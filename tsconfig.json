@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "target": "ES6",
+        "target": "es2017",
         "strict": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "node",
         "declaration": true,
-        "outDir": "./compiled"
+        "outDir": "dist"
     }
 }

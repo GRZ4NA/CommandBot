@@ -2,8 +2,9 @@
   "name": "discordcommands",
   "version": "0.0.0",
   "description": "A wrapper that helps you create your own Discord bot easier.",
-  "main": "index.js",
   "type": "module",
+  "main": "dist/Bot.js",
+  "types": "dist/Bot.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GRZ4NA/DiscordCommands.git"
