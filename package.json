@@ -1,0 +1,28 @@
+{
+  "name": "discordcommands",
+  "version": "0.0.0",
+  "description": "A wrapper that helps you create your own Discord bot easier.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GRZ4NA/DiscordCommands.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "typescript",
+    "discordjs"
+  ],
+  "author": "GRZANA",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GRZ4NA/DiscordCommands/issues"
+  },
+  "homepage": "https://github.com/GRZ4NA/DiscordCommands#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  }
+}
