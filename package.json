@@ -24,5 +24,9 @@
   "homepage": "https://github.com/GRZ4NA/DiscordCommands#readme",
   "dependencies": {
     "discord.js": "^12.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "@types/ws": "^7.4.5"
   }
 }

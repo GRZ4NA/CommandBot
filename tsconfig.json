@@ -2,6 +2,8 @@
     "compilerOptions": {
         "target": "ES6",
         "strict": true,
-        "moduleResolution": "Node"
+        "moduleResolution": "Node",
+        "declaration": true,
+        "outDir": "./compiled"
     }
 }
