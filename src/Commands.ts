@@ -1,5 +1,5 @@
 //IMPORTS
-import { Permissions, PermissionResolvable, Message, GuildMember } from 'discord.js';
+import { Permissions, PermissionResolvable, Message, GuildMember, MessageEmbed } from 'discord.js';
 
 //TYPE DEFINITIONS
 interface CommandBuilder {
@@ -9,7 +9,8 @@ interface CommandBuilder {
     description?: string,
     usage?: string,
     permissions?: PermissionResolvable,
-    function: (message?: Message) => void | string;
+    visible?: boolean
+    function: (message?: Message) => void | string | MessageEmbed;
 }
 
 //ERROR CLASSES
@@ -33,21 +34,17 @@ class Command {
     description: string;
     usage: string;
     permissions: Permissions;
-    private function: (message?: Message) => void | string;
+    visible: boolean;
+    private function: (message?: Message) => void | string | MessageEmbed;
 
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
-        this.aliases = [];
-        if(options.aliases) {
-            this.aliases = ProcessPhrase(options.aliases);
-        }
-        this.keywords = [];
-        if(options.keywords) {
-            this.keywords = ProcessPhrase(options.keywords);
-        }
+        this.aliases = ProcessPhrase(options.aliases);
+        this.keywords = ProcessPhrase(options.keywords);
         this.description = options.description || "No description";
-        this.usage = options.usage || "-";
+        this.usage = options.usage || "";
         this.permissions = new Permissions(options.permissions || 0);
+        this.visible = options.visible || true;
         this.function = options.function;
     }
     async start(message?: Message) {
@@ -107,17 +104,20 @@ class CommandsManager {
 }
 
 //FUNCTIONS
-const ProcessPhrase = (phrase: string | string[]) : string[] => {
+const ProcessPhrase = (phrase?: string | string[]) : string[] => {
     if(Array.isArray(phrase)) {
         const buff = phrase.map((p) => {
             return p.split(' ').join('_');
         });
         return buff;
     }
-    else {
+    else if(typeof phrase == 'string') {
         const buff = [];
         buff.push(phrase.split(' ').join('_'));
         return buff;
+    }
+    else {
+        return [];
     }
 }
 
