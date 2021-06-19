@@ -1,14 +1,31 @@
-import { Permissions, PermissionResolvable } from 'discord.js';
+//IMPORTS
+import { Permissions, PermissionResolvable, Message, GuildMember } from 'discord.js';
 
+//TYPE DEFINITIONS
 interface CommandBuilder {
     name: string,
     aliases?: string[] | string,
     keywords?: string[] | string,
     description?: string,
     usage?: string,
-    permissions: PermissionResolvable
+    permissions?: PermissionResolvable,
+    function: (message?: Message) => void | string;
 }
 
+//ERROR CLASSES
+class PermissionsError {
+    private command: Command;
+    private user: GuildMember | null;
+    constructor(command: Command, user?: GuildMember | null) {
+        this.command = command;
+        this.user = user || null;
+    }
+    toString() {
+        return `ERROR! User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
+    }
+}
+
+//CLASSES
 class Command {
     name: string;
     aliases: string[];
@@ -16,6 +33,7 @@ class Command {
     description: string;
     usage: string;
     permissions: Permissions;
+    private function: (message?: Message) => void | string;
 
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
@@ -29,7 +47,17 @@ class Command {
         }
         this.description = options.description || "No description";
         this.usage = options.usage || "-";
-        this.permissions = new Permissions(options.permissions);
+        this.permissions = new Permissions(options.permissions || 0);
+        this.function = options.function;
+    }
+    async start(message?: Message) {
+        const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
+        if(this.permissions.any(memberPermissions, true)) {
+            await this.function(message);
+        }
+        else {
+            throw new PermissionsError(this, message?.member);
+        }
     }
 }
 class CommandsManager {
@@ -78,7 +106,8 @@ class CommandsManager {
     }
 }
 
-function ProcessPhrase(phrase: string | string[]) : string[] {
+//FUNCTIONS
+const ProcessPhrase = (phrase: string | string[]) : string[] => {
     if(Array.isArray(phrase)) {
         const buff = phrase.map((p) => {
             return p.split(' ').join('_');
@@ -92,4 +121,5 @@ function ProcessPhrase(phrase: string | string[]) : string[] {
     }
 }
 
+//EXPORTS
 export { Command, CommandsManager }

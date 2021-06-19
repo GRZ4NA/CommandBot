@@ -1,6 +1,6 @@
 //IMPORTS
 import { Client, ClientOptions } from 'discord.js';
-import { CommandsManager } from './Commands';
+import { Command, CommandsManager } from './Commands';
 
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
