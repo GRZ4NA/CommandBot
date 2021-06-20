@@ -26,7 +26,7 @@ class PermissionsError {
         this.user = user || null;
     }
     toString() {
-        return `ERROR! User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
+        return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
     }
 }
 
