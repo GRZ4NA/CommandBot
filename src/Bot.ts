@@ -73,7 +73,7 @@ class Bot {
             console.log('Connecting to Discord...');
             if(await this.client.login(token)) {
                 console.log('BOT IS READY!\n');
-                this.client.on('message', (m) => {
+                this.client.on('message', async m => {
                     this.on.message(m);
                     const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m, this.config.prefix);
                     if(cmdMsg) {
@@ -81,7 +81,7 @@ class Bot {
                         const calledCommand: Command | null = this.commands.get(cmdMsg.name);
                         if(calledCommand) {
                             try {
-                                calledCommand.start(m, cmdMsg.arguments);   
+                                await calledCommand.start(m, cmdMsg.arguments);   
                             }
                             catch (e) {
                                 console.error(`ERROR! ${e.toString()}`);
