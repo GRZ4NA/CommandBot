@@ -39,8 +39,8 @@ class Command {
 
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
-        this.aliases = ProcessPhrase(options.aliases);
-        this.keywords = ProcessPhrase(options.keywords);
+        this.aliases = Command.ProcessPhrase(options.aliases);
+        this.keywords = Command.ProcessPhrase(options.keywords);
         this.description = options.description || "No description";
         this.usage = options.usage || "";
         this.permissions = new Permissions(options.permissions || 0);
@@ -54,6 +54,22 @@ class Command {
         }
         else {
             throw new PermissionsError(this, message?.member);
+        }
+    }
+    static ProcessPhrase(phrase?: string | string[]) : string[] {
+        if(Array.isArray(phrase)) {
+            const buff = phrase.map((p) => {
+                return p.split(' ').join('_');
+            });
+            return buff;
+        }
+        else if(typeof phrase == 'string') {
+            const buff = [];
+            buff.push(phrase.split(' ').join('_'));
+            return buff;
+        }
+        else {
+            return [];
         }
     }
 }
@@ -100,24 +116,6 @@ class CommandsManager {
             console.error(`ERROR! ${e.toString()}`);
             return false;
         }
-    }
-}
-
-//FUNCTIONS
-const ProcessPhrase = (phrase?: string | string[]) : string[] => {
-    if(Array.isArray(phrase)) {
-        const buff = phrase.map((p) => {
-            return p.split(' ').join('_');
-        });
-        return buff;
-    }
-    else if(typeof phrase == 'string') {
-        const buff = [];
-        buff.push(phrase.split(' ').join('_'));
-        return buff;
-    }
-    else {
-        return [];
     }
 }
 
