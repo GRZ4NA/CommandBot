@@ -53,7 +53,7 @@ class Command {
     }
     async start(message?: Message, cmdArguments?: string[]) {
         const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
-        if(memberPermissions.any(this.permissions, true)) {
+        if(memberPermissions.has(this.permissions, true)) {
             const fnResult = await this.function(message, cmdArguments);
             if(typeof fnResult == 'string') {
                 await message?.reply(fnResult);
