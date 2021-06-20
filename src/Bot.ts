@@ -1,8 +1,7 @@
 //IMPORTS
 import { Client, ClientOptions, Message } from 'discord.js';
-import { Command, CommandsManager } from './Commands.js';
+import { Command, CommandsManager, CommandMessageStructure } from './Commands.js';
 import { HelpMessage, HelpMessageParams } from './Help.js';
-import { CommandMessage } from './CommandMessage.js';
 import * as http from 'http';
 
 //TYPE DEFINITIONS
@@ -31,7 +30,7 @@ class Bot {
     }
     on: {
         message: (m: Message) => any,
-        command: (m: CommandMessage) => any
+        command: (m: Message, cmdInfo?: CommandMessageStructure) => any
     }
 
     constructor(options: ConstructorOptions) {
@@ -54,7 +53,7 @@ class Bot {
         }
         this.on = {
             message: (m: Message) => {},
-            command: (m: CommandMessage) => { console.log(m.command); }
+            command: (m: Message, cmdInfo?: CommandMessageStructure) => { console.log(cmdInfo); }
         }
     }
     async start(port?: number, token?: string) : Promise<boolean> {
@@ -76,12 +75,18 @@ class Bot {
                 console.log('BOT IS READY!\n');
                 this.client.on('message', (m) => {
                     this.on.message(m);
-                    const cmdMsg: CommandMessage = new CommandMessage(m, this.config.prefix);
-                    if(cmdMsg.command) {
-                        this.on.command(cmdMsg);
-                        const calledCommand = this.commands.get(cmdMsg.command.name);
+                    const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m, this.config.prefix);
+                    if(cmdMsg) {
+                        this.on.command(m, cmdMsg);
+                        const calledCommand: Command | null = this.commands.get(cmdMsg.name);
                         if(calledCommand) {
-                            calledCommand.start(cmdMsg);
+                            try {
+                                calledCommand.start(m, cmdMsg.arguments);   
+                            }
+                            catch (e) {
+                                console.error(`ERROR! ${e.toString()}`);
+                                return;
+                            }
                         }
                     }
                 });

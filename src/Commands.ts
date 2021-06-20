@@ -10,7 +10,11 @@ interface CommandBuilder {
     usage?: string,
     permissions?: PermissionResolvable,
     visible?: boolean
-    function: (message?: Message) => void | string | MessageEmbed;
+    function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
+}
+interface CommandMessageStructure {
+    name: string,
+    arguments: string[]
 }
 
 //ERROR CLASSES
@@ -35,28 +39,28 @@ class Command {
     usage: string;
     permissions: Permissions;
     visible: boolean;
-    private function: (message?: Message) => void | string | MessageEmbed;
+    private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
 
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
-        this.aliases = Command.ProcessPhrase(options.aliases);
-        this.keywords = Command.ProcessPhrase(options.keywords);
+        this.aliases = Command.processPhrase(options.aliases);
+        this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
         this.usage = options.usage || "";
         this.permissions = new Permissions(options.permissions || 0);
         this.visible = options.visible || true;
         this.function = options.function;
     }
-    async start(message?: Message) {
+    async start(message?: Message, cmdArguments?: string[]) {
         const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
-        if(this.permissions.any(memberPermissions, true)) {
-            await this.function(message);
+        if(memberPermissions.any(this.permissions, true)) {
+            await this.function(message, cmdArguments);
         }
         else {
             throw new PermissionsError(this, message?.member);
         }
     }
-    static ProcessPhrase(phrase?: string | string[]) : string[] {
+    static processPhrase(phrase?: string | string[]) : string[] {
         if(Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
                 return p.split(' ').join('_');
@@ -79,8 +83,8 @@ class CommandsManager {
     constructor() {
         this.list = [];
     }
-    get(name: string) : Command | undefined {
-        let command : Command | undefined = undefined;
+    get(name: string) : Command | null {
+        let command : Command | null = null;
         this.list.map((c) => {
             if(c.name == name) {
                 command = c;
@@ -117,7 +121,25 @@ class CommandsManager {
             return false;
         }
     }
+    fetch(message: Message, prefix: string) : CommandMessageStructure | null {
+        if(!message.author.bot && message.content.startsWith(prefix)) {
+            let msgContent = message.content.replace(prefix, '');
+            const cmdName = msgContent.split(' ')[0];
+            msgContent = msgContent.replace(cmdName, '');
+            let cmdArguments: string[] = msgContent.split(',');
+            cmdArguments = cmdArguments.map((a) => {
+                return a.replace(' ', '');
+            });
+            return {
+                name: cmdName,
+                arguments: cmdArguments
+            }
+        }
+        else {
+            return null;
+        }
+    }
 }
 
 //EXPORTS
-export { Command, CommandsManager }
+export { Command, CommandsManager, CommandMessageStructure }

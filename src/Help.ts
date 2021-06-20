@@ -16,7 +16,7 @@ class HelpMessage extends Command {
             usage: params.usage,
             permissions: 0,
             description: params.description,
-            function: (m?: Message) => {
+            function: () => {
                 const helpMsg = new MessageEmbed()
                 if(helpMsg != null) {
                     helpMsg.setColor(params.color);
