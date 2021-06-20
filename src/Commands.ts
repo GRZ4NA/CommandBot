@@ -136,6 +136,9 @@ class CommandsManager {
             cmdArguments = cmdArguments.map((a) => {
                 return a.replace(' ', '');
             });
+            if((cmdArguments[0] == '' || cmdArguments[0] == ' ') && cmdArguments.length == 1) {
+                cmdArguments = [];
+            }
             return {
                 name: cmdName,
                 arguments: cmdArguments

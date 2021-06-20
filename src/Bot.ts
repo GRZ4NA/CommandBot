@@ -59,6 +59,7 @@ class Bot {
     async start(port?: number, token?: string) : Promise<boolean> {
         try {
             console.log(`Bot name: ${this.name}`);
+            console.log(`Prefix: ${this.config.prefix} \n`);
             const loginToken: string = token || this.config.token || '';
             if(loginToken === '') {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
