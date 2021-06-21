@@ -114,4 +114,4 @@ class Bot {
 
 //EXPORTS
 export default Bot;
-export { Bot };
+export { Bot, Command };
