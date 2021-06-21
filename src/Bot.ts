@@ -60,14 +60,8 @@ class Bot {
         try {
             console.log(`Bot name: ${this.name}`);
             console.log(`Prefix: ${this.config.prefix} \n`);
-            let loginToken;
-            if(this.config.token) {
-                loginToken = this.config.token;
-            }
-            else if(token) {
-                loginToken = token;
-            }
-            else {
+            const loginToken: string = token || this.config.token || '';
+            if(loginToken === '') {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
             if(port) {
@@ -78,7 +72,7 @@ class Bot {
             const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.config.prefix, this.name);
             this.commands.add(helpMsg);
             console.log('Connecting to Discord...');
-            if(await this.client.login(token)) {
+            if(await this.client.login(loginToken)) {
                 console.log('BOT IS READY!\n');
                 this.client.on('message', async m => {
                     this.on.message(m);
