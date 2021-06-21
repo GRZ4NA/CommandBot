@@ -1,4 +1,4 @@
-import { ColorResolvable, DMChannel, GuildMember, MessageEmbed, NewsChannel, TextChannel, User } from 'discord.js';
+import { ColorResolvable, DMChannel, GuildMember, Message, MessageEmbed, NewsChannel, TextChannel, User } from 'discord.js';
 import { Command, PermissionsError } from './Command.js';
 
 type MessageType = 'PERMISSION' | 'ERROR' | 'NOT_FOUND';
@@ -44,7 +44,7 @@ class SystemMessageManager {
         }
         this.deleteTimeout = Infinity;
     }
-    async send(type: MessageType, data?: SystemMessageData, channel?: TextChannel | DMChannel | NewsChannel) : Promise<MessageEmbed | void> {
+    async send(type: MessageType, data?: SystemMessageData, channel?: TextChannel | DMChannel | NewsChannel) : Promise<MessageEmbed | Message | void> {
         if(this[type]) {
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
@@ -97,6 +97,7 @@ class SystemMessageManager {
                 if(this.deleteTimeout != Infinity && message.deletable) {
                     await message.delete({ timeout: this.deleteTimeout });
                 }
+                return message;
             }
             else {
                 return embed;
