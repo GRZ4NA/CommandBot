@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { Command, CommandsManager } from './Commands.js';
+import { Command, CommandsManager } from './Command.js';
 
 interface HelpMessageParams {
     title: string,

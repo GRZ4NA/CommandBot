@@ -1,6 +1,6 @@
 //IMPORTS
 import { Client, ClientOptions, Message } from 'discord.js';
-import { Command, CommandsManager, CommandMessageStructure } from './Commands.js';
+import { Command, CommandsManager, CommandMessageStructure } from './Command.js';
 import { HelpMessage, HelpMessageParams } from './Help.js';
 import * as http from 'http';
 
