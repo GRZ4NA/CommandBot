@@ -45,7 +45,7 @@ class Bot {
             help: {
                 title: 'Help',
                 description: 'List of all available commands',
-                color: '#000',
+                color: '#ff5500',
                 usage: '[command name (optional)]',
                 bottomText: 'List of all available commands'
             },

@@ -1,10 +1,10 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { ColorResolvable, MessageEmbed } from 'discord.js';
 import { Command, CommandsManager } from './Command.js';
 
 interface HelpMessageParams {
     title: string,
     bottomText: string
-    color: string,
+    color: ColorResolvable,
     description: string,
     usage: string
 }
