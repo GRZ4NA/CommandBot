@@ -88,6 +88,7 @@ class Bot {
                             }
                             else {
                                 this.messages.system.send('ERROR', { command: cmdMsg.command, user: m.member || undefined, error: e }, m.channel);
+                                console.error(e);
                             }
                             return;
                         }
