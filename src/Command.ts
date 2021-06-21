@@ -14,8 +14,10 @@ interface CommandBuilder {
 }
 interface CommandMessageStructure {
     name: string,
-    arguments: string[]
+    arguments: string[],
+    command: Command | null
 }
+type GetMode = 'ALL' | 'PREFIX' | 'NO_PREFIX';
 
 //ERROR CLASSES
 class PermissionsError {
@@ -89,11 +91,43 @@ class CommandsManager {
     constructor() {
         this.list = [];
     }
-    get(name: string) : Command | null {
+    get(phrase: string, mode?: GetMode) : Command | null {
+        if(!mode) mode = 'ALL';
         let command : Command | null = null;
         this.list.map((c) => {
-            if(c.name == name) {
-                command = c;
+            switch (mode) {
+                case 'PREFIX':
+                    if(c.name == phrase) {
+                        command = c;
+                    }
+                    c.aliases.map(a => {
+                        if(a == phrase) {
+                            command = c;
+                        }
+                    });
+                    break;
+                case 'NO_PREFIX':
+                    c.keywords.map(k => {
+                        if(k == phrase) {
+                            command = c;
+                        }
+                    });
+                    break;
+                case 'ALL':
+                    if(c.name == phrase) {
+                        command = c;
+                    }
+                    c.aliases.map(a => {
+                        if(a == phrase) {
+                            command = c;
+                        }
+                    });
+                    c.keywords.map(k => {
+                        if(k == phrase) {
+                            command = c;
+                        }
+                    });
+                    break;
             }
         });
         return command;
@@ -131,6 +165,7 @@ class CommandsManager {
         if(!message.author.bot && message.content.startsWith(prefix)) {
             let msgContent = message.content.replace(prefix, '');
             const cmdName = msgContent.split(' ')[0];
+            const cmd: Command | null = this.get(cmdName, 'PREFIX');
             msgContent = msgContent.replace(cmdName, '');
             let cmdArguments: string[] = msgContent.split(',');
             cmdArguments = cmdArguments.map((a) => {
@@ -141,7 +176,30 @@ class CommandsManager {
             }
             return {
                 name: cmdName,
-                arguments: cmdArguments
+                arguments: cmdArguments,
+                command: cmd
+            }
+        }
+        else if(!message.author.bot) {
+            const cmdName = message.content.split(' ')[0];
+            const cmd: Command | null = this.get(cmdName, 'NO_PREFIX');
+            if(cmd) {
+                const cmdArgumentsStr = message.content.replace(cmdName, '');
+                let cmdArguments: string[] = cmdArgumentsStr.split(',');
+                cmdArguments = cmdArguments.map((a) => {
+                    return a.replace(' ', '');
+                });
+                if((cmdArguments[0] == '' || cmdArguments[0] == ' ') && cmdArguments.length == 1) {
+                    cmdArguments = [];
+                }
+                return {
+                    name: cmdName,
+                    arguments: cmdArguments,
+                    command: cmd
+                }
+            }
+            else {
+                return null;
             }
         }
         else {

@@ -77,26 +77,23 @@ class Bot {
                 this.client.on('message', async m => {
                     this.on.message(m);
                     const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m, this.config.prefix);
-                    if(cmdMsg) {
+                    if(cmdMsg?.command) {
                         this.on.command(m, cmdMsg);
-                        const calledCommand: Command | null = this.commands.get(cmdMsg.name);
-                        if(calledCommand) {
-                            try {
-                                await calledCommand.start(m, cmdMsg.arguments);   
-                            }
-                            catch (e) {
-                                if(e instanceof PermissionsError) {
-                                    this.messages.system.send('PERMISSION', { user: m.member || undefined, command: calledCommand }, m.channel);
-                                }
-                                else {
-                                    this.messages.system.send('ERROR', { command: calledCommand, user: m.member || undefined, error: e }, m.channel);
-                                }
-                                return;
-                            }
+                        try {
+                            await cmdMsg.command.start(m, cmdMsg.arguments);   
                         }
-                        else {
-                            this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
+                        catch (e) {
+                            if(e instanceof PermissionsError) {
+                                this.messages.system.send('PERMISSION', { user: m.member || undefined, command: cmdMsg.command }, m.channel);
+                            }
+                            else {
+                                this.messages.system.send('ERROR', { command: cmdMsg.command, user: m.member || undefined, error: e }, m.channel);
+                            }
+                            return;
                         }
+                    }
+                    else if(cmdMsg) {
+                        this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
                     }
                 });
             }
