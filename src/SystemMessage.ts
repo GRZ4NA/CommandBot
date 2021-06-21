@@ -26,18 +26,20 @@ class SystemMessageManager {
             title: '👮‍♂️ Insufficient permissions',
             bottomText: "You don't have enough permissions to run this command",
             accentColor: '#1d1dc4',
-            showTimestamp: true
+            showTimestamp: true,
+            footer: botName
         }
         this.ERROR = {
             title: '❌ An error occurred',
             bottomText: 'Something went wrong while processing your request.',
             accentColor: '#ff0000',
-            showTimestamp: true
+            showTimestamp: true,
+            footer: botName
         }
         this.NOT_FOUND = {
             title: '🔍 Command not found',
             accentColor: '#ff5500',
-            showTimestamp: false,
+            showTimestamp: true,
             footer: botName
         }
         this.deleteTimeout = Infinity;
