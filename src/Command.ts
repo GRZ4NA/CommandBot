@@ -50,7 +50,7 @@ class Command {
         this.description = options.description || "No description";
         this.usage = options.usage || "";
         this.permissions = new Permissions(options.permissions || 0);
-        this.visible = options.visible || true;
+        this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
     async start(message?: Message, cmdArguments?: string[]) {
