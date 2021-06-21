@@ -28,21 +28,21 @@ class HelpMessage extends Command {
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? '' : '[HIDDEN]'}`);
                             helpMsg.setDescription(cmd.description);
                             if(cmd.usage) helpMsg.addField('Usage:', `${prefix}${cmd.name} ${cmd.usage}`, false);
-                            if(cmd.permissions) {
+                            if(cmd.permissions.toArray(false).length > 0) {
                                 let permList: string = '';
                                 cmd.permissions.toArray(false).map(p => {
                                     permList += p + '\n';
                                 });
                                 helpMsg.addField('Permissions:', permList, false);
                             }
-                            if(cmd.aliases) {
+                            if(cmd.aliases.length > 0) {
                                 let aList: string = '';
                                 cmd.aliases.map(a => {
                                     aList += a + '\n'; 
                                 });
                                 helpMsg.addField('Aliases:', aList, false);
                             }
-                            if(cmd.keywords) {
+                            if(cmd.keywords.length > 0) {
                                 let kwrdList: string = '';
                                 cmd.keywords.map(k => {
                                     kwrdList += k + '\n';

@@ -73,9 +73,15 @@ class Command {
             const buff = phrase.map((p) => {
                 return p.split(' ').join('_');
             });
+            buff.map(e => {
+                if(e == '' || e == ' ') {
+                    const i = buff.indexOf(e);
+                    buff.splice(i, 1);
+                }
+            });
             return buff;
         }
-        else if(typeof phrase == 'string') {
+        else if(typeof phrase == 'string' && phrase != '' && phrase != ' ') {
             const buff = [];
             buff.push(phrase.split(' ').join('_'));
             return buff;
