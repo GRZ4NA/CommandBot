@@ -94,9 +94,9 @@ class Bot {
                                 return;
                             }
                         }
-                    }
-                    else if(m.content.startsWith(this.config.prefix) && !m.author.bot) {
-                        this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
+                        else {
+                            this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
+                        }
                     }
                 });
             }

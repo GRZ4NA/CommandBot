@@ -31,7 +31,7 @@ class SystemMessageManager {
         this.ERROR = {
             title: '❌ An error occurred',
             bottomText: 'Something went wrong while processing your request.',
-            accentColor: '#f00',
+            accentColor: '#ff0000',
             showTimestamp: true
         }
         this.NOT_FOUND = {
