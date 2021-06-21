@@ -7,7 +7,6 @@ import * as http from 'http';
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
     prefix: string,
-    accentColor: string,
     token?: string
 }
 interface ConstructorOptions {
@@ -16,7 +15,6 @@ interface ConstructorOptions {
     helpCommand?: boolean,
     clientOptions?: ClientOptions,
     token?: string,
-    accentColor?: string
 }
 
 //MAIN CLASS
@@ -39,7 +37,6 @@ class Bot {
         this.commands = new CommandsManager();
         this.config = {
             prefix: options.prefix,
-            accentColor: "#000",
             token: options.token
         }
         this.messages = {

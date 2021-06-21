@@ -151,4 +151,4 @@ class CommandsManager {
 }
 
 //EXPORTS
-export { Command, CommandsManager, CommandMessageStructure }
+export { Command, CommandsManager, CommandMessageStructure, PermissionsError }
