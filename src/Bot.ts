@@ -60,8 +60,14 @@ class Bot {
         try {
             console.log(`Bot name: ${this.name}`);
             console.log(`Prefix: ${this.config.prefix} \n`);
-            const loginToken: string = token || this.config.token || '';
-            if(loginToken === '') {
+            let loginToken;
+            if(this.config.token) {
+                loginToken = this.config.token;
+            }
+            else if(token) {
+                loginToken = token;
+            }
+            else {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
             if(port) {
