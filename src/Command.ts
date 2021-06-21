@@ -66,7 +66,7 @@ class Command {
             throw new PermissionsError(this, message?.member);
         }
     }
-    static processPhrase(phrase?: string | string[]) : string[] {
+    private static processPhrase(phrase?: string | string[]) : string[] {
         if(Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
                 return p.split(' ').join('_');

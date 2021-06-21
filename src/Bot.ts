@@ -1,8 +1,9 @@
 //IMPORTS
 import { Client, ClientOptions, Message } from 'discord.js';
-import { Command, CommandsManager, CommandMessageStructure } from './Command.js';
+import { Command, CommandsManager, CommandMessageStructure, PermissionsError } from './Command.js';
 import { HelpMessage, HelpMessageParams } from './Help.js';
 import * as http from 'http';
+import { SystemMessageManager } from './SystemMessage.js';
 
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
@@ -24,7 +25,8 @@ class Bot {
     commands: CommandsManager;
     config: ConfigurationOptions;
     messages: {
-        help: HelpMessageParams
+        help: HelpMessageParams,
+        system: SystemMessageManager
     }
     on: {
         message: (m: Message) => any,
@@ -46,7 +48,8 @@ class Bot {
                 color: '#000',
                 usage: '[command name (optional)]',
                 bottomText: 'List of all available commands'
-            }
+            },
+            system: new SystemMessageManager(this.name)
         }
         this.on = {
             message: (m: Message) => {},
@@ -82,10 +85,18 @@ class Bot {
                                 await calledCommand.start(m, cmdMsg.arguments);   
                             }
                             catch (e) {
-                                console.error(`ERROR! ${e.toString()}`);
+                                if(e instanceof PermissionsError) {
+                                    this.messages.system.send('PERMISSION', { user: m.member || undefined, command: calledCommand }, m.channel);
+                                }
+                                else {
+                                    this.messages.system.send('ERROR', { command: calledCommand, user: m.member || undefined, error: e }, m.channel);
+                                }
                                 return;
                             }
                         }
+                    }
+                    else {
+                        this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
                     }
                 });
             }
