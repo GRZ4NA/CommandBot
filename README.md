@@ -78,9 +78,7 @@ If command function returns
 - *string* - the returned text will be sent as a reply to the command caller
 - *[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)* - the embedded content will be sent as a standalone message
 #### Errors
-If your command throws an error, it will get logged to the console and sent to the user in a message with embedded content. **The bot will not crash.**
-
-:::image type="content" source="assets/error_example.png" alt-text="Error message example":::
+If your command throws an error, it will get logged to the console and sent to the user in a message with embedded content. **The bot will not crash.** ([Example](https://raw.githubusercontent.com/GRZ4NA/DiscordCommands/master/assets/error_example.png))
 
 ### Command examples
 #### Simple reply
