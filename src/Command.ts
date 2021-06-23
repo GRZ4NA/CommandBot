@@ -53,7 +53,7 @@ class Command {
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
-    async start(message?: Message, cmdArguments?: string[]) {
+    async start(message?: Message, cmdArguments?: string[]) : Promise<void> {
         const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
         if(memberPermissions.has(this.permissions, true)) {
             const fnResult = await this.function(message, cmdArguments);
