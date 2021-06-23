@@ -21,7 +21,7 @@ Key features
     + [Command examples](#command-examples)
         * [Simple reply](#simple-reply)
         * [Example with arguments](#example-with-arguments)
-- [Customization & built-in messages](#customization-&-built-in-messages)
+- [Customization and built-in messages](#customization-and-built-in-messagess)
     + [Help message](#help-message)
     + [System messages](#system-messages)
 
@@ -166,7 +166,7 @@ test
 test
 @caller, Repeated "test" 5 times
 ```
-## Customization & built-in messages
+## Customization and built-in messages
 All configuration parameters for messages are stored in the *messages* property (example: bot.messages)
 ### Help message
 Configuration parameters are stored in *messages.help* property
