@@ -93,9 +93,13 @@ class Command {
 }
 class CommandsManager {
     list: Command[];
+    prefix: string;
+    argumentSeparator: string;
 
-    constructor() {
+    constructor(prefix: string, argumentSeparator?: string) {
         this.list = [];
+        this.prefix = prefix;
+        this.argumentSeparator = argumentSeparator || ',';
     }
     get(phrase: string, mode?: GetMode) : Command | null {
         if(!mode) mode = 'ALL';
@@ -167,13 +171,13 @@ class CommandsManager {
             return false;
         }
     }
-    fetch(message: Message, prefix: string) : CommandMessageStructure | null {
-        if(!message.author.bot && message.content.startsWith(prefix)) {
-            let msgContent = message.content.replace(prefix, '');
+    fetch(message: Message) : CommandMessageStructure | null {
+        if(!message.author.bot && message.content.startsWith(this.prefix)) {
+            let msgContent = message.content.replace(this.prefix, '');
             const cmdName = msgContent.split(' ')[0];
             const cmd: Command | null = this.get(cmdName, 'PREFIX');
             msgContent = msgContent.replace(cmdName, '');
-            let cmdArguments: string[] = msgContent.split(',');
+            let cmdArguments: string[] = msgContent.split(this.argumentSeparator);
             cmdArguments = cmdArguments.map((a) => {
                 return a.replace(' ', '');
             });

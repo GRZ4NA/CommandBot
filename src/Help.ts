@@ -10,7 +10,7 @@ interface HelpMessageParams {
 }
 
 class HelpMessage extends Command {
-    constructor(cmdManager: CommandsManager, params: HelpMessageParams, prefix: string, botName?: string) {
+    constructor(cmdManager: CommandsManager, params: HelpMessageParams, botName?: string) {
         super({
             name: 'help',
             usage: params.usage,
@@ -27,7 +27,7 @@ class HelpMessage extends Command {
                         if(cmd) {
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? '' : '[HIDDEN]'}`);
                             helpMsg.setDescription(cmd.description);
-                            if(cmd.usage) helpMsg.addField('Usage:', `${prefix}${cmd.name} ${cmd.usage}`, false);
+                            if(cmd.usage) helpMsg.addField('Usage:', `${cmdManager.prefix}${cmd.name} ${cmd.usage}`, false);
                             if(cmd.permissions.toArray(false).length > 0) {
                                 let permList: string = '';
                                 cmd.permissions.toArray(false).map(p => {
@@ -61,7 +61,7 @@ class HelpMessage extends Command {
                         cmdManager.list.map((c) => {
                             if(c.visible) {
                                 helpMsg.addField(
-                                    `${prefix}${c.name} ${c.usage}`,
+                                    `${cmdManager.prefix}${c.name} ${c.usage}`,
                                     c.description,
                                     false
                                 )

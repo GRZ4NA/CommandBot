@@ -7,13 +7,13 @@ import { SystemMessageManager } from './SystemMessage.js';
 
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
-    prefix: string,
     token?: string,
     helpCommand: boolean
 }
 interface ConstructorOptions {
     name: string,
     prefix: string,
+    argumentSeparator?: string
     helpCommand?: boolean,
     clientOptions?: ClientOptions,
     token?: string,
@@ -37,9 +37,8 @@ class Bot {
     constructor(options: ConstructorOptions) {
         this.name = options.name;
         this.client = new Client(options.clientOptions);
-        this.commands = new CommandsManager();
+        this.commands = new CommandsManager(options.prefix, options.argumentSeparator);
         this.config = {
-            prefix: options.prefix,
             token: options.token,
             helpCommand: options.helpCommand != undefined ? options.helpCommand : true
         }
@@ -61,7 +60,7 @@ class Bot {
     async start(port?: number, token?: string) : Promise<boolean> {
         try {
             console.log(`Bot name: ${this.name}`);
-            console.log(`Prefix: ${this.config.prefix} \n`);
+            console.log(`Prefix: ${this.commands.prefix} \n`);
             const loginToken: string = token || this.config.token || '';
             if(loginToken === '') {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
@@ -72,7 +71,7 @@ class Bot {
             }
             console.log('Starting modules...');
             if(this.config.helpCommand) {
-                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.config.prefix, this.name);
+                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
             console.log('Connecting to Discord...');
@@ -80,7 +79,7 @@ class Bot {
                 console.log('BOT IS READY!\n');
                 this.client.on('message', async m => {
                     this.on.message(m);
-                    const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m, this.config.prefix);
+                    const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m);
                     if(cmdMsg?.command) {
                         this.on.command(m, cmdMsg);
                         try {
