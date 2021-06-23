@@ -58,7 +58,7 @@ Optional arguments for this method
 - **port** - *number* - if specified, the app will create a http server that will be listening on the specified port
 - **token** - *string* - app token from Discord Developer Portal
 ## Commands
-> [!IMPORTANT]
+> [IMPORTANT]
 > All commands have to be declared above the *start* method
 ### All parameters
 - name - *string* - command name (used to trigger the command)
