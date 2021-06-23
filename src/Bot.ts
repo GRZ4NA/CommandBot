@@ -8,7 +8,8 @@ import { SystemMessageManager } from './SystemMessage.js';
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
     prefix: string,
-    token?: string
+    token?: string,
+    helpCommand: boolean
 }
 interface ConstructorOptions {
     name: string,
@@ -39,7 +40,8 @@ class Bot {
         this.commands = new CommandsManager();
         this.config = {
             prefix: options.prefix,
-            token: options.token
+            token: options.token,
+            helpCommand: options.helpCommand != undefined ? options.helpCommand : true
         }
         this.messages = {
             help: {
@@ -69,8 +71,10 @@ class Bot {
                 http.createServer().listen(port);
             }
             console.log('Starting modules...');
-            const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.config.prefix, this.name);
-            this.commands.add(helpMsg);
+            if(this.config.helpCommand) {
+                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.config.prefix, this.name);
+                this.commands.add(helpMsg);
+            }
             console.log('Connecting to Discord...');
             if(await this.client.login(loginToken)) {
                 console.log('BOT IS READY!\n');
