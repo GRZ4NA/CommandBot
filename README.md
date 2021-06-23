@@ -20,7 +20,10 @@ Key features
         * [Errors](#errors)
     + [Command examples](#command-examples)
         * [Simple reply](#simple-reply)
-        * [Arguments example](#arguments-example)
+        * [Example with arguments](#example-with-arguments)
+- [Customization & built-in messages](#customization-&-built-in-messages)
+    + [Help message](#help-message)
+    + [System messages](#system-messages)
 
 ## Getting started
 ### Installation
@@ -110,7 +113,7 @@ bot.commands.add(new Command({
 Result:
 @mention, pong
 ```
-#### Arguments example
+#### Example with arguments
 1. Create a command
 ```javascript
 const command = new Command({
@@ -163,3 +166,26 @@ test
 test
 @caller, Repeated "test" 5 times
 ```
+## Customization & built-in messages
+All configuration parameters for messages are stored in the *messages* property (example: bot.messages)
+### Help message
+Configuration parameters are stored in *messages.help* property
+- **title** - *string* - title of help message
+- **bottomText** - *string* - text shown below the title
+- **color** - *[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)* - color of the embedded content
+- **description** - *string* - command description (equivalent of the *description* property in *Command* object)
+- **usage** - *string* - equivalent of the *usage* property in *Command* object (You can pass a command name, alias or keyword with the *help* command to get detailed information about the specified command)
+### System messages
+All options are stored inside *messages.system* property
+
+There are 3 types of system messages
+- Error message (**ERROR**)
+- Command not found message (**NOT_FOUND**)
+- Insufficient permissions message (**PERMISSION**)
+
+Each message can be customized using these properties
+- **title** - *string* - title of the message
+- **bottomText** - *string* - text shown below the title
+- **accentColor** - *[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)* - color of the embedded content
+- **showTimestamp** - *boolean* - show time and date at the bottom of the embedded content
+- **footer** - *string* - footer of the embedded content
