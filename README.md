@@ -21,7 +21,7 @@ Key features
     + [Command examples](#command-examples)
         * [Simple reply](#simple-reply)
         * [Example with arguments](#example-with-arguments)
-- [Customization and built-in messages](#customization-and-built-in-messagess)
+- [Customization and built-in messages](#customization-and-built-in-messages)
     + [Help message](#help-message)
     + [System messages](#system-messages)
 
