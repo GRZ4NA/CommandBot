@@ -36,7 +36,7 @@ npm install discordcommands@latest
 
 3. Import the package
 ```javascript
-import { Bot, Command } from 'discordcommands'
+import { Bot, Command } from 'discordcommands';
 ```
 ### Creating bot instance
 ```javascript
@@ -126,7 +126,7 @@ const command = new Command({
             }
         }
     }
-})
+});
 ```
 or
 ```javascript
