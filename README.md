@@ -72,7 +72,7 @@ Optional arguments for this method
 ### Command function
 #### Arguments
 - **m** - *[Message](https://discord.js.org/#/docs/main/stable/class/Message)* - a message object instance containing message content, author and additional informations
-- **a** - *string[]* - list of arguments passed with the message (separated with *argumentSeparator*)
+- **a** - *string[]* - list of arguments passed with the message (splitted with *argumentSeparator*)
 #### Return
 If command function returns
 - *string* - the returned text will be sent as a reply to the command caller
