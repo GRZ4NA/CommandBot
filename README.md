@@ -61,18 +61,18 @@ Optional arguments for this method
 > [IMPORTANT]
 > All commands have to be declared above the *start* method
 ### All parameters
-- name - *string* - command name (used to trigger the command)
-- function - *Function* - function that will trigger when the commands gets called
-- visible - *boolean* - show command in the *help message* (optional, defaults to *true*)
-- description - *string* - command description shown in the *help message* (optional)
-- usage - *string* - command usage description shown in the *help message* (optional)
-- permissions - *[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)* - permissions needed to run the command (optional)
-- aliases - *string | string[]* - other words that can trigger the command with prefix (optional)
-- keywords - *string | string[]* - other words that can trigger the command without prefix (optional)
+- **name** - *string* - command name (used to trigger the command)
+- **function** - *Function* - function that will trigger when the commands gets called
+- **visible** - *boolean* - show command in the *help message* (optional, defaults to *true*)
+- **description** - *string* - command description shown in the *help message* (optional)
+- **usage** - *string* - command usage description shown in the *help message* (optional)
+- **permissions** - *[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)* - permissions needed to run the command (optional)
+- **aliases** - *string | string[]* - other words that can trigger the command with prefix (optional)
+- **keywords** - *string | string[]* - other words that can trigger the command without prefix (optional)
 ### Command function
 #### Arguments
-- m - *[Message](https://discord.js.org/#/docs/main/stable/class/Message)* - a message object instance containing message content, author and additional informations
-- a - *string[]* - list of arguments passed with the message (separated with *argumentSeparator*)
+- **m** - *[Message](https://discord.js.org/#/docs/main/stable/class/Message)* - a message object instance containing message content, author and additional informations
+- **a** - *string[]* - list of arguments passed with the message (separated with *argumentSeparator*)
 #### Return
 If command function returns
 - *string* - the returned text will be sent as a reply to the command caller
@@ -104,8 +104,11 @@ bot.commands.add(new Command({
 }));
 ```
 2. Call it from Discord text channel (example prefix: "!")
-```javascript
-!ping // replies "pong" with the user mention
+```
+!ping 
+
+Result:
+@mention, pong
 ```
 #### Arguments example
 1. Create a command
