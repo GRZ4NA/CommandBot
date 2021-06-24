@@ -1,5 +1,5 @@
 {
-  "name": "discordcommands",
+  "name": "commandbot",
   "version": "1.0.0-test",
   "description": "A framework that helps you create your own Discord bot easier.",
   "type": "module",
@@ -13,7 +13,8 @@
     "discord",
     "bot",
     "typescript",
-    "discordjs"
+    "discordjs",
+    "framework"
   ],
   "author": "GRZANA",
   "license": "MIT",
