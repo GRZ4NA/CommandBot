@@ -1,6 +1,6 @@
 //IMPORTS
 import { Client, ClientOptions, Message } from 'discord.js';
-import { Command, CommandsManager, CommandMessageStructure, PermissionsError } from './Command.js';
+import { Command, CommandManager, CommandMessageStructure, PermissionsError } from './Command.js';
 import { HelpMessage, HelpMessageParams } from './Help.js';
 import * as http from 'http';
 import { SystemMessageManager } from './SystemMessage.js';
@@ -23,7 +23,7 @@ interface ConstructorOptions {
 class Bot {
     name: string;
     client: Client;
-    commands: CommandsManager;
+    commands: CommandManager;
     config: ConfigurationOptions;
     messages: {
         help: HelpMessageParams,
@@ -37,7 +37,7 @@ class Bot {
     constructor(options: ConstructorOptions) {
         this.name = options.name;
         this.client = new Client(options.clientOptions);
-        this.commands = new CommandsManager(options.prefix, options.argumentSeparator);
+        this.commands = new CommandManager(options.prefix, options.argumentSeparator);
         this.config = {
             token: options.token,
             helpCommand: options.helpCommand != undefined ? options.helpCommand : true

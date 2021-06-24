@@ -12,6 +12,7 @@ Key features
 - [Getting started](#getting-started)
     + [Installation](#installation)
     + [Creating bot instance](#creating-bot-instance)
+- [Bot instance](#bot-instance)
 - [Commands](#commands)
     + [All parameters](#all-parameters)
     + [Command function](#command-function)
@@ -21,9 +22,11 @@ Key features
     + [Command examples](#command-examples)
         * [Simple reply](#simple-reply)
         * [Example with arguments](#example-with-arguments)
+- [Events](#events)
 - [Customization and built-in messages](#customization-and-built-in-messages)
     + [Help message](#help-message)
     + [System messages](#system-messages)
+- [Complete example](#complete-example)
 
 ## Getting started
 ### Installation
@@ -60,6 +63,14 @@ bot.start();
 Optional arguments for this method
 - **port** - *number* - if specified, the app will create a http server that will be listening on the specified port
 - **token** - *string* - app token from Discord Developer Portal
+## Bot instance
+The main object of this library has the following properties
+- **name** - *string* - bot's name specified in the constructor
+- **client** - *[Client](https://discord.js.org/#/docs/main/stable/class/Client)* - Discord.js client instance
+- **commands** - *CommandManager* - base of the command system (see [Commands](#commands))
+- **config** - *object* - object that stores the login token and *helpMessage* value from the constructor
+- **messages** - *SystemMessageManager* - object instance containing all configuration parameters for built-in messages (see [Customization and built-in messages](#customization-and-built-in-messages))
+- **on** - *object* - object containing function that trigger on specified events (see [Events](#events))
 ## Commands
 > [IMPORTANT]
 > All commands have to be declared above the *start* method
@@ -166,6 +177,12 @@ test
 test
 @caller, Repeated "test" 5 times
 ```
+## Events
+There are 2 events defined in the *on* property
+- **message** - *Function* - a function that will trigger for every message sent in any text channel (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument)
+- **command** - *Function* - a function that will trigger for every message that gets recognized as a command (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument and a CommandMessageStructure object to the second argument)
+> [IMPORTANT]
+> Do not use client.on('message') event handler! This handler is a core part of the command system.
 ## Customization and built-in messages
 All configuration parameters for messages are stored in the *messages* property (example: bot.messages)
 ### Help message
@@ -189,3 +206,44 @@ Each message can be customized using these properties
 - **accentColor** - *[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)* - color of the embedded content
 - **showTimestamp** - *boolean* - show time and date at the bottom of the embedded content
 - **footer** - *string* - footer of the embedded content
+## Complete example
+```javascript
+import { Bot, Command } from 'discordcommands';
+
+const bot = new Bot({
+    name: "CommandBot",
+    prefix: "!"
+});
+
+bot.messages.help.accentColor = '#ff0000';
+bot.messages.system.NOT_FOUND.accentColor = "BLUE";
+
+//Command triggers: !ping, !pong, pingpong
+bot.commands.add(new Command({
+    name: 'ping',
+    aliases: 'pong',
+    keywords: 'pingpong',
+    function: (m, a) => {
+        return 'Bot ping: ' + bot.client.ws.ping + 'ms';
+    }
+}));
+bot.commands.add(new Command({
+    name: "repeat",
+    function: async (m, a) => {
+        if(a[0] && a[1]) {
+            const count = parseInt(a[1]);
+            if(!isNaN(count)) {
+                for(let i = 0; i < count; i++) {
+                    await m.channel.send(a[0]);
+                }
+                return `Repeated "${a[0]}" ${count} times`;
+            }
+            else {
+                throw new Error('Number of messages is incorrect');
+            }
+        }
+    }
+}));
+
+bot.start(3000, 'TOKEN');
+```

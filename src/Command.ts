@@ -91,7 +91,7 @@ class Command {
         }
     }
 }
-class CommandsManager {
+class CommandManager {
     list: Command[];
     prefix: string;
     argumentSeparator: string;
@@ -219,4 +219,4 @@ class CommandsManager {
 }
 
 //EXPORTS
-export { Command, CommandsManager, CommandMessageStructure, PermissionsError }
+export { Command, CommandManager, CommandMessageStructure, PermissionsError }
