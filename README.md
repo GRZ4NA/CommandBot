@@ -32,7 +32,7 @@ Key features
 ### Installation
 1. Install this package using npm
 ```
-npm install discordcommands@latest
+npm install commandbot@latest
 ```
 
 2. Add the following entry to your *package.json* file
@@ -42,7 +42,7 @@ npm install discordcommands@latest
 
 3. Import the package
 ```javascript
-import { Bot, Command } from 'discordcommands';
+import { Bot, Command } from 'commandbot';
 ```
 ### Creating bot instance
 ```javascript
@@ -92,7 +92,7 @@ If command function returns
 - *string* - the returned text will be sent as a reply to the command caller
 - *[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)* - the embedded content will be sent as a standalone message
 #### Errors
-If your command throws an error, it will get logged to the console and sent to the user in a message with embedded content. **The bot will not crash.** ([Example](https://raw.githubusercontent.com/GRZ4NA/DiscordCommands/master/assets/error_example.png))
+If your command throws an error, it will get logged to the console and sent to the user in a message with embedded content. **The bot will not crash.** ([Example](https://raw.githubusercontent.com/GRZ4NA/CommandBot/master/assets/error_example.png))
 
 ### Command examples
 #### Simple reply
@@ -208,7 +208,7 @@ Each message can be customized using these properties
 - **footer** - *string* - footer of the embedded content
 ## Complete example
 ```javascript
-import { Bot, Command } from 'discordcommands';
+import { Bot, Command } from 'commandbot';
 
 const bot = new Bot({
     name: "CommandBot",
