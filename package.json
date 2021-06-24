@@ -1,6 +1,6 @@
 {
   "name": "discordcommands",
-  "version": "1.0.0",
+  "version": "1.0.0-test",
   "description": "A framework that helps you create your own Discord bot easier.",
   "type": "module",
   "main": "dist/index.js",
