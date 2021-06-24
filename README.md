@@ -49,7 +49,7 @@ import { Bot, Command } from 'discordcommands';
 const bot = new Bot({
     name: "Command bot", // Name of your bot
     prefix: "!", // Prefix used to call commands
-    argumentSeparator: "," // Used to get arguments from message
+    argumentSeparator: ",", // Used to get arguments from message
     helpCommand: true, // Enable or disable the *help* command (optional)
     clientOptions: undefined, // Instance of ClientOptions from Discord.js
     token: "" // Bot token from Discord Developer Portal (optional, you can pass the token in *start* method)
