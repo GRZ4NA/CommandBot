@@ -1,7 +1,7 @@
 # DiscordCommands
 **1.0.0**
 
-Discord.js wrapper that helps you build your own Discord bot.
+Discord.js framework that helps you build your own Discord bot.
 
 Key features
 - command system
@@ -184,7 +184,7 @@ There are 2 events defined in the *on* property
 > [IMPORTANT]
 > Do not use client.on('message') event handler! This handler is a core part of the command system.
 ## Customization and built-in messages
-All configuration parameters for messages are stored in the *messages* property (example: bot.messages)
+All configuration parameters for messages are stored in *messages* property (example: bot.messages)
 ### Help message
 Configuration parameters are stored in *messages.help* property
 - **title** - *string* - title of help message
@@ -193,7 +193,7 @@ Configuration parameters are stored in *messages.help* property
 - **description** - *string* - command description (equivalent of the *description* property in *Command* object)
 - **usage** - *string* - equivalent of the *usage* property in *Command* object (You can pass a command name, alias or keyword with the *help* command to get detailed information about the specified command)
 ### System messages
-All options are stored inside *messages.system* property
+All options are stored in *messages.system* property
 
 There are 3 types of system messages
 - Error message (**ERROR**)
