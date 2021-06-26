@@ -54,7 +54,7 @@ class Bot {
         }
         this.on = {
             message: (m: Message) => {},
-            command: (m: Message, cmdInfo?: CommandMessageStructure) => { console.log(cmdInfo); }
+            command: (m: Message, cmdInfo?: CommandMessageStructure) => {}
         }
     }
     async start(port?: number, token?: string) : Promise<boolean> {

@@ -144,6 +144,9 @@ class CommandManager {
     }
     add(command: Command) : boolean {
         try {
+            if(!(command instanceof Command)) {
+                throw new TypeError('Inavlid argument type');
+            }
             this.list.map((c) => {
                 if(c.name == command.name) {
                     throw new Error(`Command with name "${c.name}" already exists!`);

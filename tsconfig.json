@@ -4,6 +4,7 @@
         "strict": true,
         "moduleResolution": "node",
         "declaration": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "alwaysStrict": true
     }
 }
