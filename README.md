@@ -144,6 +144,7 @@ const command = new Command({
         }
     }
 });
+bot.commands.add(command);
 ```
 or
 ```javascript
