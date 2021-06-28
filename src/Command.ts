@@ -162,7 +162,7 @@ class CommandManager {
             command.aliases.map(a => {
                 const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(a);
                 if(aliasOccurrence) {
-                    console.warn(`WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}".`);
+                    console.warn(`WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`);
                     const iToRemove = command.aliases.indexOf(a);
                     command.aliases.splice(iToRemove, 1);
                 }
