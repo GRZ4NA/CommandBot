@@ -8,6 +8,7 @@ interface CommandBuilder {
     keywords?: string[] | string,
     description?: string,
     usage?: string,
+    permissionCheck?: PermissionCheckTypes,
     permissions?: PermissionResolvable,
     visible?: boolean
     function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
@@ -18,6 +19,7 @@ interface CommandMessageStructure {
     command: Command | null
 }
 type GetMode = 'ALL' | 'PREFIX' | 'NO_PREFIX';
+type PermissionCheckTypes = 'ALL' | 'ANY';
 
 //ERROR CLASSES
 class PermissionsError {
@@ -39,6 +41,7 @@ class Command {
     keywords: string[];
     description: string;
     usage: string;
+    permissionCheck: PermissionCheckTypes;
     permissions: Permissions;
     visible: boolean;
     private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
@@ -49,13 +52,14 @@ class Command {
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
         this.usage = options.usage || "";
+        this.permissionCheck = options.permissionCheck == 'ALL' || options.permissionCheck == 'ANY' ? options.permissionCheck : "ANY";
         this.permissions = new Permissions(options.permissions || 0);
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
     async start(message?: Message, cmdArguments?: string[]) : Promise<void> {
         const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
-        if(memberPermissions.has(this.permissions, true)) {
+        if(this.permissionCheck == 'ALL' ? memberPermissions.has(this.permissions, true) : memberPermissions.any(this.permissions, true)) {
             const fnResult = await this.function(message, cmdArguments);
             if(typeof fnResult == 'string') {
                 await message?.reply(fnResult);

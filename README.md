@@ -1,5 +1,5 @@
 # CommandBot
-**1.0.0**
+**1.1.0**
 
 Discord.js framework that helps you build your own Discord bot.
 
@@ -80,6 +80,7 @@ The main object of this library has the following properties
 - **visible** - *boolean* - show command in the *help message* (optional, defaults to *true*)
 - **description** - *string* - command description shown in the *help message* (optional)
 - **usage** - *string* - command usage description shown in the *help message* (optional)
+- **permissionCheck** - *"ALL" | "ANY"* - specifies if the caller has to have all of the specified permissions or any of that (optional, default value: "ANY")
 - **permissions** - *[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)* - permissions needed to run the command (optional)
 - **aliases** - *string | string[]* - other words that can trigger the command with prefix (optional)
 - **keywords** - *string | string[]* - other words that can trigger the command without prefix (optional)
@@ -207,6 +208,8 @@ Each message can be customized using these properties
 - **accentColor** - *[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)* - color of the embedded content
 - **showTimestamp** - *boolean* - show time and date at the bottom of the embedded content
 - **footer** - *string* - footer of the embedded content
+
+The *messages.system* also contains a *deleteTimeout* property. It specifies the time (in ms) after which a system message will be deleted. Set it to *Infinity* to never delete messages (default value).
 ## Complete example
 ```javascript
 import { Bot, Command } from 'commandbot';
