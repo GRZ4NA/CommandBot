@@ -18,6 +18,10 @@ interface CommandMessageStructure {
     arguments: string[],
     command: Command | null
 }
+interface PhraseOccurrenceData {
+    command: Command,
+    type: 'NAME' | 'ALIAS'
+}
 type GetMode = 'ALL' | 'PREFIX' | 'NO_PREFIX';
 type PermissionCheckTypes = 'ALL' | 'ANY';
 
@@ -151,20 +155,22 @@ class CommandManager {
             if(!(command instanceof Command)) {
                 throw new TypeError('Inavlid argument type');
             }
-            this.list.map((c) => {
-                if(c.name == command.name) {
-                    throw new Error(`Command with name "${c.name}" already exists!`);
+            const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.name);
+            if(nameOccurrence) {
+                throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
+            }
+            command.aliases.map(a => {
+                const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(a);
+                if(aliasOccurrence) {
+                    console.warn(`WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}".`);
+                    const iToRemove = command.aliases.indexOf(a);
+                    command.aliases.splice(iToRemove, 1);
                 }
-                command.aliases.map((a) => {
-                    if(c.aliases.indexOf(a) != -1) {
-                        console.warn(`WARN! Alias with name "${a}" already exists in "${c.name}" command. It will be removed from the "${command.name}" command`);
-                        const iToRemove = command.aliases.indexOf(a);
-                        command.aliases.splice(iToRemove, 1);
-                    }
-                });
-                command.keywords.map((k) => {
+            });
+            this.list.map(c => {
+                command.keywords.map(k => {
                     if(c.keywords.indexOf(k) != -1) {
-                        console.warn(`WARN! Keyword "${k}" already exists in "${c.name}" command. It will be removed from the "${command.name}" command`);
+                        console.warn(`WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`);
                         const iToRemove = command.keywords.indexOf(k);
                         command.keywords.splice(iToRemove, 1);
                     }
@@ -222,6 +228,24 @@ class CommandManager {
         else {
             return null;
         }
+    }
+    private findPhraseOccurrence(phrase?: string) : PhraseOccurrenceData | null {
+        let returnValue: PhraseOccurrenceData | null = null;
+        this.list.map(c => {
+            if(phrase == c.name) {
+                returnValue = {
+                    command: c,
+                    type: 'NAME'
+                }
+            }
+            else if(c.aliases.indexOf(phrase || '') != -1) {
+                returnValue = {
+                    command: c,
+                    type: 'ALIAS'
+                }
+            }
+        });
+        return returnValue;
     }
 }
 
