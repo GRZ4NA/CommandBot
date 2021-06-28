@@ -1,5 +1,5 @@
 # CommandBot
-**1.1.1**
+**1.1.2**
 
 Discord.js framework that helps you build your own Discord bot.
 

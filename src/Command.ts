@@ -11,7 +11,7 @@ interface CommandBuilder {
     permissionCheck?: PermissionCheckTypes,
     permissions?: PermissionResolvable,
     visible?: boolean
-    function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
+    function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
 interface CommandMessageStructure {
     name: string,
@@ -48,7 +48,7 @@ class Command {
     permissionCheck: PermissionCheckTypes;
     permissions: Permissions;
     visible: boolean;
-    private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed;
+    private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
