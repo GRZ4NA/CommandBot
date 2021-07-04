@@ -34,6 +34,17 @@ class Bot {
         command: (m: Message, cmdInfo?: CommandMessageStructure) => any
     }
 
+    /**
+     * Bot instance initializer
+     * @constructor
+     * @param {ConstructorOptions} options - instance properties
+     * @param {string} options.name - name of your bot
+     * @param {string} options.prefix - prefix used to call commands
+     * @param {string} [options.argumentSeparator=','] - used to get arguments from message
+     * @param {boolean} [options.helpCommand = true] - enable or disable the *help* command
+     * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
+     * @param {string} [options.token] - bot token from Discord Developer Portal
+     */
     constructor(options: ConstructorOptions) {
         this.name = options.name;
         this.client = new Client(options.clientOptions);
@@ -57,6 +68,13 @@ class Bot {
             command: (m: Message, cmdInfo?: CommandMessageStructure) => {}
         }
     }
+    
+    /**
+     * Starts your Discord bot
+     * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port
+     * @param {string} [token] - app token from Discord Developer Portal 
+     * @returns *Promise<boolean>*
+     */
     async start(port?: number, token?: string) : Promise<boolean> {
         try {
             console.log(`Bot name: ${this.name}`);

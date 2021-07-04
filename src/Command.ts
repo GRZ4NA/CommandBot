@@ -50,6 +50,20 @@ class Command {
     visible: boolean;
     private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
+    /**
+     * Command constructor
+     * @constructor
+     * @param {CommandBuilder} options - all command properties
+     * @param {string} options.name - command name (used to trigger the command)
+     * @param {string | string[]} [options.aliases] - other words that can trigger the command with prefix
+     * @param {string | string[]} [options.keywords] - other words that can trigger the command without prefix
+     * @param {string} [options.description="No description"] - command description shown in the help message
+     * @param {string} [options.usage] - command usage description shown in the help message
+     * @param {PermissionCheckTypes} [options.permissionCheck='ANY'] - specifies if the caller has to have all of the specified permissions or any of that
+     * @param {PermissionResolvable} [options.permissions] - permissions needed to run the command
+     * @param {boolean} [options.visible=true] - show command in the help message
+     * @param {Function} options.function - function that will trigger when the commands gets called
+     */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(' ').join('_');
         this.aliases = Command.processPhrase(options.aliases);
@@ -61,6 +75,13 @@ class Command {
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
+
+    /**
+     * Starts the command
+     * @param {Message} [message] - a *Message* object used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
+     * @param {string[]} [cmdArguments] - list of processed arguments passed in a Discord message
+     * @returns *Promise<void>*
+     */
     async start(message?: Message, cmdArguments?: string[]) : Promise<void> {
         const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
         if(this.permissionCheck == 'ALL' ? memberPermissions.has(this.permissions, true) : memberPermissions.any(this.permissions, true)) {
@@ -76,6 +97,7 @@ class Command {
             throw new PermissionsError(this, message?.member);
         }
     }
+
     private static processPhrase(phrase?: string | string[]) : string[] {
         if(Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
@@ -109,6 +131,13 @@ class CommandManager {
         this.prefix = prefix;
         this.argumentSeparator = argumentSeparator || ',';
     }
+
+    /**
+     * Retrieves the command by name, alias or keyword
+     * @param {string} phrase - command name, alias or keyword
+     * @param {GetMode} [mode='ALL'] - specifies which types of command triggers will be used to find the command [*NO_PREFIX* - only keywords; *PREFIX* - names and aliases]
+     * @returns *Command* | *null*
+     */
     get(phrase: string, mode?: GetMode) : Command | null {
         if(!mode) mode = 'ALL';
         let command : Command | null = null;
@@ -150,6 +179,12 @@ class CommandManager {
         });
         return command;
     }
+
+    /**
+     * Adds the given command to the instance manager
+     * @param {Command} command - *Command* or *HelpMessage* object
+     * @returns *boolean*
+     */
     add(command: Command) : boolean {
         try {
             if(!(command instanceof Command)) {
@@ -184,6 +219,12 @@ class CommandManager {
             return false;
         }
     }
+
+    /**
+     * Fetches command and arguments from the given *Message* object
+     * @param {Message} message - *Message* object
+     * @returns *CommandMessagesStructure* | *null*
+     */
     fetch(message: Message) : CommandMessageStructure | null {
         if(!message.author.bot && message.content.startsWith(this.prefix)) {
             let msgContent = message.content.replace(this.prefix, '');
@@ -229,6 +270,7 @@ class CommandManager {
             return null;
         }
     }
+
     private findPhraseOccurrence(phrase?: string) : PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
         this.list.map(c => {
