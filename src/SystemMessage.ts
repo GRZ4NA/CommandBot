@@ -12,6 +12,7 @@ import { Command, PermissionsError } from "./Command.js";
 
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
 export interface SystemMessageAppearance {
+    enabled: boolean;
     title: string;
     bottomText?: string;
     accentColor?: ColorResolvable;
@@ -26,15 +27,14 @@ interface SystemMessageData {
 }
 
 export class SystemMessageManager {
-    enabled: boolean;
     PERMISSION: SystemMessageAppearance;
     ERROR: SystemMessageAppearance;
     NOT_FOUND: SystemMessageAppearance;
     deleteTimeout: number;
 
     constructor(botName?: string) {
-        this.enabled = true;
         this.PERMISSION = {
+            enabled: true,
             title: "👮‍♂️ Insufficient permissions",
             bottomText: "You don't have enough permissions to run this command",
             accentColor: "#1d1dc4",
@@ -42,6 +42,7 @@ export class SystemMessageManager {
             footer: botName,
         };
         this.ERROR = {
+            enabled: true,
             title: "❌ An error occurred",
             bottomText: "Something went wrong while processing your request.",
             accentColor: "#ff0000",
@@ -49,6 +50,7 @@ export class SystemMessageManager {
             footer: botName,
         };
         this.NOT_FOUND = {
+            enabled: true,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
             showTimestamp: true,
@@ -69,10 +71,10 @@ export class SystemMessageManager {
         data?: SystemMessageData,
         channel?: TextChannel | DMChannel | NewsChannel
     ): Promise<MessageEmbed | Message | void> {
-        if (!this.enabled) {
-            return;
-        }
         if (this[type]) {
+            if (this[type].enabled === false) {
+                return;
+            }
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
             if (this[type].bottomText)
