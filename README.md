@@ -1,6 +1,9 @@
 # CommandBot
 
-**2.0.0-beta**
+**2.0.0-beta2**
+
+> [IMPORTANT]
+> Upgrading to this version from 1.1.3 may require additional changes in your code since 2.0.0 is not fully backwards compatible
 
 Discord.js framework that helps you build your own Discord bot.
 
@@ -59,10 +62,9 @@ import { Bot, Command } from "commandbot";
 const bot = new Bot({
     name: "Command bot", // Name of your bot
     prefix: "!", // Prefix used to call commands
-    argumentSeparator: ",", // Used to get arguments from message
-    helpCommand: true, // Enable or disable the *help* command (optional)
-    clientOptions: undefined, // Instance of ClientOptions from Discord.js
-    token: "", // Bot token from Discord Developer Portal (optional, you can pass the token in *start* method)
+    argumentSeparator: ",", // Used to get arguments from message (optional)
+    clientOptions: undefined, // Instance of ClientOptions from Discord.js (optional)
+    token: "", // Bot token from Discord Developer Portal (optional, you can pass the token in the *start* method)
 });
 ```
 
@@ -86,7 +88,6 @@ The main object of this library has the following properties
 -   **commands** - _CommandManager_ - base of the command system (see [Commands](#commands))
 -   **config** - _object_ - object that stores the login token and _helpMessage_ value from the constructor
 -   **messages** - _SystemMessageManager_ - object instance containing all configuration parameters for built-in messages (see [Customization and built-in messages](#customization-and-built-in-messages))
--   **on** - _object_ - object containing function that trigger on specified events (see [Events](#events))
 
 ## Commands
 
@@ -251,6 +252,7 @@ All configuration parameters for messages are stored in _messages_ property (exa
 
 Configuration parameters are stored in _messages.help_ property
 
+-   **enabled** - _boolean_ - enables or disables the help message
 -   **title** - _string_ - title of help message
 -   **bottomText** - _string_ - text shown below the title
 -   **color** - _[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)_ - color of the embedded content

@@ -21,15 +21,10 @@ export declare interface Bot {
     ): this;
     on(event: "error", listener: (e: any) => void): this;
 }
-interface ConfigurationOptions {
-    token?: string;
-    helpCommand: boolean;
-}
 interface ConstructorOptions {
     name: string;
     prefix: string;
     argumentSeparator?: string;
-    helpCommand?: boolean;
     clientOptions?: ClientOptions;
     token?: string;
 }
@@ -39,7 +34,7 @@ export class Bot extends EventEmitter {
     name: string;
     client: Client;
     commands: CommandManager;
-    config: ConfigurationOptions;
+    token: string;
     messages: {
         help: HelpMessageParams;
         system: SystemMessageManager;
@@ -52,7 +47,6 @@ export class Bot extends EventEmitter {
      * @param {string} options.name - name of your bot
      * @param {string} options.prefix - prefix used to call commands
      * @param {string} [options.argumentSeparator=','] - used to get arguments from message
-     * @param {boolean} [options.helpCommand = true] - enable or disable the *help* command
      * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
      * @param {string} [options.token] - bot token from Discord Developer Portal
      */
@@ -64,13 +58,10 @@ export class Bot extends EventEmitter {
             options.prefix,
             options.argumentSeparator
         );
-        this.config = {
-            token: options.token,
-            helpCommand:
-                options.helpCommand != undefined ? options.helpCommand : true,
-        };
+        this.token = options.token || "";
         this.messages = {
             help: {
+                enabled: true,
                 title: "Help",
                 description: "List of all available commands",
                 color: "#ff5500",
@@ -91,8 +82,8 @@ export class Bot extends EventEmitter {
         try {
             console.log(`Bot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix} \n`);
-            const loginToken: string = token || this.config.token || "";
-            if (loginToken === "") {
+            this.token = token || this.token;
+            if (this.token === "") {
                 throw new ReferenceError(
                     'No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor'
                 );
@@ -102,7 +93,7 @@ export class Bot extends EventEmitter {
                 http.createServer().listen(port);
             }
             console.log("Starting modules...");
-            if (this.config.helpCommand) {
+            if (this.messages.help.enabled === true) {
                 const helpMsg: Command = new HelpMessage(
                     this.commands,
                     this.messages.help,
@@ -111,7 +102,7 @@ export class Bot extends EventEmitter {
                 this.commands.add(helpMsg);
             }
             console.log("Connecting to Discord...");
-            if (await this.client.login(loginToken)) {
+            if (await this.client.login(this.token)) {
                 this.client.on("ready", () => {
                     this.emit("ready");
                 });

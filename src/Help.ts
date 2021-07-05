@@ -2,6 +2,7 @@ import { ColorResolvable, MessageEmbed } from "discord.js";
 import { Command, CommandManager } from "./Command.js";
 
 export interface HelpMessageParams {
+    enabled: boolean;
     title: string;
     bottomText: string;
     color: ColorResolvable;
