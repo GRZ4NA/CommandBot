@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "node test/index.js",
+            "command": "yarn test",
             "name": "Start test env",
             "request": "launch",
             "type": "node-terminal"

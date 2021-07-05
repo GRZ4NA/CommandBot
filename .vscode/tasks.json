@@ -2,14 +2,21 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Compile TypeScript",
+            "label": "Compile TypeScript (Watch)",
             "type": "shell",
-            "command": "npx tsc",
+            "command": "yarn watch",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Compile TypeScript",
+            "type": "shell",
+            "command": "yarn compile",
+            "problemMatcher": [],
+            "group": "build"
         }
     ]
 }
