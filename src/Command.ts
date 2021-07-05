@@ -1,29 +1,38 @@
 //IMPORTS
-import { Permissions, PermissionResolvable, Message, GuildMember, MessageEmbed } from 'discord.js';
+import {
+    Permissions,
+    PermissionResolvable,
+    Message,
+    GuildMember,
+    MessageEmbed,
+} from "discord.js";
 
 //TYPE DEFINITIONS
 interface CommandBuilder {
-    name: string,
-    aliases?: string[] | string,
-    keywords?: string[] | string,
-    description?: string,
-    usage?: string,
-    permissionCheck?: PermissionCheckTypes,
-    permissions?: PermissionResolvable,
-    visible?: boolean
-    function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
+    name: string;
+    aliases?: string[] | string;
+    keywords?: string[] | string;
+    description?: string;
+    usage?: string;
+    permissionCheck?: PermissionCheckTypes;
+    permissions?: PermissionResolvable;
+    visible?: boolean;
+    function: (
+        message?: Message,
+        cmdArguments?: string[]
+    ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
 interface CommandMessageStructure {
-    name: string,
-    arguments: string[],
-    command: Command | null
+    name: string;
+    arguments: string[];
+    command: Command | null;
 }
 interface PhraseOccurrenceData {
-    command: Command,
-    type: 'NAME' | 'ALIAS'
+    command: Command;
+    type: "NAME" | "ALIAS";
 }
-type GetMode = 'ALL' | 'PREFIX' | 'NO_PREFIX';
-type PermissionCheckTypes = 'ALL' | 'ANY';
+type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
+type PermissionCheckTypes = "ALL" | "ANY";
 
 //ERROR CLASSES
 class PermissionsError {
@@ -48,7 +57,10 @@ class Command {
     permissionCheck: PermissionCheckTypes;
     permissions: Permissions;
     visible: boolean;
-    private function: (message?: Message, cmdArguments?: string[]) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
+    private function: (
+        message?: Message,
+        cmdArguments?: string[]
+    ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
     /**
      * Command constructor
@@ -65,12 +77,15 @@ class Command {
      * @param {Function} options.function - function that will trigger when the commands gets called
      */
     constructor(options: CommandBuilder) {
-        this.name = options.name.split(' ').join('_');
+        this.name = options.name.split(" ").join("_");
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
         this.usage = options.usage || "";
-        this.permissionCheck = options.permissionCheck == 'ALL' || options.permissionCheck == 'ANY' ? options.permissionCheck : "ANY";
+        this.permissionCheck =
+            options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
+                ? options.permissionCheck
+                : "ANY";
         this.permissions = new Permissions(options.permissions || 0);
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
@@ -82,41 +97,42 @@ class Command {
      * @param {string[]} [cmdArguments] - list of processed arguments passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(message?: Message, cmdArguments?: string[]) : Promise<void> {
-        const memberPermissions : Readonly<Permissions> = message?.member?.permissions || new Permissions(0);
-        if(this.permissionCheck == 'ALL' ? memberPermissions.has(this.permissions, true) : memberPermissions.any(this.permissions, true)) {
+    async start(message?: Message, cmdArguments?: string[]): Promise<void> {
+        const memberPermissions: Readonly<Permissions> =
+            message?.member?.permissions || new Permissions(0);
+        if (
+            this.permissionCheck == "ALL"
+                ? memberPermissions.has(this.permissions, true)
+                : memberPermissions.any(this.permissions, true)
+        ) {
             const fnResult = await this.function(message, cmdArguments);
-            if(typeof fnResult == 'string') {
+            if (typeof fnResult == "string") {
                 await message?.reply(fnResult);
-            }
-            else if(fnResult instanceof MessageEmbed) {
+            } else if (fnResult instanceof MessageEmbed) {
                 await message?.channel.send(fnResult);
             }
-        }
-        else {
+        } else {
             throw new PermissionsError(this, message?.member);
         }
     }
 
-    private static processPhrase(phrase?: string | string[]) : string[] {
-        if(Array.isArray(phrase)) {
+    private static processPhrase(phrase?: string | string[]): string[] {
+        if (Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
-                return p.split(' ').join('_');
+                return p.split(" ").join("_");
             });
-            buff.map(e => {
-                if(e == '' || e == ' ') {
+            buff.map((e) => {
+                if (e == "" || e == " ") {
                     const i = buff.indexOf(e);
                     buff.splice(i, 1);
                 }
             });
             return buff;
-        }
-        else if(typeof phrase == 'string' && phrase != '' && phrase != ' ') {
+        } else if (typeof phrase == "string" && phrase != "" && phrase != " ") {
             const buff = [];
-            buff.push(phrase.split(' ').join('_'));
+            buff.push(phrase.split(" ").join("_"));
             return buff;
-        }
-        else {
+        } else {
             return [];
         }
     }
@@ -129,7 +145,7 @@ class CommandManager {
     constructor(prefix: string, argumentSeparator?: string) {
         this.list = [];
         this.prefix = prefix;
-        this.argumentSeparator = argumentSeparator || ',';
+        this.argumentSeparator = argumentSeparator || ",";
     }
 
     /**
@@ -138,39 +154,39 @@ class CommandManager {
      * @param {GetMode} [mode='ALL'] - specifies which types of command triggers will be used to find the command [*NO_PREFIX* - only keywords; *PREFIX* - names and aliases]
      * @returns *Command* | *null*
      */
-    get(phrase: string, mode?: GetMode) : Command | null {
-        if(!mode) mode = 'ALL';
-        let command : Command | null = null;
+    get(phrase: string, mode?: GetMode): Command | null {
+        if (!mode) mode = "ALL";
+        let command: Command | null = null;
         this.list.map((c) => {
             switch (mode) {
-                case 'PREFIX':
-                    if(c.name == phrase) {
+                case "PREFIX":
+                    if (c.name == phrase) {
                         command = c;
                     }
-                    c.aliases.map(a => {
-                        if(a == phrase) {
+                    c.aliases.map((a) => {
+                        if (a == phrase) {
                             command = c;
                         }
                     });
                     break;
-                case 'NO_PREFIX':
-                    c.keywords.map(k => {
-                        if(k == phrase) {
+                case "NO_PREFIX":
+                    c.keywords.map((k) => {
+                        if (k == phrase) {
                             command = c;
                         }
                     });
                     break;
-                case 'ALL':
-                    if(c.name == phrase) {
+                case "ALL":
+                    if (c.name == phrase) {
                         command = c;
                     }
-                    c.aliases.map(a => {
-                        if(a == phrase) {
+                    c.aliases.map((a) => {
+                        if (a == phrase) {
                             command = c;
                         }
                     });
-                    c.keywords.map(k => {
-                        if(k == phrase) {
+                    c.keywords.map((k) => {
+                        if (k == phrase) {
                             command = c;
                         }
                     });
@@ -185,36 +201,43 @@ class CommandManager {
      * @param {Command} command - *Command* or *HelpMessage* object
      * @returns *boolean*
      */
-    add(command: Command) : boolean {
+    add(command: Command): boolean {
         try {
-            if(!(command instanceof Command)) {
-                throw new TypeError('Inavlid argument type');
+            if (!(command instanceof Command)) {
+                throw new TypeError("Inavlid argument type");
             }
-            const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.name);
-            if(nameOccurrence) {
-                throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
+            const nameOccurrence: PhraseOccurrenceData | null =
+                this.findPhraseOccurrence(command.name);
+            if (nameOccurrence) {
+                throw new Error(
+                    `The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`
+                );
             }
-            command.aliases.map(a => {
-                const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(a);
-                if(aliasOccurrence) {
-                    console.warn(`WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`);
+            command.aliases.map((a) => {
+                const aliasOccurrence: PhraseOccurrenceData | null =
+                    this.findPhraseOccurrence(a);
+                if (aliasOccurrence) {
+                    console.warn(
+                        `WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
+                    );
                     const iToRemove = command.aliases.indexOf(a);
                     command.aliases.splice(iToRemove, 1);
                 }
             });
-            this.list.map(c => {
-                command.keywords.map(k => {
-                    if(c.keywords.indexOf(k) != -1) {
-                        console.warn(`WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`);
+            this.list.map((c) => {
+                command.keywords.map((k) => {
+                    if (c.keywords.indexOf(k) != -1) {
+                        console.warn(
+                            `WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
+                        );
                         const iToRemove = command.keywords.indexOf(k);
                         command.keywords.splice(iToRemove, 1);
                     }
                 });
             });
             this.list.push(command);
-            return true;  
-        } 
-        catch(e) {
+            return true;
+        } catch (e) {
             console.error(`ERROR! ${e.toString()}`);
             return false;
         }
@@ -225,66 +248,70 @@ class CommandManager {
      * @param {Message} message - *Message* object
      * @returns *CommandMessagesStructure* | *null*
      */
-    fetch(message: Message) : CommandMessageStructure | null {
-        if(!message.author.bot && message.content.startsWith(this.prefix)) {
-            let msgContent = message.content.replace(this.prefix, '');
-            const cmdName = msgContent.split(' ')[0];
-            const cmd: Command | null = this.get(cmdName, 'PREFIX');
-            msgContent = msgContent.replace(cmdName, '');
-            let cmdArguments: string[] = msgContent.split(this.argumentSeparator);
+    fetch(message: Message): CommandMessageStructure | null {
+        if (!message.author.bot && message.content.startsWith(this.prefix)) {
+            let msgContent = message.content.replace(this.prefix, "");
+            const cmdName = msgContent.split(" ")[0];
+            const cmd: Command | null = this.get(cmdName, "PREFIX");
+            msgContent = msgContent.replace(cmdName, "");
+            let cmdArguments: string[] = msgContent.split(
+                this.argumentSeparator
+            );
             cmdArguments = cmdArguments.map((a) => {
-                return a.replace(' ', '');
+                return a.replace(" ", "");
             });
-            if((cmdArguments[0] == '' || cmdArguments[0] == ' ') && cmdArguments.length == 1) {
+            if (
+                (cmdArguments[0] == "" || cmdArguments[0] == " ") &&
+                cmdArguments.length == 1
+            ) {
                 cmdArguments = [];
             }
             return {
                 name: cmdName,
                 arguments: cmdArguments,
-                command: cmd
-            }
-        }
-        else if(!message.author.bot) {
-            const cmdName = message.content.split(' ')[0];
-            const cmd: Command | null = this.get(cmdName, 'NO_PREFIX');
-            if(cmd) {
-                const cmdArgumentsStr = message.content.replace(cmdName, '');
-                let cmdArguments: string[] = cmdArgumentsStr.split(',');
+                command: cmd,
+            };
+        } else if (!message.author.bot) {
+            const cmdName = message.content.split(" ")[0];
+            const cmd: Command | null = this.get(cmdName, "NO_PREFIX");
+            if (cmd) {
+                const cmdArgumentsStr = message.content.replace(cmdName, "");
+                let cmdArguments: string[] = cmdArgumentsStr.split(",");
                 cmdArguments = cmdArguments.map((a) => {
-                    return a.replace(' ', '');
+                    return a.replace(" ", "");
                 });
-                if((cmdArguments[0] == '' || cmdArguments[0] == ' ') && cmdArguments.length == 1) {
+                if (
+                    (cmdArguments[0] == "" || cmdArguments[0] == " ") &&
+                    cmdArguments.length == 1
+                ) {
                     cmdArguments = [];
                 }
                 return {
                     name: cmdName,
                     arguments: cmdArguments,
-                    command: cmd
-                }
-            }
-            else {
+                    command: cmd,
+                };
+            } else {
                 return null;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    private findPhraseOccurrence(phrase?: string) : PhraseOccurrenceData | null {
+    private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
-        this.list.map(c => {
-            if(phrase == c.name) {
+        this.list.map((c) => {
+            if (phrase == c.name) {
                 returnValue = {
                     command: c,
-                    type: 'NAME'
-                }
-            }
-            else if(c.aliases.indexOf(phrase || '') != -1) {
+                    type: "NAME",
+                };
+            } else if (c.aliases.indexOf(phrase || "") != -1) {
                 returnValue = {
                     command: c,
-                    type: 'ALIAS'
-                }
+                    type: "ALIAS",
+                };
             }
         });
         return returnValue;
@@ -292,4 +319,4 @@ class CommandManager {
 }
 
 //EXPORTS
-export { Command, CommandManager, CommandMessageStructure, PermissionsError }
+export { Command, CommandManager, CommandMessageStructure, PermissionsError };

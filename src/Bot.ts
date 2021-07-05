@@ -1,38 +1,40 @@
 //IMPORTS
-import { Client, ClientOptions, Message } from 'discord.js';
-import { Command, CommandManager, CommandMessageStructure, PermissionsError } from './Command.js';
-import { HelpMessage, HelpMessageParams } from './Help.js';
-import * as http from 'http';
-import { SystemMessageManager } from './SystemMessage.js';
+import { Client, ClientOptions, Message } from "discord.js";
+import {
+    Command,
+    CommandManager,
+    CommandMessageStructure,
+    PermissionsError,
+} from "./Command.js";
+import { HelpMessage, HelpMessageParams } from "./Help.js";
+import * as http from "http";
+import { SystemMessageManager } from "./SystemMessage.js";
+import { EventEmitter } from "events";
 
 //TYPE DEFINITIONS
 interface ConfigurationOptions {
-    token?: string,
-    helpCommand: boolean
+    token?: string;
+    helpCommand: boolean;
 }
 interface ConstructorOptions {
-    name: string,
-    prefix: string,
-    argumentSeparator?: string
-    helpCommand?: boolean,
-    clientOptions?: ClientOptions,
-    token?: string,
+    name: string;
+    prefix: string;
+    argumentSeparator?: string;
+    helpCommand?: boolean;
+    clientOptions?: ClientOptions;
+    token?: string;
 }
 
 //MAIN CLASS
-class Bot {
+class Bot extends EventEmitter {
     name: string;
     client: Client;
     commands: CommandManager;
     config: ConfigurationOptions;
     messages: {
-        help: HelpMessageParams,
-        system: SystemMessageManager
-    }
-    on: {
-        message: (m: Message) => any,
-        command: (m: Message, cmdInfo?: CommandMessageStructure) => any
-    }
+        help: HelpMessageParams;
+        system: SystemMessageManager;
+    };
 
     /**
      * Bot instance initializer
@@ -46,85 +48,110 @@ class Bot {
      * @param {string} [options.token] - bot token from Discord Developer Portal
      */
     constructor(options: ConstructorOptions) {
+        super();
         this.name = options.name;
         this.client = new Client(options.clientOptions);
-        this.commands = new CommandManager(options.prefix, options.argumentSeparator);
+        this.commands = new CommandManager(
+            options.prefix,
+            options.argumentSeparator
+        );
         this.config = {
             token: options.token,
-            helpCommand: options.helpCommand != undefined ? options.helpCommand : true
-        }
+            helpCommand:
+                options.helpCommand != undefined ? options.helpCommand : true,
+        };
         this.messages = {
             help: {
-                title: 'Help',
-                description: 'List of all available commands',
-                color: '#ff5500',
-                usage: '[command name (optional)]',
-                bottomText: 'List of all available commands'
+                title: "Help",
+                description: "List of all available commands",
+                color: "#ff5500",
+                usage: "[command name (optional)]",
+                bottomText: "List of all available commands",
             },
-            system: new SystemMessageManager(this.name)
-        }
-        this.on = {
-            message: (m: Message) => {},
-            command: (m: Message, cmdInfo?: CommandMessageStructure) => {}
-        }
+            system: new SystemMessageManager(this.name),
+        };
     }
-    
+
     /**
      * Starts your Discord bot
      * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port
-     * @param {string} [token] - app token from Discord Developer Portal 
+     * @param {string} [token] - app token from Discord Developer Portal
      * @returns *Promise<boolean>*
      */
-    async start(port?: number, token?: string) : Promise<boolean> {
+    async start(port?: number, token?: string): Promise<boolean> {
         try {
             console.log(`Bot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix} \n`);
-            const loginToken: string = token || this.config.token || '';
-            if(loginToken === '') {
-                throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
+            const loginToken: string = token || this.config.token || "";
+            if (loginToken === "") {
+                throw new ReferenceError(
+                    'No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor'
+                );
             }
-            if(port) {
+            if (port) {
                 console.log(`Creating http server on port ${port}...`);
                 http.createServer().listen(port);
             }
-            console.log('Starting modules...');
-            if(this.config.helpCommand) {
-                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
+            console.log("Starting modules...");
+            if (this.config.helpCommand) {
+                const helpMsg: Command = new HelpMessage(
+                    this.commands,
+                    this.messages.help,
+                    this.name
+                );
                 this.commands.add(helpMsg);
             }
-            console.log('Connecting to Discord...');
-            if(await this.client.login(loginToken)) {
-                console.log('BOT IS READY!\n');
-                this.client.on('message', async m => {
-                    this.on.message(m);
-                    const cmdMsg: CommandMessageStructure | null = this.commands.fetch(m);
-                    if(cmdMsg?.command) {
-                        this.on.command(m, cmdMsg);
+            console.log("Connecting to Discord...");
+            if (await this.client.login(loginToken)) {
+                this.client.on("ready", () => {
+                    this.emit("ready");
+                });
+                this.client.on("message", async (m) => {
+                    const cmdMsg: CommandMessageStructure | null =
+                        this.commands.fetch(m);
+                    if (cmdMsg?.command) {
+                        this.emit("command", [m, cmdMsg]);
                         try {
-                            await cmdMsg.command.start(m, cmdMsg.arguments);   
-                        }
-                        catch (e) {
-                            if(e instanceof PermissionsError) {
-                                this.messages.system.send('PERMISSION', { user: m.member || undefined, command: cmdMsg.command }, m.channel);
-                            }
-                            else {
-                                this.messages.system.send('ERROR', { command: cmdMsg.command, user: m.member || undefined, error: e }, m.channel);
+                            await cmdMsg.command.start(m, cmdMsg.arguments);
+                        } catch (e) {
+                            if (e instanceof PermissionsError) {
+                                this.messages.system.send(
+                                    "PERMISSION",
+                                    {
+                                        user: m.member || undefined,
+                                        command: cmdMsg.command,
+                                    },
+                                    m.channel
+                                );
+                            } else {
+                                this.messages.system.send(
+                                    "ERROR",
+                                    {
+                                        command: cmdMsg.command,
+                                        user: m.member || undefined,
+                                        error: e,
+                                    },
+                                    m.channel
+                                );
                                 console.error(e);
                             }
                             return;
                         }
-                    }
-                    else if(cmdMsg) {
-                        this.messages.system.send('NOT_FOUND', { phrase: m.content, user: m.member || undefined }, m.channel);
+                    } else if (cmdMsg) {
+                        this.messages.system.send(
+                            "NOT_FOUND",
+                            { phrase: m.content, user: m.member || undefined },
+                            m.channel
+                        );
+                    } else {
+                        this.emit("message", [m]);
                     }
                 });
-            }
-            else {
+            } else {
                 return false;
             }
             return true;
-        }
-        catch (e) {
+        } catch (e) {
             console.error(`ERROR! ${e.toString()}`);
             return false;
         }

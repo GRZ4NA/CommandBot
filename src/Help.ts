@@ -1,76 +1,91 @@
-import { ColorResolvable, MessageEmbed } from 'discord.js';
-import { Command, CommandManager } from './Command.js';
+import { ColorResolvable, MessageEmbed } from "discord.js";
+import { Command, CommandManager } from "./Command.js";
 
 interface HelpMessageParams {
-    title: string,
-    bottomText: string
-    color: ColorResolvable,
-    description: string,
-    usage: string
+    title: string;
+    bottomText: string;
+    color: ColorResolvable;
+    description: string;
+    usage: string;
 }
 
 class HelpMessage extends Command {
-    constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
+    constructor(
+        cmdManager: CommandManager,
+        params: HelpMessageParams,
+        botName?: string
+    ) {
         super({
-            name: 'help',
+            name: "help",
             usage: params.usage,
             permissions: 0,
             description: params.description,
             function: (m, a) => {
-                const helpMsg = new MessageEmbed()
+                const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();
-                helpMsg.setFooter(botName || '');
-                if(helpMsg != null) {
-                    if(a && a[0]) {
-                        const cmd: Command | null = cmdManager.get(a[0], 'ALL');
-                        if(cmd) {
-                            helpMsg.setTitle(`${cmd.name} ${cmd.visible ? '' : '[HIDDEN]'}`);
+                helpMsg.setFooter(botName || "");
+                if (helpMsg != null) {
+                    if (a && a[0]) {
+                        const cmd: Command | null = cmdManager.get(a[0], "ALL");
+                        if (cmd) {
+                            helpMsg.setTitle(
+                                `${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`
+                            );
                             helpMsg.setDescription(cmd.description);
-                            if(cmd.usage) helpMsg.addField('Usage:', `${cmdManager.prefix}${cmd.name} ${cmd.usage}`, false);
-                            if(cmd.permissions.toArray(false).length > 0) {
-                                let permList: string = '';
-                                cmd.permissions.toArray(false).map(p => {
-                                    permList += p + '\n';
+                            if (cmd.usage)
+                                helpMsg.addField(
+                                    "Usage:",
+                                    `${cmdManager.prefix}${cmd.name} ${cmd.usage}`,
+                                    false
+                                );
+                            if (cmd.permissions.toArray(false).length > 0) {
+                                let permList: string = "";
+                                cmd.permissions.toArray(false).map((p) => {
+                                    permList += p + "\n";
                                 });
-                                helpMsg.addField('Permissions:', permList, false);
+                                helpMsg.addField(
+                                    "Permissions:",
+                                    permList,
+                                    false
+                                );
                             }
-                            if(cmd.aliases.length > 0) {
-                                let aList: string = '';
-                                cmd.aliases.map(a => {
-                                    aList += a + '\n'; 
+                            if (cmd.aliases.length > 0) {
+                                let aList: string = "";
+                                cmd.aliases.map((a) => {
+                                    aList += a + "\n";
                                 });
-                                helpMsg.addField('Aliases:', aList, false);
+                                helpMsg.addField("Aliases:", aList, false);
                             }
-                            if(cmd.keywords.length > 0) {
-                                let kwrdList: string = '';
-                                cmd.keywords.map(k => {
-                                    kwrdList += k + '\n';
+                            if (cmd.keywords.length > 0) {
+                                let kwrdList: string = "";
+                                cmd.keywords.map((k) => {
+                                    kwrdList += k + "\n";
                                 });
-                                helpMsg.addField('Keywords:', kwrdList, false);
+                                helpMsg.addField("Keywords:", kwrdList, false);
                             }
+                        } else {
+                            throw new ReferenceError(
+                                `Command "${a[0]}" does not exist`
+                            );
                         }
-                        else {
-                            throw new ReferenceError(`Command "${a[0]}" does not exist`);
-                        }
-                    }
-                    else {
+                    } else {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
                         cmdManager.list.map((c) => {
-                            if(c.visible) {
+                            if (c.visible) {
                                 helpMsg.addField(
                                     `${cmdManager.prefix}${c.name} ${c.usage}`,
                                     c.description,
                                     false
-                                )
+                                );
                             }
                         });
                     }
                 }
                 return helpMsg;
-            }
+            },
         });
     }
 }
