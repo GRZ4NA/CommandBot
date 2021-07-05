@@ -1,6 +1,6 @@
 # CommandBot
 
-**1.1.3**
+**2.0.0-beta**
 
 Discord.js framework that helps you build your own Discord bot.
 
