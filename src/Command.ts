@@ -34,7 +34,7 @@ interface PhraseOccurrenceData {
     type: "NAME" | "ALIAS";
 }
 
-//ERROR CLASSES
+//CLASSES
 export class PermissionsError {
     private command: Command;
     private user: GuildMember | null;
@@ -46,8 +46,6 @@ export class PermissionsError {
         return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
     }
 }
-
-//CLASSES
 export class Command {
     name: string;
     aliases: string[];

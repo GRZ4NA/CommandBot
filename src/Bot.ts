@@ -12,6 +12,15 @@ import { SystemMessageManager } from "./SystemMessage.js";
 import { EventEmitter } from "events";
 
 //TYPE DEFINITIONS
+export declare interface Bot {
+    on(event: "ready", listener: Function): this;
+    on(event: "message", listener: (m: Message) => void): this;
+    on(
+        event: "command",
+        listener: (m: Message, cmdMsg: CommandMessageStructure) => void
+    ): this;
+    on(event: "error", listener: (e: any) => void): this;
+}
 interface ConfigurationOptions {
     token?: string;
     helpCommand: boolean;
