@@ -10,8 +10,8 @@ import {
 } from "discord.js";
 import { Command, PermissionsError } from "./Command.js";
 
-type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
-interface SystemMessageAppearance {
+export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
+export interface SystemMessageAppearance {
     title: string;
     bottomText?: string;
     accentColor?: ColorResolvable;
@@ -25,7 +25,7 @@ interface SystemMessageData {
     error?: Error | PermissionsError | string;
 }
 
-class SystemMessageManager {
+export class SystemMessageManager {
     enabled: boolean;
     PERMISSION: SystemMessageAppearance;
     ERROR: SystemMessageAppearance;
@@ -167,5 +167,3 @@ class SystemMessageManager {
         }
     }
 }
-
-export { MessageType, SystemMessageAppearance, SystemMessageManager };

@@ -26,7 +26,7 @@ interface ConstructorOptions {
 }
 
 //MAIN CLASS
-class Bot extends EventEmitter {
+export class Bot extends EventEmitter {
     name: string;
     client: Client;
     commands: CommandManager;
@@ -114,6 +114,7 @@ class Bot extends EventEmitter {
                         try {
                             await cmdMsg.command.start(m, cmdMsg.arguments);
                         } catch (e) {
+                            this.emit("error", [e]);
                             if (e instanceof PermissionsError) {
                                 this.messages.system.send(
                                     "PERMISSION",
@@ -160,4 +161,3 @@ class Bot extends EventEmitter {
 
 //EXPORTS
 export default Bot;
-export { Bot, Command };

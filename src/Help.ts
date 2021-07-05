@@ -1,7 +1,7 @@
 import { ColorResolvable, MessageEmbed } from "discord.js";
 import { Command, CommandManager } from "./Command.js";
 
-interface HelpMessageParams {
+export interface HelpMessageParams {
     title: string;
     bottomText: string;
     color: ColorResolvable;
@@ -9,7 +9,7 @@ interface HelpMessageParams {
     usage: string;
 }
 
-class HelpMessage extends Command {
+export class HelpMessage extends Command {
     constructor(
         cmdManager: CommandManager,
         params: HelpMessageParams,
@@ -89,5 +89,3 @@ class HelpMessage extends Command {
         });
     }
 }
-
-export { HelpMessage, HelpMessageParams };

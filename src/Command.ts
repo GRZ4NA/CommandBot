@@ -8,6 +8,13 @@ import {
 } from "discord.js";
 
 //TYPE DEFINITIONS
+type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
+type PermissionCheckTypes = "ALL" | "ANY";
+export interface CommandMessageStructure {
+    name: string;
+    arguments: string[];
+    command: Command | null;
+}
 interface CommandBuilder {
     name: string;
     aliases?: string[] | string;
@@ -22,20 +29,13 @@ interface CommandBuilder {
         cmdArguments?: string[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
-interface CommandMessageStructure {
-    name: string;
-    arguments: string[];
-    command: Command | null;
-}
 interface PhraseOccurrenceData {
     command: Command;
     type: "NAME" | "ALIAS";
 }
-type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
-type PermissionCheckTypes = "ALL" | "ANY";
 
 //ERROR CLASSES
-class PermissionsError {
+export class PermissionsError {
     private command: Command;
     private user: GuildMember | null;
     constructor(command: Command, user?: GuildMember | null) {
@@ -48,7 +48,7 @@ class PermissionsError {
 }
 
 //CLASSES
-class Command {
+export class Command {
     name: string;
     aliases: string[];
     keywords: string[];
@@ -137,7 +137,7 @@ class Command {
         }
     }
 }
-class CommandManager {
+export class CommandManager {
     list: Command[];
     prefix: string;
     argumentSeparator: string;
@@ -317,6 +317,3 @@ class CommandManager {
         return returnValue;
     }
 }
-
-//EXPORTS
-export { Command, CommandManager, CommandMessageStructure, PermissionsError };
