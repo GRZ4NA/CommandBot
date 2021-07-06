@@ -115,7 +115,7 @@ export class Bot extends EventEmitter {
                     const cmdMsg: CommandMessageStructure | null =
                         this.commands.fetch(m);
                     if (cmdMsg?.command) {
-                        this.emit("COMMAND", [m, cmdMsg]);
+                        this.emit("COMMAND", m, cmdMsg);
                         try {
                             await cmdMsg.command.start(m, cmdMsg.arguments);
                         } catch (e) {
@@ -140,7 +140,7 @@ export class Bot extends EventEmitter {
                                 );
                                 console.error(e);
                             }
-                            this.emit("ERROR", [e]);
+                            this.emit("ERROR", e);
                             return;
                         }
                     } else if (cmdMsg) {
@@ -150,7 +150,7 @@ export class Bot extends EventEmitter {
                             m.channel
                         );
                     } else {
-                        this.emit("MESSAGE", [m]);
+                        this.emit("MESSAGE", m);
                     }
                 });
             } else {
