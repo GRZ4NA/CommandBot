@@ -119,9 +119,9 @@ export class Command {
             const buff = phrase.map((p) => {
                 return p.split(" ").join("_");
             });
-            buff.map((e, i) => {
+            buff.map((e, i, a) => {
                 if (e == "" || e == " ") {
-                    buff.splice(i, 1);
+                    a.splice(i, 1);
                 }
             });
             return buff;
@@ -210,23 +210,23 @@ export class CommandManager {
                     `The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`
                 );
             }
-            command.aliases.map((a, i) => {
+            command.aliases.map((a, i, ar) => {
                 const aliasOccurrence: PhraseOccurrenceData | null =
                     this.findPhraseOccurrence(a);
                 if (aliasOccurrence) {
                     console.warn(
                         `WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
                     );
-                    command.aliases.splice(i, 1);
+                    ar.splice(i, 1);
                 }
             });
             this.list.map((c) => {
-                command.keywords.map((k, i) => {
+                command.keywords.map((k, i, a) => {
                     if (c.keywords.indexOf(k) != -1) {
                         console.warn(
                             `WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
                         );
-                        command.keywords.splice(i, 1);
+                        a.splice(i, 1);
                     }
                 });
             });
