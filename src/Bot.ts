@@ -13,13 +13,13 @@ import { EventEmitter } from "events";
 
 //TYPE DEFINITIONS
 export declare interface Bot {
-    on(event: "ready", listener: Function): this;
-    on(event: "message", listener: (m: Message) => void): this;
+    on(event: "READY", listener: Function): this;
+    on(event: "MESSAGE", listener: (m: Message) => void): this;
     on(
-        event: "command",
+        event: "COMMAND",
         listener: (m: Message, cmdMsg: CommandMessageStructure) => void
     ): this;
-    on(event: "error", listener: (e: any) => void): this;
+    on(event: "ERROR", listener: (e: any) => void): this;
 }
 interface ConstructorOptions {
     name: string;
@@ -80,7 +80,7 @@ export class Bot extends EventEmitter {
      */
     async start(port?: number, token?: string): Promise<boolean> {
         try {
-            console.log(`Bot name: ${this.name}`);
+            console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix} \n`);
             this.token = token || this.token;
             if (this.token === "") {
@@ -89,10 +89,13 @@ export class Bot extends EventEmitter {
                 );
             }
             if (port) {
-                console.log(`Creating http server on port ${port}...`);
+                process.stdout.write(
+                    `Creating http server on port ${port}... `
+                );
                 http.createServer().listen(port);
+                console.log("✔");
             }
-            console.log("Starting modules...");
+            process.stdout.write("Starting modules... ");
             if (this.messages.help.enabled === true) {
                 const helpMsg: Command = new HelpMessage(
                     this.commands,
@@ -101,20 +104,21 @@ export class Bot extends EventEmitter {
                 );
                 this.commands.add(helpMsg);
             }
-            console.log("Connecting to Discord...");
+            console.log("✔");
+            process.stdout.write("Connecting to Discord... ");
             if (await this.client.login(this.token)) {
                 this.client.on("ready", () => {
-                    this.emit("ready");
+                    console.log("✔\n");
+                    this.emit("READY");
                 });
                 this.client.on("message", async (m) => {
                     const cmdMsg: CommandMessageStructure | null =
                         this.commands.fetch(m);
                     if (cmdMsg?.command) {
-                        this.emit("command", [m, cmdMsg]);
+                        this.emit("COMMAND", [m, cmdMsg]);
                         try {
                             await cmdMsg.command.start(m, cmdMsg.arguments);
                         } catch (e) {
-                            this.emit("error", [e]);
                             if (e instanceof PermissionsError) {
                                 this.messages.system.send(
                                     "PERMISSION",
@@ -136,6 +140,7 @@ export class Bot extends EventEmitter {
                                 );
                                 console.error(e);
                             }
+                            this.emit("ERROR", [e]);
                             return;
                         }
                     } else if (cmdMsg) {
@@ -145,7 +150,7 @@ export class Bot extends EventEmitter {
                             m.channel
                         );
                     } else {
-                        this.emit("message", [m]);
+                        this.emit("MESSAGE", [m]);
                     }
                 });
             } else {

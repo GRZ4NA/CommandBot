@@ -1,6 +1,6 @@
 # CommandBot
 
-**2.0.0-beta2**
+**2.0.0-beta3**
 
 > [IMPORTANT]
 > Upgrading to this version from 1.1.3 may require additional changes in your code since 2.0.0 is not fully backwards compatible
@@ -229,10 +229,10 @@ test
 
 Events are emitted using built-in event emitter **(since version 2.0.0)**. You can handle them using _on_ property
 
--   **ready** - emitted when the client successfully connect to Discord API
--   **message** - emitted for every message sent in any text channel (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument)
--   **command** - emitted for every message that gets recognized as a command (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument and a CommandMessageStructure object to the second argument)
--   **error** - emitted on permission and command errors (an error object is passed to the first argument)
+-   **READY** - emitted when the client successfully connect to Discord API
+-   **MESSAGE** - emitted for every message sent in any text channel (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument)
+-   **COMMAND** - emitted for every message that gets recognized as a command (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument and a CommandMessageStructure object to the second argument)
+-   **ERROR** - emitted on permission and command errors (an error object is passed to the first argument)
     > [IMPORTANT]
     > Do not use client.on('message') and client.on('ready') event handler! This handler is a core part of the command system.
 
