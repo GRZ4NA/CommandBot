@@ -119,9 +119,8 @@ export class Command {
             const buff = phrase.map((p) => {
                 return p.split(" ").join("_");
             });
-            buff.map((e) => {
+            buff.map((e, i) => {
                 if (e == "" || e == " ") {
-                    const i = buff.indexOf(e);
                     buff.splice(i, 1);
                 }
             });
@@ -211,25 +210,23 @@ export class CommandManager {
                     `The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`
                 );
             }
-            command.aliases.map((a) => {
+            command.aliases.map((a, i) => {
                 const aliasOccurrence: PhraseOccurrenceData | null =
                     this.findPhraseOccurrence(a);
                 if (aliasOccurrence) {
                     console.warn(
                         `WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
                     );
-                    const iToRemove = command.aliases.indexOf(a);
-                    command.aliases.splice(iToRemove, 1);
+                    command.aliases.splice(i, 1);
                 }
             });
             this.list.map((c) => {
-                command.keywords.map((k) => {
+                command.keywords.map((k, i) => {
                     if (c.keywords.indexOf(k) != -1) {
                         console.warn(
                             `WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
                         );
-                        const iToRemove = command.keywords.indexOf(k);
-                        command.keywords.splice(iToRemove, 1);
+                        command.keywords.splice(i, 1);
                     }
                 });
             });
