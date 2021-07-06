@@ -2,9 +2,9 @@
     "name": "commandbot",
     "version": "2.0.0-beta4",
     "description": "A framework that helps you create your own Discord bot easier.",
-    "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/cjs/index.js",
+    "module": "dist/mjs/index.js",
+    "types": "dist/mjs/index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/GRZ4NA/DiscordCommands.git"
@@ -17,8 +17,7 @@
         "framework"
     ],
     "scripts": {
-        "watch": "npx tsc -w",
-        "compile": "npx tsc",
+        "compile": "rd dist /S /Q && tsc -p tsconfig-mjs.json && tsc -p tsconfig-cjs.json && package-create.bat",
         "test": "node test/index.js"
     },
     "author": "GRZANA",
@@ -33,5 +32,9 @@
     "devDependencies": {
         "@types/node": "^15.12.4",
         "@types/ws": "^7.4.5"
+    },
+    "exports": {
+        "import": "./dist/mjs/index.js",
+        "require": "./dist/cjs/index.js"
     }
 }
