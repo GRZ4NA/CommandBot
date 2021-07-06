@@ -1,6 +1,6 @@
 # CommandBot
 
-**2.0.0-beta5**
+**2.0.0**
 
 > [IMPORTANT]
 > Upgrading to this version from 1.1.3 may require additional changes in your code since 2.0.0 is not fully backwards compatible

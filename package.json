@@ -1,13 +1,13 @@
 {
     "name": "commandbot",
-    "version": "2.0.0-beta5",
+    "version": "2.0.0",
     "description": "A framework that helps you create your own Discord bot easier.",
     "main": "dist/cjs/index.js",
     "module": "dist/mjs/index.js",
     "types": "dist/mjs/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/GRZ4NA/DiscordCommands.git"
+        "url": "git+https://github.com/GRZ4NA/CommandBot.git"
     },
     "keywords": [
         "discord",
@@ -23,9 +23,9 @@
     "author": "GRZANA",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/GRZ4NA/DiscordCommands/issues"
+        "url": "https://github.com/GRZ4NA/CommandBot/issues"
     },
-    "homepage": "https://github.com/GRZ4NA/DiscordCommands#readme",
+    "homepage": "https://github.com/GRZ4NA/CommandBot#readme",
     "dependencies": {
         "discord.js": "^12.5.3"
     },
