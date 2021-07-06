@@ -1,6 +1,6 @@
 # CommandBot
 
-**2.0.0-beta4**
+**2.0.0-beta5**
 
 > [IMPORTANT]
 > Upgrading to this version from 1.1.3 may require additional changes in your code since 2.0.0 is not fully backwards compatible
@@ -44,15 +44,19 @@ Key features
 npm install commandbot@latest
 ```
 
-2. Add the following entry to your _package.json_ file
-
-```json
-"type": "module"
-```
-
-3. Import the package
+or yarn
 
 ```javascript
+yarn add commandbot@latest
+```
+
+2. Import the package
+
+```javascript
+//CommonJS
+const { Bot, Command } = require("commandbot");
+
+//ES Modules (to use this option add "type": "module" to your package.json file)
 import { Bot, Command } from "commandbot";
 ```
 
