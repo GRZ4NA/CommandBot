@@ -24,7 +24,7 @@ export class ArgumentTypeError extends TypeError {
         this.type = type;
     }
     toString() {
-        `Argument ${this.stringContent} cannot be converted to ${this.type}`;
+        return `Argument "${this.stringContent}" cannot be converted to ${this.type}`;
     }
 }
 
@@ -35,6 +35,6 @@ export class MissingArgumentError extends ReferenceError {
         this.argument = a;
     }
     toString() {
-        return `${this.argument.name}: Argument not optional`;
+        return `Your request is missing a "${this.argument.name}" argument which is not optional`;
     }
 }
