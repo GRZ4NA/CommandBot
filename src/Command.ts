@@ -100,7 +100,7 @@ export class Command {
                 this.arguments.map((a, i) => {
                     if (!inputArguments[i] && !a.optional) {
                         throw new MissingArgumentError(a);
-                    } else {
+                    } else if (inputArguments[i]) {
                         inputArguments[i] = ProcessArgument(
                             inputArguments[i] as string,
                             a.type
