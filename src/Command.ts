@@ -3,9 +3,9 @@ import {
     Permissions,
     PermissionResolvable,
     Message,
-    GuildMember,
     MessageEmbed,
 } from "discord.js";
+import { MissingArgumentError, PermissionsError } from "./Error.js";
 import { Argument, ArgumentResolvable, ProcessArgument } from "./Arguments.js";
 
 //TYPE DEFINITIONS
@@ -36,17 +36,6 @@ interface PhraseOccurrenceData {
 }
 
 //CLASSES
-export class PermissionsError {
-    private command: Command;
-    private user: GuildMember | null;
-    constructor(command: Command, user?: GuildMember | null) {
-        this.command = command;
-        this.user = user || null;
-    }
-    toString() {
-        return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
-    }
-}
 export class Command {
     name: string;
     arguments: Argument[];
@@ -268,7 +257,7 @@ export class CommandManager {
             const command = this.get(name, "ALL");
             if (command) {
                 const argumentsText = content.replace(name, "");
-                const argumentsList = argumentsText
+                const argumentsList: ArgumentResolvable[] = argumentsText
                     .split(this.argumentSeparator)
                     .map((a) => {
                         return a.replace(" ", "");
@@ -278,6 +267,18 @@ export class CommandManager {
                     argumentsList.length == 1
                 ) {
                     argumentsList.splice(0, 1);
+                }
+                if (command.arguments) {
+                    command.arguments.map((a, i) => {
+                        if (!argumentsList[i] && !a.optional) {
+                            throw new MissingArgumentError(a);
+                        } else {
+                            argumentsList[i] = ProcessArgument(
+                                argumentsList[i] as string,
+                                a.type
+                            );
+                        }
+                    });
                 }
                 return {
                     command: command,
