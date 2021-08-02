@@ -94,10 +94,7 @@ export class SystemMessageManager {
                             );
                         }
                         if (data.error) {
-                            if (
-                                data.error instanceof Error ||
-                                (data.error as any) instanceof PermissionsError
-                            ) {
+                            if (data.error instanceof Error) {
                                 embed.addField(
                                     "Error details:",
                                     data.error.toString(),
