@@ -1,6 +1,6 @@
 import { Command } from "./Command.js";
 import { GuildMember } from "discord.js";
-import { Argument, ArgumentType } from "Arguments.js";
+import { Argument, ArgumentType } from "./Arguments.js";
 
 export class PermissionsError extends Error {
     private command: Command;
