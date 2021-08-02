@@ -1,3 +1,5 @@
+import { ArgumentTypeError } from "./Error.js";
+
 export type ArgumentType = "STRING" | "BOOLEAN" | "INTEGER" | "FLOAT";
 export type ArgumentResolvable = string | boolean | number;
 export interface Argument {
@@ -15,18 +17,14 @@ export const ProcessArgument = (
         case "INTEGER":
             const numI = parseInt(a);
             if (isNaN(numI)) {
-                throw new TypeError(
-                    `Argument ${a} cannot be converted to ${type}`
-                );
+                throw new ArgumentTypeError(a, type);
             } else {
                 return numI;
             }
         case "FLOAT":
             const numF = parseFloat(a);
             if (isNaN(numF)) {
-                throw new TypeError(
-                    `Argument ${a} cannot be converted to ${type}`
-                );
+                throw new ArgumentTypeError(a, type);
             } else {
                 return numF;
             }
@@ -36,9 +34,7 @@ export const ProcessArgument = (
             } else if (a.toLowerCase() == "false") {
                 return false;
             } else {
-                throw new TypeError(
-                    `Argument ${a} cannot be converted to ${type}`
-                );
+                throw new ArgumentTypeError(a, type);
             }
         default:
             throw new TypeError("Invalied type specified");
