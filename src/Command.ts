@@ -230,7 +230,7 @@ export class CommandManager {
                     this.findPhraseOccurrence(a);
                 if (aliasOccurrence) {
                     console.warn(
-                        `WARN! The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
+                        `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
                     );
                     ar.splice(i, 1);
                 }
@@ -239,7 +239,7 @@ export class CommandManager {
                 command.keywords.map((k, i, a) => {
                     if (c.keywords.indexOf(k) != -1) {
                         console.warn(
-                            `WARN! The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
+                            `[⚠ WARN] The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
                         );
                         a.splice(i, 1);
                     }
@@ -260,11 +260,15 @@ export class CommandManager {
      */
     fetch(message: Message): CommandMessageStructure | null {
         if (!message.author.bot) {
-            const content = message.content.startsWith(this.prefix)
+            let prefix = false;
+            if (message.content.startsWith(this.prefix)) {
+                prefix = true;
+            }
+            const content = prefix
                 ? message.content.replace(this.prefix, "")
                 : message.content;
             const name = content.split(" ")[0];
-            const command = this.get(name, "ALL");
+            const command = this.get(name, prefix ? "PREFIX" : "NO_PREFIX");
             if (command) {
                 const argumentsText = content.replace(name, "");
                 const argumentsList = argumentsText
