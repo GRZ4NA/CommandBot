@@ -11,11 +11,7 @@ import {
 import { Command } from "./Command.js";
 import { PermissionsError } from "./Error.js";
 
-export type MessageType =
-    | "PERMISSION"
-    | "ERROR"
-    | "NOT_FOUND"
-    | "MISSING_ARGUMENT";
+export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
 export interface SystemMessageAppearance {
     enabled: boolean;
     title: string;
@@ -35,8 +31,6 @@ export class SystemMessageManager {
     PERMISSION: SystemMessageAppearance;
     ERROR: SystemMessageAppearance;
     NOT_FOUND: SystemMessageAppearance;
-    MISSING_ARGUMENT: SystemMessageAppearance;
-    ARGUMENT_TYPE_MISMATCH: SystemMessageAppearance;
     deleteTimeout: number;
 
     constructor(botName?: string) {
@@ -60,23 +54,6 @@ export class SystemMessageManager {
             enabled: true,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
-            showTimestamp: true,
-            footer: botName,
-        };
-        this.MISSING_ARGUMENT = {
-            enabled: true,
-            title: "🛑 Missing arguments",
-            bottomText:
-                "This command requires an argument that you didn't provide",
-            accentColor: "#ff0000",
-            showTimestamp: true,
-            footer: botName,
-        };
-        this.ARGUMENT_TYPE_MISMATCH = {
-            enabled: true,
-            title: "📝 Wrong argument type",
-            bottomText: "This command requires a different type of argument",
-            accentColor: "#ff0000",
             showTimestamp: true,
             footer: botName,
         };
@@ -176,7 +153,6 @@ export class SystemMessageManager {
                             }
                         }
                         break;
-                    //TODO Add argument error processing
                 }
             }
             if (channel) {
