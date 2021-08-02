@@ -13,7 +13,7 @@ type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandMessageStructure {
     command: Command;
-    arguments: ArgumentResolvable[];
+    arguments: string[];
 }
 interface CommandBuilder {
     name: string;
@@ -87,10 +87,7 @@ export class Command {
      * @param {string[]} [cmdArguments] - list of processed arguments passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(
-        message?: Message,
-        cmdArguments?: ArgumentResolvable[]
-    ): Promise<void> {
+    async start(message?: Message, cmdArguments?: string[]): Promise<void> {
         const memberPermissions: Readonly<Permissions> =
             message?.member?.permissions || new Permissions(0);
         if (
@@ -98,6 +95,19 @@ export class Command {
                 ? memberPermissions.has(this.permissions, true)
                 : memberPermissions.any(this.permissions, true)
         ) {
+            let inputArguments: ArgumentResolvable[] = cmdArguments || [];
+            if (this.arguments.length > 0) {
+                this.arguments.map((a, i) => {
+                    if (!inputArguments[i] && !a.optional) {
+                        throw new MissingArgumentError(a);
+                    } else {
+                        inputArguments[i] = ProcessArgument(
+                            inputArguments[i] as string,
+                            a.type
+                        );
+                    }
+                });
+            }
             const fnResult = await this.function(message, cmdArguments);
             if (typeof fnResult == "string") {
                 await message?.reply(fnResult);
@@ -257,7 +267,7 @@ export class CommandManager {
             const command = this.get(name, "ALL");
             if (command) {
                 const argumentsText = content.replace(name, "");
-                const argumentsList: ArgumentResolvable[] = argumentsText
+                const argumentsList = argumentsText
                     .split(this.argumentSeparator)
                     .map((a) => {
                         return a.replace(" ", "");
@@ -267,18 +277,6 @@ export class CommandManager {
                     argumentsList.length == 1
                 ) {
                     argumentsList.splice(0, 1);
-                }
-                if (command.arguments.length > 0) {
-                    command.arguments.map((a, i) => {
-                        if (!argumentsList[i] && !a.optional) {
-                            throw new MissingArgumentError(a);
-                        } else {
-                            argumentsList[i] = ProcessArgument(
-                                argumentsList[i] as string,
-                                a.type
-                            );
-                        }
-                    });
                 }
                 return {
                     command: command,
