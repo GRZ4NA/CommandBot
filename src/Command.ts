@@ -6,17 +6,19 @@ import {
     GuildMember,
     MessageEmbed,
 } from "discord.js";
+import { Argument, ArgumentResolvable } from "./Arguments.js";
 
 //TYPE DEFINITIONS
 type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandMessageStructure {
     name: string;
-    arguments: string[];
+    arguments: ArgumentResolvable[];
     command: Command | null;
 }
 interface CommandBuilder {
     name: string;
+    arguments?: Argument[];
     aliases?: string[] | string;
     keywords?: string[] | string;
     description?: string;
@@ -26,7 +28,7 @@ interface CommandBuilder {
     visible?: boolean;
     function: (
         message?: Message,
-        cmdArguments?: string[]
+        cmdArguments?: ArgumentResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
 interface PhraseOccurrenceData {
@@ -48,6 +50,7 @@ export class PermissionsError {
 }
 export class Command {
     name: string;
+    arguments: Argument[];
     aliases: string[];
     keywords: string[];
     description: string;
@@ -57,7 +60,7 @@ export class Command {
     visible: boolean;
     private function: (
         message?: Message,
-        cmdArguments?: string[]
+        cmdArguments?: ArgumentResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
     /**
@@ -76,10 +79,11 @@ export class Command {
      */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(" ").join("_");
+        this.arguments = options.arguments || [];
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
-        this.usage = options.usage || "";
+        this.usage = options.usage || this.generateUsageFromArguments();
         this.permissionCheck =
             options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
                 ? options.permissionCheck
@@ -95,7 +99,10 @@ export class Command {
      * @param {string[]} [cmdArguments] - list of processed arguments passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(message?: Message, cmdArguments?: string[]): Promise<void> {
+    async start(
+        message?: Message,
+        cmdArguments?: ArgumentResolvable[]
+    ): Promise<void> {
         const memberPermissions: Readonly<Permissions> =
             message?.member?.permissions || new Permissions(0);
         if (
@@ -132,6 +139,16 @@ export class Command {
         } else {
             return [];
         }
+    }
+
+    private generateUsageFromArguments(): string {
+        let usageTemplate: string = "";
+        this.arguments.map((e) => {
+            usageTemplate += `[${e.name} (${e.type}${
+                e.isOptional ? ", optional" : ""
+            })] `;
+        });
+        return usageTemplate;
     }
 }
 export class CommandManager {
@@ -233,7 +250,7 @@ export class CommandManager {
             this.list.push(command);
             return true;
         } catch (e) {
-            console.error(`ERROR! ${e.toString()}`);
+            console.error(`[❌ ERROR] ${e.toString()}`);
             return false;
         }
     }
