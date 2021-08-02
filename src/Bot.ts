@@ -112,9 +112,8 @@ export class Bot extends EventEmitter {
                 this.emit("READY");
             });
             this.client.on("message", async (m) => {
-                const cmdMsg: CommandMessageStructure | null =
-                    this.commands.fetch(m);
-                if (cmdMsg?.command) {
+                const cmdMsg = this.commands.fetch(m);
+                if (cmdMsg) {
                     this.emit("COMMAND", m, cmdMsg);
                     try {
                         await cmdMsg.command.start(m, cmdMsg.arguments);
@@ -143,7 +142,8 @@ export class Bot extends EventEmitter {
                         this.emit("ERROR", e);
                         return;
                     }
-                } else if (cmdMsg) {
+                } else if (m.content.startsWith(this.commands.prefix)) {
+                    this.emit("MESSAGE", m);
                     this.messages.system.send(
                         "NOT_FOUND",
                         { phrase: m.content, user: m.member || undefined },

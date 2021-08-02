@@ -2,8 +2,8 @@ export type ArgumentType = "STRING" | "BOOLEAN" | "INTEGER" | "FLOAT";
 export type ArgumentResolvable = string | boolean | number;
 export interface Argument {
     name: string;
-    isOptional?: boolean;
-    type?: ArgumentType;
+    optional: boolean;
+    type: ArgumentType;
 }
 export const ProcessArgument = (
     a: string,

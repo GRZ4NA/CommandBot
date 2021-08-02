@@ -6,15 +6,14 @@ import {
     GuildMember,
     MessageEmbed,
 } from "discord.js";
-import { Argument, ArgumentResolvable } from "./Arguments.js";
+import { Argument, ArgumentResolvable, ProcessArgument } from "./Arguments.js";
 
 //TYPE DEFINITIONS
 type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandMessageStructure {
-    name: string;
+    command: Command;
     arguments: ArgumentResolvable[];
-    command: Command | null;
 }
 interface CommandBuilder {
     name: string;
@@ -145,7 +144,7 @@ export class Command {
         let usageTemplate: string = "";
         this.arguments.map((e) => {
             usageTemplate += `[${e.name} (${e.type}${
-                e.isOptional ? ", optional" : ""
+                e.optional ? ", optional" : ""
             })] `;
         });
         return usageTemplate;
@@ -261,47 +260,28 @@ export class CommandManager {
      * @returns *CommandMessagesStructure* | *null*
      */
     fetch(message: Message): CommandMessageStructure | null {
-        if (!message.author.bot && message.content.startsWith(this.prefix)) {
-            let msgContent = message.content.replace(this.prefix, "");
-            const cmdName = msgContent.split(" ")[0];
-            const cmd: Command | null = this.get(cmdName, "PREFIX");
-            msgContent = msgContent.replace(cmdName, "");
-            let cmdArguments: string[] = msgContent.split(
-                this.argumentSeparator
-            );
-            cmdArguments = cmdArguments.map((a) => {
-                return a.replace(" ", "");
-            });
-            if (
-                (cmdArguments[0] == "" || cmdArguments[0] == " ") &&
-                cmdArguments.length == 1
-            ) {
-                cmdArguments = [];
-            }
-            return {
-                name: cmdName,
-                arguments: cmdArguments,
-                command: cmd,
-            };
-        } else if (!message.author.bot) {
-            const cmdName = message.content.split(" ")[0];
-            const cmd: Command | null = this.get(cmdName, "NO_PREFIX");
-            if (cmd) {
-                const cmdArgumentsStr = message.content.replace(cmdName, "");
-                let cmdArguments: string[] = cmdArgumentsStr.split(",");
-                cmdArguments = cmdArguments.map((a) => {
-                    return a.replace(" ", "");
-                });
+        if (!message.author.bot) {
+            const content = message.content.startsWith(this.prefix)
+                ? message.content.replace(this.prefix, "")
+                : message.content;
+            const name = content.split(" ")[0];
+            const command = this.get(name, "ALL");
+            if (command) {
+                const argumentsText = content.replace(name, "");
+                const argumentsList = argumentsText
+                    .split(this.argumentSeparator)
+                    .map((a) => {
+                        return a.replace(" ", "");
+                    });
                 if (
-                    (cmdArguments[0] == "" || cmdArguments[0] == " ") &&
-                    cmdArguments.length == 1
+                    (argumentsList[0] == "" || argumentsList[0] == " ") &&
+                    argumentsList.length == 1
                 ) {
-                    cmdArguments = [];
+                    argumentsList.splice(0, 1);
                 }
                 return {
-                    name: cmdName,
-                    arguments: cmdArguments,
-                    command: cmd,
+                    command: command,
+                    arguments: argumentsList,
                 };
             } else {
                 return null;
