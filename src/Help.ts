@@ -28,7 +28,10 @@ export class HelpMessage extends Command {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (a && a[0]) {
-                        const cmd: Command | null = cmdManager.get(a[0], "ALL");
+                        const cmd: Command | null = cmdManager.get(
+                            a[0].toString(),
+                            "ALL"
+                        );
                         if (cmd) {
                             helpMsg.setTitle(
                                 `${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`
