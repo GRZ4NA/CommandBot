@@ -1,11 +1,7 @@
 //IMPORTS
 import { Client, ClientOptions, Message } from "discord.js";
-import {
-    Command,
-    CommandManager,
-    CommandMessageStructure,
-    PermissionsError,
-} from "./Command.js";
+import { Command, CommandManager, CommandMessageStructure } from "./Command.js";
+import { PermissionsError } from "./Error.js";
 import { HelpMessage, HelpMessageParams } from "./Help.js";
 import * as http from "http";
 import { SystemMessageManager } from "./SystemMessage.js";

@@ -8,7 +8,8 @@ import {
     TextChannel,
     User,
 } from "discord.js";
-import { Command, PermissionsError } from "./Command.js";
+import { Command } from "./Command.js";
+import { PermissionsError } from "./Error.js";
 
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
 export interface SystemMessageAppearance {
@@ -95,7 +96,7 @@ export class SystemMessageManager {
                         if (data.error) {
                             if (
                                 data.error instanceof Error ||
-                                data.error instanceof PermissionsError
+                                (data.error as any) instanceof PermissionsError
                             ) {
                                 embed.addField(
                                     "Error details:",
