@@ -91,7 +91,6 @@ export class Bot extends EventEmitter {
                 http.createServer().listen(port);
                 console.log("✔");
             }
-            process.stdout.write("Starting modules... ");
             if (this.messages.help.enabled === true) {
                 const helpMsg: Command = new HelpMessage(
                     this.commands,
@@ -100,7 +99,6 @@ export class Bot extends EventEmitter {
                 );
                 this.commands.add(helpMsg);
             }
-            console.log("✔");
             process.stdout.write("Connecting to Discord... ");
             await this.client.login(this.token);
             this.client.on("ready", () => {
