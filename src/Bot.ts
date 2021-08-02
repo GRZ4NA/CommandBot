@@ -106,59 +106,57 @@ export class Bot extends EventEmitter {
             }
             console.log("✔");
             process.stdout.write("Connecting to Discord... ");
-            if (await this.client.login(this.token)) {
-                this.client.on("ready", () => {
-                    console.log("✔\n");
-                    this.emit("READY");
-                });
-                this.client.on("message", async (m) => {
-                    const cmdMsg: CommandMessageStructure | null =
-                        this.commands.fetch(m);
-                    if (cmdMsg?.command) {
-                        this.emit("COMMAND", m, cmdMsg);
-                        try {
-                            await cmdMsg.command.start(m, cmdMsg.arguments);
-                        } catch (e) {
-                            if (e instanceof PermissionsError) {
-                                this.messages.system.send(
-                                    "PERMISSION",
-                                    {
-                                        user: m.member || undefined,
-                                        command: cmdMsg.command,
-                                    },
-                                    m.channel
-                                );
-                            } else {
-                                this.messages.system.send(
-                                    "ERROR",
-                                    {
-                                        command: cmdMsg.command,
-                                        user: m.member || undefined,
-                                        error: e,
-                                    },
-                                    m.channel
-                                );
-                                console.error(e);
-                            }
-                            this.emit("ERROR", e);
-                            return;
+            await this.client.login(this.token);
+            this.client.on("ready", () => {
+                console.log("✔\n");
+                this.emit("READY");
+            });
+            this.client.on("message", async (m) => {
+                const cmdMsg: CommandMessageStructure | null =
+                    this.commands.fetch(m);
+                if (cmdMsg?.command) {
+                    this.emit("COMMAND", m, cmdMsg);
+                    try {
+                        await cmdMsg.command.start(m, cmdMsg.arguments);
+                    } catch (e) {
+                        if (e instanceof PermissionsError) {
+                            this.messages.system.send(
+                                "PERMISSION",
+                                {
+                                    user: m.member || undefined,
+                                    command: cmdMsg.command,
+                                },
+                                m.channel
+                            );
+                        } else {
+                            this.messages.system.send(
+                                "ERROR",
+                                {
+                                    command: cmdMsg.command,
+                                    user: m.member || undefined,
+                                    error: e,
+                                },
+                                m.channel
+                            );
+                            console.error(e);
                         }
-                    } else if (cmdMsg) {
-                        this.messages.system.send(
-                            "NOT_FOUND",
-                            { phrase: m.content, user: m.member || undefined },
-                            m.channel
-                        );
-                    } else {
-                        this.emit("MESSAGE", m);
+                        this.emit("ERROR", e);
+                        return;
                     }
-                });
-            } else {
-                return false;
-            }
+                } else if (cmdMsg) {
+                    this.messages.system.send(
+                        "NOT_FOUND",
+                        { phrase: m.content, user: m.member || undefined },
+                        m.channel
+                    );
+                } else {
+                    this.emit("MESSAGE", m);
+                }
+            });
             return true;
         } catch (e) {
-            console.error(`ERROR! ${e.toString()}`);
+            console.log("❌");
+            console.error(`[❌ ERROR] ${e.toString()}`);
             return false;
         }
     }

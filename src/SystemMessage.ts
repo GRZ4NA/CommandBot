@@ -164,7 +164,7 @@ export class SystemMessageManager {
                 return embed;
             }
         } else {
-            console.error("ERROR! System message: Incorrect parameter");
+            console.error("[❌ ERROR] System message: Incorrect parameter");
             return;
         }
     }
