@@ -268,7 +268,7 @@ export class CommandManager {
                 ) {
                     argumentsList.splice(0, 1);
                 }
-                if (command.arguments) {
+                if (command.arguments.length > 0) {
                     command.arguments.map((a, i) => {
                         if (!argumentsList[i] && !a.optional) {
                             throw new MissingArgumentError(a);
