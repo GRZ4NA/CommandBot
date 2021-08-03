@@ -1,6 +1,6 @@
 import { Command } from "./Command.js";
 import { GuildMember } from "discord.js";
-import { Argument, ArgumentType } from "./Arguments.js";
+import { Parameter, ParameterType } from "./Parameter.js";
 
 export class PermissionsError extends Error {
     private command: Command;
@@ -15,26 +15,26 @@ export class PermissionsError extends Error {
     }
 }
 
-export class ArgumentTypeError extends TypeError {
+export class ParameterTypeError extends TypeError {
     private stringContent: string;
-    private type: ArgumentType;
-    constructor(s: string, type: ArgumentType) {
+    private type: ParameterType;
+    constructor(s: string, type: ParameterType) {
         super();
         this.stringContent = s;
         this.type = type;
     }
     toString() {
-        return `Argument "${this.stringContent}" cannot be converted to ${this.type}`;
+        return `Parameter "${this.stringContent}" cannot be converted to ${this.type}`;
     }
 }
 
-export class MissingArgumentError extends ReferenceError {
-    private argument: Argument;
-    constructor(a: Argument) {
+export class MissingParameterError extends ReferenceError {
+    private argument: Parameter;
+    constructor(a: Parameter) {
         super();
         this.argument = a;
     }
     toString() {
-        return `Your request is missing a "${this.argument.name}" argument which is not optional`;
+        return `Your request is missing a "${this.argument.name}" parameter which is not optional`;
     }
 }

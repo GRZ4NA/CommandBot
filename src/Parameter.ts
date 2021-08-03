@@ -1,30 +1,30 @@
-import { ArgumentTypeError } from "./Error.js";
+import { ParameterTypeError } from "./Error.js";
 
-export type ArgumentType = "STRING" | "BOOLEAN" | "INTEGER" | "FLOAT";
-export type ArgumentResolvable = string | boolean | number;
-export interface Argument {
+export type ParameterType = "STRING" | "BOOLEAN" | "INTEGER" | "FLOAT";
+export type ParameterResolvable = string | boolean | number;
+export interface Parameter {
     name: string;
     optional: boolean;
-    type: ArgumentType;
+    type: ParameterType;
 }
 export const ProcessArgument = (
     a: string,
-    type: ArgumentType
-): ArgumentResolvable => {
+    type: ParameterType
+): ParameterResolvable => {
     switch (type) {
         case "STRING":
             return a;
         case "INTEGER":
             const numI = parseInt(a);
             if (isNaN(numI)) {
-                throw new ArgumentTypeError(a, type);
+                throw new ParameterTypeError(a, type);
             } else {
                 return numI;
             }
         case "FLOAT":
             const numF = parseFloat(a);
             if (isNaN(numF)) {
-                throw new ArgumentTypeError(a, type);
+                throw new ParameterTypeError(a, type);
             } else {
                 return numF;
             }
@@ -34,7 +34,7 @@ export const ProcessArgument = (
             } else if (a.toLowerCase() == "false") {
                 return false;
             } else {
-                throw new ArgumentTypeError(a, type);
+                throw new ParameterTypeError(a, type);
             }
         default:
             throw new TypeError("Invalied type specified");

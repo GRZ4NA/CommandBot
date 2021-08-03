@@ -5,19 +5,23 @@ import {
     Message,
     MessageEmbed,
 } from "discord.js";
-import { MissingArgumentError, PermissionsError } from "./Error.js";
-import { Argument, ArgumentResolvable, ProcessArgument } from "./Arguments.js";
+import { MissingParameterError, PermissionsError } from "./Error.js";
+import {
+    Parameter,
+    ParameterResolvable,
+    ProcessArgument,
+} from "./Parameter.js";
 
 //TYPE DEFINITIONS
 type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandMessageStructure {
     command: Command;
-    arguments: string[];
+    parameters: string[];
 }
 interface CommandBuilder {
     name: string;
-    arguments?: Argument[];
+    parameters?: Parameter[];
     aliases?: string[] | string;
     keywords?: string[] | string;
     description?: string;
@@ -27,7 +31,7 @@ interface CommandBuilder {
     visible?: boolean;
     function: (
         message?: Message,
-        cmdArguments?: ArgumentResolvable[]
+        cmdParams?: ParameterResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
 interface PhraseOccurrenceData {
@@ -38,7 +42,7 @@ interface PhraseOccurrenceData {
 //CLASSES
 export class Command {
     name: string;
-    arguments: Argument[];
+    parameters: Parameter[];
     aliases: string[];
     keywords: string[];
     description: string;
@@ -48,7 +52,7 @@ export class Command {
     visible: boolean;
     private function: (
         message?: Message,
-        cmdArguments?: ArgumentResolvable[]
+        cmdParams?: ParameterResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
     /**
@@ -67,7 +71,7 @@ export class Command {
      */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(" ").join("_");
-        this.arguments = options.arguments || [];
+        this.parameters = options.parameters || [];
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
@@ -84,10 +88,10 @@ export class Command {
     /**
      * Starts the command
      * @param {Message} [message] - a *Message* object used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
-     * @param {string[]} [cmdArguments] - list of processed arguments passed in a Discord message
+     * @param {string[]} [cmdParams] - list of processed parameters passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(message?: Message, cmdArguments?: string[]): Promise<void> {
+    async start(message?: Message, cmdParams?: string[]): Promise<void> {
         const memberPermissions: Readonly<Permissions> =
             message?.member?.permissions || new Permissions(0);
         if (
@@ -95,11 +99,11 @@ export class Command {
                 ? memberPermissions.has(this.permissions, true)
                 : memberPermissions.any(this.permissions, true)
         ) {
-            let inputArguments: ArgumentResolvable[] = cmdArguments || [];
-            if (this.arguments.length > 0) {
-                this.arguments.map((a, i) => {
+            let inputArguments: ParameterResolvable[] = cmdParams || [];
+            if (this.parameters.length > 0) {
+                this.parameters.map((a, i) => {
                     if (!inputArguments[i] && !a.optional) {
-                        throw new MissingArgumentError(a);
+                        throw new MissingParameterError(a);
                     } else if (inputArguments[i]) {
                         inputArguments[i] = ProcessArgument(
                             inputArguments[i] as string,
@@ -108,7 +112,7 @@ export class Command {
                     }
                 });
             }
-            const fnResult = await this.function(message, cmdArguments);
+            const fnResult = await this.function(message, cmdParams);
             if (typeof fnResult == "string") {
                 await message?.reply(fnResult);
             } else if (fnResult instanceof MessageEmbed) {
@@ -141,7 +145,7 @@ export class Command {
 
     private generateUsageFromArguments(): string {
         let usageTemplate: string = "";
-        this.arguments.map((e) => {
+        this.parameters.map((e) => {
             usageTemplate += `[${e.name} (${e.type}${
                 e.optional ? ", optional" : ""
             })] `;
@@ -254,7 +258,7 @@ export class CommandManager {
     }
 
     /**
-     * Fetches command and arguments from the given *Message* object
+     * Fetches command and parameters from the given *Message* object
      * @param {Message} message - *Message* object
      * @returns *CommandMessagesStructure* | *null*
      */
@@ -271,20 +275,20 @@ export class CommandManager {
             const command = this.get(name, prefix ? "PREFIX" : "NO_PREFIX");
             if (command) {
                 const argumentsText = content.replace(name, "");
-                const argumentsList = argumentsText
+                const paramsList = argumentsText
                     .split(this.argumentSeparator)
                     .map((a) => {
                         return a.replace(" ", "");
                     });
                 if (
-                    (argumentsList[0] == "" || argumentsList[0] == " ") &&
-                    argumentsList.length == 1
+                    (paramsList[0] == "" || paramsList[0] == " ") &&
+                    paramsList.length == 1
                 ) {
-                    argumentsList.splice(0, 1);
+                    paramsList.splice(0, 1);
                 }
                 return {
                     command: command,
-                    arguments: argumentsList,
+                    parameters: paramsList,
                 };
             } else {
                 return null;

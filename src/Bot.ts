@@ -42,7 +42,7 @@ export class Bot extends EventEmitter {
      * @param {ConstructorOptions} options - instance properties
      * @param {string} options.name - name of your bot
      * @param {string} options.prefix - prefix used to call commands
-     * @param {string} [options.argumentSeparator=','] - used to get arguments from message
+     * @param {string} [options.argumentSeparator=','] - used to get parameters from message
      * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
      * @param {string} [options.token] - bot token from Discord Developer Portal
      */
@@ -110,7 +110,7 @@ export class Bot extends EventEmitter {
                 if (cmdMsg) {
                     this.emit("COMMAND", m, cmdMsg);
                     try {
-                        await cmdMsg.command.start(m, cmdMsg.arguments);
+                        await cmdMsg.command.start(m, cmdMsg.parameters);
                     } catch (e) {
                         if (e instanceof PermissionsError) {
                             this.messages.system.send(
