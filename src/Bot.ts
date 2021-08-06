@@ -1,5 +1,11 @@
 //IMPORTS
-import { Client, ClientOptions, Message } from "discord.js";
+import {
+    Client,
+    ClientOptions,
+    Intents,
+    Message,
+    TextChannel,
+} from "discord.js";
 import { Command, CommandManager, CommandMessageStructure } from "./Command.js";
 import { PermissionsError } from "./Error.js";
 import { HelpMessage, HelpMessageParams } from "./Help.js";
@@ -49,7 +55,11 @@ export class Bot extends EventEmitter {
     constructor(options: ConstructorOptions) {
         super();
         this.name = options.name;
-        this.client = new Client(options.clientOptions);
+        this.client = new Client(
+            options.clientOptions || {
+                intents: Intents.FLAGS.GUILDS,
+            }
+        );
         this.commands = new CommandManager(
             options.prefix,
             options.argumentSeparator
@@ -119,7 +129,7 @@ export class Bot extends EventEmitter {
                                     user: m.member || undefined,
                                     command: cmdMsg.command,
                                 },
-                                m.channel
+                                m.channel as TextChannel
                             );
                         } else {
                             this.messages.system.send(
@@ -129,7 +139,7 @@ export class Bot extends EventEmitter {
                                     user: m.member || undefined,
                                     error: e,
                                 },
-                                m.channel
+                                m.channel as TextChannel
                             );
                             console.error(e);
                         }
@@ -141,7 +151,7 @@ export class Bot extends EventEmitter {
                     this.messages.system.send(
                         "NOT_FOUND",
                         { phrase: m.content, user: m.member || undefined },
-                        m.channel
+                        m.channel as TextChannel
                     );
                 } else {
                     this.emit("MESSAGE", m);
