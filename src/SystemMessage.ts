@@ -9,7 +9,7 @@ import {
     User,
 } from "discord.js";
 import { Command } from "./Command.js";
-import { PermissionsError } from "./Error.js";
+import { PermissionsError } from "./errors.js";
 
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
 export interface SystemMessageAppearance {

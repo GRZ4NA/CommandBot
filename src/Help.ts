@@ -1,14 +1,7 @@
-import { ColorResolvable, MessageEmbed } from "discord.js";
-import { Command, CommandManager } from "./Command.js";
-
-export interface HelpMessageParams {
-    enabled: boolean;
-    title: string;
-    bottomText: string;
-    color: ColorResolvable;
-    description: string;
-    usage: string;
-}
+import { MessageEmbed } from "discord.js";
+import { Command } from "./Command.js";
+import { CommandManager } from "./CommandManager.js";
+import { HelpMessageParams } from "./types.js";
 
 export class HelpMessage extends Command {
     constructor(

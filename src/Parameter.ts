@@ -1,7 +1,5 @@
-import { ParameterTypeError } from "./Error.js";
-
-export type ParameterType = "TEXT" | "TRUE/FALSE" | "NUMBER";
-export type ParameterResolvable = string | boolean | number;
+import { ParameterTypeError } from "./errors.js";
+import { ParameterType, ParameterResolvable } from "./types.js";
 export interface Parameter {
     name: string;
     optional: boolean;

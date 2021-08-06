@@ -1,13 +1,17 @@
-//IMPORTS
-import { Client, ClientOptions, Message } from "discord.js";
-import { Command, CommandManager, CommandMessageStructure } from "./Command.js";
-import { PermissionsError } from "./Error.js";
-import { HelpMessage, HelpMessageParams } from "./Help.js";
+import { Client, Message } from "discord.js";
+import { Command } from "./Command.js";
+import { CommandManager } from "./CommandManager.js";
+import {
+    CommandMessageStructure,
+    InitOptions,
+    HelpMessageParams,
+} from "./types.js";
+import { PermissionsError } from "./errors.js";
+import { HelpMessage } from "./Help.js";
 import * as http from "http";
 import { SystemMessageManager } from "./SystemMessage.js";
 import { EventEmitter } from "events";
 
-//TYPE DEFINITIONS
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
     on(event: "MESSAGE", listener: (m: Message) => void): this;
@@ -17,15 +21,7 @@ export declare interface Bot {
     ): this;
     on(event: "ERROR", listener: (e: any) => void): this;
 }
-interface ConstructorOptions {
-    name: string;
-    prefix: string;
-    argumentSeparator?: string;
-    clientOptions?: ClientOptions;
-    token?: string;
-}
 
-//MAIN CLASS
 export class Bot extends EventEmitter {
     name: string;
     client: Client;
@@ -46,7 +42,7 @@ export class Bot extends EventEmitter {
      * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
      * @param {string} [options.token] - bot token from Discord Developer Portal
      */
-    constructor(options: ConstructorOptions) {
+    constructor(options: InitOptions) {
         super();
         this.name = options.name;
         this.client = new Client(options.clientOptions);
@@ -156,5 +152,4 @@ export class Bot extends EventEmitter {
     }
 }
 
-//EXPORTS
 export default Bot;
