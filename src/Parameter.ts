@@ -1,6 +1,6 @@
 import { ParameterTypeError } from "./Error.js";
 
-export type ParameterType = "STRING" | "BOOLEAN" | "INTEGER" | "FLOAT";
+export type ParameterType = "TEXT" | "TRUE/FALSE" | "NUMBER";
 export type ParameterResolvable = string | boolean | number;
 export interface Parameter {
     name: string;
@@ -12,23 +12,16 @@ export const ProcessArgument = (
     type: ParameterType
 ): ParameterResolvable => {
     switch (type) {
-        case "STRING":
+        case "TEXT":
             return a;
-        case "INTEGER":
-            const numI = parseInt(a);
-            if (isNaN(numI)) {
-                throw new ParameterTypeError(a, type);
-            } else {
-                return numI;
-            }
-        case "FLOAT":
+        case "NUMBER":
             const numF = parseFloat(a);
             if (isNaN(numF)) {
                 throw new ParameterTypeError(a, type);
             } else {
                 return numF;
             }
-        case "BOOLEAN":
+        case "TRUE/FALSE":
             if (a.toLowerCase() == "true") {
                 return true;
             } else if (a.toLowerCase() == "false") {

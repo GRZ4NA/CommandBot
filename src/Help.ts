@@ -21,7 +21,14 @@ export class HelpMessage extends Command {
             usage: params.usage,
             permissions: 0,
             description: params.description,
-            function: (m, a) => {
+            parameters: [
+                {
+                    name: "Command name",
+                    optional: true,
+                    type: "TEXT",
+                },
+            ],
+            function: (_, a) => {
                 const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();
