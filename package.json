@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/GRZ4NA/CommandBot#readme",
     "dependencies": {
-        "discord.js": "^13.0.0"
+        "discord.js": "^12.5.3"
     },
     "devDependencies": {
         "@types/node": "^15.12.4",

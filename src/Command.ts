@@ -1,10 +1,9 @@
 //IMPORTS
 import {
     Permissions,
+    PermissionResolvable,
     Message,
     MessageEmbed,
-    BitFieldResolvable,
-    PermissionString,
 } from "discord.js";
 import { MissingParameterError, PermissionsError } from "./Error.js";
 import {
@@ -28,7 +27,7 @@ interface CommandBuilder {
     description?: string;
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
-    permissions?: BitFieldResolvable<PermissionString, bigint>;
+    permissions?: PermissionResolvable;
     visible?: boolean;
     function: (
         message?: Message,
@@ -66,7 +65,7 @@ export class Command {
      * @param {string} [options.description="No description"] - command description shown in the help message
      * @param {string} [options.usage] - command usage description shown in the help message
      * @param {PermissionCheckTypes} [options.permissionCheck='ANY'] - specifies if the caller has to have all of the specified permissions or any of that
-     * @param {BitFieldResolvable} [options.permissions] - permissions needed to run the command
+     * @param {PermissionResolvable} [options.permissions] - permissions needed to run the command
      * @param {boolean} [options.visible=true] - show command in the help message
      * @param {Function} options.function - function that will trigger when the commands gets called
      */
@@ -81,7 +80,7 @@ export class Command {
             options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
                 ? options.permissionCheck
                 : "ANY";
-        this.permissions = new Permissions(options.permissions);
+        this.permissions = new Permissions(options.permissions || 0);
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
@@ -94,7 +93,7 @@ export class Command {
      */
     async start(message?: Message, cmdParams?: string[]): Promise<void> {
         const memberPermissions: Readonly<Permissions> =
-            message?.member?.permissions || new Permissions();
+            message?.member?.permissions || new Permissions(0);
         if (
             this.permissionCheck == "ALL"
                 ? memberPermissions.has(this.permissions, true)
@@ -117,7 +116,7 @@ export class Command {
             if (typeof fnResult == "string") {
                 await message?.reply(fnResult);
             } else if (fnResult instanceof MessageEmbed) {
-                await message?.channel.send({ embeds: [fnResult] });
+                await message?.channel.send(fnResult);
             }
         } else {
             throw new PermissionsError(this, message?.member);

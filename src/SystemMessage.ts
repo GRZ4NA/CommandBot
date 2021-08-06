@@ -79,10 +79,10 @@ export class SystemMessageManager {
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
             if (this[type].bottomText)
-                embed.setDescription(this[type].bottomText || "");
+                embed.setDescription(this[type].bottomText);
             embed.setColor(this[type].accentColor || "#000");
             if (this[type].showTimestamp) embed.setTimestamp();
-            if (this[type].footer) embed.setFooter(this[type].footer || "");
+            if (this[type].footer) embed.setFooter(this[type].footer);
             if (data) {
                 switch (type) {
                     case "ERROR":
@@ -153,11 +153,9 @@ export class SystemMessageManager {
                 }
             }
             if (channel) {
-                const message = await channel.send({ embeds: [embed] });
+                const message = await channel.send(embed);
                 if (this.deleteTimeout != Infinity && message.deletable) {
-                    setTimeout(async () => {
-                        await message.delete();
-                    }, this.deleteTimeout || 0);
+                    await message.delete({ timeout: this.deleteTimeout });
                 }
                 return message;
             } else {

@@ -19,7 +19,7 @@ export class HelpMessage extends Command {
         super({
             name: "help",
             usage: params.usage,
-            permissions: undefined,
+            permissions: 0,
             description: params.description,
             parameters: [
                 {
