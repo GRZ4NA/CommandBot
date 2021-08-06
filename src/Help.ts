@@ -12,13 +12,13 @@ export class HelpMessage extends Command {
         super({
             name: "help",
             usage: params.usage,
-            permissions: 0,
+            permissions: undefined,
             description: params.description,
             parameters: [
                 {
                     name: "Command name",
                     optional: true,
-                    type: "TEXT",
+                    type: "string",
                 },
             ],
             function: (_, a) => {

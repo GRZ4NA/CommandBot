@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Intents, Message, TextChannel } from "discord.js";
 import { Command } from "./Command.js";
 import { CommandManager } from "./CommandManager.js";
 import {
@@ -27,6 +27,7 @@ export class Bot extends EventEmitter {
     client: Client;
     commands: CommandManager;
     token: string;
+    applicationId: string;
     messages: {
         help: HelpMessageParams;
         system: SystemMessageManager;
@@ -45,12 +46,15 @@ export class Bot extends EventEmitter {
     constructor(options: InitOptions) {
         super();
         this.name = options.name;
-        this.client = new Client(options.clientOptions);
+        this.client = new Client(
+            options.clientOptions || { intents: Intents.FLAGS.GUILDS }
+        );
         this.commands = new CommandManager(
             options.prefix,
             options.argumentSeparator
         );
-        this.token = options.token || "";
+        this.token = options.token;
+        this.applicationId = options.applicationId;
         this.messages = {
             help: {
                 enabled: true,
@@ -70,11 +74,10 @@ export class Bot extends EventEmitter {
      * @param {string} [token] - app token from Discord Developer Portal
      * @returns *Promise<boolean>*
      */
-    async start(port?: number, token?: string): Promise<boolean> {
+    async start(port?: number): Promise<boolean> {
         try {
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix} \n`);
-            this.token = token || this.token;
             if (this.token === "") {
                 throw new ReferenceError(
                     'No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor'
@@ -96,8 +99,11 @@ export class Bot extends EventEmitter {
                 this.commands.add(helpMsg);
             }
             process.stdout.write("Connecting to Discord... ");
-            await this.client.login(this.token);
-            this.client.on("ready", () => {
+            this.client.login(this.token);
+            this.client.on("ready", async () => {
+                console.log("✔");
+                process.stdout.write("Registering commands... ");
+
                 console.log("✔\n");
                 this.emit("READY");
             });
@@ -115,7 +121,7 @@ export class Bot extends EventEmitter {
                                     user: m.member || undefined,
                                     command: cmdMsg.command,
                                 },
-                                m.channel
+                                m.channel as TextChannel
                             );
                         } else {
                             this.messages.system.send(
@@ -125,7 +131,7 @@ export class Bot extends EventEmitter {
                                     user: m.member || undefined,
                                     error: e,
                                 },
-                                m.channel
+                                m.channel as TextChannel
                             );
                             console.error(e);
                         }
@@ -137,7 +143,7 @@ export class Bot extends EventEmitter {
                     this.messages.system.send(
                         "NOT_FOUND",
                         { phrase: m.content, user: m.member || undefined },
-                        m.channel
+                        m.channel as TextChannel
                     );
                 } else {
                     this.emit("MESSAGE", m);

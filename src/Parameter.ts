@@ -10,7 +10,7 @@ export const ProcessArgument = (
     type: ParameterType
 ): ParameterResolvable => {
     switch (type) {
-        case "TEXT":
+        /* case "TEXT":
             return a;
         case "NUMBER":
             const numF = parseFloat(a);
@@ -26,8 +26,9 @@ export const ProcessArgument = (
                 return false;
             } else {
                 throw new ParameterTypeError(a, type);
-            }
+            }*/
         default:
-            throw new TypeError("Invalied type specified");
+            return a;
+        //throw new TypeError("Invalied type specified");
     }
 };

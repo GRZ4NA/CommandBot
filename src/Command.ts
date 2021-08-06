@@ -1,5 +1,5 @@
 //IMPORTS
-import { Permissions, Message, MessageEmbed } from "discord.js";
+import { Permissions, Message, MessageEmbed, Guild } from "discord.js";
 import {
     CommandBuilder,
     PermissionCheckTypes,
@@ -18,6 +18,7 @@ export class Command {
     usage: string;
     permissionCheck: PermissionCheckTypes;
     permissions: Permissions;
+    guilds: Guild[];
     visible: boolean;
     private function: (
         message?: Message,
@@ -49,7 +50,8 @@ export class Command {
             options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
                 ? options.permissionCheck
                 : "ANY";
-        this.permissions = new Permissions(options.permissions || 0);
+        this.permissions = new Permissions(options.permissions || undefined);
+        this.guilds = options.guilds || [];
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
     }
@@ -62,7 +64,7 @@ export class Command {
      */
     async start(message?: Message, cmdParams?: string[]): Promise<void> {
         const memberPermissions: Readonly<Permissions> =
-            message?.member?.permissions || new Permissions(0);
+            message?.member?.permissions || new Permissions();
         if (
             this.permissionCheck == "ALL"
                 ? memberPermissions.has(this.permissions, true)
@@ -85,7 +87,7 @@ export class Command {
             if (typeof fnResult == "string") {
                 await message?.reply(fnResult);
             } else if (fnResult instanceof MessageEmbed) {
-                await message?.channel.send(fnResult);
+                await message?.channel.send({ embeds: [fnResult] });
             }
         } else {
             throw new PermissionsError(this, message?.member);

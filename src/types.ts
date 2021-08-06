@@ -1,4 +1,13 @@
-import { ClientOptions, ColorResolvable } from "discord.js";
+import {
+    ClientOptions,
+    ColorResolvable,
+    Guild,
+    GuildMember,
+    NewsChannel,
+    Role,
+    TextChannel,
+    VoiceChannel,
+} from "discord.js";
 import { Parameter } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
@@ -8,7 +17,8 @@ export interface InitOptions {
     prefix: string;
     argumentSeparator?: string;
     clientOptions?: ClientOptions;
-    token?: string;
+    token: string;
+    applicationId: string;
 }
 export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 export type PermissionCheckTypes = "ALL" | "ANY";
@@ -21,6 +31,7 @@ export interface CommandBuilder {
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
     permissions?: PermissionResolvable;
+    guilds?: Guild[];
     visible?: boolean;
     function: (
         message?: Message,
@@ -43,5 +54,20 @@ export interface HelpMessageParams {
     description: string;
     usage: string;
 }
-export type ParameterType = "TEXT" | "TRUE/FALSE" | "NUMBER";
-export type ParameterResolvable = string | boolean | number;
+export type ParameterType =
+    | "string"
+    | "boolean"
+    | "number"
+    | "user"
+    | "role"
+    | "channel"
+    | "mentionable";
+export type ParameterResolvable =
+    | string
+    | boolean
+    | number
+    | GuildMember
+    | Role
+    | TextChannel
+    | VoiceChannel
+    | NewsChannel;
