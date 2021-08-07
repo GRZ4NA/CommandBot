@@ -12,7 +12,7 @@ import {
     PermissionCheckTypes,
     ParameterResolvable,
 } from "./types.js";
-import { MissingParameterError, PermissionsError } from "./errors.js";
+import { PermissionsError } from "./errors.js";
 import { Parameter } from "./Parameter.js";
 
 //CLASSES
@@ -92,19 +92,6 @@ export class Command {
                     ? memberPermissions.has(this.permissions, true)
                     : memberPermissions.any(this.permissions, true))
             ) {
-                let inputArguments: ParameterResolvable[] = cmdParams || [];
-                if (this.parameters) {
-                    this.parameters.map((a, i) => {
-                        if (!inputArguments[i] && !a.optional) {
-                            throw new MissingParameterError(a);
-                        } else if (inputArguments[i]) {
-                            inputArguments[i] = Parameter.process(
-                                inputArguments[i] as string,
-                                a.type
-                            );
-                        }
-                    });
-                }
                 const fnResult = await this.function(interaction, cmdParams);
                 if (typeof fnResult == "string") {
                     await interaction?.reply(fnResult);

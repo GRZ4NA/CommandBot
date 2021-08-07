@@ -29,7 +29,7 @@ export class Parameter {
         }
         return;
     }
-    static process(a: string, type: ParameterType): ParameterResolvable {
+    static processString(a: string, type: ParameterType): ParameterResolvable {
         return a;
     }
 }

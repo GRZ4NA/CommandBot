@@ -1,8 +1,11 @@
 import { CommandInteraction, Message } from "discord.js";
+import { MissingParameterError } from "errors.js";
+import { Parameter } from "Parameter.js";
 import { Command } from "./Command.js";
 import {
     CommandMessageStructure,
     GetMode,
+    ParameterResolvable,
     PhraseOccurrenceData,
 } from "./types.js";
 
@@ -144,6 +147,19 @@ export class CommandManager {
                     paramsList.length == 1
                 ) {
                     paramsList.splice(0, 1);
+                }
+                let parameters: ParameterResolvable[] = paramsList;
+                if (command.parameters) {
+                    command.parameters.map((a, i) => {
+                        if (!parameters[i] && !a.optional) {
+                            throw new MissingParameterError(a);
+                        } else if (parameters[i]) {
+                            parameters[i] = Parameter.processString(
+                                parameters[i] as string,
+                                a.type
+                            );
+                        }
+                    });
                 }
                 return {
                     command: command,
