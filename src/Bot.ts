@@ -128,18 +128,11 @@ export class Bot extends EventEmitter {
                         .filter((c) => !!c.guilds)
                         .map((c) => {
                             c.guilds?.map(async (g) => {
-                                const guild = await this.client.guilds.fetch(g);
-                                if (guild) {
-                                    if (guilds[guild.id]) {
-                                        guilds[guild.id].push(
-                                            c.toCommandObject()
-                                        );
-                                    } else {
-                                        guilds[guild.id] = [];
-                                        guilds[guild.id].push(
-                                            c.toCommandObject()
-                                        );
-                                    }
+                                if (guilds[g]) {
+                                    guilds[g].push(c.toCommandObject());
+                                } else {
+                                    guilds[g] = [];
+                                    guilds[g].push(c.toCommandObject());
                                 }
                             });
                         });
@@ -217,7 +210,6 @@ export class Bot extends EventEmitter {
                             i as CommandInteraction
                         );
                     }
-                    cmd = this.commands.fetchFromInteraction(i);
                 } catch (e) {
                     if (e instanceof PermissionsError) {
                         await this.messages.system.send(
