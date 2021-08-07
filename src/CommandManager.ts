@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { Command } from "./Command.js";
 import {
     CommandMessageStructure,
@@ -121,7 +121,7 @@ export class CommandManager {
      * @param {Message} message - *Message* object
      * @returns *CommandMessagesStructure* | *null*
      */
-    fetch(message: Message): CommandMessageStructure | null {
+    fetchFromMessage(message: Message): CommandMessageStructure | null {
         if (!message.author.bot) {
             let prefix = false;
             if (message.content.startsWith(this.prefix)) {
@@ -155,6 +155,23 @@ export class CommandManager {
         } else {
             return null;
         }
+    }
+    fetchFromInteraction(
+        interaction: CommandInteraction
+    ): CommandMessageStructure | null {
+        const cmd = this.get(interaction.commandName);
+        if (cmd) {
+            if (interaction.options?.data) {
+                const params = interaction.options.data.map((o) => o.value);
+                return {
+                    command: cmd,
+                    parameters: params,
+                };
+            }
+        } else {
+            return null;
+        }
+        return null;
     }
 
     private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {

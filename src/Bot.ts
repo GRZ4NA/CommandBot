@@ -1,4 +1,4 @@
-import { Client, Intents, Message, TextChannel } from "discord.js";
+import { Client, GuildMember, Intents, Message, TextChannel } from "discord.js";
 import { Command } from "./Command.js";
 import { CommandManager } from "./CommandManager.js";
 import {
@@ -119,7 +119,7 @@ export class Bot extends EventEmitter {
                 this.emit("READY");
             });
             this.client.on("message", async (m) => {
-                const cmdMsg = this.commands.fetch(m);
+                const cmdMsg = this.commands.fetchFromMessage(m);
                 if (cmdMsg) {
                     this.emit("COMMAND", m, cmdMsg);
                     try {
@@ -158,6 +158,42 @@ export class Bot extends EventEmitter {
                     );
                 } else {
                     this.emit("MESSAGE", m);
+                }
+            });
+            this.client.on("interactionCreate", async (i) => {
+                if (!i.isCommand()) return;
+                const cmd = this.commands.fetchFromInteraction(i);
+                if (cmd) {
+                    this.emit("COMMAND", i, cmd);
+                    try {
+                        await cmd.command.start(i, cmd.parameters);
+                    } catch (e) {
+                        if (e instanceof PermissionsError) {
+                            this.messages.system.send(
+                                "PERMISSION",
+                                {
+                                    user:
+                                        (i.member as GuildMember) || undefined,
+                                    command: cmd.command,
+                                },
+                                i
+                            );
+                        } else {
+                            this.messages.system.send(
+                                "ERROR",
+                                {
+                                    command: cmd.command,
+                                    user:
+                                        (i.member as GuildMember) || undefined,
+                                    error: e,
+                                },
+                                i
+                            );
+                            console.error(e);
+                        }
+                        this.emit("ERROR", e);
+                        return;
+                    }
                 }
             });
             return true;

@@ -1,5 +1,6 @@
 import {
     ColorResolvable,
+    CommandInteraction,
     DMChannel,
     GuildMember,
     Message,
@@ -64,13 +65,13 @@ export class SystemMessageManager {
      * Generates and sends a system message
      * @param {MessageType} type - 'ERROR' | 'PERMISSION' | 'NOT_FOUND'
      * @param {SystemMessageData} [data] - additional data to include in the message
-     * @param {TextChannel | DMChannel | NewsChannel} [channel] - if specified, the generated message will be sent in this channel
+     * @param {TextChannel | DMChannel | NewsChannel} [interaction] - if specified, the generated message will be sent in this channel
      * @returns *Promise<MessageEmbed | Message | void>*
      */
     async send(
         type: MessageType,
         data?: SystemMessageData,
-        channel?: TextChannel | DMChannel | NewsChannel
+        interaction?: TextChannel | DMChannel | NewsChannel | CommandInteraction
     ): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
@@ -152,14 +153,19 @@ export class SystemMessageManager {
                         break;
                 }
             }
-            if (channel) {
-                const message = await channel.send({ embeds: [embed] });
+            if (interaction && !(interaction instanceof CommandInteraction)) {
+                const message = await interaction.send({ embeds: [embed] });
                 if (this.deleteTimeout != Infinity && message.deletable) {
                     setTimeout(async () => {
                         await message.delete();
                     }, this.deleteTimeout || 0);
                 }
                 return message;
+            } else if (
+                interaction &&
+                interaction instanceof CommandInteraction
+            ) {
+                interaction.reply({ embeds: [embed] });
             } else {
                 return embed;
             }

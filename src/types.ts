@@ -1,6 +1,7 @@
 import {
     ClientOptions,
     ColorResolvable,
+    CommandInteraction,
     Guild,
     GuildMember,
     NewsChannel,
@@ -34,7 +35,7 @@ export interface CommandBuilder {
     guilds?: Guild[];
     visible?: boolean;
     function: (
-        message?: Message,
+        interaction?: Message | CommandInteraction,
         cmdParams?: ParameterResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
@@ -44,7 +45,7 @@ export interface PhraseOccurrenceData {
 }
 export interface CommandMessageStructure {
     command: Command;
-    parameters: string[];
+    parameters: ParameterResolvable[];
 }
 export interface HelpMessageParams {
     enabled: boolean;
@@ -62,15 +63,7 @@ export type ParameterType =
     | "role"
     | "channel"
     | "mentionable";
-export type ParameterResolvable =
-    | string
-    | boolean
-    | number
-    | GuildMember
-    | Role
-    | TextChannel
-    | VoiceChannel
-    | NewsChannel;
+export type ParameterResolvable = string | boolean | number | undefined;
 export interface Choice {
     name: string;
     value: string;

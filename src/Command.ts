@@ -1,5 +1,12 @@
 //IMPORTS
-import { Permissions, Message, MessageEmbed, Guild } from "discord.js";
+import {
+    Permissions,
+    Message,
+    MessageEmbed,
+    Guild,
+    CommandInteraction,
+    GuildMember,
+} from "discord.js";
 import {
     CommandBuilder,
     PermissionCheckTypes,
@@ -21,7 +28,7 @@ export class Command {
     guilds?: Guild[];
     visible: boolean;
     private function: (
-        message?: Message,
+        interaction?: Message | CommandInteraction,
         cmdParams?: ParameterResolvable[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
@@ -72,36 +79,66 @@ export class Command {
      * @param {string[]} [cmdParams] - list of processed parameters passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(message?: Message, cmdParams?: string[]): Promise<void> {
-        const memberPermissions: Readonly<Permissions> =
-            message?.member?.permissions || new Permissions();
-        if (
-            !this.permissions ||
-            (this.permissionCheck == "ALL"
-                ? memberPermissions.has(this.permissions, true)
-                : memberPermissions.any(this.permissions, true))
-        ) {
-            let inputArguments: ParameterResolvable[] = cmdParams || [];
-            if (this.parameters) {
-                this.parameters.map((a, i) => {
-                    if (!inputArguments[i] && !a.optional) {
-                        throw new MissingParameterError(a);
-                    } else if (inputArguments[i]) {
-                        inputArguments[i] = Parameter.process(
-                            inputArguments[i] as string,
-                            a.type
-                        );
+    async start(
+        interaction?: Message | CommandInteraction,
+        cmdParams?: ParameterResolvable[]
+    ): Promise<void> {
+        if (interaction instanceof Message) {
+            const memberPermissions: Readonly<Permissions> =
+                interaction?.member?.permissions || new Permissions();
+            if (
+                !this.permissions ||
+                (this.permissionCheck == "ALL"
+                    ? memberPermissions.has(this.permissions, true)
+                    : memberPermissions.any(this.permissions, true))
+            ) {
+                let inputArguments: ParameterResolvable[] = cmdParams || [];
+                if (this.parameters) {
+                    this.parameters.map((a, i) => {
+                        if (!inputArguments[i] && !a.optional) {
+                            throw new MissingParameterError(a);
+                        } else if (inputArguments[i]) {
+                            inputArguments[i] = Parameter.process(
+                                inputArguments[i] as string,
+                                a.type
+                            );
+                        }
+                    });
+                }
+                const fnResult = await this.function(interaction, cmdParams);
+                if (typeof fnResult == "string") {
+                    await interaction?.reply(fnResult);
+                } else if (fnResult instanceof MessageEmbed) {
+                    await interaction?.channel.send({ embeds: [fnResult] });
+                }
+            } else {
+                throw new PermissionsError(this, interaction?.member);
+            }
+        } else if (interaction instanceof CommandInteraction) {
+            const memberPermissions = interaction.member?.permissions;
+            if (memberPermissions instanceof Permissions) {
+                if (
+                    !this.permissions ||
+                    (this.permissionCheck === "ALL"
+                        ? memberPermissions.has(this.permissions, true)
+                        : memberPermissions.any(this.permissions, true))
+                ) {
+                    const fnResult = await this.function(
+                        interaction,
+                        cmdParams
+                    );
+                    if (typeof fnResult == "string") {
+                        await interaction.reply(fnResult);
+                    } else if (fnResult instanceof MessageEmbed) {
+                        await interaction.reply({ embeds: [fnResult] });
                     }
-                });
+                }
+            } else {
+                throw new PermissionsError(
+                    this,
+                    interaction.member as GuildMember
+                );
             }
-            const fnResult = await this.function(message, cmdParams);
-            if (typeof fnResult == "string") {
-                await message?.reply(fnResult);
-            } else if (fnResult instanceof MessageEmbed) {
-                await message?.channel.send({ embeds: [fnResult] });
-            }
-        } else {
-            throw new PermissionsError(this, message?.member);
         }
     }
 
