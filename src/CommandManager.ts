@@ -32,33 +32,37 @@ export class CommandManager {
                     if (c.name == phrase) {
                         command = c;
                     }
-                    c.aliases.map((a) => {
-                        if (a == phrase) {
-                            command = c;
-                        }
-                    });
+                    c.aliases &&
+                        c.aliases.map((a) => {
+                            if (a == phrase) {
+                                command = c;
+                            }
+                        });
                     break;
                 case "NO_PREFIX":
-                    c.keywords.map((k) => {
-                        if (k == phrase) {
-                            command = c;
-                        }
-                    });
+                    c.keywords &&
+                        c.keywords.map((k) => {
+                            if (k == phrase) {
+                                command = c;
+                            }
+                        });
                     break;
                 case "ALL":
                     if (c.name == phrase) {
                         command = c;
                     }
-                    c.aliases.map((a) => {
-                        if (a == phrase) {
-                            command = c;
-                        }
-                    });
-                    c.keywords.map((k) => {
-                        if (k == phrase) {
-                            command = c;
-                        }
-                    });
+                    c.aliases &&
+                        c.aliases.map((a) => {
+                            if (a == phrase) {
+                                command = c;
+                            }
+                        });
+                    c.keywords &&
+                        c.keywords.map((k) => {
+                            if (k == phrase) {
+                                command = c;
+                            }
+                        });
                     break;
             }
         });
@@ -82,25 +86,27 @@ export class CommandManager {
                     `The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`
                 );
             }
-            command.aliases.map((a, i, ar) => {
-                const aliasOccurrence: PhraseOccurrenceData | null =
-                    this.findPhraseOccurrence(a);
-                if (aliasOccurrence) {
-                    console.warn(
-                        `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
-                    );
-                    ar.splice(i, 1);
-                }
-            });
-            this.list.map((c) => {
-                command.keywords.map((k, i, a) => {
-                    if (c.keywords.indexOf(k) != -1) {
+            command.aliases &&
+                command.aliases.map((a, i, ar) => {
+                    const aliasOccurrence: PhraseOccurrenceData | null =
+                        this.findPhraseOccurrence(a);
+                    if (aliasOccurrence) {
                         console.warn(
-                            `[⚠ WARN] The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
+                            `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
                         );
-                        a.splice(i, 1);
+                        ar.splice(i, 1);
                     }
                 });
+            this.list.map((c) => {
+                command.keywords &&
+                    command.keywords.map((k, i, a) => {
+                        if (c.keywords && c.keywords.indexOf(k) != -1) {
+                            console.warn(
+                                `[⚠ WARN] The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
+                            );
+                            a.splice(i, 1);
+                        }
+                    });
             });
             this.list.push(command);
             return true;
@@ -159,7 +165,7 @@ export class CommandManager {
                     command: c,
                     type: "NAME",
                 };
-            } else if (c.aliases.indexOf(phrase || "") != -1) {
+            } else if (c.aliases && c.aliases.indexOf(phrase || "") != -1) {
                 returnValue = {
                     command: c,
                     type: "ALIAS",

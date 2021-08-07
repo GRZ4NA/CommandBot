@@ -8,7 +8,7 @@ import {
     TextChannel,
     VoiceChannel,
 } from "discord.js";
-import { Parameter } from "./Parameter.js";
+import { ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
 
@@ -24,7 +24,7 @@ export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 export type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandBuilder {
     name: string;
-    parameters?: Parameter[];
+    parameters?: ParameterSchema[];
     aliases?: string[] | string;
     keywords?: string[] | string;
     description?: string;

@@ -75,7 +75,7 @@ export class Bot extends EventEmitter {
      * @param {string} [token] - app token from Discord Developer Portal
      * @returns *Promise<boolean>*
      */
-    async start(port?: number): Promise<boolean> {
+    async start(port?: number, register?: boolean): Promise<boolean> {
         try {
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix} \n`);
@@ -102,16 +102,20 @@ export class Bot extends EventEmitter {
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {
-                console.log("✔");
-                process.stdout.write("Registering commands... ");
-                this.commands.list.map(async (c) => {
-                    await axios.post(
+                if (register === undefined || register === true) {
+                    console.log("✔");
+                    process.stdout.write("Registering commands... ");
+                    await axios.put(
                         `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-                        c.toCommandObject(),
+                        this.commands.list.map((c) =>
+                            !c.guilds ? c.toCommandObject() : {}
+                        ),
                         { headers: { Authorization: `Bot ${this.token}` } }
                     );
-                });
-                console.log("✔\n");
+                    console.log("✔\n");
+                } else {
+                    console.log("✔\n");
+                }
                 this.emit("READY");
             });
             this.client.on("message", async (m) => {

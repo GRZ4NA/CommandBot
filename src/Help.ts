@@ -16,7 +16,7 @@ export class HelpMessage extends Command {
             description: params.description,
             parameters: [
                 {
-                    name: "Command name",
+                    name: "command_name",
                     description:
                         "Name of the command that you want to get details about",
                     optional: true,
@@ -45,7 +45,10 @@ export class HelpMessage extends Command {
                                     `${cmdManager.prefix}${cmd.name} ${cmd.usage}`,
                                     false
                                 );
-                            if (cmd.permissions.toArray(false).length > 0) {
+                            if (
+                                cmd.permissions &&
+                                cmd.permissions.toArray(false).length > 0
+                            ) {
                                 let permList: string = "";
                                 cmd.permissions.toArray(false).map((p) => {
                                     permList += p + "\n";
@@ -56,14 +59,14 @@ export class HelpMessage extends Command {
                                     false
                                 );
                             }
-                            if (cmd.aliases.length > 0) {
+                            if (cmd.aliases && cmd.aliases.length > 0) {
                                 let aList: string = "";
                                 cmd.aliases.map((a) => {
                                     aList += a + "\n";
                                 });
                                 helpMsg.addField("Aliases:", aList, false);
                             }
-                            if (cmd.keywords.length > 0) {
+                            if (cmd.keywords && cmd.keywords.length > 0) {
                                 let kwrdList: string = "";
                                 cmd.keywords.map((k) => {
                                     kwrdList += k + "\n";

@@ -1,35 +1,35 @@
 import { ParameterType, ParameterResolvable, Choice } from "./types.js";
-export interface Parameter {
+export interface ParameterSchema {
     name: string;
     description?: string;
     optional: boolean;
     type: ParameterType;
     choices?: Choice[];
 }
-export const ProcessArgument = (
-    a: string,
-    type: ParameterType
-): ParameterResolvable => {
-    switch (type) {
-        /* case "TEXT":
-            return a;
-        case "NUMBER":
-            const numF = parseFloat(a);
-            if (isNaN(numF)) {
-                throw new ParameterTypeError(a, type);
-            } else {
-                return numF;
-            }
-        case "TRUE/FALSE":
-            if (a.toLowerCase() == "true") {
-                return true;
-            } else if (a.toLowerCase() == "false") {
-                return false;
-            } else {
-                throw new ParameterTypeError(a, type);
-            }*/
-        default:
-            return a;
-        //throw new TypeError("Invalied type specified");
+export class Parameter {
+    name: string;
+    description: string;
+    optional: boolean;
+    type: ParameterType;
+    choices?: Choice[];
+
+    constructor(options: ParameterSchema) {
+        this.name = options.name;
+        this.description = options.description || "No description";
+        this.optional = options.optional;
+        this.type = options.type;
+        this.choices = options.choices;
+        if (!/^[\w-]{1,32}$/.test(this.name)) {
+            throw new Error(
+                `Parameter name ${this.name} doesn't match the pattern`
+            );
+        }
+        if (this.description.length > 100) {
+            throw new Error(`Parameter ${this.name}: Description too long`);
+        }
+        return;
     }
-};
+    static process(a: string, type: ParameterType): ParameterResolvable {
+        return a;
+    }
+}

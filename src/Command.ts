@@ -6,19 +6,19 @@ import {
     ParameterResolvable,
 } from "./types.js";
 import { MissingParameterError, PermissionsError } from "./errors.js";
-import { Parameter, ProcessArgument } from "./Parameter.js";
+import { Parameter } from "./Parameter.js";
 
 //CLASSES
 export class Command {
     name: string;
-    parameters: Parameter[];
-    aliases: string[];
-    keywords: string[];
+    parameters?: Parameter[];
+    aliases?: string[];
+    keywords?: string[];
     description: string;
-    usage: string;
+    usage?: string;
     permissionCheck: PermissionCheckTypes;
-    permissions: Permissions;
-    guilds: Guild[];
+    permissions?: Permissions;
+    guilds?: Guild[];
     visible: boolean;
     private function: (
         message?: Message,
@@ -41,7 +41,9 @@ export class Command {
      */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(" ").join("_");
-        this.parameters = options.parameters || [];
+        this.parameters = options.parameters
+            ? options.parameters.map((p) => new Parameter(p))
+            : undefined;
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
@@ -50,13 +52,18 @@ export class Command {
             options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
                 ? options.permissionCheck
                 : "ANY";
-        this.permissions = new Permissions(options.permissions || undefined);
-        this.guilds = options.guilds || [];
+        this.permissions = options.permissions
+            ? new Permissions(options.permissions)
+            : undefined;
+        this.guilds = options.guilds;
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
-        /*if (!new RegExp("^[w-]{1,32}$").test(this.name)) {
+        if (!/^[\w-]{1,32}$/.test(this.name)) {
             throw new Error(`Incorrect command name: ${this.name}`);
-        }*/
+        }
+        if (this.description.length > 100) {
+            throw new Error("Command description is too long");
+        }
     }
 
     /**
@@ -69,17 +76,18 @@ export class Command {
         const memberPermissions: Readonly<Permissions> =
             message?.member?.permissions || new Permissions();
         if (
-            this.permissionCheck == "ALL"
+            !this.permissions ||
+            (this.permissionCheck == "ALL"
                 ? memberPermissions.has(this.permissions, true)
-                : memberPermissions.any(this.permissions, true)
+                : memberPermissions.any(this.permissions, true))
         ) {
             let inputArguments: ParameterResolvable[] = cmdParams || [];
-            if (this.parameters.length > 0) {
+            if (this.parameters) {
                 this.parameters.map((a, i) => {
                     if (!inputArguments[i] && !a.optional) {
                         throw new MissingParameterError(a);
                     } else if (inputArguments[i]) {
-                        inputArguments[i] = ProcessArgument(
+                        inputArguments[i] = Parameter.process(
                             inputArguments[i] as string,
                             a.type
                         );
@@ -98,14 +106,45 @@ export class Command {
     }
 
     toCommandObject() {
+        let options: any[] = [];
+        if (this.parameters) {
+            options = this.parameters.map((p) => {
+                let type = 3;
+                if (!/^[\w-]{1,32}$/.test(p.name)) {
+                    throw new Error(
+                        `Failed to register ${p.name} parameter for ${this.name}: The option name is incorrect`
+                    );
+                }
+                if ((p.description || "No description").length > 100) {
+                    throw new Error(
+                        `Failed to register ${p.name} parameter for ${this.name}: The description is too long`
+                    );
+                }
+                if (p.type == "boolean") type = 5;
+                else if (p.type == "user") type = 6;
+                else if (p.type == "channel") type = 7;
+                else if (p.type == "role") type = 8;
+                else if (p.type == "mentionable") type = 9;
+                else if (p.type == "number") type = 10;
+                return {
+                    name: p.name,
+                    description: p.description || "No description",
+                    required: !p.optional,
+                    type: type,
+                    choices: p.choices || [],
+                };
+            });
+        }
         return {
             name: this.name,
             description: this.description,
-            options: [],
+            options: options,
         };
     }
 
-    private static processPhrase(phrase?: string | string[]): string[] {
+    private static processPhrase(
+        phrase?: string | string[]
+    ): string[] | undefined {
         if (Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
                 return p.split(" ").join("_");
@@ -121,17 +160,18 @@ export class Command {
             buff.push(phrase.split(" ").join("_"));
             return buff;
         } else {
-            return [];
+            return undefined;
         }
     }
 
     private generateUsageFromArguments(): string {
         let usageTemplate: string = "";
-        this.parameters.map((e) => {
-            usageTemplate += `[${e.name} (${e.type}${
-                e.optional ? ", optional" : ""
-            })] `;
-        });
+        this.parameters &&
+            this.parameters.map((e) => {
+                usageTemplate += `[${e.name} (${e.type}${
+                    e.optional ? ", optional" : ""
+                })] `;
+            });
         return usageTemplate;
     }
 }
