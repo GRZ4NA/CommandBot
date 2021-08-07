@@ -59,7 +59,9 @@ export class Bot extends EventEmitter {
         super();
         this.name = options.name;
         this.client = new Client(
-            options.clientOptions || { intents: Intents.FLAGS.GUILDS }
+            options.clientOptions || {
+                intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+            }
         );
         this.commands = new CommandManager(
             options.prefix,
