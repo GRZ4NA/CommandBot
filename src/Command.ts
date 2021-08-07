@@ -131,6 +131,22 @@ export class Command {
                         await interaction.reply(fnResult);
                     } else if (fnResult instanceof MessageEmbed) {
                         await interaction.reply({ embeds: [fnResult] });
+                    } else if (!interaction.replied) {
+                        try {
+                            await interaction.reply({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setColor("#00ff00")
+                                        .setTitle(
+                                            "✅ Task completed successfully"
+                                        ),
+                                ],
+                            });
+                        } catch (e) {
+                            console.log(
+                                "Cannot reply. The interaction has been closed"
+                            );
+                        }
                     }
                 }
             } else {
