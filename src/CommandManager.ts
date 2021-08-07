@@ -249,31 +249,32 @@ export class CommandManager {
                     parameters: parameters,
                 };
             } else if (interaction.options?.data) {
-                const paramsList = interaction.options.data.map((o) => o.value);
+                const paramsList = interaction.options.data;
                 const parameters: InputParameter[] = [];
-                cmd.parameters.map((p, i) => {
-                    if (!p.optional && !paramsList[i]) {
+                cmd.parameters.map((p) => {
+                    const inputParam = paramsList.find((d) => d.name == p.name);
+                    if (!p.optional && !inputParam) {
                         throw new MissingParameterError(p);
                     }
                     switch (p.type) {
                         case "string":
                             parameters.push(
-                                new StringParameter(p, paramsList[i])
+                                new StringParameter(p, inputParam?.value)
                             );
                             break;
                         case "boolean":
                             parameters.push(
-                                new BooleanParameter(p, paramsList[i])
+                                new BooleanParameter(p, inputParam?.value)
                             );
                             break;
                         case "number":
                             parameters.push(
-                                new NumberParameter(p, paramsList[i])
+                                new NumberParameter(p, inputParam?.value)
                             );
                             break;
                         default:
                             parameters.push(
-                                new InputParameter(p, paramsList[i])
+                                new InputParameter(p, inputParam?.value)
                             );
                             break;
                     }
