@@ -48,9 +48,13 @@ export class Command {
      */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(" ").join("_");
-        this.parameters = options.parameters
-            ? options.parameters.map((p) => new Parameter(p))
-            : [new DefaultParameter()];
+        if (options.parameters == "no_input" || !options.parameters) {
+            this.parameters = [];
+        } else if (options.parameters == "simple") {
+            this.parameters = [new DefaultParameter()];
+        } else {
+            this.parameters = options.parameters.map((ps) => new Parameter(ps));
+        }
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";

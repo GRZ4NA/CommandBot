@@ -20,7 +20,7 @@ export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 export type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandBuilder {
     name: string;
-    parameters?: ParameterSchema[];
+    parameters?: ParameterSchema[] | "simple" | "no_input";
     aliases?: string[] | string;
     keywords?: string[] | string;
     description?: string;
