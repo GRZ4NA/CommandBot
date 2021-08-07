@@ -118,7 +118,7 @@ export class Bot extends EventEmitter {
                 }
                 this.emit("READY");
             });
-            this.client.on("message", async (m) => {
+            this.client.on("messageCreate", async (m) => {
                 const cmdMsg = this.commands.fetchFromMessage(m);
                 if (cmdMsg) {
                     this.emit("COMMAND", m, cmdMsg);
@@ -194,6 +194,15 @@ export class Bot extends EventEmitter {
                         this.emit("ERROR", e);
                         return;
                     }
+                } else {
+                    this.messages.system.send(
+                        "NOT_FOUND",
+                        {
+                            phrase: i.commandName,
+                            user: i.member as GuildMember,
+                        },
+                        i
+                    );
                 }
             });
             return true;
