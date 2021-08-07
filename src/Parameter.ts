@@ -1,9 +1,10 @@
-import { ParameterTypeError } from "./errors.js";
-import { ParameterType, ParameterResolvable } from "./types.js";
+import { ParameterType, ParameterResolvable, Choice } from "./types.js";
 export interface Parameter {
     name: string;
+    description?: string;
     optional: boolean;
     type: ParameterType;
+    choices?: Choice[];
 }
 export const ProcessArgument = (
     a: string,

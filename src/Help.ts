@@ -17,6 +17,8 @@ export class HelpMessage extends Command {
             parameters: [
                 {
                     name: "Command name",
+                    description:
+                        "Name of the command that you want to get details about",
                     optional: true,
                     type: "string",
                 },

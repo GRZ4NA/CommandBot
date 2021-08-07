@@ -11,6 +11,7 @@ import { HelpMessage } from "./Help.js";
 import * as http from "http";
 import { SystemMessageManager } from "./SystemMessage.js";
 import { EventEmitter } from "events";
+import axios from "axios";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
@@ -103,7 +104,13 @@ export class Bot extends EventEmitter {
             this.client.on("ready", async () => {
                 console.log("✔");
                 process.stdout.write("Registering commands... ");
-
+                this.commands.list.map(async (c) => {
+                    await axios.post(
+                        `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
+                        c.toCommandObject(),
+                        { headers: { Authorization: `Bot ${this.token}` } }
+                    );
+                });
                 console.log("✔\n");
                 this.emit("READY");
             });

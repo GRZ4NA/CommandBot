@@ -54,6 +54,9 @@ export class Command {
         this.guilds = options.guilds || [];
         this.visible = options.visible != undefined ? options.visible : true;
         this.function = options.function;
+        /*if (!new RegExp("^[w-]{1,32}$").test(this.name)) {
+            throw new Error(`Incorrect command name: ${this.name}`);
+        }*/
     }
 
     /**
@@ -92,6 +95,14 @@ export class Command {
         } else {
             throw new PermissionsError(this, message?.member);
         }
+    }
+
+    toCommandObject() {
+        return {
+            name: this.name,
+            description: this.description,
+            options: [],
+        };
     }
 
     private static processPhrase(phrase?: string | string[]): string[] {

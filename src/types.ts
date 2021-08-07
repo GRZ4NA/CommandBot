@@ -71,3 +71,7 @@ export type ParameterResolvable =
     | TextChannel
     | VoiceChannel
     | NewsChannel;
+export interface Choice {
+    name: string;
+    value: string;
+}
