@@ -25,7 +25,10 @@ export declare interface Bot {
     on(event: "MESSAGE", listener: (m: Message) => void): this;
     on(
         event: "COMMAND",
-        listener: (m: Message, cmdMsg: CommandMessageStructure) => void
+        listener: (
+            m: Message | CommandInteraction,
+            cmdMsg: CommandMessageStructure
+        ) => void
     ): this;
     on(event: "ERROR", listener: (e: any) => void): this;
 }
@@ -124,12 +127,19 @@ export class Bot extends EventEmitter {
                     this.commands.list
                         .filter((c) => !!c.guilds)
                         .map((c) => {
-                            c.guilds?.map((g) => {
-                                if (guilds[g.id]) {
-                                    guilds[g.id].push(c.toCommandObject());
-                                } else {
-                                    guilds[g.id] = [];
-                                    guilds[g.id].push(c.toCommandObject());
+                            c.guilds?.map(async (g) => {
+                                const guild = await this.client.guilds.fetch(g);
+                                if (guild) {
+                                    if (guilds[guild.id]) {
+                                        guilds[guild.id].push(
+                                            c.toCommandObject()
+                                        );
+                                    } else {
+                                        guilds[guild.id] = [];
+                                        guilds[guild.id].push(
+                                            c.toCommandObject()
+                                        );
+                                    }
                                 }
                             });
                         });

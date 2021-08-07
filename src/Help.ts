@@ -31,7 +31,7 @@ export class HelpMessage extends Command {
                 if (helpMsg != null) {
                     if (a && a[0]) {
                         const cmd: Command | null = cmdManager.get(
-                            a[0].toString(),
+                            a[0].value?.toString() || "",
                             "ALL"
                         );
                         if (cmd) {
@@ -75,7 +75,7 @@ export class HelpMessage extends Command {
                             }
                         } else {
                             throw new ReferenceError(
-                                `Command "${a[0]}" does not exist`
+                                `Command "${a[0].value}" does not exist`
                             );
                         }
                     } else {

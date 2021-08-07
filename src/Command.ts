@@ -13,23 +13,23 @@ import {
     ParameterResolvable,
 } from "./types.js";
 import { PermissionsError } from "./errors.js";
-import { Parameter } from "./Parameter.js";
+import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
 //CLASSES
 export class Command {
     name: string;
-    parameters?: Parameter[];
+    parameters: Parameter[];
     aliases?: string[];
     keywords?: string[];
     description: string;
     usage?: string;
     permissionCheck: PermissionCheckTypes;
     permissions?: Permissions;
-    guilds?: Guild[];
+    guilds?: string[];
     visible: boolean;
     private function: (
         interaction?: Message | CommandInteraction,
-        cmdParams?: ParameterResolvable[]
+        cmdParams?: InputParameter[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 
     /**
@@ -50,7 +50,7 @@ export class Command {
         this.name = options.name.split(" ").join("_");
         this.parameters = options.parameters
             ? options.parameters.map((p) => new Parameter(p))
-            : undefined;
+            : [new DefaultParameter()];
         this.aliases = Command.processPhrase(options.aliases);
         this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
@@ -81,7 +81,7 @@ export class Command {
      */
     async start(
         interaction?: Message | CommandInteraction,
-        cmdParams?: ParameterResolvable[]
+        cmdParams?: InputParameter[]
     ): Promise<void> {
         if (interaction instanceof Message) {
             const memberPermissions: Readonly<Permissions> =
@@ -110,30 +110,63 @@ export class Command {
                         ? memberPermissions.has(this.permissions, true)
                         : memberPermissions.any(this.permissions, true))
                 ) {
+                    setTimeout(async () => {
+                        if (!interaction.replied) {
+                            await interaction.reply({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setColor("#ffff00")
+                                        .setTitle("🔄 Please wait..."),
+                                ],
+                            });
+                        }
+                    }, 2000);
                     const fnResult = await this.function(
                         interaction,
                         cmdParams
                     );
-                    if (typeof fnResult == "string") {
-                        await interaction.reply(fnResult);
-                    } else if (fnResult instanceof MessageEmbed) {
-                        await interaction.reply({ embeds: [fnResult] });
-                    } else if (!interaction.replied) {
-                        try {
-                            await interaction.reply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setColor("#00ff00")
-                                        .setTitle(
-                                            "✅ Task completed successfully"
-                                        ),
-                                ],
-                            });
-                        } catch (e) {
-                            console.log(
-                                "Cannot reply. The interaction has been closed"
-                            );
+                    try {
+                        if (typeof fnResult == "string") {
+                            interaction.replied
+                                ? await interaction.editReply({
+                                      content: fnResult,
+                                      embeds: [],
+                                  })
+                                : await interaction.reply({
+                                      content: fnResult,
+                                      embeds: [],
+                                  });
+                        } else if (fnResult instanceof MessageEmbed) {
+                            interaction.replied
+                                ? await interaction.editReply({
+                                      embeds: [fnResult],
+                                  })
+                                : await interaction.reply({
+                                      embeds: [fnResult],
+                                  });
+                        } else {
+                            interaction.replied
+                                ? await interaction.editReply({
+                                      embeds: [
+                                          new MessageEmbed()
+                                              .setColor("#00ff00")
+                                              .setTitle(
+                                                  "✅ Task completed successfully"
+                                              ),
+                                      ],
+                                  })
+                                : await interaction.reply({
+                                      embeds: [
+                                          new MessageEmbed()
+                                              .setColor("#00ff00")
+                                              .setTitle(
+                                                  "✅ Task completed successfully"
+                                              ),
+                                      ],
+                                  });
                         }
+                    } catch (e) {
+                        console.error("[❌ ERROR] Cannot reply.", e);
                     }
                 }
             } else {

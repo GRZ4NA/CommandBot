@@ -1,6 +1,13 @@
 import { CommandInteraction, Message } from "discord.js";
-import { MissingParameterError } from "errors.js";
-import { Parameter } from "Parameter.js";
+import { MissingParameterError } from "./errors.js";
+import {
+    BooleanParameter,
+    DefaultParameter,
+    InputParameter,
+    NumberParameter,
+    Parameter,
+    StringParameter,
+} from "./Parameter.js";
 import { Command } from "./Command.js";
 import {
     CommandMessageStructure,
@@ -148,22 +155,37 @@ export class CommandManager {
                 ) {
                     paramsList.splice(0, 1);
                 }
-                let parameters: ParameterResolvable[] = paramsList;
-                if (command.parameters) {
-                    command.parameters.map((a, i) => {
-                        if (!parameters[i] && !a.optional) {
-                            throw new MissingParameterError(a);
-                        } else if (parameters[i]) {
-                            parameters[i] = Parameter.processString(
-                                parameters[i] as string,
-                                a.type
+                const parameters: InputParameter[] = [];
+                command.parameters.map((p, i) => {
+                    if (!p.optional && !paramsList[i]) {
+                        throw new MissingParameterError(p);
+                    }
+                    switch (p.type) {
+                        case "string":
+                            parameters.push(
+                                new StringParameter(p, paramsList[i])
                             );
-                        }
-                    });
-                }
+                            break;
+                        case "boolean":
+                            parameters.push(
+                                new BooleanParameter(p, paramsList[i])
+                            );
+                            break;
+                        case "number":
+                            parameters.push(
+                                new NumberParameter(p, paramsList[i])
+                            );
+                            break;
+                        default:
+                            parameters.push(
+                                new InputParameter(p, paramsList[i])
+                            );
+                            break;
+                    }
+                });
                 return {
                     command: command,
-                    parameters: paramsList,
+                    parameters: parameters,
                 };
             } else {
                 return null;
@@ -177,11 +199,88 @@ export class CommandManager {
     ): CommandMessageStructure | null {
         const cmd = this.get(interaction.commandName);
         if (cmd) {
-            if (interaction.options?.data) {
-                const params = interaction.options.data.map((o) => o.value);
+            if (
+                cmd.parameters.length == 1 &&
+                cmd.parameters[0] instanceof DefaultParameter
+            ) {
+                const argumentsText = interaction.options.data[0]
+                    .value as string;
+                const paramsList = argumentsText
+                    .split(this.argumentSeparator)
+                    .map((a) => {
+                        return a.replace(" ", "");
+                    });
+                if (
+                    (paramsList[0] == "" || paramsList[0] == " ") &&
+                    paramsList.length == 1
+                ) {
+                    paramsList.splice(0, 1);
+                }
+                const parameters: InputParameter[] = [];
+                cmd.parameters.map((p, i) => {
+                    if (!p.optional && !paramsList[i]) {
+                        throw new MissingParameterError(p);
+                    }
+                    switch (p.type) {
+                        case "string":
+                            parameters.push(
+                                new StringParameter(p, paramsList[i])
+                            );
+                            break;
+                        case "boolean":
+                            parameters.push(
+                                new BooleanParameter(p, paramsList[i])
+                            );
+                            break;
+                        case "number":
+                            parameters.push(
+                                new NumberParameter(p, paramsList[i])
+                            );
+                            break;
+                        default:
+                            parameters.push(
+                                new InputParameter(p, paramsList[i])
+                            );
+                            break;
+                    }
+                });
                 return {
                     command: cmd,
-                    parameters: params,
+                    parameters: parameters,
+                };
+            } else if (interaction.options?.data) {
+                const paramsList = interaction.options.data.map((o) => o.value);
+                const parameters: InputParameter[] = [];
+                cmd.parameters.map((p, i) => {
+                    if (!p.optional && !paramsList[i]) {
+                        throw new MissingParameterError(p);
+                    }
+                    switch (p.type) {
+                        case "string":
+                            parameters.push(
+                                new StringParameter(p, paramsList[i])
+                            );
+                            break;
+                        case "boolean":
+                            parameters.push(
+                                new BooleanParameter(p, paramsList[i])
+                            );
+                            break;
+                        case "number":
+                            parameters.push(
+                                new NumberParameter(p, paramsList[i])
+                            );
+                            break;
+                        default:
+                            parameters.push(
+                                new InputParameter(p, paramsList[i])
+                            );
+                            break;
+                    }
+                });
+                return {
+                    command: cmd,
+                    parameters: parameters,
                 };
             }
         } else {

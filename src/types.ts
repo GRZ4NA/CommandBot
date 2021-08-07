@@ -3,13 +3,8 @@ import {
     ColorResolvable,
     CommandInteraction,
     Guild,
-    GuildMember,
-    NewsChannel,
-    Role,
-    TextChannel,
-    VoiceChannel,
 } from "discord.js";
-import { ParameterSchema } from "./Parameter.js";
+import { InputParameter, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
 
@@ -32,11 +27,11 @@ export interface CommandBuilder {
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
     permissions?: PermissionResolvable;
-    guilds?: Guild[];
+    guilds?: string[];
     visible?: boolean;
     function: (
         interaction?: Message | CommandInteraction,
-        cmdParams?: ParameterResolvable[]
+        cmdParams?: InputParameter[]
     ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
 }
 export interface PhraseOccurrenceData {
@@ -45,7 +40,7 @@ export interface PhraseOccurrenceData {
 }
 export interface CommandMessageStructure {
     command: Command;
-    parameters: ParameterResolvable[];
+    parameters: InputParameter[];
 }
 export interface HelpMessageParams {
     enabled: boolean;

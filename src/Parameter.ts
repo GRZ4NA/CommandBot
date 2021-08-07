@@ -33,3 +33,45 @@ export class Parameter {
         return a;
     }
 }
+export class DefaultParameter extends Parameter {
+    constructor() {
+        super({
+            name: "input",
+            description: "No description",
+            type: "string",
+            optional: true,
+        });
+    }
+}
+export class InputParameter extends Parameter {
+    value: ParameterResolvable;
+
+    constructor(parameter: Parameter, value: ParameterResolvable) {
+        super(parameter);
+        this.value = value;
+    }
+}
+export class StringParameter extends InputParameter {
+    constructor(parameter: Parameter, value: ParameterResolvable) {
+        if (parameter.type != "string") {
+            throw new Error(`Parameter type mismatch`);
+        }
+        super(parameter, value?.toString());
+    }
+}
+export class BooleanParameter extends InputParameter {
+    constructor(parameter: Parameter, value: ParameterResolvable) {
+        if (parameter.type != "boolean") {
+            throw new Error(`Parameter type mismatch`);
+        }
+        super(parameter, value ? true : false);
+    }
+}
+export class NumberParameter extends InputParameter {
+    constructor(parameter: Parameter, value: ParameterResolvable) {
+        if (parameter.type != "number") {
+            throw new Error(`Parameter type mismatch`);
+        }
+        super(parameter, parseFloat(value ? value.toString() : ""));
+    }
+}
