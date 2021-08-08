@@ -31,8 +31,7 @@ export class HelpMessage extends Command {
                 if (helpMsg != null) {
                     if (param("command_name")) {
                         const cmd: Command | null = cmdManager.get(
-                            param("command_name")?.toString() || "",
-                            "ALL"
+                            param("command_name")?.toString() || ""
                         );
                         if (cmd) {
                             helpMsg.setTitle(
@@ -65,13 +64,6 @@ export class HelpMessage extends Command {
                                     aList += a + "\n";
                                 });
                                 helpMsg.addField("Aliases:", aList, false);
-                            }
-                            if (cmd.keywords && cmd.keywords.length > 0) {
-                                let kwrdList: string = "";
-                                cmd.keywords.map((k) => {
-                                    kwrdList += k + "\n";
-                                });
-                                helpMsg.addField("Keywords:", kwrdList, false);
                             }
                         } else {
                             throw new ReferenceError(

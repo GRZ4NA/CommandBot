@@ -20,7 +20,6 @@ export class Command {
     name: string;
     parameters: Parameter[];
     aliases?: string[];
-    keywords?: string[];
     description: string;
     usage?: string;
     permissionCheck: PermissionCheckTypes;
@@ -64,7 +63,6 @@ export class Command {
             this.parameters = options.parameters.map((ps) => new Parameter(ps));
         }
         this.aliases = Command.processPhrase(options.aliases);
-        this.keywords = Command.processPhrase(options.keywords);
         this.description = options.description || "No description";
         this.usage = options.usage || this.generateUsageFromArguments();
         this.permissionCheck =

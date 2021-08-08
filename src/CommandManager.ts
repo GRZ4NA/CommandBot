@@ -31,48 +31,18 @@ export class CommandManager {
      * @param {GetMode} [mode='ALL'] - specifies which types of command triggers will be used to find the command [*NO_PREFIX* - only keywords; *PREFIX* - names and aliases]
      * @returns *Command* | *null*
      */
-    get(phrase: string, mode?: GetMode): Command | null {
-        if (!mode) mode = "ALL";
+    get(phrase: string): Command | null {
         let command: Command | null = null;
         this.list.map((c) => {
-            switch (mode) {
-                case "PREFIX":
-                    if (c.name == phrase) {
-                        command = c;
-                    }
-                    c.aliases &&
-                        c.aliases.map((a) => {
-                            if (a == phrase) {
-                                command = c;
-                            }
-                        });
-                    break;
-                case "NO_PREFIX":
-                    c.keywords &&
-                        c.keywords.map((k) => {
-                            if (k == phrase) {
-                                command = c;
-                            }
-                        });
-                    break;
-                case "ALL":
-                    if (c.name == phrase) {
-                        command = c;
-                    }
-                    c.aliases &&
-                        c.aliases.map((a) => {
-                            if (a == phrase) {
-                                command = c;
-                            }
-                        });
-                    c.keywords &&
-                        c.keywords.map((k) => {
-                            if (k == phrase) {
-                                command = c;
-                            }
-                        });
-                    break;
+            if (c.name == phrase) {
+                command = c;
             }
+            c.aliases &&
+                c.aliases.map((a) => {
+                    if (a == phrase) {
+                        command = c;
+                    }
+                });
         });
         return command;
     }
@@ -105,17 +75,6 @@ export class CommandManager {
                         ar.splice(i, 1);
                     }
                 });
-            this.list.map((c) => {
-                command.keywords &&
-                    command.keywords.map((k, i, a) => {
-                        if (c.keywords && c.keywords.indexOf(k) != -1) {
-                            console.warn(
-                                `[⚠ WARN] The name "${k}" is already a registered KEYWORD for the "${c.name}" command. It will be removed from the "${command.name}" command`
-                            );
-                            a.splice(i, 1);
-                        }
-                    });
-            });
             this.list.push(command);
             return true;
         } catch (e) {
@@ -130,16 +89,10 @@ export class CommandManager {
      * @returns *CommandMessagesStructure* | *null*
      */
     fetchFromMessage(message: Message): CommandMessageStructure | null {
-        if (!message.author.bot) {
-            let prefix = false;
-            if (message.content.startsWith(this.prefix)) {
-                prefix = true;
-            }
-            const content = prefix
-                ? message.content.replace(this.prefix, "")
-                : message.content;
+        if (!message.author.bot && message.content.startsWith(this.prefix)) {
+            const content = message.content.replace(this.prefix, "");
             const name = content.split(" ")[0];
-            const command = this.get(name, prefix ? "PREFIX" : "NO_PREFIX");
+            const command = this.get(name);
             if (command) {
                 const argumentsText = content.replace(name, "");
                 const paramsList = argumentsText

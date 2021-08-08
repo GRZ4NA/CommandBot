@@ -22,7 +22,6 @@ export interface CommandBuilder {
     name: string;
     parameters?: ParameterSchema[] | "simple" | "no_input";
     aliases?: string[] | string;
-    keywords?: string[] | string;
     description?: string;
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
