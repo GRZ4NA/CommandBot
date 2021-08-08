@@ -7,7 +7,11 @@ import {
     GuildMember,
     ReplyMessageOptions,
 } from "discord.js";
-import { CommandBuilder, PermissionCheckTypes } from "./types.js";
+import {
+    CommandBuilder,
+    ParameterResolvable,
+    PermissionCheckTypes,
+} from "./types.js";
 import { PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
@@ -97,7 +101,11 @@ export class Command {
                     ? memberPermissions.has(this.permissions, true)
                     : memberPermissions.any(this.permissions, true))
             ) {
-                const fnResult = await this.function(interaction, cmdParams);
+                const fnResult = await this.function.call(
+                    this,
+                    interaction,
+                    cmdParams
+                );
                 if (
                     "content" in (fnResult as ReplyMessageOptions) ||
                     "embeds" in (fnResult as ReplyMessageOptions) ||
@@ -134,7 +142,8 @@ export class Command {
                             });
                         }
                     }, 2000);
-                    const fnResult = await this.function(
+                    const fnResult = await this.function.call(
+                        this,
                         interaction,
                         cmdParams
                     );
@@ -240,6 +249,16 @@ export class Command {
             description: this.description,
             options: options,
         };
+    }
+
+    getParam(
+        query: string,
+        list: InputParameter[],
+        returnType?: "value" | "object"
+    ): ParameterResolvable | InputParameter | null {
+        return returnType === "object"
+            ? list.find((p) => p.name === query) || null
+            : list.find((p) => p.name === query)?.value || null;
     }
 
     private static processPhrase(
