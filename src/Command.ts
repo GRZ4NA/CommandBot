@@ -42,13 +42,13 @@ export class Command {
      * @constructor
      * @param {CommandBuilder} options - all command properties
      * @param {string} options.name - command name (used to trigger the command)
-     * @param {string | string[]} [options.aliases] - other words that can trigger the command with prefix
-     * @param {string | string[]} [options.keywords] - other words that can trigger the command without prefix
+     * @param {string | string[]} [options.aliases] - other words that can trigger the command with prefix (not used in slash commands)
+     * @param {string | string[]} [options.keywords] - other words that can trigger the command without prefix (not used in slash commands)
      * @param {string} [options.description="No description"] - command description shown in the help message
-     * @param {string} [options.usage] - command usage description shown in the help message
+     * @param {string} [options.usage] - command usage description shown in the help message (usage message can be automatically generated using parameters)
      * @param {PermissionCheckTypes} [options.permissionCheck='ANY'] - specifies if the caller has to have all of the specified permissions or any of that
      * @param {PermissionResolvable} [options.permissions] - permissions needed to run the command
-     * @param {boolean} [options.visible=true] - show command in the help message
+     * @param {boolean} [options.visible=true] - show command in the help message (visible as a slash command)
      * @param {Function} options.function - function that will trigger when the commands gets called
      */
     constructor(options: CommandBuilder) {
