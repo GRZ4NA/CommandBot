@@ -2,7 +2,6 @@ import { CommandInteraction, Message } from "discord.js";
 import { MissingParameterError } from "./errors.js";
 import {
     BooleanParameter,
-    DefaultParameter,
     InputParameter,
     NumberParameter,
     StringParameter,
@@ -198,65 +197,7 @@ export class CommandManager {
     ): CommandMessageStructure | null {
         const cmd = this.get(interaction.commandName);
         if (cmd) {
-            if (
-                cmd.parameters.length == 1 &&
-                cmd.parameters[0] instanceof DefaultParameter
-            ) {
-                const argumentsText = interaction.options.data[0]
-                    .value as string;
-                const paramsList = argumentsText
-                    .split(this.argumentSeparator)
-                    .map((a) => {
-                        return a.replace(" ", "");
-                    });
-                if (
-                    (paramsList[0] == "" || paramsList[0] == " ") &&
-                    paramsList.length == 1
-                ) {
-                    paramsList.splice(0, 1);
-                }
-                const parameters: InputParameter[] = [];
-                cmd.parameters.map((p, i) => {
-                    const inputParam = paramsList[i];
-                    if (!p.optional && !inputParam) {
-                        throw new MissingParameterError(p);
-                    } else if (
-                        p.optional &&
-                        (!inputParam ||
-                            inputParam == "" ||
-                            inputParam == "_" ||
-                            inputParam == " ")
-                    ) {
-                        return;
-                    }
-                    switch (p.type) {
-                        case "string":
-                            parameters.push(
-                                new StringParameter(p, paramsList[i])
-                            );
-                            break;
-                        case "boolean":
-                            parameters.push(
-                                new BooleanParameter(p, paramsList[i])
-                            );
-                            break;
-                        case "number":
-                            parameters.push(
-                                new NumberParameter(p, paramsList[i])
-                            );
-                            break;
-                        default:
-                            parameters.push(
-                                new InputParameter(p, paramsList[i])
-                            );
-                            break;
-                    }
-                });
-                return {
-                    command: cmd,
-                    parameters: parameters,
-                };
-            } else if (interaction.options?.data) {
+            if (interaction.options?.data) {
                 const paramsList = interaction.options.data;
                 const parameters: InputParameter[] = [];
                 cmd.parameters.map((p) => {
