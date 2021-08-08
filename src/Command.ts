@@ -110,14 +110,10 @@ export class Command {
                 ? memberPermissions.has(this.permissions, true)
                 : memberPermissions.any(this.permissions, true))
         ) {
-            let placeholdingReply: boolean = false;
             if (interaction instanceof CommandInteraction) {
                 setTimeout(async () => {
                     if (!interaction.replied) {
-                        await interaction.reply({
-                            content: "🔄",
-                        });
-                        placeholdingReply = true;
+                        await interaction.deferReply();
                     }
                 }, 1500);
             }
@@ -137,7 +133,7 @@ export class Command {
                 if (interaction instanceof Message)
                     await interaction.reply(fnResult as ReplyMessageOptions);
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied
+                    interaction.replied || interaction.deferred
                         ? await interaction.editReply(
                               fnResult as ReplyMessageOptions
                           )
@@ -146,27 +142,25 @@ export class Command {
                           );
             } else if (typeof fnResult == "string") {
                 if (interaction instanceof Message)
-                    await interaction?.reply({ content: fnResult, embeds: [] });
+                    await interaction?.reply({ content: fnResult });
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied
+                    interaction.replied || interaction.deferred
                         ? await interaction.editReply({
                               content: fnResult,
-                              embeds: [],
                           })
                         : await interaction.reply({
                               content: fnResult,
-                              embeds: [],
                           });
             } else if (fnResult instanceof MessageEmbed) {
                 if (interaction instanceof Message)
                     await interaction?.channel.send({ embeds: [fnResult] });
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied
+                    interaction.replied || interaction.deferred
                         ? await interaction.editReply({ embeds: [fnResult] })
                         : await interaction.reply({ embeds: [fnResult] });
             } else if (
                 interaction instanceof CommandInteraction &&
-                (!interaction.replied || placeholdingReply)
+                !interaction.replied
             ) {
                 await interaction.deleteReply();
             }
