@@ -181,25 +181,16 @@ export class Command {
                                   embeds: [fnResult],
                               });
                     } else {
-                        interaction.replied
-                            ? await interaction.editReply({
-                                  embeds: [
-                                      new MessageEmbed()
-                                          .setColor("#00ff00")
-                                          .setTitle(
-                                              "✅ Task completed successfully"
-                                          ),
-                                  ],
-                              })
-                            : await interaction.reply({
-                                  embeds: [
-                                      new MessageEmbed()
-                                          .setColor("#00ff00")
-                                          .setTitle(
-                                              "✅ Task completed successfully"
-                                          ),
-                                  ],
-                              });
+                        interaction.replied &&
+                            (await interaction.editReply({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setColor("#00ff00")
+                                        .setTitle(
+                                            "✅ Task completed successfully"
+                                        ),
+                                ],
+                            }));
                     }
                 } catch (e) {
                     console.error("[❌ ERROR] Cannot reply.", e);
