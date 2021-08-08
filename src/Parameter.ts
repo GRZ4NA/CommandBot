@@ -99,7 +99,7 @@ export class ObjectParameter extends InputParameter {
 export class ObjectID {
     id: string;
     constructor(id: string) {
-        this.id = id;
+        this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
     }
     async toObject(
         guild: Guild,
