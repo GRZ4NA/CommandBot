@@ -95,25 +95,42 @@ export class Command {
         interaction?: Message | CommandInteraction,
         cmdParams?: InputParameter[]
     ): Promise<void> {
-        if (interaction instanceof Message) {
-            const memberPermissions: Readonly<Permissions> =
-                interaction?.member?.permissions || new Permissions();
-            if (
-                !this.permissions ||
-                (this.permissionCheck == "ALL"
-                    ? memberPermissions.has(this.permissions, true)
-                    : memberPermissions.any(this.permissions, true))
-            ) {
-                const fnResult = await this.function.call(
-                    this,
-                    function (query: string, returnType?: "value" | "object") {
-                        return returnType === "object"
-                            ? cmdParams?.find((p) => p.name === query) || null
-                            : cmdParams?.find((p) => p.name === query)?.value ||
-                                  null;
-                    },
-                    interaction
-                );
+        const paramFindFn = function (
+            query: string,
+            returnType?: "value" | "object"
+        ) {
+            return returnType === "object"
+                ? cmdParams?.find((p) => p.name === query) || null
+                : cmdParams?.find((p) => p.name === query)?.value || null;
+        };
+        const memberPermissions: Readonly<Permissions> =
+            (interaction?.member?.permissions as Permissions) ||
+            new Permissions();
+        if (
+            !this.permissions ||
+            (this.permissionCheck == "ALL"
+                ? memberPermissions.has(this.permissions, true)
+                : memberPermissions.any(this.permissions, true))
+        ) {
+            if (interaction instanceof CommandInteraction) {
+                setTimeout(async () => {
+                    if (!interaction.replied) {
+                        await interaction.reply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor("#ffff00")
+                                    .setTitle("🔄 Please wait..."),
+                            ],
+                        });
+                    }
+                }, 2000);
+            }
+            const fnResult = await this.function.call(
+                this,
+                paramFindFn,
+                interaction
+            );
+            if (interaction instanceof Message) {
                 if (
                     fnResult instanceof Object &&
                     ("content" in (fnResult as any) ||
@@ -128,108 +145,71 @@ export class Command {
                 } else if (fnResult instanceof MessageEmbed) {
                     await interaction?.channel.send({ embeds: [fnResult] });
                 }
-            } else {
-                throw new PermissionsError(this, interaction?.member);
-            }
-        } else if (interaction instanceof CommandInteraction) {
-            const memberPermissions = interaction.member?.permissions;
-            if (memberPermissions instanceof Permissions) {
-                if (
-                    !this.permissions ||
-                    (this.permissionCheck === "ALL"
-                        ? memberPermissions.has(this.permissions, true)
-                        : memberPermissions.any(this.permissions, true))
-                ) {
-                    setTimeout(async () => {
-                        if (!interaction.replied) {
-                            await interaction.reply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setColor("#ffff00")
-                                        .setTitle("🔄 Please wait..."),
-                                ],
-                            });
-                        }
-                    }, 2000);
-                    const fnResult = await this.function.call(
-                        this,
-                        function (
-                            query: string,
-                            returnType?: "value" | "object"
-                        ) {
-                            return returnType === "object"
-                                ? cmdParams?.find((p) => p.name === query) ||
-                                      null
-                                : cmdParams?.find((p) => p.name === query)
-                                      ?.value || null;
-                        },
-                        interaction
-                    );
-                    try {
-                        if (
-                            fnResult instanceof Object &&
-                            ("content" in (fnResult as any) ||
-                                "embeds" in (fnResult as any) ||
-                                "files" in (fnResult as any) ||
-                                "components" in (fnResult as any) ||
-                                "sticker" in (fnResult as any))
-                        ) {
-                            interaction.replied
-                                ? await interaction.editReply(
-                                      fnResult as ReplyMessageOptions
-                                  )
-                                : await interaction.reply(
-                                      fnResult as ReplyMessageOptions
-                                  );
-                        } else if (typeof fnResult == "string") {
-                            interaction.replied
-                                ? await interaction.editReply({
-                                      content: fnResult,
-                                      embeds: [],
-                                  })
-                                : await interaction.reply({
-                                      content: fnResult,
-                                      embeds: [],
-                                  });
-                        } else if (fnResult instanceof MessageEmbed) {
-                            interaction.replied
-                                ? await interaction.editReply({
-                                      embeds: [fnResult],
-                                  })
-                                : await interaction.reply({
-                                      embeds: [fnResult],
-                                  });
-                        } else {
-                            interaction.replied
-                                ? await interaction.editReply({
-                                      embeds: [
-                                          new MessageEmbed()
-                                              .setColor("#00ff00")
-                                              .setTitle(
-                                                  "✅ Task completed successfully"
-                                              ),
-                                      ],
-                                  })
-                                : await interaction.reply({
-                                      embeds: [
-                                          new MessageEmbed()
-                                              .setColor("#00ff00")
-                                              .setTitle(
-                                                  "✅ Task completed successfully"
-                                              ),
-                                      ],
-                                  });
-                        }
-                    } catch (e) {
-                        console.error("[❌ ERROR] Cannot reply.", e);
+            } else if (interaction instanceof CommandInteraction) {
+                try {
+                    if (
+                        fnResult instanceof Object &&
+                        ("content" in (fnResult as any) ||
+                            "embeds" in (fnResult as any) ||
+                            "files" in (fnResult as any) ||
+                            "components" in (fnResult as any) ||
+                            "sticker" in (fnResult as any))
+                    ) {
+                        interaction.replied
+                            ? await interaction.editReply(
+                                  fnResult as ReplyMessageOptions
+                              )
+                            : await interaction.reply(
+                                  fnResult as ReplyMessageOptions
+                              );
+                    } else if (typeof fnResult == "string") {
+                        interaction.replied
+                            ? await interaction.editReply({
+                                  content: fnResult,
+                                  embeds: [],
+                              })
+                            : await interaction.reply({
+                                  content: fnResult,
+                                  embeds: [],
+                              });
+                    } else if (fnResult instanceof MessageEmbed) {
+                        interaction.replied
+                            ? await interaction.editReply({
+                                  embeds: [fnResult],
+                              })
+                            : await interaction.reply({
+                                  embeds: [fnResult],
+                              });
+                    } else {
+                        interaction.replied
+                            ? await interaction.editReply({
+                                  embeds: [
+                                      new MessageEmbed()
+                                          .setColor("#00ff00")
+                                          .setTitle(
+                                              "✅ Task completed successfully"
+                                          ),
+                                  ],
+                              })
+                            : await interaction.reply({
+                                  embeds: [
+                                      new MessageEmbed()
+                                          .setColor("#00ff00")
+                                          .setTitle(
+                                              "✅ Task completed successfully"
+                                          ),
+                                  ],
+                              });
                     }
+                } catch (e) {
+                    console.error("[❌ ERROR] Cannot reply.", e);
                 }
-            } else {
-                throw new PermissionsError(
-                    this,
-                    interaction.member as GuildMember
-                );
             }
+        } else {
+            throw new PermissionsError(
+                this,
+                interaction?.member as GuildMember
+            );
         }
     }
 
