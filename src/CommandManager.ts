@@ -194,6 +194,7 @@ export class CommandManager {
             return null;
         }
     }
+
     fetchFromInteraction(
         interaction: CommandInteraction
     ): CommandMessageStructure | null {
@@ -218,8 +219,17 @@ export class CommandManager {
                 }
                 const parameters: InputParameter[] = [];
                 cmd.parameters.map((p, i) => {
-                    if (!p.optional && !paramsList[i]) {
+                    const inputParam = paramsList[i];
+                    if (!p.optional && !inputParam) {
                         throw new MissingParameterError(p);
+                    } else if (
+                        p.optional &&
+                        (!inputParam ||
+                            inputParam == "" ||
+                            inputParam == "_" ||
+                            inputParam == " ")
+                    ) {
+                        return;
                     }
                     switch (p.type) {
                         case "string":
@@ -255,6 +265,8 @@ export class CommandManager {
                     const inputParam = paramsList.find((d) => d.name == p.name);
                     if (!p.optional && !inputParam) {
                         throw new MissingParameterError(p);
+                    } else if (p.optional && !inputParam) {
+                        return;
                     }
                     switch (p.type) {
                         case "string":
