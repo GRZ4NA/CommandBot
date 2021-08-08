@@ -30,8 +30,11 @@ export interface CommandBuilder {
     guilds?: string[];
     visible?: boolean;
     function: (
-        interaction?: Message | CommandInteraction,
-        cmdParams?: InputParameter[]
+        params: (
+            query: string,
+            returnType?: "value" | "object"
+        ) => ParameterResolvable | InputParameter | null,
+        interaction?: Message | CommandInteraction
     ) =>
         | void
         | string

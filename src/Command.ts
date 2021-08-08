@@ -28,8 +28,11 @@ export class Command {
     guilds?: string[];
     visible: boolean;
     private function: (
-        interaction?: Message | CommandInteraction,
-        cmdParams?: InputParameter[]
+        params: (
+            query: string,
+            returnType?: "value" | "object"
+        ) => ParameterResolvable | InputParameter | null,
+        interaction?: Message | CommandInteraction
     ) =>
         | void
         | string
@@ -103,15 +106,21 @@ export class Command {
             ) {
                 const fnResult = await this.function.call(
                     this,
-                    interaction,
-                    cmdParams
+                    function (query: string, returnType?: "value" | "object") {
+                        return returnType === "object"
+                            ? cmdParams?.find((p) => p.name === query) || null
+                            : cmdParams?.find((p) => p.name === query)?.value ||
+                                  null;
+                    },
+                    interaction
                 );
                 if (
-                    "content" in (fnResult as ReplyMessageOptions) ||
-                    "embeds" in (fnResult as ReplyMessageOptions) ||
-                    "files" in (fnResult as ReplyMessageOptions) ||
-                    "components" in (fnResult as ReplyMessageOptions) ||
-                    "sticker" in (fnResult as ReplyMessageOptions)
+                    fnResult instanceof Object &&
+                    ("content" in (fnResult as any) ||
+                        "embeds" in (fnResult as any) ||
+                        "files" in (fnResult as any) ||
+                        "components" in (fnResult as any) ||
+                        "sticker" in (fnResult as any))
                 ) {
                     await interaction.reply(fnResult as ReplyMessageOptions);
                 } else if (typeof fnResult == "string") {
@@ -144,16 +153,26 @@ export class Command {
                     }, 2000);
                     const fnResult = await this.function.call(
                         this,
-                        interaction,
-                        cmdParams
+                        function (
+                            query: string,
+                            returnType?: "value" | "object"
+                        ) {
+                            return returnType === "object"
+                                ? cmdParams?.find((p) => p.name === query) ||
+                                      null
+                                : cmdParams?.find((p) => p.name === query)
+                                      ?.value || null;
+                        },
+                        interaction
                     );
                     try {
                         if (
-                            "content" in (fnResult as ReplyMessageOptions) ||
-                            "embeds" in (fnResult as ReplyMessageOptions) ||
-                            "files" in (fnResult as ReplyMessageOptions) ||
-                            "components" in (fnResult as ReplyMessageOptions) ||
-                            "sticker" in (fnResult as ReplyMessageOptions)
+                            fnResult instanceof Object &&
+                            ("content" in (fnResult as any) ||
+                                "embeds" in (fnResult as any) ||
+                                "files" in (fnResult as any) ||
+                                "components" in (fnResult as any) ||
+                                "sticker" in (fnResult as any))
                         ) {
                             interaction.replied
                                 ? await interaction.editReply(
@@ -249,16 +268,6 @@ export class Command {
             description: this.description,
             options: options,
         };
-    }
-
-    getParam(
-        query: string,
-        list: InputParameter[],
-        returnType?: "value" | "object"
-    ): ParameterResolvable | InputParameter | null {
-        return returnType === "object"
-            ? list.find((p) => p.name === query) || null
-            : list.find((p) => p.name === query)?.value || null;
     }
 
     private static processPhrase(

@@ -23,15 +23,15 @@ export class HelpMessage extends Command {
                     type: "string",
                 },
             ],
-            function: (_, a) => {
+            function: (param, _) => {
                 const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
-                    if (a && a[0]) {
+                    if (param("command_name")) {
                         const cmd: Command | null = cmdManager.get(
-                            a[0].value?.toString() || "",
+                            param("command_name")?.toString() || "",
                             "ALL"
                         );
                         if (cmd) {
@@ -75,7 +75,9 @@ export class HelpMessage extends Command {
                             }
                         } else {
                             throw new ReferenceError(
-                                `Command "${a[0].value}" does not exist`
+                                `Command "${param(
+                                    "command_name"
+                                )}" does not exist`
                             );
                         }
                     } else {
