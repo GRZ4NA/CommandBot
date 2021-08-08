@@ -35,7 +35,7 @@ bot.on("READY", () => {
     console.log('BOT IS READY!');
 });
 
-bot.start(3000, true /*Register slash commands*/);
+bot.start(3000, true /*Register slash commands (set to false after registering to avoid daily quota problems)*/);
 ```
 
 ## Discord usage
