@@ -3,9 +3,9 @@ import {
     Permissions,
     Message,
     MessageEmbed,
-    Guild,
     CommandInteraction,
     GuildMember,
+    ReplyMessageOptions,
 } from "discord.js";
 import { CommandBuilder, PermissionCheckTypes } from "./types.js";
 import { PermissionsError } from "./errors.js";
@@ -26,7 +26,12 @@ export class Command {
     private function: (
         interaction?: Message | CommandInteraction,
         cmdParams?: InputParameter[]
-    ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
+    ) =>
+        | void
+        | string
+        | MessageEmbed
+        | ReplyMessageOptions
+        | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 
     /**
      * Command constructor
@@ -93,7 +98,15 @@ export class Command {
                     : memberPermissions.any(this.permissions, true))
             ) {
                 const fnResult = await this.function(interaction, cmdParams);
-                if (typeof fnResult == "string") {
+                if (
+                    "content" in (fnResult as ReplyMessageOptions) ||
+                    "embeds" in (fnResult as ReplyMessageOptions) ||
+                    "files" in (fnResult as ReplyMessageOptions) ||
+                    "components" in (fnResult as ReplyMessageOptions) ||
+                    "sticker" in (fnResult as ReplyMessageOptions)
+                ) {
+                    await interaction.reply(fnResult as ReplyMessageOptions);
+                } else if (typeof fnResult == "string") {
                     await interaction?.reply(fnResult);
                 } else if (fnResult instanceof MessageEmbed) {
                     await interaction?.channel.send({ embeds: [fnResult] });
@@ -126,7 +139,21 @@ export class Command {
                         cmdParams
                     );
                     try {
-                        if (typeof fnResult == "string") {
+                        if (
+                            "content" in (fnResult as ReplyMessageOptions) ||
+                            "embeds" in (fnResult as ReplyMessageOptions) ||
+                            "files" in (fnResult as ReplyMessageOptions) ||
+                            "components" in (fnResult as ReplyMessageOptions) ||
+                            "sticker" in (fnResult as ReplyMessageOptions)
+                        ) {
+                            interaction.replied
+                                ? await interaction.editReply(
+                                      fnResult as ReplyMessageOptions
+                                  )
+                                : await interaction.reply(
+                                      fnResult as ReplyMessageOptions
+                                  );
+                        } else if (typeof fnResult == "string") {
                             interaction.replied
                                 ? await interaction.editReply({
                                       content: fnResult,

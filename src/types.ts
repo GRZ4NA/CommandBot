@@ -1,4 +1,9 @@
-import { ClientOptions, ColorResolvable, CommandInteraction } from "discord.js";
+import {
+    ClientOptions,
+    ColorResolvable,
+    CommandInteraction,
+    ReplyMessageOptions,
+} from "discord.js";
 import { InputParameter, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
@@ -27,7 +32,12 @@ export interface CommandBuilder {
     function: (
         interaction?: Message | CommandInteraction,
         cmdParams?: InputParameter[]
-    ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
+    ) =>
+        | void
+        | string
+        | MessageEmbed
+        | ReplyMessageOptions
+        | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 }
 export interface PhraseOccurrenceData {
     command: Command;
