@@ -158,6 +158,10 @@ export class CommandManager {
                         throw new MissingParameterError(p);
                     }
                     switch (p.type) {
+                        case "mentionable":
+                        case "channel":
+                        case "role":
+                        case "user":
                         case "string":
                             parameters.push(
                                 new StringParameter(p, paramsList[i])
@@ -208,6 +212,10 @@ export class CommandManager {
                         return;
                     }
                     switch (p.type) {
+                        case "mentionable":
+                        case "channel":
+                        case "role":
+                        case "user":
                         case "string":
                             parameters.push(
                                 new StringParameter(p, inputParam?.value)

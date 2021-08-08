@@ -29,9 +29,6 @@ export class Parameter {
         }
         return;
     }
-    static processString(a: string, type: ParameterType): ParameterResolvable {
-        return a;
-    }
 }
 export class DefaultParameter extends Parameter {
     constructor() {
