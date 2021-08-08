@@ -5,14 +5,12 @@ import {
     DefaultParameter,
     InputParameter,
     NumberParameter,
-    Parameter,
     StringParameter,
 } from "./Parameter.js";
 import { Command } from "./Command.js";
 import {
     CommandMessageStructure,
     GetMode,
-    ParameterResolvable,
     PhraseOccurrenceData,
 } from "./types.js";
 

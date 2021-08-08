@@ -7,11 +7,7 @@ import {
     CommandInteraction,
     GuildMember,
 } from "discord.js";
-import {
-    CommandBuilder,
-    PermissionCheckTypes,
-    ParameterResolvable,
-} from "./types.js";
+import { CommandBuilder, PermissionCheckTypes } from "./types.js";
 import { PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 

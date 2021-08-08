@@ -1,9 +1,4 @@
-import {
-    ClientOptions,
-    ColorResolvable,
-    CommandInteraction,
-    Guild,
-} from "discord.js";
+import { ClientOptions, ColorResolvable, CommandInteraction } from "discord.js";
 import { InputParameter, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
