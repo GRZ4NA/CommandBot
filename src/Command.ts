@@ -115,11 +115,7 @@ export class Command {
                 setTimeout(async () => {
                     if (!interaction.replied) {
                         await interaction.reply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setColor("#ffff00")
-                                    .setTitle("🔄"),
-                            ],
+                            content: "🔄",
                         });
                         placeholdingReply = true;
                     }
@@ -150,7 +146,7 @@ export class Command {
                           );
             } else if (typeof fnResult == "string") {
                 if (interaction instanceof Message)
-                    await interaction?.reply(fnResult);
+                    await interaction?.reply({ content: fnResult, embeds: [] });
                 else if (interaction instanceof CommandInteraction)
                     interaction.replied
                         ? await interaction.editReply({
@@ -172,11 +168,7 @@ export class Command {
                 interaction instanceof CommandInteraction &&
                 (!interaction.replied || placeholdingReply)
             ) {
-                await interaction.reply({
-                    embeds: [
-                        new MessageEmbed().setColor("#00ff00").setTitle("✅"),
-                    ],
-                });
+                await interaction.deleteReply();
             }
         } else {
             throw new PermissionsError(
