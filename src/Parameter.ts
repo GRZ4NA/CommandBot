@@ -1,4 +1,14 @@
-import { Guild } from "discord.js";
+import {
+    CategoryChannel,
+    Guild,
+    GuildMember,
+    NewsChannel,
+    Role,
+    StageChannel,
+    StoreChannel,
+    TextChannel,
+    VoiceChannel,
+} from "discord.js";
 import { ParameterType, ParameterResolvable, Choice } from "./types.js";
 export interface ParameterSchema {
     name: string;
@@ -83,17 +93,43 @@ export class ObjectParameter extends InputParameter {
         ) {
             throw new Error(`Parameter type mismatch`);
         }
-        super(parameter, value);
+        super(parameter, new ObjectID(value?.toString() || ""));
     }
-
-    async toObject(guild: Guild, type: "channel" | "user" | "role") {
+}
+export class ObjectID {
+    id: string;
+    constructor(id: string) {
+        this.id = id;
+    }
+    async toObject(
+        guild: Guild,
+        type: "channel" | "user" | "role"
+    ): Promise<
+        | Role
+        | TextChannel
+        | VoiceChannel
+        | CategoryChannel
+        | GuildMember
+        | NewsChannel
+        | StoreChannel
+        | StageChannel
+        | null
+    > {
         switch (type) {
             case "channel":
-                return await guild.channels.fetch(this.value?.toString() || "");
+                return (
+                    (await guild.channels.fetch(this.id.toString() || "")) ||
+                    null
+                );
             case "role":
-                return await guild.roles.fetch(this.value?.toString() || "");
+                return (
+                    (await guild.roles.fetch(this.id.toString() || "")) || null
+                );
             case "user":
-                return await guild.members.fetch(this.value?.toString() || "");
+                return (
+                    (await guild.members.fetch(this.id.toString() || "")) ||
+                    null
+                );
         }
     }
 }

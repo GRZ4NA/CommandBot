@@ -1,15 +1,10 @@
 import {
-    CategoryChannel,
     ClientOptions,
     ColorResolvable,
     CommandInteraction,
-    GuildMember,
     ReplyMessageOptions,
-    Role,
-    TextChannel,
-    VoiceChannel,
 } from "discord.js";
-import { InputParameter, ParameterSchema } from "./Parameter.js";
+import { InputParameter, ObjectID, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
 
@@ -75,11 +70,7 @@ export type ParameterResolvable =
     | string
     | boolean
     | number
-    | Role
-    | GuildMember
-    | TextChannel
-    | VoiceChannel
-    | CategoryChannel
+    | ObjectID
     | undefined;
 export interface Choice {
     name: string;
