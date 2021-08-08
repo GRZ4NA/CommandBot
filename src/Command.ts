@@ -110,6 +110,7 @@ export class Command {
                 ? memberPermissions.has(this.permissions, true)
                 : memberPermissions.any(this.permissions, true))
         ) {
+            let placeholdingReply: boolean = false;
             if (interaction instanceof CommandInteraction) {
                 setTimeout(async () => {
                     if (!interaction.replied) {
@@ -117,82 +118,65 @@ export class Command {
                             embeds: [
                                 new MessageEmbed()
                                     .setColor("#ffff00")
-                                    .setTitle("🔄 Please wait..."),
+                                    .setTitle("🔄"),
                             ],
                         });
+                        placeholdingReply = true;
                     }
-                }, 2000);
+                }, 1500);
             }
             const fnResult = await this.function.call(
                 this,
                 paramFindFn,
                 interaction
             );
-            if (interaction instanceof Message) {
-                if (
-                    fnResult instanceof Object &&
-                    ("content" in (fnResult as any) ||
-                        "embeds" in (fnResult as any) ||
-                        "files" in (fnResult as any) ||
-                        "components" in (fnResult as any) ||
-                        "sticker" in (fnResult as any))
-                ) {
+            if (
+                fnResult instanceof Object &&
+                ("content" in (fnResult as any) ||
+                    "embeds" in (fnResult as any) ||
+                    "files" in (fnResult as any) ||
+                    "components" in (fnResult as any) ||
+                    "sticker" in (fnResult as any))
+            ) {
+                if (interaction instanceof Message)
                     await interaction.reply(fnResult as ReplyMessageOptions);
-                } else if (typeof fnResult == "string") {
+                else if (interaction instanceof CommandInteraction)
+                    interaction.replied
+                        ? await interaction.editReply(
+                              fnResult as ReplyMessageOptions
+                          )
+                        : await interaction.reply(
+                              fnResult as ReplyMessageOptions
+                          );
+            } else if (typeof fnResult == "string") {
+                if (interaction instanceof Message)
                     await interaction?.reply(fnResult);
-                } else if (fnResult instanceof MessageEmbed) {
+                else if (interaction instanceof CommandInteraction)
+                    interaction.replied
+                        ? await interaction.editReply({
+                              content: fnResult,
+                              embeds: [],
+                          })
+                        : await interaction.reply({
+                              content: fnResult,
+                              embeds: [],
+                          });
+            } else if (fnResult instanceof MessageEmbed) {
+                if (interaction instanceof Message)
                     await interaction?.channel.send({ embeds: [fnResult] });
-                }
-            } else if (interaction instanceof CommandInteraction) {
-                try {
-                    if (
-                        fnResult instanceof Object &&
-                        ("content" in (fnResult as any) ||
-                            "embeds" in (fnResult as any) ||
-                            "files" in (fnResult as any) ||
-                            "components" in (fnResult as any) ||
-                            "sticker" in (fnResult as any))
-                    ) {
-                        interaction.replied
-                            ? await interaction.editReply(
-                                  fnResult as ReplyMessageOptions
-                              )
-                            : await interaction.reply(
-                                  fnResult as ReplyMessageOptions
-                              );
-                    } else if (typeof fnResult == "string") {
-                        interaction.replied
-                            ? await interaction.editReply({
-                                  content: fnResult,
-                                  embeds: [],
-                              })
-                            : await interaction.reply({
-                                  content: fnResult,
-                                  embeds: [],
-                              });
-                    } else if (fnResult instanceof MessageEmbed) {
-                        interaction.replied
-                            ? await interaction.editReply({
-                                  embeds: [fnResult],
-                              })
-                            : await interaction.reply({
-                                  embeds: [fnResult],
-                              });
-                    } else {
-                        interaction.replied &&
-                            (await interaction.editReply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setColor("#00ff00")
-                                        .setTitle(
-                                            "✅ Task completed successfully"
-                                        ),
-                                ],
-                            }));
-                    }
-                } catch (e) {
-                    console.error("[❌ ERROR] Cannot reply.", e);
-                }
+                else if (interaction instanceof CommandInteraction)
+                    interaction.replied
+                        ? await interaction.editReply({ embeds: [fnResult] })
+                        : await interaction.reply({ embeds: [fnResult] });
+            } else if (
+                interaction instanceof CommandInteraction &&
+                (!interaction.replied || placeholdingReply)
+            ) {
+                await interaction.reply({
+                    embeds: [
+                        new MessageEmbed().setColor("#00ff00").setTitle("✅"),
+                    ],
+                });
             }
         } else {
             throw new PermissionsError(
