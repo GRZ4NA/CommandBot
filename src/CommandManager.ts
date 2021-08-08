@@ -163,6 +163,10 @@ export class CommandManager {
                         case "channel":
                         case "role":
                         case "user":
+                            parameters.push(
+                                new ObjectParameter(p, paramsList[i])
+                            );
+                            break;
                         case "string":
                             parameters.push(
                                 new StringParameter(p, paramsList[i])
