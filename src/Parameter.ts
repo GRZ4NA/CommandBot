@@ -1,3 +1,4 @@
+import { Guild } from "discord.js";
 import { ParameterType, ParameterResolvable, Choice } from "./types.js";
 export interface ParameterSchema {
     name: string;
@@ -70,5 +71,29 @@ export class NumberParameter extends InputParameter {
             throw new Error(`Parameter type mismatch`);
         }
         super(parameter, parseFloat(value ? value.toString() : ""));
+    }
+}
+export class ObjectParameter extends InputParameter {
+    constructor(parameter: Parameter, value: ParameterResolvable) {
+        if (
+            parameter.type != "channel" &&
+            parameter.type != "mentionable" &&
+            parameter.type != "user" &&
+            parameter.type != "role"
+        ) {
+            throw new Error(`Parameter type mismatch`);
+        }
+        super(parameter, value);
+    }
+
+    async toObject(guild: Guild, type: "channel" | "user" | "role") {
+        switch (type) {
+            case "channel":
+                return await guild.channels.fetch(this.value?.toString() || "");
+            case "role":
+                return await guild.roles.fetch(this.value?.toString() || "");
+            case "user":
+                return await guild.members.fetch(this.value?.toString() || "");
+        }
     }
 }
