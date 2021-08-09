@@ -65,13 +65,13 @@ export class SystemMessageManager {
      * Generates and sends a system message
      * @param {MessageType} type - 'ERROR' | 'PERMISSION' | 'NOT_FOUND'
      * @param {SystemMessageData} [data] - additional data to include in the message
-     * @param {TextChannel | DMChannel | NewsChannel} [interaction] - if specified, the generated message will be sent in this channel
+     * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns *Promise<MessageEmbed | Message | void>*
      */
     async send(
         type: MessageType,
         data?: SystemMessageData,
-        interaction?: TextChannel | DMChannel | NewsChannel | CommandInteraction
+        interaction?: Message | CommandInteraction
     ): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
@@ -154,7 +154,7 @@ export class SystemMessageManager {
                 }
             }
             if (interaction && !(interaction instanceof CommandInteraction)) {
-                const message = await interaction.send({ embeds: [embed] });
+                const message = await interaction.reply({ embeds: [embed] });
                 if (this.deleteTimeout != Infinity && message.deletable) {
                     setTimeout(async () => {
                         await message.delete();
@@ -165,7 +165,9 @@ export class SystemMessageManager {
                 interaction &&
                 interaction instanceof CommandInteraction
             ) {
-                interaction.reply({ embeds: [embed] });
+                interaction.replied || interaction.deferred
+                    ? await interaction.editReply({ embeds: [embed] })
+                    : await interaction.reply({ embeds: [embed] });
             } else {
                 return embed;
             }

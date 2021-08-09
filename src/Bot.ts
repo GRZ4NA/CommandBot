@@ -163,7 +163,7 @@ export class Bot extends EventEmitter {
                         await this.messages.system.send(
                             "NOT_FOUND",
                             { phrase: m.content, user: m.member || undefined },
-                            m.channel as TextChannel
+                            m
                         );
                     } else {
                         this.emit("MESSAGE", m);
@@ -176,7 +176,7 @@ export class Bot extends EventEmitter {
                                 user: m.member || undefined,
                                 command: cmdMsg?.command,
                             },
-                            m.channel as TextChannel
+                            m
                         );
                     } else {
                         await this.messages.system.send(
@@ -186,7 +186,7 @@ export class Bot extends EventEmitter {
                                 user: m.member || undefined,
                                 error: e,
                             },
-                            m.channel as TextChannel
+                            m
                         );
                         console.error(e);
                     }
