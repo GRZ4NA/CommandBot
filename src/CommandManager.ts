@@ -8,11 +8,7 @@ import {
     StringParameter,
 } from "./Parameter.js";
 import { Command } from "./Command.js";
-import {
-    CommandMessageStructure,
-    GetMode,
-    PhraseOccurrenceData,
-} from "./types.js";
+import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
 
 export class CommandManager {
     list: Command[];

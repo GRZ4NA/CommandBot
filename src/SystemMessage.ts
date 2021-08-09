@@ -1,12 +1,9 @@
 import {
     ColorResolvable,
     CommandInteraction,
-    DMChannel,
     GuildMember,
     Message,
     MessageEmbed,
-    NewsChannel,
-    TextChannel,
     User,
 } from "discord.js";
 import { Command } from "./Command.js";

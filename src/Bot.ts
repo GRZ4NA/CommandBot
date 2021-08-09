@@ -5,7 +5,6 @@ import {
     GuildMember,
     Intents,
     Message,
-    TextChannel,
 } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
