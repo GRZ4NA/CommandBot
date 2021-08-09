@@ -64,6 +64,26 @@ export class StringParameter extends InputParameter {
         if (parameter.type != "string") {
             throw new Error(`Parameter type mismatch`);
         }
+        if (parameter.choices) {
+            const match = parameter.choices.filter(
+                (c) =>
+                    c.name.toLowerCase() === value?.toString().toLowerCase() ||
+                    c.value.toLowerCase() === value?.toString().toLowerCase()
+            );
+            if (match.length === 0) {
+                throw new Error(
+                    `Parameter "${
+                        parameter.name
+                    }" has incorrect value. Please enter one of the following values: ${parameter.choices
+                        .map((c) => [c.name, c.value])
+                        .flat(1)
+                        .join(", ")}`
+                );
+            } else {
+                super(parameter, match[0].value);
+                return;
+            }
+        }
         super(parameter, value?.toString());
     }
 }
@@ -72,7 +92,15 @@ export class BooleanParameter extends InputParameter {
         if (parameter.type != "boolean") {
             throw new Error(`Parameter type mismatch`);
         }
-        super(parameter, value ? true : false);
+        if (value?.toString().toLowerCase() === "true") {
+            super(parameter, true);
+        } else if (value?.toString().toLowerCase() === "false") {
+            super(parameter, false);
+        } else {
+            throw new Error(
+                `Cannot convert "${parameter.name}" parameter to boolean. Please enter either "true" or "false".`
+            );
+        }
     }
 }
 export class NumberParameter extends InputParameter {

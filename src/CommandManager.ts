@@ -106,6 +106,8 @@ export class CommandManager {
                 command.parameters.map((p, i) => {
                     if (!p.optional && !paramsList[i]) {
                         throw new MissingParameterError(p);
+                    } else if (p.optional && !paramsList[i]) {
+                        return;
                     }
                     switch (p.type) {
                         case "mentionable":
