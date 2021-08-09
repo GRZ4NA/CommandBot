@@ -121,7 +121,7 @@ export class Bot extends EventEmitter {
                     await axios.put(
                         `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
                         this.commands.list
-                            .filter((c) => !c.guilds)
+                            .filter((c) => !c.guilds && c.slash)
                             .map((c) => (!c.guilds ? c.toCommandObject() : {})),
                         { headers: { Authorization: `Bot ${this.token}` } }
                     );

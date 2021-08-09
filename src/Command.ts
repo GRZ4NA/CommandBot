@@ -26,6 +26,7 @@ export class Command {
     permissions?: Permissions;
     guilds?: string[];
     visible: boolean;
+    slash: boolean;
     private function: (
         params: (
             query: string,
@@ -44,13 +45,14 @@ export class Command {
      * @constructor
      * @param {CommandBuilder} options - all command properties
      * @param {string} options.name - command name (used to trigger the command)
+     * @param {ParameterSchema} options.parameters - all parameters that can be passed with the command
      * @param {string | string[]} [options.aliases] - other words that can trigger the command with prefix (not used in slash commands)
-     * @param {string | string[]} [options.keywords] - other words that can trigger the command without prefix (not used in slash commands)
      * @param {string} [options.description="No description"] - command description shown in the help message
      * @param {string} [options.usage] - command usage description shown in the help message (usage message can be automatically generated using parameters)
      * @param {PermissionCheckTypes} [options.permissionCheck='ANY'] - specifies if the caller has to have all of the specified permissions or any of that
      * @param {PermissionResolvable} [options.permissions] - permissions needed to run the command
      * @param {boolean} [options.visible=true] - show command in the help message (visible as a slash command)
+     * @param {boolean} [options.slash=true] - whether the command should be available as a slash command
      * @param {Function} options.function - function that will trigger when the commands gets called
      */
     constructor(options: CommandBuilder) {
@@ -73,7 +75,8 @@ export class Command {
             ? new Permissions(options.permissions)
             : undefined;
         this.guilds = options.guilds;
-        this.visible = options.visible != undefined ? options.visible : true;
+        this.visible = options.visible !== undefined ? options.visible : true;
+        this.slash = options.slash !== undefined ? options.slash : true;
         this.function = options.function;
         if (!/^[\w-]{1,32}$/.test(this.name)) {
             throw new Error(`Incorrect command name: ${this.name}`);
@@ -85,8 +88,8 @@ export class Command {
 
     /**
      * Starts the command
-     * @param {Message} [message] - a *Message* object used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
-     * @param {string[]} [cmdParams] - list of processed parameters passed in a Discord message
+     * @param {Message | CommandInteraction} [interaction] - a *Message* or *CommandInteraction* object used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
+     * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord message
      * @returns *Promise<void>*
      */
     async start(
@@ -111,11 +114,7 @@ export class Command {
                 : memberPermissions.any(this.permissions, true))
         ) {
             if (interaction instanceof CommandInteraction) {
-                setTimeout(async () => {
-                    if (!interaction.replied) {
-                        await interaction.deferReply();
-                    }
-                }, 1500);
+                await interaction.deferReply();
             }
             const fnResult = await this.function.call(
                 this,
@@ -133,31 +132,21 @@ export class Command {
                 if (interaction instanceof Message)
                     await interaction.reply(fnResult as ReplyMessageOptions);
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied || interaction.deferred
-                        ? await interaction.editReply(
-                              fnResult as ReplyMessageOptions
-                          )
-                        : await interaction.reply(
-                              fnResult as ReplyMessageOptions
-                          );
+                    await interaction.editReply(
+                        fnResult as ReplyMessageOptions
+                    );
             } else if (typeof fnResult == "string") {
                 if (interaction instanceof Message)
                     await interaction?.reply({ content: fnResult });
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied || interaction.deferred
-                        ? await interaction.editReply({
-                              content: fnResult,
-                          })
-                        : await interaction.reply({
-                              content: fnResult,
-                          });
+                    await interaction.editReply({
+                        content: fnResult,
+                    });
             } else if (fnResult instanceof MessageEmbed) {
                 if (interaction instanceof Message)
-                    await interaction?.channel.send({ embeds: [fnResult] });
+                    await interaction?.reply({ embeds: [fnResult] });
                 else if (interaction instanceof CommandInteraction)
-                    interaction.replied || interaction.deferred
-                        ? await interaction.editReply({ embeds: [fnResult] })
-                        : await interaction.reply({ embeds: [fnResult] });
+                    await interaction.editReply({ embeds: [fnResult] });
             } else if (
                 interaction instanceof CommandInteraction &&
                 !interaction.replied
@@ -172,6 +161,10 @@ export class Command {
         }
     }
 
+    /**
+     * Returns object that is ready to be registered in the Discord API
+     * @returns {Object} object
+     */
     toCommandObject() {
         let options: any[] = [];
         if (this.parameters) {

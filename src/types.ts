@@ -28,6 +28,7 @@ export interface CommandBuilder {
     permissions?: PermissionResolvable;
     guilds?: string[];
     visible?: boolean;
+    slash?: boolean;
     function: (
         params: (
             query: string,

@@ -154,6 +154,11 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Fetches command and parameters from the given *CommandInteraction* object
+     * @param {CommandInteraction} interaction - interaction object
+     * @returns *CommandMessagesStructure* | *null*
+     */
     fetchFromInteraction(
         interaction: CommandInteraction
     ): CommandMessageStructure | null {
