@@ -12,7 +12,7 @@ import {
     ParameterResolvable,
     PermissionCheckTypes,
 } from "./types.js";
-import { PermissionsError } from "./errors.js";
+import { OperationSuccess, PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
 //CLASSES
@@ -27,6 +27,7 @@ export class Command {
     guilds?: string[];
     visible: boolean;
     slash: boolean;
+    announceSuccess: boolean;
     private function: (
         params: (
             query: string,
@@ -77,6 +78,10 @@ export class Command {
         this.guilds = options.guilds;
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
+        this.announceSuccess =
+            options.announceSuccess !== undefined
+                ? options.announceSuccess
+                : true;
         this.function = options.function;
         if (!/^[\w-]{1,32}$/.test(this.name)) {
             throw new Error(`Incorrect command name: ${this.name}`);
@@ -147,11 +152,8 @@ export class Command {
                     await interaction?.reply({ embeds: [fnResult] });
                 else if (interaction instanceof CommandInteraction)
                     await interaction.editReply({ embeds: [fnResult] });
-            } else if (
-                interaction instanceof CommandInteraction &&
-                !interaction.replied
-            ) {
-                await interaction.deleteReply();
+            } else if (this.announceSuccess) {
+                throw new OperationSuccess(this);
             }
         } else {
             throw new PermissionsError(

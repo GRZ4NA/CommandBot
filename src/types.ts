@@ -29,6 +29,7 @@ export interface CommandBuilder {
     guilds?: string[];
     visible?: boolean;
     slash?: boolean;
+    announceSuccess?: boolean;
     function: (
         params: (
             query: string,

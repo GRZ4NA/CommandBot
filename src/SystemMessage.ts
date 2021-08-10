@@ -9,7 +9,7 @@ import {
 import { Command } from "./Command.js";
 import { PermissionsError } from "./errors.js";
 
-export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
+export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND" | "SUCCESS";
 export interface SystemMessageAppearance {
     enabled: boolean;
     title: string;
@@ -29,6 +29,7 @@ export class SystemMessageManager {
     PERMISSION: SystemMessageAppearance;
     ERROR: SystemMessageAppearance;
     NOT_FOUND: SystemMessageAppearance;
+    SUCCESS: SystemMessageAppearance;
     deleteTimeout: number;
 
     constructor(botName?: string) {
@@ -52,6 +53,13 @@ export class SystemMessageManager {
             enabled: true,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
+            showTimestamp: true,
+            footer: botName,
+        };
+        this.SUCCESS = {
+            enabled: true,
+            title: "✅ Task completed successfully",
+            accentColor: "#00ff00",
             showTimestamp: true,
             footer: botName,
         };
@@ -147,6 +155,8 @@ export class SystemMessageManager {
                                 );
                             }
                         }
+                        break;
+                    case "SUCCESS":
                         break;
                 }
             }

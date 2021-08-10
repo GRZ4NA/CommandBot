@@ -10,7 +10,7 @@ import { EventEmitter } from "events";
 import * as http from "http";
 import { Command } from "./Command.js";
 import { CommandManager } from "./CommandManager.js";
-import { PermissionsError } from "./errors.js";
+import { OperationSuccess, PermissionsError } from "./errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
 import {
@@ -180,6 +180,12 @@ export class Bot extends EventEmitter {
                             },
                             m
                         );
+                    } else if (e instanceof OperationSuccess) {
+                        await this.messages.system.send(
+                            "SUCCESS",
+                            undefined,
+                            m
+                        );
                     } else {
                         await this.messages.system.send(
                             "ERROR",
@@ -222,6 +228,12 @@ export class Bot extends EventEmitter {
                                 user: (i.member as GuildMember) || undefined,
                                 command: cmd?.command,
                             },
+                            i as CommandInteraction
+                        );
+                    } else if (e instanceof OperationSuccess) {
+                        await this.messages.system.send(
+                            "SUCCESS",
+                            undefined,
                             i as CommandInteraction
                         );
                     } else {
