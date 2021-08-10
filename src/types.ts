@@ -10,7 +10,7 @@ import type { Command } from "./Command.js";
 
 export interface InitOptions {
     name: string;
-    prefix: string;
+    prefix?: string;
     argumentSeparator?: string;
     clientOptions?: ClientOptions;
     token: string;

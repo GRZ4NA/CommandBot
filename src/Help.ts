@@ -41,7 +41,9 @@ export class HelpMessage extends Command {
                             if (cmd.usage)
                                 helpMsg.addField(
                                     "Usage:",
-                                    `${cmdManager.prefix}${cmd.name} ${cmd.usage}`,
+                                    `${cmdManager.prefix || "/"}${cmd.name} ${
+                                        cmd.usage
+                                    }`,
                                     false
                                 );
                             if (
@@ -79,7 +81,9 @@ export class HelpMessage extends Command {
                         cmdManager.list.map((c) => {
                             if (c.visible) {
                                 helpMsg.addField(
-                                    `${cmdManager.prefix}${c.name} ${c.usage}`,
+                                    `${cmdManager.prefix || "/"}${c.name} ${
+                                        c.usage
+                                    }`,
                                     c.description,
                                     false
                                 );

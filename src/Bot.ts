@@ -157,7 +157,10 @@ export class Bot extends EventEmitter {
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
-                    } else if (m.content.startsWith(this.commands.prefix)) {
+                    } else if (
+                        this.commands.prefix &&
+                        m.content.startsWith(this.commands.prefix)
+                    ) {
                         this.emit("MESSAGE", m);
                         await this.messages.system.send(
                             "NOT_FOUND",

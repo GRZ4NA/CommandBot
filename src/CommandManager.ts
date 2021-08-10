@@ -12,10 +12,10 @@ import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
 
 export class CommandManager {
     list: Command[];
-    prefix: string;
+    prefix?: string;
     argumentSeparator: string;
 
-    constructor(prefix: string, argumentSeparator?: string) {
+    constructor(prefix?: string, argumentSeparator?: string) {
         this.list = [];
         this.prefix = prefix;
         this.argumentSeparator = argumentSeparator || ",";
@@ -85,6 +85,7 @@ export class CommandManager {
      * @returns *CommandMessagesStructure* | *null*
      */
     fetchFromMessage(message: Message): CommandMessageStructure | null {
+        if (!this.prefix) return null;
         if (!message.author.bot && message.content.startsWith(this.prefix)) {
             const content = message.content.replace(this.prefix, "");
             const name = content.split(" ")[0];
