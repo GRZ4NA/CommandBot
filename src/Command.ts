@@ -232,9 +232,11 @@ export class Command {
         let usageTemplate: string = "";
         this.parameters &&
             this.parameters.map((e) => {
-                usageTemplate += `[${e.name} (${e.type}${
-                    e.optional ? ", optional" : ""
-                })] `;
+                usageTemplate += `[${e.name} (${
+                    e.choices
+                        ? e.choices.map((c) => c.name).join(" / ")
+                        : e.type
+                }${e.optional ? ", optional" : ""})] `;
             });
         return usageTemplate;
     }
