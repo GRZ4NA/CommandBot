@@ -154,6 +154,8 @@ export class Command {
                     await interaction.editReply({ embeds: [fnResult] });
             } else if (this.announceSuccess) {
                 throw new OperationSuccess(this);
+            } else if (interaction instanceof CommandInteraction) {
+                await interaction.deleteReply();
             }
         } else {
             throw new PermissionsError(
