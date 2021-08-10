@@ -90,7 +90,11 @@ export class Bot extends EventEmitter {
     async start(port?: number, register?: boolean): Promise<boolean> {
         try {
             console.log(`\nBot name: ${this.name}`);
-            console.log(`Prefix: ${this.commands.prefix} \n`);
+            console.log(
+                `Prefix: ${
+                    this.commands.prefix || "/ (only slash commands)"
+                } \n`
+            );
             if (this.token === "") {
                 throw new ReferenceError(
                     'No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor'
