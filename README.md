@@ -5,6 +5,11 @@ A Discord.js based framework that makes creating Discord bots easy and fast.
 # Table of contents
 
 -   [Instalation](#installation)
+    -   [System requirements](#system-requirements)
+    -   [Creating a project](#creating-a-project)
+        -   [Registering Discord app](#registering-discord-app)
+        -   [Creating application](#creating-application)
+-   [Commands](#commands)
 
 # Installation
 
@@ -57,8 +62,8 @@ const bot = new Bot({
     clientOptions: {
         intents: [..."DISCORD_API_INTENTS"],
     }, // Discord.js ClientOptions (optional)
-    token: "DISCORD_BOT_TOKEN" // Discord bot token
-    applicationId: "APPLICATION_ID" // Discord application ID used to register slash commands
+    token: "DISCORD_BOT_TOKEN", // Discord bot token
+    applicationId: "APPLICATION_ID", // Discord application ID used to register slash commands
 });
 ```
 
@@ -76,3 +81,5 @@ bot.start(
     true // If true, the app will register all slash commands in the Discord API (it's recommended setting it to false after registering to avoid reaching daily quota)
 );
 ```
+
+# Commands
