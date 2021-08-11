@@ -1,50 +1,78 @@
 # CommandBot
 
-> **WARNING!** Documentation has not been completed yet!
+A Discord.js based framework that makes creating Discord bots easy and fast.
 
-> **WARNING!** This version uses Discord.js 13 which requires Node.js 16.6.0 or newer
+# Table of contents
 
-> **WARNING!** This is a very early version of this package. A lot of things may not work as intended and some names, properties or variables might get added or removed without worrying about backwards compatibility previous beta editions. This version is not compatible with CommandBot 2 at all. If you notice any issues please report them in the Issues tab
+-   [Instalation](#installation)
 
-## Example code
+# Installation
+
+## System requirements
+
+-   _Node.js_ 16.6.0 or newer
+-   _npm_ or _yarn_ package manager
+
+## Creating a project
+
+### Registering Discord app
+
+1. Visit [Discord Developer Portal](https://discord.com/developers/) and create an app
+2. Navigate to the _Bot_ section and register a bot
+3. Navigate to _OAuth 2_ section, select _bot_ and _application.commands_ scopes and check bot permissions
+4. Copy the link and add your bot to the servers
+
+### Creating application
+
+1. Create empty directory
+2. Run `npm init -y` or `yarn init -y`
+3. Add the CommandBot package
+
+```javascript
+// npm
+npm install commandbot@latest
+
+// yarn
+yarn add commandbot@latest
+```
+
+4. Create _index.js_ file
+5. Import the CommandBot package
+
+```javascript
+// CommonJS
+const { Bot, Command } = require("commandbot");
+
+// ES Modules (to use ESM add "type": "module" to your package.json file)
+import { Bot, Command } from "commandbot";
+```
+
+6. Initialize the bot instance
 
 ```javascript
 const bot = new Bot({
-    name: "Command Bot",
-    prefix: "!", // for text commands
-    token: "BOT_TOKEN",
-    applicationId: "APPLICATION_ID",
+    name: "YOUR_BOT_NAME",
+    prefix: "BOT_PREFIX", // bot prefix (optional) (if undefined, only slash commands will be available)
+    argumentSeparator: ",", // used to separate parameters from messages (optional)
+    clientOptions: {
+        intents: [..."DISCORD_API_INTENTS"],
+    }, // Discord.js ClientOptions (optional)
+    token: "DISCORD_BOT_TOKEN" // Discord bot token
+    applicationId: "APPLICATION_ID" // Discord application ID used to register slash commands
 });
-
-bot.commands.add(new Command(
-    name: 'hello',
-    description: 'Greets the user',
-    parameters: [
-        {
-            name: 'name',
-            type: 'string',
-            optional: false
-        }
-    ],
-    function: (p, m) => {
-        return `Hello ${p('name')} from ${m.member.toString()}`;
-    }
-));
-
-bot.on("READY", () => {
-    console.log('BOT IS READY!');
-});
-
-bot.start(3000, true /*Register slash commands (set to false after registering to avoid daily quota problems)*/);
 ```
 
-## Discord usage
+Links
 
-```
-/hello name:World
-or
-!hello World
+-   [DISCORD_API_INTENTS](https://discord.js.org/#/docs/main/stable/class/Intents)
+-   [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)
 
-Response:
-Hello World from @USER
+7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
+8. Start your bot
+
+```javascript
+bot.start(
+    port, // If passed, the application will create a HTTP server
+    true // If true, the app will register all slash commands in the Discord API (it's recommended setting it to false after registering to avoid reaching daily quota)
+);
 ```
