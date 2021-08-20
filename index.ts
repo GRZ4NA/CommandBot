@@ -5,12 +5,4 @@ import { MessageEmbed } from "discord.js";
 import { ObjectID, InputParameter } from "./src/Parameter.js";
 
 export default Bot;
-export {
-    Bot,
-    Command,
-    MessageEmbed,
-    ParameterResolvable,
-    ParameterType,
-    ObjectID,
-    InputParameter,
-};
+export { Bot, Command, MessageEmbed, ParameterResolvable, ParameterType, ObjectID, InputParameter };

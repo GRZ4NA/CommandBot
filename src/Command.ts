@@ -1,17 +1,6 @@
 //IMPORTS
-import {
-    Permissions,
-    Message,
-    MessageEmbed,
-    CommandInteraction,
-    GuildMember,
-    ReplyMessageOptions,
-} from "discord.js";
-import {
-    CommandBuilder,
-    ParameterResolvable,
-    PermissionCheckTypes,
-} from "./types.js";
+import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions } from "discord.js";
+import { CommandBuilder, ParameterResolvable, PermissionCheckTypes } from "./types.js";
 import { OperationSuccess, PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
@@ -29,17 +18,9 @@ export class Command {
     slash: boolean;
     announceSuccess: boolean;
     private function: (
-        params: (
-            query: string,
-            returnType?: "value" | "object"
-        ) => ParameterResolvable | InputParameter | null,
+        params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
-    ) =>
-        | void
-        | string
-        | MessageEmbed
-        | ReplyMessageOptions
-        | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
+    ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 
     /**
      * Command constructor
@@ -68,20 +49,12 @@ export class Command {
         this.aliases = Command.processPhrase(options.aliases);
         this.description = options.description || "No description";
         this.usage = options.usage || this.generateUsageFromArguments();
-        this.permissionCheck =
-            options.permissionCheck == "ALL" || options.permissionCheck == "ANY"
-                ? options.permissionCheck
-                : "ANY";
-        this.permissions = options.permissions
-            ? new Permissions(options.permissions)
-            : undefined;
+        this.permissionCheck = options.permissionCheck == "ALL" || options.permissionCheck == "ANY" ? options.permissionCheck : "ANY";
+        this.permissions = options.permissions ? new Permissions(options.permissions) : undefined;
         this.guilds = options.guilds;
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
-        this.announceSuccess =
-            options.announceSuccess !== undefined
-                ? options.announceSuccess
-                : true;
+        this.announceSuccess = options.announceSuccess !== undefined ? options.announceSuccess : true;
         this.function = options.function;
         if (!/^[\w-]{1,32}$/.test(this.name)) {
             throw new Error(`Incorrect command name: ${this.name}`);
@@ -97,35 +70,16 @@ export class Command {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord message
      * @returns *Promise<void>*
      */
-    async start(
-        interaction?: Message | CommandInteraction,
-        cmdParams?: InputParameter[]
-    ): Promise<void> {
-        const paramFindFn = function (
-            query: string,
-            returnType?: "value" | "object"
-        ) {
-            return returnType === "object"
-                ? cmdParams?.find((p) => p.name === query) || null
-                : cmdParams?.find((p) => p.name === query)?.value || null;
+    async start(interaction?: Message | CommandInteraction, cmdParams?: InputParameter[]): Promise<void> {
+        const paramFindFn = function (query: string, returnType?: "value" | "object") {
+            return returnType === "object" ? cmdParams?.find((p) => p.name === query) || null : cmdParams?.find((p) => p.name === query)?.value || null;
         };
-        const memberPermissions: Readonly<Permissions> =
-            (interaction?.member?.permissions as Permissions) ||
-            new Permissions();
-        if (
-            !this.permissions ||
-            (this.permissionCheck == "ALL"
-                ? memberPermissions.has(this.permissions, true)
-                : memberPermissions.any(this.permissions, true))
-        ) {
+        const memberPermissions: Readonly<Permissions> = (interaction?.member?.permissions as Permissions) || new Permissions();
+        if (!this.permissions || (this.permissionCheck == "ALL" ? memberPermissions.has(this.permissions, true) : memberPermissions.any(this.permissions, true))) {
             if (interaction instanceof CommandInteraction) {
                 await interaction.deferReply();
             }
-            const fnResult = await this.function.call(
-                this,
-                paramFindFn,
-                interaction
-            );
+            const fnResult = await this.function.call(this, paramFindFn, interaction);
             if (
                 fnResult instanceof Object &&
                 ("content" in (fnResult as any) ||
@@ -134,34 +88,24 @@ export class Command {
                     "components" in (fnResult as any) ||
                     "sticker" in (fnResult as any))
             ) {
-                if (interaction instanceof Message)
-                    await interaction.reply(fnResult as ReplyMessageOptions);
-                else if (interaction instanceof CommandInteraction)
-                    await interaction.editReply(
-                        fnResult as ReplyMessageOptions
-                    );
+                if (interaction instanceof Message) await interaction.reply(fnResult as ReplyMessageOptions);
+                else if (interaction instanceof CommandInteraction) await interaction.editReply(fnResult as ReplyMessageOptions);
             } else if (typeof fnResult == "string") {
-                if (interaction instanceof Message)
-                    await interaction?.reply({ content: fnResult });
+                if (interaction instanceof Message) await interaction?.reply({ content: fnResult });
                 else if (interaction instanceof CommandInteraction)
                     await interaction.editReply({
                         content: fnResult,
                     });
             } else if (fnResult instanceof MessageEmbed) {
-                if (interaction instanceof Message)
-                    await interaction?.reply({ embeds: [fnResult] });
-                else if (interaction instanceof CommandInteraction)
-                    await interaction.editReply({ embeds: [fnResult] });
+                if (interaction instanceof Message) await interaction?.reply({ embeds: [fnResult] });
+                else if (interaction instanceof CommandInteraction) await interaction.editReply({ embeds: [fnResult] });
             } else if (this.announceSuccess) {
                 throw new OperationSuccess(this);
             } else if (interaction instanceof CommandInteraction) {
                 await interaction.deleteReply();
             }
         } else {
-            throw new PermissionsError(
-                this,
-                interaction?.member as GuildMember
-            );
+            throw new PermissionsError(this, interaction?.member as GuildMember);
         }
     }
 
@@ -175,14 +119,10 @@ export class Command {
             options = this.parameters.map((p) => {
                 let type = 3;
                 if (!/^[\w-]{1,32}$/.test(p.name)) {
-                    throw new Error(
-                        `Failed to register ${p.name} parameter for ${this.name}: The option name is incorrect`
-                    );
+                    throw new Error(`Failed to register ${p.name} parameter for ${this.name}: The option name is incorrect`);
                 }
                 if ((p.description || "No description").length > 100) {
-                    throw new Error(
-                        `Failed to register ${p.name} parameter for ${this.name}: The description is too long`
-                    );
+                    throw new Error(`Failed to register ${p.name} parameter for ${this.name}: The description is too long`);
                 }
                 if (p.type == "boolean") type = 5;
                 else if (p.type == "user") type = 6;
@@ -206,9 +146,7 @@ export class Command {
         };
     }
 
-    private static processPhrase(
-        phrase?: string | string[]
-    ): string[] | undefined {
+    private static processPhrase(phrase?: string | string[]): string[] | undefined {
         if (Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
                 return p.split(" ").join("_");
@@ -232,11 +170,7 @@ export class Command {
         let usageTemplate: string = "";
         this.parameters &&
             this.parameters.map((e) => {
-                usageTemplate += `[${e.name} (${
-                    e.choices
-                        ? e.choices.map((c) => c.name).join(" / ")
-                        : e.type
-                }${e.optional ? ", optional" : ""})] `;
+                usageTemplate += `[${e.name} (${e.choices ? e.choices.map((c) => c.name).join(" / ") : e.type}${e.optional ? ", optional" : ""})] `;
             });
         return usageTemplate;
     }

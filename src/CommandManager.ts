@@ -1,12 +1,6 @@
 import { CommandInteraction, Message } from "discord.js";
 import { MissingParameterError } from "./errors.js";
-import {
-    BooleanParameter,
-    InputParameter,
-    NumberParameter,
-    ObjectParameter,
-    StringParameter,
-} from "./Parameter.js";
+import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "./Parameter.js";
 import { Command } from "./Command.js";
 import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
 
@@ -53,17 +47,13 @@ export class CommandManager {
             if (!(command instanceof Command)) {
                 throw new TypeError("Inavlid argument type");
             }
-            const nameOccurrence: PhraseOccurrenceData | null =
-                this.findPhraseOccurrence(command.name);
+            const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.name);
             if (nameOccurrence) {
-                throw new Error(
-                    `The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`
-                );
+                throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
             }
             command.aliases &&
                 command.aliases.map((a, i, ar) => {
-                    const aliasOccurrence: PhraseOccurrenceData | null =
-                        this.findPhraseOccurrence(a);
+                    const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(a);
                     if (aliasOccurrence) {
                         console.warn(
                             `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
@@ -92,15 +82,10 @@ export class CommandManager {
             const command = this.get(name);
             if (command) {
                 const argumentsText = content.replace(name, "");
-                const paramsList = argumentsText
-                    .split(this.argumentSeparator)
-                    .map((a) => {
-                        return a.replace(" ", "");
-                    });
-                if (
-                    (paramsList[0] == "" || paramsList[0] == " ") &&
-                    paramsList.length == 1
-                ) {
+                const paramsList = argumentsText.split(this.argumentSeparator).map((a) => {
+                    return a.replace(" ", "");
+                });
+                if ((paramsList[0] == "" || paramsList[0] == " ") && paramsList.length == 1) {
                     paramsList.splice(0, 1);
                 }
                 const parameters: InputParameter[] = [];
@@ -115,29 +100,19 @@ export class CommandManager {
                         case "channel":
                         case "role":
                         case "user":
-                            parameters.push(
-                                new ObjectParameter(p, paramsList[i])
-                            );
+                            parameters.push(new ObjectParameter(p, paramsList[i]));
                             break;
                         case "string":
-                            parameters.push(
-                                new StringParameter(p, paramsList[i])
-                            );
+                            parameters.push(new StringParameter(p, paramsList[i]));
                             break;
                         case "boolean":
-                            parameters.push(
-                                new BooleanParameter(p, paramsList[i])
-                            );
+                            parameters.push(new BooleanParameter(p, paramsList[i]));
                             break;
                         case "number":
-                            parameters.push(
-                                new NumberParameter(p, paramsList[i])
-                            );
+                            parameters.push(new NumberParameter(p, paramsList[i]));
                             break;
                         default:
-                            parameters.push(
-                                new InputParameter(p, paramsList[i])
-                            );
+                            parameters.push(new InputParameter(p, paramsList[i]));
                             break;
                     }
                 });
@@ -158,9 +133,7 @@ export class CommandManager {
      * @param {CommandInteraction} interaction - interaction object
      * @returns *CommandMessagesStructure* | *null*
      */
-    fetchFromInteraction(
-        interaction: CommandInteraction
-    ): CommandMessageStructure | null {
+    fetchFromInteraction(interaction: CommandInteraction): CommandMessageStructure | null {
         const cmd = this.get(interaction.commandName);
         if (cmd) {
             if (interaction.options?.data) {
@@ -178,29 +151,19 @@ export class CommandManager {
                         case "channel":
                         case "role":
                         case "user":
-                            parameters.push(
-                                new ObjectParameter(p, inputParam?.value)
-                            );
+                            parameters.push(new ObjectParameter(p, inputParam?.value));
                             break;
                         case "string":
-                            parameters.push(
-                                new StringParameter(p, inputParam?.value)
-                            );
+                            parameters.push(new StringParameter(p, inputParam?.value));
                             break;
                         case "boolean":
-                            parameters.push(
-                                new BooleanParameter(p, inputParam?.value)
-                            );
+                            parameters.push(new BooleanParameter(p, inputParam?.value));
                             break;
                         case "number":
-                            parameters.push(
-                                new NumberParameter(p, inputParam?.value)
-                            );
+                            parameters.push(new NumberParameter(p, inputParam?.value));
                             break;
                         default:
-                            parameters.push(
-                                new InputParameter(p, inputParam?.value)
-                            );
+                            parameters.push(new InputParameter(p, inputParam?.value));
                             break;
                     }
                 });

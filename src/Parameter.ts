@@ -1,14 +1,4 @@
-import {
-    CategoryChannel,
-    Guild,
-    GuildMember,
-    NewsChannel,
-    Role,
-    StageChannel,
-    StoreChannel,
-    TextChannel,
-    VoiceChannel,
-} from "discord.js";
+import { CategoryChannel, Guild, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ParameterType, ParameterResolvable, Choice } from "./types.js";
 export interface ParameterSchema {
     name: string;
@@ -31,9 +21,7 @@ export class Parameter {
         this.type = options.type;
         this.choices = options.choices;
         if (!/^[\w-]{1,32}$/.test(this.name)) {
-            throw new Error(
-                `Parameter name ${this.name} doesn't match the pattern`
-            );
+            throw new Error(`Parameter name ${this.name} doesn't match the pattern`);
         }
         if (this.description.length > 100) {
             throw new Error(`Parameter ${this.name}: Description too long`);
@@ -65,16 +53,10 @@ export class StringParameter extends InputParameter {
             throw new Error(`Parameter type mismatch`);
         }
         if (parameter.choices) {
-            const match = parameter.choices.filter(
-                (c) =>
-                    c.name.toLowerCase() === value?.toString().toLowerCase() ||
-                    c.value.toLowerCase() === value?.toString().toLowerCase()
-            );
+            const match = parameter.choices.filter((c) => c.name.toLowerCase() === value?.toString().toLowerCase() || c.value.toLowerCase() === value?.toString().toLowerCase());
             if (match.length === 0) {
                 throw new Error(
-                    `Parameter "${
-                        parameter.name
-                    }" has incorrect value. Please enter one of the following values: ${parameter.choices
+                    `Parameter "${parameter.name}" has incorrect value. Please enter one of the following values: ${parameter.choices
                         .map((c) => [c.name, c.value])
                         .flat(1)
                         .join(", ")}`
@@ -97,9 +79,7 @@ export class BooleanParameter extends InputParameter {
         } else if (value?.toString().toLowerCase() === "false") {
             super(parameter, false);
         } else {
-            throw new Error(
-                `Cannot convert "${parameter.name}" parameter to boolean. Please enter either "true" or "false".`
-            );
+            throw new Error(`Cannot convert "${parameter.name}" parameter to boolean. Please enter either "true" or "false".`);
         }
     }
 }
@@ -113,12 +93,7 @@ export class NumberParameter extends InputParameter {
 }
 export class ObjectParameter extends InputParameter {
     constructor(parameter: Parameter, value: ParameterResolvable) {
-        if (
-            parameter.type != "channel" &&
-            parameter.type != "mentionable" &&
-            parameter.type != "user" &&
-            parameter.type != "role"
-        ) {
+        if (parameter.type != "channel" && parameter.type != "mentionable" && parameter.type != "user" && parameter.type != "role") {
             throw new Error(`Parameter type mismatch`);
         }
         super(parameter, new ObjectID(value?.toString() || ""));
@@ -132,32 +107,14 @@ export class ObjectID {
     async toObject(
         guild: Guild,
         type: "channel" | "user" | "role"
-    ): Promise<
-        | Role
-        | TextChannel
-        | VoiceChannel
-        | CategoryChannel
-        | GuildMember
-        | NewsChannel
-        | StoreChannel
-        | StageChannel
-        | null
-    > {
+    ): Promise<Role | TextChannel | VoiceChannel | CategoryChannel | GuildMember | NewsChannel | StoreChannel | StageChannel | null> {
         switch (type) {
             case "channel":
-                return (
-                    (await guild.channels.fetch(this.id.toString() || "")) ||
-                    null
-                );
+                return (await guild.channels.fetch(this.id.toString() || "")) || null;
             case "role":
-                return (
-                    (await guild.roles.fetch(this.id.toString() || "")) || null
-                );
+                return (await guild.roles.fetch(this.id.toString() || "")) || null;
             case "user":
-                return (
-                    (await guild.members.fetch(this.id.toString() || "")) ||
-                    null
-                );
+                return (await guild.members.fetch(this.id.toString() || "")) || null;
         }
     }
 }

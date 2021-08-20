@@ -1,11 +1,5 @@
 import axios from "axios";
-import {
-    Client,
-    CommandInteraction,
-    GuildMember,
-    Intents,
-    Message,
-} from "discord.js";
+import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
 import { Command } from "./Command.js";
@@ -13,22 +7,12 @@ import { CommandManager } from "./CommandManager.js";
 import { OperationSuccess, PermissionsError } from "./errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import {
-    CommandMessageStructure,
-    InitOptions,
-    HelpMessageParams,
-} from "./types.js";
+import { CommandMessageStructure, InitOptions, HelpMessageParams } from "./types.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
     on(event: "MESSAGE", listener: (m: Message) => void): this;
-    on(
-        event: "COMMAND",
-        listener: (
-            m: Message | CommandInteraction,
-            cmdMsg: CommandMessageStructure
-        ) => void
-    ): this;
+    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: CommandMessageStructure) => void): this;
     on(event: "ERROR", listener: (e: any) => void): this;
 }
 
@@ -78,10 +62,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(
-            options.prefix,
-            options.argumentSeparator
-        );
+        this.commands = new CommandManager(options.prefix, options.argumentSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
@@ -106,29 +87,17 @@ export class Bot extends EventEmitter {
     async start(port?: number, register?: boolean): Promise<boolean> {
         try {
             console.log(`\nBot name: ${this.name}`);
-            console.log(
-                `Prefix: ${
-                    this.commands.prefix || "/ (only slash commands)"
-                } \n`
-            );
+            console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
-                throw new ReferenceError(
-                    'No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor'
-                );
+                throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
             if (port) {
-                process.stdout.write(
-                    `Creating http server on port ${port}... `
-                );
+                process.stdout.write(`Creating http server on port ${port}... `);
                 http.createServer().listen(port);
                 console.log("✔");
             }
             if (this.messages.help.enabled === true) {
-                const helpMsg: Command = new HelpMessage(
-                    this.commands,
-                    this.messages.help,
-                    this.name
-                );
+                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
             process.stdout.write("Connecting to Discord... ");
@@ -139,9 +108,7 @@ export class Bot extends EventEmitter {
                     process.stdout.write("Registering commands... ");
                     await axios.put(
                         `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-                        this.commands.list
-                            .filter((c) => !c.guilds && c.slash)
-                            .map((c) => (!c.guilds ? c.toCommandObject() : {})),
+                        this.commands.list.filter((c) => !c.guilds && c.slash).map((c) => (!c.guilds ? c.toCommandObject() : {})),
                         { headers: { Authorization: `Bot ${this.token}` } }
                     );
                     const guilds: any = {};
@@ -158,11 +125,9 @@ export class Bot extends EventEmitter {
                             });
                         });
                     for (let i in guilds) {
-                        await axios.put(
-                            `https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`,
-                            guilds[i],
-                            { headers: { Authorization: `Bot ${this.token}` } }
-                        );
+                        await axios.put(`https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`, guilds[i], {
+                            headers: { Authorization: `Bot ${this.token}` },
+                        });
                     }
                     console.log("✔\n");
                 } else {
@@ -177,16 +142,9 @@ export class Bot extends EventEmitter {
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
-                    } else if (
-                        this.commands.prefix &&
-                        m.content.startsWith(this.commands.prefix)
-                    ) {
+                    } else if (this.commands.prefix && m.content.startsWith(this.commands.prefix)) {
                         this.emit("MESSAGE", m);
-                        await this.messages.system.send(
-                            "NOT_FOUND",
-                            { phrase: m.content, user: m.member || undefined },
-                            m
-                        );
+                        await this.messages.system.send("NOT_FOUND", { phrase: m.content, user: m.member || undefined }, m);
                     } else {
                         this.emit("MESSAGE", m);
                     }
@@ -201,11 +159,7 @@ export class Bot extends EventEmitter {
                             m
                         );
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send(
-                            "SUCCESS",
-                            undefined,
-                            m
-                        );
+                        await this.messages.system.send("SUCCESS", undefined, m);
                     } else {
                         await this.messages.system.send(
                             "ERROR",
@@ -251,11 +205,7 @@ export class Bot extends EventEmitter {
                             i as CommandInteraction
                         );
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send(
-                            "SUCCESS",
-                            undefined,
-                            i as CommandInteraction
-                        );
+                        await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
                     } else {
                         await this.messages.system.send(
                             "ERROR",

@@ -1,9 +1,4 @@
-import {
-    ClientOptions,
-    ColorResolvable,
-    CommandInteraction,
-    ReplyMessageOptions,
-} from "discord.js";
+import { ClientOptions, ColorResolvable, CommandInteraction, ReplyMessageOptions } from "discord.js";
 import { InputParameter, ObjectID, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
@@ -31,17 +26,9 @@ export interface CommandBuilder {
     slash?: boolean;
     announceSuccess?: boolean;
     function: (
-        params: (
-            query: string,
-            returnType?: "value" | "object"
-        ) => ParameterResolvable | InputParameter | null,
+        params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
-    ) =>
-        | void
-        | string
-        | MessageEmbed
-        | ReplyMessageOptions
-        | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
+    ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 }
 export interface PhraseOccurrenceData {
     command: Command;
@@ -59,20 +46,8 @@ export interface HelpMessageParams {
     description: string;
     usage: string;
 }
-export type ParameterType =
-    | "string"
-    | "boolean"
-    | "number"
-    | "user"
-    | "role"
-    | "channel"
-    | "mentionable";
-export type ParameterResolvable =
-    | string
-    | boolean
-    | number
-    | ObjectID
-    | undefined;
+export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
+export type ParameterResolvable = string | boolean | number | ObjectID | undefined;
 export interface Choice {
     name: string;
     value: string;

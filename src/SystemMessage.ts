@@ -1,11 +1,4 @@
-import {
-    ColorResolvable,
-    CommandInteraction,
-    GuildMember,
-    Message,
-    MessageEmbed,
-    User,
-} from "discord.js";
+import { ColorResolvable, CommandInteraction, GuildMember, Message, MessageEmbed, User } from "discord.js";
 import { Command } from "./Command.js";
 import { PermissionsError } from "./errors.js";
 
@@ -73,19 +66,14 @@ export class SystemMessageManager {
      * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns *Promise<MessageEmbed | Message | void>*
      */
-    async send(
-        type: MessageType,
-        data?: SystemMessageData,
-        interaction?: Message | CommandInteraction
-    ): Promise<MessageEmbed | Message | void> {
+    async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
                 return;
             }
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
-            if (this[type].bottomText)
-                embed.setDescription(this[type].bottomText || "");
+            if (this[type].bottomText) embed.setDescription(this[type].bottomText || "");
             embed.setColor(this[type].accentColor || "#000");
             if (this[type].showTimestamp) embed.setTimestamp();
             if (this[type].footer) embed.setFooter(this[type].footer || "");
@@ -93,33 +81,17 @@ export class SystemMessageManager {
                 switch (type) {
                     case "ERROR":
                         if (data.command) {
-                            embed.addField(
-                                "Command name:",
-                                data.command.name,
-                                false
-                            );
+                            embed.addField("Command name:", data.command.name, false);
                         }
                         if (data.error) {
                             if (data.error instanceof Error) {
-                                embed.addField(
-                                    "Error details:",
-                                    data.error.toString(),
-                                    false
-                                );
+                                embed.addField("Error details:", data.error.toString(), false);
                             } else if (typeof data.error == "string") {
-                                embed.addField(
-                                    "Error details:",
-                                    data.error,
-                                    false
-                                );
+                                embed.addField("Error details:", data.error, false);
                             }
                         }
                         if (data.user) {
-                            embed.addField(
-                                "User:",
-                                data.user.toString(),
-                                false
-                            );
+                            embed.addField("User:", data.user.toString(), false);
                         }
                         break;
                     case "NOT_FOUND":
@@ -129,30 +101,16 @@ export class SystemMessageManager {
                         break;
                     case "PERMISSION":
                         if (data.user) {
-                            embed.addField(
-                                "User:",
-                                data.user.toString(),
-                                false
-                            );
+                            embed.addField("User:", data.user.toString(), false);
                         }
                         if (data.command) {
-                            embed.addField(
-                                "Command name:",
-                                data.command.name,
-                                false
-                            );
+                            embed.addField("Command name:", data.command.name, false);
                             if (data.command.permissions) {
                                 let permList: string = "";
-                                data.command.permissions
-                                    .toArray(false)
-                                    .map((p) => {
-                                        permList += p + "\n";
-                                    });
-                                embed.addField(
-                                    "Required permissions:",
-                                    permList,
-                                    false
-                                );
+                                data.command.permissions.toArray(false).map((p) => {
+                                    permList += p + "\n";
+                                });
+                                embed.addField("Required permissions:", permList, false);
                             }
                         }
                         break;
@@ -168,13 +126,8 @@ export class SystemMessageManager {
                     }, this.deleteTimeout || 0);
                 }
                 return message;
-            } else if (
-                interaction &&
-                interaction instanceof CommandInteraction
-            ) {
-                interaction.replied || interaction.deferred
-                    ? await interaction.editReply({ embeds: [embed] })
-                    : await interaction.reply({ embeds: [embed] });
+            } else if (interaction && interaction instanceof CommandInteraction) {
+                interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] });
             } else {
                 return embed;
             }
