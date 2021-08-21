@@ -20,7 +20,7 @@ export interface CommandBuilder {
     description?: string;
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
-    permissions?: PermissionResolvable;
+    permissions?: PermissionResolvable | ((m?: Message | CommandInteraction) => boolean);
     guilds?: string[];
     visible?: boolean;
     slash?: boolean;

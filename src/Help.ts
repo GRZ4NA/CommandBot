@@ -30,12 +30,16 @@ export class HelpMessage extends Command {
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`);
                             helpMsg.setDescription(cmd.description);
                             if (cmd.usage) helpMsg.addField("Usage:", `${cmdManager.prefix || "/"}${cmd.name} ${cmd.usage}`, false);
-                            if (cmd.permissions && cmd.permissions.toArray(false).length > 0) {
-                                let permList: string = "";
-                                cmd.permissions.toArray(false).map((p) => {
-                                    permList += p + "\n";
-                                });
-                                helpMsg.addField("Permissions:", permList, false);
+                            if (cmd.permissions) {
+                                if (cmd.permissions instanceof Function) {
+                                    helpMsg.addField("Permissions:", "Custom", false);
+                                } else if (cmd.permissions.toArray(false).length > 0) {
+                                    let permList: string = "";
+                                    cmd.permissions.toArray(false).map((p) => {
+                                        permList += p + "\n";
+                                    });
+                                    helpMsg.addField("Permissions:", permList, false);
+                                }
                             }
                             if (cmd.aliases && cmd.aliases.length > 0) {
                                 let aList: string = "";

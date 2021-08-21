@@ -107,9 +107,13 @@ export class SystemMessageManager {
                             embed.addField("Command name:", data.command.name, false);
                             if (data.command.permissions) {
                                 let permList: string = "";
-                                data.command.permissions.toArray(false).map((p) => {
-                                    permList += p + "\n";
-                                });
+                                data.command.permissions instanceof Function
+                                    ? (() => {
+                                          permList = "Custom";
+                                      })()
+                                    : data.command.permissions.toArray(false).map((p) => {
+                                          permList += p + "\n";
+                                      });
                                 embed.addField("Required permissions:", permList, false);
                             }
                         }

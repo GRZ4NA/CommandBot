@@ -1,5 +1,5 @@
 //IMPORTS
-import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions } from "discord.js";
+import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions, PermissionResolvable } from "discord.js";
 import { CommandBuilder, ParameterResolvable, PermissionCheckTypes } from "./types.js";
 import { OperationSuccess, PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
@@ -12,7 +12,7 @@ export class Command {
     description: string;
     usage?: string;
     permissionCheck: PermissionCheckTypes;
-    permissions?: Permissions;
+    permissions?: Permissions | ((m?: Message | CommandInteraction) => boolean);
     guilds?: string[];
     visible: boolean;
     slash: boolean;
@@ -50,7 +50,7 @@ export class Command {
         this.description = options.description || "No description";
         this.usage = options.usage || this.generateUsageFromArguments();
         this.permissionCheck = options.permissionCheck == "ALL" || options.permissionCheck == "ANY" ? options.permissionCheck : "ANY";
-        this.permissions = options.permissions ? new Permissions(options.permissions) : undefined;
+        this.permissions = options.permissions ? (options.permissions instanceof Function ? options.permissions : new Permissions(options.permissions)) : undefined;
         this.guilds = options.guilds;
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
@@ -75,7 +75,15 @@ export class Command {
             return returnType === "object" ? cmdParams?.find((p) => p.name === query) || null : cmdParams?.find((p) => p.name === query)?.value || null;
         };
         const memberPermissions: Readonly<Permissions> = (interaction?.member?.permissions as Permissions) || new Permissions();
-        if (!this.permissions || (this.permissionCheck == "ALL" ? memberPermissions.has(this.permissions, true) : memberPermissions.any(this.permissions, true))) {
+        if (
+            !this.permissions ||
+            (this.permissions instanceof Function && this.permissions(interaction)) ||
+            (!(this.permissions instanceof Function)
+                ? this.permissionCheck == "ALL"
+                    ? memberPermissions.has(this.permissions as PermissionResolvable, true)
+                    : memberPermissions.any(this.permissions as PermissionResolvable, true)
+                : false)
+        ) {
             if (interaction instanceof CommandInteraction) {
                 await interaction.deferReply();
             }
