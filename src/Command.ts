@@ -154,6 +154,10 @@ export class Command {
         };
     }
 
+    /**
+     * @param  {string|string[]} phrase?
+     * @returns string
+     */
     private static processPhrase(phrase?: string | string[]): string[] | undefined {
         if (Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
@@ -174,6 +178,9 @@ export class Command {
         }
     }
 
+    /**
+     * @returns string
+     */
     private generateUsageFromArguments(): string {
         let usageTemplate: string = "";
         this.parameters &&

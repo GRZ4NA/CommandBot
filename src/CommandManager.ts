@@ -9,6 +9,10 @@ export class CommandManager {
     prefix?: string;
     argumentSeparator: string;
 
+    /**
+     * @param  {string} prefix?
+     * @param  {string} argumentSeparator?
+     */
     constructor(prefix?: string, argumentSeparator?: string) {
         this.list = [];
         this.prefix = prefix;
@@ -18,7 +22,6 @@ export class CommandManager {
     /**
      * Retrieves the command by name, alias or keyword
      * @param {string} phrase - command name, alias or keyword
-     * @param {GetMode} [mode='ALL'] - specifies which types of command triggers will be used to find the command [*NO_PREFIX* - only keywords; *PREFIX* - names and aliases]
      * @returns *Command* | *null*
      */
     get(phrase: string): Command | null {
@@ -178,6 +181,10 @@ export class CommandManager {
         return null;
     }
 
+    /**
+     * @param  {string} phrase?
+     * @returns PhraseOccurrenceData
+     */
     private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
         this.list.map((c) => {
