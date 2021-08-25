@@ -1,18 +1,18 @@
 import { CategoryChannel, Guild, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
-import { ParameterType, ParameterResolvable, Choice } from "./types.js";
+import { ParameterType, ParameterResolvable } from "./types.js";
 export interface ParameterSchema {
     name: string;
     description?: string;
     optional: boolean;
     type: ParameterType;
-    choices?: Choice[];
+    choices?: string[];
 }
 export class Parameter {
     name: string;
     description: string;
     optional: boolean;
     type: ParameterType;
-    choices?: Choice[];
+    choices?: string[];
 
     constructor(options: ParameterSchema) {
         this.name = options.name;
@@ -53,16 +53,11 @@ export class StringParameter extends InputParameter {
             throw new Error(`Parameter type mismatch`);
         }
         if (parameter.choices) {
-            const match = parameter.choices.filter((c) => c.name.toLowerCase() === value?.toString().toLowerCase() || c.value.toLowerCase() === value?.toString().toLowerCase());
+            const match = parameter.choices.filter((c) => c.toLowerCase() === value?.toString().toLowerCase());
             if (match.length === 0) {
-                throw new Error(
-                    `Parameter "${parameter.name}" has incorrect value. Please enter one of the following values: ${parameter.choices
-                        .map((c) => [c.name, c.value])
-                        .flat(1)
-                        .join(", ")}`
-                );
+                throw new Error(`Parameter "${parameter.name}" has incorrect value. Please enter one of the following values: ${parameter.choices.join(", ")}`);
             } else {
-                super(parameter, match[0].value);
+                super(parameter, match[0]);
                 return;
             }
         }

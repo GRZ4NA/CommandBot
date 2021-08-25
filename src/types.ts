@@ -48,7 +48,3 @@ export interface HelpMessageParams {
 }
 export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
 export type ParameterResolvable = string | boolean | number | ObjectID | undefined;
-export interface Choice {
-    name: string;
-    value: string;
-}

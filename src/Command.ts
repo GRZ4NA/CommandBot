@@ -143,7 +143,10 @@ export class Command {
                     description: p.description || "No description",
                     required: !p.optional,
                     type: type,
-                    choices: p.choices || [],
+                    choices:
+                        p.choices?.map((c) => {
+                            return { name: c, value: c };
+                        }) || [],
                 };
             });
         }
@@ -185,7 +188,7 @@ export class Command {
         let usageTemplate: string = "";
         this.parameters &&
             this.parameters.map((e) => {
-                usageTemplate += `[${e.name} (${e.choices ? e.choices.map((c) => c.name).join(" / ") : e.type}${e.optional ? ", optional" : ""})] `;
+                usageTemplate += `[${e.name} (${e.choices ? e.choices.join(" / ") : e.type}${e.optional ? ", optional" : ""})] `;
             });
         return usageTemplate;
     }
