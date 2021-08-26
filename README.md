@@ -57,20 +57,24 @@ import { Bot, Command } from "commandbot";
 ```javascript
 const bot = new Bot({
     name: "YOUR_BOT_NAME",
-    prefix: "BOT_PREFIX", // bot prefix (optional) (if undefined, only slash commands will be available)
-    argumentSeparator: ",", // used to separate parameters from messages (optional)
+    prefix: "BOT_PREFIX",
+    parameterSeparator: ",",
     clientOptions: {
         intents: [..."DISCORD_API_INTENTS"],
-    }, // Discord.js ClientOptions (optional)
-    token: "DISCORD_BOT_TOKEN", // Discord bot token
-    applicationId: "APPLICATION_ID", // Discord application ID used to register slash commands
+    },
+    token: "DISCORD_BOT_TOKEN",
+    applicationId: "APPLICATION_ID",
 });
 ```
 
-Links
+Properties (\* - required):
 
--   [DISCORD_API_INTENTS](https://discord.js.org/#/docs/main/stable/class/Intents)
--   [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)
+-   name\* - _string_ - bot name
+-   prefix - _string_ - bot prefix to use with text commands (if undefined, only slash commands will be available)
+-   parameterSeparator - _string_ - used to separate parameters from messages (default: ',')
+-   clientOptions - _[ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)_ - Discord.js client options
+-   token\* - _string_ - Discord bot token
+-   applicationId\* - _string_ - Discord application ID
 
 7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
 8. Start your bot
@@ -78,7 +82,7 @@ Links
 ```javascript
 bot.start(
     port, // If passed, the application will create a HTTP server
-    true // If true, the app will register all slash commands in the Discord API (it's recommended setting it to false after registering to avoid reaching daily quota)
+    true // If true or undefined, the app will register all slash commands in the Discord API
 );
 ```
 
