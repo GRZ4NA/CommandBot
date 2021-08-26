@@ -7,16 +7,16 @@ import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
 export class CommandManager {
     list: Command[];
     prefix?: string;
-    argumentSeparator: string;
+    parameterSeparator: string;
 
     /**
      * @param  {string} prefix?
-     * @param  {string} argumentSeparator?
+     * @param  {string} parameterSeparator?
      */
-    constructor(prefix?: string, argumentSeparator?: string) {
+    constructor(prefix?: string, parameterSeparator?: string) {
         this.list = [];
         this.prefix = prefix;
-        this.argumentSeparator = argumentSeparator || ",";
+        this.parameterSeparator = parameterSeparator || ",";
     }
 
     /**
@@ -85,7 +85,7 @@ export class CommandManager {
             const command = this.get(name);
             if (command) {
                 const argumentsText = content.replace(name, "");
-                const paramsList = argumentsText.split(this.argumentSeparator).map((a) => {
+                const paramsList = argumentsText.split(this.parameterSeparator).map((a) => {
                     return a.replace(" ", "");
                 });
                 if ((paramsList[0] == "" || paramsList[0] == " ") && paramsList.length == 1) {

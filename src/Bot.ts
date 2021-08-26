@@ -62,7 +62,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(options.prefix, options.argumentSeparator);
+        this.commands = new CommandManager(options.prefix, options.parameterSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
