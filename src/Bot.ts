@@ -113,9 +113,12 @@ export class Bot extends EventEmitter {
                     );
                     const guilds: any = {};
                     this.commands.list
-                        .filter((c) => !!c.guilds)
+                        .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
                         .map((c) => {
                             c.guilds?.map(async (g) => {
+                                if (!(await this.client.guilds.fetch(g))) {
+                                    throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
+                                }
                                 if (guilds[g]) {
                                     guilds[g].push(c.toCommandObject());
                                 } else {

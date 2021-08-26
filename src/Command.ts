@@ -84,6 +84,12 @@ export class Command {
                     : memberPermissions.any(this.permissions as PermissionResolvable, true)
                 : false)
         ) {
+            if (this.guilds && !this.guilds.find((g) => g == interaction?.guild?.id)) {
+                throw new Error("This command is not available here");
+            }
+            if (!this.slash && interaction instanceof CommandInteraction) {
+                throw new Error("This command is not available as a slash command");
+            }
             if (interaction instanceof CommandInteraction) {
                 await interaction.deferReply();
             }
