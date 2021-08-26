@@ -108,7 +108,7 @@ export class Bot extends EventEmitter {
                     process.stdout.write("Registering commands... ");
                     await axios.put(
                         `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-                        this.commands.list.filter((c) => !c.guilds && c.slash).map((c) => (!c.guilds ? c.toCommandObject() : {})),
+                        this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toCommandObject()),
                         { headers: { Authorization: `Bot ${this.token}` } }
                     );
                     const guilds: any = {};
