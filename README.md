@@ -83,3 +83,67 @@ bot.start(
 ```
 
 # Commands
+
+To create a command, initialize a _Command_ object
+
+Example:
+
+```javascript
+const cmdGreet = new Command({
+    name: "greet",
+    parameters: [
+        {
+            name: "name",
+            description: "Name that will be greeted",
+            optional: true,
+            type: "string",
+        },
+    ],
+    aliases: ["hello"],
+    description: "Welcomes someone",
+    usage: "[name]",
+    permissionCheck: "ALL",
+    permissions: ["SEND_MESSAGES"],
+    guilds: undefined,
+    visible: true,
+    slash: true,
+    annouceSuccess: true,
+    function: function(p. m) {
+        if(p('name')) {
+            return `Hello, ${p('name')}!`
+        }
+        else {
+            return 'Hello!'
+        }
+    }
+});
+
+// Register
+bot.commands.add(cmdGreet)
+```
+
+Properties (\* - required):
+
+-   name\* - _string_ - command name
+-   parameters - _ParameterSchema[]_ - list of parameters (see [Parameters](#parameters))
+-   aliases - _string | string[]_ - list of alternative strings that can call this command (not available for slash commands)
+-   description - _string_ - command description
+-   usage - _string_ - command usage visible in the help message (if not defined, usage string will be automatically generated based on defined parameters)
+-   permissionCheck - _"ALL" | "ANY"_ - whether to check if caller has all defined permission or at least one of them
+-   permissions - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable) | (m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => boolean_ - permissions required to run this command
+-   guilds - _string[]_ - list of servers IDs in which this command will be available (if slash command)
+-   visible - _boolean_ - whether this command is visible in the help message
+-   slash - _boolean_ - whether this command should be registered as a slash command
+-   announceSuccess - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
+-   function\* - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
+    -   Arguments
+    -   -   p - _function_ - call this function with parameter name to fetch parameter value
+        -   m? - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
+
+Register your command in bot client using:
+
+```javascript
+bot.commands.add(cmd);
+```
+
+where _cmd_ is your _Command_ object
