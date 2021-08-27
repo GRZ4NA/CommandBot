@@ -64,6 +64,12 @@ export class CommandManager {
                         ar.splice(i, 1);
                     }
                 });
+            command.parameters &&
+                command.parameters.map((p) => {
+                    if (p.type != "string" && p.choices) {
+                        throw new Error('Parameter with defined choices must have a "string" type');
+                    }
+                });
             this.list.push(command);
             return true;
         } catch (e) {

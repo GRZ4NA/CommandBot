@@ -148,7 +148,7 @@ export class Command {
                     name: p.name,
                     description: p.description || "No description",
                     required: !p.optional,
-                    type: type,
+                    type: p.choices ? 3 : type,
                     choices:
                         p.choices?.map((c) => {
                             return { name: c, value: c };
