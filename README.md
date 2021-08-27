@@ -10,6 +10,11 @@ A Discord.js based framework that makes creating Discord bots easy and fast.
         -   [Registering Discord app](#registering-discord-app)
         -   [Creating application](#creating-application)
 -   [Commands](#commands)
+    -   [Creating and registering a command](#creating-and-registering-a-command)
+    -   [Parameters](#parameters)
+        -   [Types](#types)
+        -   [Defining](#defining)
+        -   [Reading input value](#reading-input-value)
 
 # Installation
 
@@ -69,12 +74,12 @@ const bot = new Bot({
 
 Properties (\* - required):
 
--   name\* - _string_ - bot name
--   prefix - _string_ - bot prefix to use with text commands (if undefined, only slash commands will be available)
--   parameterSeparator - _string_ - used to separate parameters from messages (default: ',')
--   clientOptions - _[ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)_ - Discord.js client options
--   token\* - _string_ - Discord bot token
--   applicationId\* - _string_ - Discord application ID
+-   **name\*** - _string_ - bot name
+-   **prefix** - _string_ - bot prefix to use with text commands (if undefined, only slash commands will be available)
+-   **parameterSeparator** - _string_ - used to separate parameters from messages (default: ',')
+-   **clientOptions** - _[ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)_ - Discord.js client options
+-   **token\*** - _string_ - Discord bot token
+-   **applicationId\*** - _string_ - Discord application ID
 
 7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
 8. Start your bot
@@ -87,6 +92,8 @@ bot.start(
 ```
 
 # Commands
+
+## Creating and registering a command
 
 To create a command, initialize a _Command_ object
 
@@ -128,21 +135,21 @@ bot.commands.add(cmdGreet)
 
 Properties (\* - required):
 
--   name\* - _string_ - command name
--   parameters - _ParameterSchema[]_ - list of parameters (see [Parameters](#parameters))
--   aliases - _string | string[]_ - list of alternative strings that can call this command (not available for slash commands)
--   description - _string_ - command description
--   usage - _string_ - command usage visible in the help message (if not defined, usage string will be automatically generated based on defined parameters)
--   permissionCheck - _"ALL" | "ANY"_ - whether to check if caller has all defined permission or at least one of them
--   permissions - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable) | (m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => boolean_ - permissions required to run this command
--   guilds - _string[]_ - list of servers IDs in which this command will be available (if slash command)
--   visible - _boolean_ - whether this command is visible in the help message
--   slash - _boolean_ - whether this command should be registered as a slash command
--   announceSuccess - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
--   function\* - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
+-   **name\*** - _string_ - command name
+-   **parameters** - _ParameterSchema[]_ - array of parameters (see [Parameters](#parameters))
+-   **aliases** - _string | string[]_ - array of alternative strings that can call this command (not available for slash commands)
+-   **description** - _string_ - command description
+-   **usage** - _string_ - command usage visible in the help message (if not defined, usage string will be automatically generated based on defined parameters)
+-   **permissionCheck** - _"ALL" | "ANY"_ - whether to check if caller has all defined permission or at least one of them
+-   **permissions** - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable) | (m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => boolean_ - permissions required to run this command
+-   **guilds** - _string[]_ - array of servers IDs in which this command will be available (if slash command)
+-   **visible** - _boolean_ - whether this command is visible in the help message
+-   **slash** - _boolean_ - whether this command should be registered as a slash command
+-   **announceSuccess** - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
+-   **function\*** - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
     -   Arguments
-    -   -   p - _function_ - call this function with parameter name to fetch parameter value
-        -   m? - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
+    -   -   **p** - _function_ - call this function with parameter name to fetch parameter value
+        -   **m?** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
 
 Register your command in bot client using:
 
@@ -150,4 +157,78 @@ Register your command in bot client using:
 bot.commands.add(cmd);
 ```
 
-where _cmd_ is your _Command_ object
+where (\* - required):
+
+-   **cmd** - _Command_
+
+## Parameters
+
+### Types
+
+-   **string** - text value
+-   **boolean** - True or False
+-   **number** - number (double) value
+-   **user** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **role** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **channel** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **mentionable** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+
+To get an entity ID from _ObjectID_ use the _value_ property. You can also call _toObject_ method to retrieve full entity object from Discord API
+
+```javascript
+ObjectID.toObject(g, "TYPE");
+```
+
+where (\* - required):
+
+-   **g\*** - _Guild_ - Guild object to fetch from
+-   **"TYPE"\*** - _"user' | "role" | "channel"_ - defines the entity type
+
+### Defining
+
+Example:
+
+```javascript
+{
+    name: "user",
+    description: "User to mention",
+    optional: false,
+    type: "user"
+}
+```
+
+Properties (\* - required):
+
+-   **name\*** - _string_ - parameter name
+-   **description** - _string_ - parameter description
+-   **optional\*** - _boolean_ - whether this parameter is optional
+-   **type\*** - _"string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable"_ - parameter type
+-   **choices** - _string[]_ - parameter value choices (to use this, set type to "string")
+
+### Reading input value
+
+To read parameter values use a function that is passed in the first argument of a call function (defined in _function_ parameter in _Command_ object)
+
+```javascript
+p(query, returnType);
+```
+
+where (\* - required):
+
+-   **query\*** - _string_ - parameter name
+-   **returnType** - _"value" | "object"_ - whether to return only parameter value or a full object
+
+```javascript
+function: (p, m) => {
+    const userObj = p('user')
+    if(userObj) {
+        const user = user.toObject(m.guild, "user");
+        if(user) {
+            return `Hello, ${user.toString()}`
+        }
+        else {
+            throw new Error('User not found')
+        }
+    }
+}
+```
