@@ -105,34 +105,7 @@ export class Bot extends EventEmitter {
             this.client.on("ready", async () => {
                 if (register === undefined || register === true) {
                     console.log("✔");
-                    process.stdout.write("Registering commands... ");
-                    await axios.put(
-                        `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-                        this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toCommandObject()),
-                        { headers: { Authorization: `Bot ${this.token}` } }
-                    );
-                    const guilds: any = {};
-                    this.commands.list
-                        .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
-                        .map((c) => {
-                            c.guilds?.map(async (g) => {
-                                if (!(await this.client.guilds.fetch(g))) {
-                                    throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
-                                }
-                                if (guilds[g]) {
-                                    guilds[g].push(c.toCommandObject());
-                                } else {
-                                    guilds[g] = [];
-                                    guilds[g].push(c.toCommandObject());
-                                }
-                            });
-                        });
-                    for (let i in guilds) {
-                        await axios.put(`https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`, guilds[i], {
-                            headers: { Authorization: `Bot ${this.token}` },
-                        });
-                    }
-                    console.log("✔\n");
+                    this.register();
                 } else {
                     console.log("✔\n");
                 }
@@ -231,6 +204,41 @@ export class Bot extends EventEmitter {
             console.error(`[❌ ERROR] ${e.toString()}`);
             return false;
         }
+    }
+
+    /**
+     * Registers commands in Discord API
+     * @returns *Promise<void>*
+     */
+    async register(): Promise<void> {
+        process.stdout.write("Registering commands... ");
+        await axios.put(
+            `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
+            this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toCommandObject()),
+            { headers: { Authorization: `Bot ${this.token}` } }
+        );
+        const guilds: any = {};
+        this.commands.list
+            .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
+            .map((c) => {
+                c.guilds?.map(async (g) => {
+                    if (!(await this.client.guilds.fetch(g))) {
+                        throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
+                    }
+                    if (guilds[g]) {
+                        guilds[g].push(c.toCommandObject());
+                    } else {
+                        guilds[g] = [];
+                        guilds[g].push(c.toCommandObject());
+                    }
+                });
+            });
+        for (let i in guilds) {
+            await axios.put(`https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`, guilds[i], {
+                headers: { Authorization: `Bot ${this.token}` },
+            });
+        }
+        console.log("✔\n");
     }
 }
 
