@@ -11,6 +11,10 @@ A Discord.js based framework that makes creating Discord bots easy and fast.
         -   [Creating application](#creating-application)
 -   [Commands](#commands)
     -   [Creating and registering a command](#creating-and-registering-a-command)
+    -   [Command function](#command-function)
+        -   [Arguments](#arguments)
+        -   [Return value](#return-value)
+        -   [Errors](#errors)
     -   [Parameters](#parameters)
         -   [Types](#types)
         -   [Defining](#defining)
@@ -118,7 +122,7 @@ const cmdGreet = new Command({
     guilds: undefined,
     visible: true,
     slash: true,
-    annouceSuccess: true,
+    announceSuccess: true,
     function: function(p. m) {
         if(p('name')) {
             return `Hello, ${p('name')}!`
@@ -147,9 +151,6 @@ Properties (\* - required):
 -   **slash** - _boolean_ - whether this command should be registered as a slash command
 -   **announceSuccess** - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
 -   **function\*** - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
-    -   Arguments
-    -   -   **p** - _function_ - call this function with parameter name to fetch parameter value
-        -   **m?** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
 
 Register your command in bot client using:
 
@@ -160,6 +161,28 @@ bot.commands.add(cmd);
 where (\* - required):
 
 -   **cmd** - _Command_
+
+## Command function
+
+### Arguments
+
+-   **p** - _function_ - call this function with parameter name to fetch parameter value
+-   **m?** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
+
+### Return value
+
+If function returns (also after resolving a _Promise_):
+
+-   **void** - If _announceSuccess_ property is _true_, bot will automatically send a SUCCESS message (see [Messages](#messages)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
+-   **string** - this string will be sent in a reply
+-   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
+-   **[ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)** - these options will get used to send a reply
+
+It is possible to manually send replies directly from the command function using the **m** argument. If you are using slash commands don't forget to use the _[editReply](https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=editReply)_ method instead of the _reply_ method since a **reply is already deferred** when a command function is being called (read more [here](https://discord.com/developers/docs/interactions/receiving-and-responding)) If you try to create a new reply, you app will throw an error that will result a crash. If you manually reply to a slash command interaction and return _void_ from the command function, a SUCCESS message will not be sent or reply will not get deleted (if you want to disable SUCCESS messages on prefix interactions set _announceSuccess_ property to _false_).
+
+### Errors
+
+If a command function will throw an error, it will automatically get caught and your bot will send an ERROR message (see [Messages](#messages)). The app **will not** crash.
 
 ## Parameters
 
@@ -232,3 +255,5 @@ function: (p, m) => {
     }
 }
 ```
+
+Coming soon...
