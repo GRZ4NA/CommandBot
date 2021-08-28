@@ -113,9 +113,9 @@ export class Command {
             } else if (fnResult instanceof MessageEmbed) {
                 if (interaction instanceof Message) await interaction?.reply({ embeds: [fnResult] });
                 else if (interaction instanceof CommandInteraction) await interaction.editReply({ embeds: [fnResult] });
-            } else if (this.announceSuccess) {
+            } else if (this.announceSuccess && (interaction instanceof CommandInteraction ? !interaction.replied : true)) {
                 throw new OperationSuccess(this);
-            } else if (interaction instanceof CommandInteraction) {
+            } else if (interaction instanceof CommandInteraction && !interaction.replied) {
                 await interaction.deleteReply();
             }
         } else {
