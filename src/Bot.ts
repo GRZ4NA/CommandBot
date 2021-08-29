@@ -134,6 +134,7 @@ export class Bot extends EventEmitter {
                             },
                             m
                         );
+                        this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, m);
                     } else {
@@ -146,9 +147,8 @@ export class Bot extends EventEmitter {
                             },
                             m
                         );
-                        console.error(e);
+                        this.emit("ERROR", e);
                     }
-                    this.emit("ERROR", e);
                     return;
                 }
             });
@@ -180,6 +180,7 @@ export class Bot extends EventEmitter {
                             },
                             i as CommandInteraction
                         );
+                        this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
                     } else {
@@ -192,9 +193,8 @@ export class Bot extends EventEmitter {
                             },
                             i as CommandInteraction
                         );
-                        console.error(e);
+                        this.emit("ERROR", e);
                     }
-                    this.emit("ERROR", e);
                     return;
                 }
             });
