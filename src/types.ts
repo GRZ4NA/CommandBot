@@ -1,31 +1,34 @@
-import { ClientOptions, ColorResolvable } from "discord.js";
-import { Parameter } from "./Parameter.js";
+import { ClientOptions, ColorResolvable, CommandInteraction, ReplyMessageOptions } from "discord.js";
+import { InputParameter, ObjectID, ParameterSchema } from "./Parameter.js";
 import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import type { Command } from "./Command.js";
 
 export interface InitOptions {
     name: string;
-    prefix: string;
-    argumentSeparator?: string;
+    prefix?: string;
+    parameterSeparator?: string;
     clientOptions?: ClientOptions;
-    token?: string;
+    token: string;
+    applicationId: string;
 }
 export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 export type PermissionCheckTypes = "ALL" | "ANY";
 export interface CommandBuilder {
     name: string;
-    parameters?: Parameter[];
+    parameters?: ParameterSchema[] | "simple" | "no_input";
     aliases?: string[] | string;
-    keywords?: string[] | string;
     description?: string;
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
-    permissions?: PermissionResolvable;
+    permissions?: PermissionResolvable | ((m?: Message | CommandInteraction) => boolean);
+    guilds?: string[];
     visible?: boolean;
+    slash?: boolean;
+    announceSuccess?: boolean;
     function: (
-        message?: Message,
-        cmdParams?: ParameterResolvable[]
-    ) => void | string | MessageEmbed | Promise<void | string | MessageEmbed>;
+        params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
+        interaction?: Message | CommandInteraction
+    ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 }
 export interface PhraseOccurrenceData {
     command: Command;
@@ -33,7 +36,7 @@ export interface PhraseOccurrenceData {
 }
 export interface CommandMessageStructure {
     command: Command;
-    parameters: string[];
+    parameters: InputParameter[];
 }
 export interface HelpMessageParams {
     enabled: boolean;
@@ -42,6 +45,7 @@ export interface HelpMessageParams {
     color: ColorResolvable;
     description: string;
     usage: string;
+    visible: boolean;
 }
-export type ParameterType = "TEXT" | "TRUE/FALSE" | "NUMBER";
-export type ParameterResolvable = string | boolean | number;
+export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
+export type ParameterResolvable = string | boolean | number | ObjectID | undefined;

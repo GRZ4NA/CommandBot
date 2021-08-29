@@ -10,6 +10,12 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Compile test bot",
+            "type": "shell",
+            "command": "cd test; tsc",
+            "problemMatcher": []
         }
     ]
 }

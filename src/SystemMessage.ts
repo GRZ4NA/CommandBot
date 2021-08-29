@@ -1,17 +1,8 @@
-import {
-    ColorResolvable,
-    DMChannel,
-    GuildMember,
-    Message,
-    MessageEmbed,
-    NewsChannel,
-    TextChannel,
-    User,
-} from "discord.js";
+import { ColorResolvable, CommandInteraction, GuildMember, Message, MessageEmbed, User } from "discord.js";
 import { Command } from "./Command.js";
 import { PermissionsError } from "./errors.js";
 
-export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND";
+export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND" | "SUCCESS";
 export interface SystemMessageAppearance {
     enabled: boolean;
     title: string;
@@ -31,6 +22,7 @@ export class SystemMessageManager {
     PERMISSION: SystemMessageAppearance;
     ERROR: SystemMessageAppearance;
     NOT_FOUND: SystemMessageAppearance;
+    SUCCESS: SystemMessageAppearance;
     deleteTimeout: number;
 
     constructor(botName?: string) {
@@ -57,6 +49,13 @@ export class SystemMessageManager {
             showTimestamp: true,
             footer: botName,
         };
+        this.SUCCESS = {
+            enabled: true,
+            title: "✅ Task completed successfully",
+            accentColor: "#00ff00",
+            showTimestamp: true,
+            footer: botName,
+        };
         this.deleteTimeout = Infinity;
     }
 
@@ -64,56 +63,35 @@ export class SystemMessageManager {
      * Generates and sends a system message
      * @param {MessageType} type - 'ERROR' | 'PERMISSION' | 'NOT_FOUND'
      * @param {SystemMessageData} [data] - additional data to include in the message
-     * @param {TextChannel | DMChannel | NewsChannel} [channel] - if specified, the generated message will be sent in this channel
+     * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns *Promise<MessageEmbed | Message | void>*
      */
-    async send(
-        type: MessageType,
-        data?: SystemMessageData,
-        channel?: TextChannel | DMChannel | NewsChannel
-    ): Promise<MessageEmbed | Message | void> {
+    async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
                 return;
             }
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
-            if (this[type].bottomText)
-                embed.setDescription(this[type].bottomText);
+            if (this[type].bottomText) embed.setDescription(this[type].bottomText || "");
             embed.setColor(this[type].accentColor || "#000");
             if (this[type].showTimestamp) embed.setTimestamp();
-            if (this[type].footer) embed.setFooter(this[type].footer);
+            if (this[type].footer) embed.setFooter(this[type].footer || "");
             if (data) {
                 switch (type) {
                     case "ERROR":
                         if (data.command) {
-                            embed.addField(
-                                "Command name:",
-                                data.command.name,
-                                false
-                            );
+                            embed.addField("Command name:", data.command.name, false);
                         }
                         if (data.error) {
                             if (data.error instanceof Error) {
-                                embed.addField(
-                                    "Error details:",
-                                    data.error.toString(),
-                                    false
-                                );
+                                embed.addField("Error details:", data.error.toString(), false);
                             } else if (typeof data.error == "string") {
-                                embed.addField(
-                                    "Error details:",
-                                    data.error,
-                                    false
-                                );
+                                embed.addField("Error details:", data.error, false);
                             }
                         }
                         if (data.user) {
-                            embed.addField(
-                                "User:",
-                                data.user.toString(),
-                                false
-                            );
+                            embed.addField("User:", data.user.toString(), false);
                         }
                         break;
                     case "NOT_FOUND":
@@ -123,41 +101,37 @@ export class SystemMessageManager {
                         break;
                     case "PERMISSION":
                         if (data.user) {
-                            embed.addField(
-                                "User:",
-                                data.user.toString(),
-                                false
-                            );
+                            embed.addField("User:", data.user.toString(), false);
                         }
                         if (data.command) {
-                            embed.addField(
-                                "Command name:",
-                                data.command.name,
-                                false
-                            );
+                            embed.addField("Command name:", data.command.name, false);
                             if (data.command.permissions) {
                                 let permList: string = "";
-                                data.command.permissions
-                                    .toArray(false)
-                                    .map((p) => {
-                                        permList += p + "\n";
-                                    });
-                                embed.addField(
-                                    "Required permissions:",
-                                    permList,
-                                    false
-                                );
+                                data.command.permissions instanceof Function
+                                    ? (() => {
+                                          permList = "Custom";
+                                      })()
+                                    : data.command.permissions.toArray(false).map((p) => {
+                                          permList += p + "\n";
+                                      });
+                                embed.addField("Required permissions:", permList, false);
                             }
                         }
                         break;
+                    case "SUCCESS":
+                        break;
                 }
             }
-            if (channel) {
-                const message = await channel.send(embed);
+            if (interaction && !(interaction instanceof CommandInteraction)) {
+                const message = await interaction.reply({ embeds: [embed] });
                 if (this.deleteTimeout != Infinity && message.deletable) {
-                    await message.delete({ timeout: this.deleteTimeout });
+                    setTimeout(async () => {
+                        await message.delete();
+                    }, this.deleteTimeout || 0);
                 }
                 return message;
+            } else if (interaction && interaction instanceof CommandInteraction) {
+                interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] });
             } else {
                 return embed;
             }

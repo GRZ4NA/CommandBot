@@ -39,3 +39,10 @@ export class MissingParameterError extends ReferenceError {
         return `Your request is missing a "${this.argument.name}" parameter which is not optional`;
     }
 }
+
+export class OperationSuccess {
+    command: Command;
+    constructor(c: Command) {
+        this.command = c;
+    }
+}

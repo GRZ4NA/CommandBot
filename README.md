@@ -1,329 +1,328 @@
 # CommandBot
 
-> [IMPORTANT]
-> Upgrading to this version from 1.1.3 may require additional changes in your code since 2.0.0 is not fully backwards compatible
+A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.
 
-Discord.js framework that helps you build your own Discord bot.
+# Table of contents
 
-Key features
-
--   command system
--   auto-generated help command
--   command permissions
-
-## Table of contents
-
--   [Getting started](#getting-started)
-    -   [Installation](#installation)
-    -   [Creating bot instance](#creating-bot-instance)
--   [Bot instance](#bot-instance)
+-   [CommandBot](#commandbot)
+-   [Table of contents](#table-of-contents)
+-   [Instalation](#installation)
+    -   [System requirements](#system-requirements)
+    -   [Creating a project](#creating-a-project)
+        -   [Registering Discord app](#registering-discord-app)
+        -   [Creating application](#creating-application)
 -   [Commands](#commands)
-    -   [All parameters](#all-parameters)
+    -   [Creating and registering a command](#creating-and-registering-a-command)
     -   [Command function](#command-function)
         -   [Arguments](#arguments)
-        -   [Return](#return)
+        -   [Return value](#return-value)
         -   [Errors](#errors)
-    -   [Command examples](#command-examples)
-        -   [Simple reply](#simple-reply)
-        -   [Example with arguments](#example-with-arguments)
+    -   [Parameters](#parameters)
+        -   [Types](#types)
+        -   [Defining](#defining)
+        -   [Reading input value](#reading-input-value)
 -   [Events](#events)
--   [Customization and built-in messages](#customization-and-built-in-messages)
+    -   [Handling events](#handling-events)
+    -   [Event types](#event-types)
+-   [Messages](#messages)
+    -   [Information messages](#information-messages)
     -   [Help message](#help-message)
-    -   [System messages](#system-messages)
--   [Complete example](#complete-example)
+-   [Issues](#issues)
 
-## Getting started
+# Installation
 
-### Installation
+## System requirements
 
-1. Install this package using npm
+-   _Node.js_ 16.6.0 or newer
+-   _npm_ or _yarn_ package manager
 
-```
-npm install commandbot@latest
-```
+## Creating a project
 
-or yarn
+### Registering Discord app
+
+1. Visit [Discord Developer Portal](https://discord.com/developers/) and create an app
+2. Navigate to the _Bot_ section and register a bot
+3. Navigate to _OAuth 2_ section, select _bot_ and _application.commands_ scopes and check bot permissions
+4. Copy the link and add your bot to the servers
+
+### Creating application
+
+1. Create empty directory
+2. Run `npm init -y` or `yarn init -y`
+3. Add the CommandBot package
 
 ```javascript
+// npm
+npm install commandbot@latest
+
+// yarn
 yarn add commandbot@latest
 ```
 
-2. Import the package
+4. Create _index.js_ file
+5. Import the CommandBot package
 
 ```javascript
-//CommonJS
+// CommonJS
 const { Bot, Command } = require("commandbot");
 
-//ES Modules (to use this option add "type": "module" to your package.json file)
+// ES Modules (to use ESM add "type": "module" to your package.json file)
 import { Bot, Command } from "commandbot";
 ```
 
-### Creating bot instance
+6. Initialize the bot instance
 
 ```javascript
 const bot = new Bot({
-    name: "Command bot", // Name of your bot
-    prefix: "!", // Prefix used to call commands
-    argumentSeparator: ",", // Used to get arguments from message (optional)
-    clientOptions: undefined, // Instance of ClientOptions from Discord.js (optional)
-    token: "", // Bot token from Discord Developer Portal (optional, you can pass the token in the *start* method)
-});
-```
-
-Start your bot using
-
-```javascript
-bot.start();
-```
-
-Optional arguments for this method
-
--   **port** - _number_ - if specified, the app will create a http server that will be listening on the specified port
--   **token** - _string_ - app token from Discord Developer Portal
-
-## Bot instance
-
-The main object of this library has the following properties
-
--   **name** - _string_ - bot's name specified in the constructor
--   **client** - _[Client](https://discord.js.org/#/docs/main/stable/class/Client)_ - Discord.js client instance
--   **commands** - _CommandManager_ - base of the command system (see [Commands](#commands))
--   **config** - _object_ - object that stores the login token and _helpMessage_ value from the constructor
--   **messages** - _SystemMessageManager_ - object instance containing all configuration parameters for built-in messages (see [Customization and built-in messages](#customization-and-built-in-messages))
-
-## Commands
-
-> [IMPORTANT]
-> All commands have to be declared above the _start_ method
-
-### All parameters
-
--   **name** - _string_ - command name (used to trigger the command)
--   **function** - _Function_ - function that will trigger when the commands gets called
--   **visible** - _boolean_ - show command in the _help message_ (optional, defaults to _true_)
--   **description** - _string_ - command description shown in the _help message_ (optional)
--   **usage** - _string_ - command usage description shown in the _help message_ (optional)
--   **permissionCheck** - _"ALL" | "ANY"_ - specifies if the caller has to have all of the specified permissions or any of that (optional, default value: "ANY")
--   **permissions** - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)_ - permissions needed to run the command (optional)
--   **aliases** - _string | string[]_ - other words that can trigger the command with prefix (optional)
--   **keywords** - _string | string[]_ - other words that can trigger the command without prefix (optional)
-
-### Command function
-
-#### Arguments
-
--   **m** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ - a message object instance containing message content, author and additional informations
--   **a** - _string[]_ - list of arguments passed with the message (splitted with _argumentSeparator_)
-
-#### Return
-
-If command function returns
-
--   _string_ - the returned text will be sent as a reply to the command caller
--   _[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)_ - the embedded content will be sent as a standalone message
-
-#### Errors
-
-If your command throws an error, it will get logged to the console and sent to the user in a message with embedded content. **The bot will not crash.** ([Example](https://raw.githubusercontent.com/GRZ4NA/CommandBot/master/assets/error_example.png))
-
-### Command examples
-
-#### Simple reply
-
-1. Create a command
-
-```javascript
-//CREATE COMMAND
-const command = new Command({
-    name: "ping",
-    function: (m, a) => {
-        return "pong";
+    name: "YOUR_BOT_NAME",
+    prefix: "BOT_PREFIX",
+    parameterSeparator: ",",
+    clientOptions: {
+        intents: [..."DISCORD_API_INTENTS"],
     },
+    token: "DISCORD_BOT_TOKEN",
+    applicationId: "APPLICATION_ID",
 });
-//APPEND IT TO THE COMMANDS LIST
-bot.commands.add(command);
 ```
 
-or
+Properties (\* - required):
+
+-   **name\*** - _string_ - bot name
+-   **prefix** - _string_ - bot prefix to use with text commands (if undefined, only slash commands will be available)
+-   **parameterSeparator** - _string_ - used to separate parameters from messages (default: ',')
+-   **clientOptions** - _[ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)_ - Discord.js client options
+-   **token\*** - _string_ - Discord bot token
+-   **applicationId\*** - _string_ - Discord application ID
+
+7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
+8. Start your bot
 
 ```javascript
-bot.commands.add(
-    new Command({
-        name: "ping",
-        function: (m, a) => {
-            return "pong";
-        },
-    })
+bot.start(
+    port, // If passed, the application will create a HTTP server
+    true // If true or undefined, the app will register all slash commands in the Discord API
 );
 ```
 
-2. Call it from Discord text channel (example prefix: "!")
+# Commands
 
-```
-!ping
+## Creating and registering a command
 
-Result:
-@mention, pong
-```
+To create a command, initialize a _Command_ object
 
-#### Example with arguments
-
-1. Create a command
+Example:
 
 ```javascript
-const command = new Command({
-    name: "repeat",
-    function: async (m, a) => {
-        if (a[0] && a[1]) {
-            const count = parseInt(a[1]);
-            if (!isNaN(count)) {
-                for (let i = 0; i < count; i++) {
-                    await m.channel.send(a[0]);
-                }
-                return `Repeated "${a[0]}" ${count} times`;
-            } else {
-                throw new Error("Number of messages is incorrect");
-            }
+const cmdGreet = new Command({
+    name: "greet",
+    parameters: [
+        {
+            name: "name",
+            description: "Name that will be greeted",
+            optional: true,
+            type: "string",
+        },
+    ],
+    aliases: ["hello"],
+    description: "Welcomes someone",
+    usage: "[name]",
+    permissionCheck: "ALL",
+    permissions: ["SEND_MESSAGES"],
+    guilds: undefined,
+    visible: true,
+    slash: true,
+    announceSuccess: true,
+    function: function(p. m) {
+        if(p('name')) {
+            return `Hello, ${p('name')}!`
         }
-    },
+        else {
+            return 'Hello!'
+        }
+    }
 });
-bot.commands.add(command);
+
+// Register
+bot.commands.add(cmdGreet)
 ```
 
-or
+Properties (\* - required):
+
+-   **name\*** - _string_ - command name
+-   **parameters** - _ParameterSchema[]_ - array of parameters (see [Parameters](#parameters))
+-   **aliases** - _string | string[]_ - array of alternative strings that can call this command (not available for slash commands)
+-   **description** - _string_ - command description
+-   **usage** - _string_ - command usage visible in the help message (if not defined, usage string will be automatically generated based on defined parameters)
+-   **permissionCheck** - _"ALL" | "ANY"_ - whether to check if caller has all defined permission or at least one of them
+-   **permissions** - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable) | (m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => boolean_ - permissions required to run this command
+-   **guilds** - _string[]_ - array of servers IDs in which this command will be available (if slash command)
+-   **visible** - _boolean_ - whether this command is visible in the help message
+-   **slash** - _boolean_ - whether this command should be registered as a slash command
+-   **announceSuccess** - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
+-   **function\*** - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
+
+Register your command in bot client using:
 
 ```javascript
-bot.commands.add(
-    new Command({
-        name: "repeat",
-        function: async (m, a) => {
-            if (a[0] && a[1]) {
-                const count = parseInt(a[1]);
-                if (!isNaN(count)) {
-                    for (let i = 0; i < count; i++) {
-                        await m.channel.send(a[0]);
-                    }
-                    return `Repeated "${a[0]}" ${count} times`;
-                } else {
-                    throw new Error("Number of messages is incorrect");
-                }
-            }
-        },
-    })
-);
+bot.commands.add(cmd);
 ```
 
-2. Call it from Discord text channel (example prefix: "!", example separator: "," [default])
+where (\* - required):
 
-```
-!repeat test, 5
+-   **cmd** - _Command_
 
-Result:
-test
-test
-test
-test
-test
-@caller, Repeated "test" 5 times
-```
+## Command function
 
-## Events
+### Arguments
 
-Events are emitted using built-in event emitter **(since version 2.0.0)**. You can handle them using _on_ property
+-   **p** - _function_ - call this function with parameter name to fetch parameter value
+-   **m?** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
 
--   **READY** - emitted when the client successfully connect to Discord API
--   **MESSAGE** - emitted for every message sent in any text channel (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument)
--   **COMMAND** - emitted for every message that gets recognized as a command (a [Message](https://discord.js.org/#/docs/main/stable/class/Message) object is passed to the first argument and a CommandMessageStructure object to the second argument)
--   **ERROR** - emitted on permission and command errors (an error object is passed to the first argument)
-    > [IMPORTANT]
-    > Do not use client.on('message') and client.on('ready') event handler! This handler is a core part of the command system.
+### Return value
 
-Example
+If function returns (also after resolving a _Promise_):
+
+-   **void** - If _announceSuccess_ property is _true_, bot will automatically send a SUCCESS message (see [Messages](#messages)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
+-   **string** - this string will be sent in a reply
+-   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
+-   **[ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)** - these options will get used to send a reply
+
+It is possible to manually send replies directly from the command function using the **m** argument. If you are using slash commands don't forget to use the _[editReply](https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=editReply)_ method instead of the _reply_ method since a **reply is already deferred** when a command function is being called (read more [here](https://discord.com/developers/docs/interactions/receiving-and-responding)) If you try to create a new reply, you app will throw an error that will result a crash. If you manually reply to a slash command interaction and return _void_ from the command function, a SUCCESS message will not be sent or reply will not get deleted (if you want to disable SUCCESS messages on prefix interactions set _announceSuccess_ property to _false_).
+
+### Errors
+
+If a command function will throw an error, it will automatically get caught and your bot will send an ERROR message (see [Messages](#messages)). The app **will not** crash.
+
+## Parameters
+
+### Types
+
+-   **string** - text value
+-   **boolean** - True or False
+-   **number** - number (double) value
+-   **user** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **role** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **channel** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   **mentionable** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+
+To get an entity ID from _ObjectID_ use the _value_ property. You can also call _toObject_ method to retrieve full entity object from Discord API
 
 ```javascript
-bot.on("ready", () => {
-    console.log("Bot is ready!");
-});
+ObjectID.toObject(g, "TYPE");
 ```
 
-## Customization and built-in messages
+where (\* - required):
 
-All configuration parameters for messages are stored in _messages_ property (example: bot.messages)
+-   **g\*** - _Guild_ - Guild object to fetch from
+-   **"TYPE"\*** - _"user' | "role" | "channel"_ - defines the entity type
 
-### Help message
+### Defining
 
-Configuration parameters are stored in _messages.help_ property
+Example:
 
--   **enabled** - _boolean_ - enables or disables the help message
--   **title** - _string_ - title of help message
--   **bottomText** - _string_ - text shown below the title
--   **color** - _[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)_ - color of the embedded content
--   **description** - _string_ - command description (equivalent of the _description_ property in _Command_ object)
--   **usage** - _string_ - equivalent of the _usage_ property in _Command_ object (You can pass a command name, alias or keyword with the _help_ command to get detailed information about the specified command)
+```javascript
+{
+    name: "user",
+    description: "User to mention",
+    optional: false,
+    type: "user"
+}
+```
 
-### System messages
+Properties (\* - required):
 
-All options are stored in _messages.system_ property
+-   **name\*** - _string_ - parameter name
+-   **description** - _string_ - parameter description
+-   **optional\*** - _boolean_ - whether this parameter is optional
+-   **type\*** - _"string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable"_ - parameter type
+-   **choices** - _string[]_ - parameter value choices (to use this, set type to "string")
 
-There are 3 types of system messages
+### Reading input value
 
--   Error message (**ERROR**)
--   Command not found message (**NOT_FOUND**)
--   Insufficient permissions message (**PERMISSION**)
+To read parameter values use a function that is passed in the first argument of a call function (defined in _function_ parameter in _Command_ object)
 
-Each message can be customized using these properties
+```javascript
+p(query, returnType);
+```
 
--   **enabled** - _boolean_ - enables or disables the system message
+where (\* - required):
+
+-   **query\*** - _string_ - parameter name
+-   **returnType** - _"value" | "object"_ - whether to return only parameter value or a full object
+
+```javascript
+function: (p, m) => {
+    const userObj = p('user')
+    if(userObj) {
+        const user = user.toObject(m.guild, "user");
+        if(user) {
+            return `Hello, ${user.toString()}`
+        }
+        else {
+            throw new Error('User not found')
+        }
+    }
+}
+```
+
+# Events
+
+## Handling events
+
+CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _on_ method.
+
+```javascript
+bot.on(eventType, callbackFn);
+```
+
+where (\* - required):
+
+-   **eventType\*** - _"READY" | "COMMAND" | "MESSAGE" | "ERROR"_ - type of event that you want to listen to
+-   **callbackFn\*** - _Function_ - a function that will get executed when the event is emitted
+
+## Event types
+
+-   **READY** - emitted when the app has finished its initialization process
+-   **MESSAGE** - emitted when message is created (similar to _messageCreate_ event from Discord.js) (not emitted when command gets triggered) - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ object is being passed to the first argument
+-   **COMMAND** - emitted when command gets triggered - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ or _[CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ object is being passed to the first argument; an object containing fetched _Command_ object and input parameters is being passed to the second
+-   **ERROR** - emitted when a command function throws an error - an _Error_ object is being passed to the first argument
+
+# Messages
+
+## Information messages
+
+There are 4 information messages:
+
+-   **ERROR** - "An error occurred" message (sent when error occurs)
+-   **SUCCESS** - "Task completed successfully" message (sent after successfully executing a command function)
+-   **PERMISSION** - "Insufficient permissions" message (sent when the caller doesn't have enough permissions)
+-   **NOT_FOUND** - "Command not found" message (sent when someone tries to call a command that does not exist)
+
+Each of these messages can be customized with these properties:
+
+-   **enabled** - _boolean_ - enables or disables the message
 -   **title** - _string_ - title of the message
--   **bottomText** - _string_ - text shown below the title
--   **accentColor** - _[ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)_ - color of the embedded content
--   **showTimestamp** - _boolean_ - show time and date at the bottom of the embedded content
--   **footer** - _string_ - footer of the embedded content
+-   **bottomText** - _string_ - text below the title (also known as description)
+-   **accentColor** - _ColorResolvable_ - embed color
+-   **showTimestamp** - _boolean_ - whether to show date and time in the footer
+-   **footer** - _string_ - message footer
 
-The _messages.system_ also contains a _deleteTimeout_ property. It specifies the time (in ms) after which a system message will be deleted. Set it to _Infinity_ to never delete messages (default value).
+## Help message
 
-## Complete example
+You can customize the help message with these properties:
 
-```javascript
-import { Bot, Command } from "commandbot";
+-   **enabled** - _boolean_ - enables or disables the message
+-   **title** - _string_ - title of the message
+-   **bottomText** - _string_ - text below the title (also known as description)
+-   **accentColor** - _ColorResolvable_ - embed color
+-   **description** - _string_ - description shown in the message itself
+-   **usage** - _string_ - usage displayed in the message itself
+-   **visible** - _boolean_ - whether to show the help command in the list
 
-const bot = new Bot({
-    name: "CommandBot",
-    prefix: "!",
-});
+# Issues
 
-bot.messages.help.accentColor = "#ff0000";
-bot.messages.system.NOT_FOUND.accentColor = "BLUE";
+Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the _Issues_ tab on GitHub.
 
-//Command triggers: !ping, !pong, pingpong
-bot.commands.add(
-    new Command({
-        name: "ping",
-        aliases: "pong",
-        keywords: "pingpong",
-        function: (m, a) => {
-            return "Bot ping: " + bot.client.ws.ping + "ms";
-        },
-    })
-);
-bot.commands.add(
-    new Command({
-        name: "repeat",
-        function: async (m, a) => {
-            if (a[0] && a[1]) {
-                const count = parseInt(a[1]);
-                if (!isNaN(count)) {
-                    for (let i = 0; i < count; i++) {
-                        await m.channel.send(a[0]);
-                    }
-                    return `Repeated "${a[0]}" ${count} times`;
-                } else {
-                    throw new Error("Number of messages is incorrect");
-                }
-            }
-        },
-    })
-);
+Thank you.
 
-bot.start(3000, "TOKEN");
-```
+Created with ❤️ by [GRZANA](https://github.com/GRZ4NA)
