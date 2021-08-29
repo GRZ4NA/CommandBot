@@ -1,9 +1,11 @@
 # CommandBot
 
-A Discord.js based framework that makes creating Discord bots easy and fast.
+A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.
 
 # Table of contents
 
+-   [CommandBot](#commandbot)
+-   [Table of contents](#table-of-contents)
 -   [Instalation](#installation)
     -   [System requirements](#system-requirements)
     -   [Creating a project](#creating-a-project)
@@ -23,6 +25,9 @@ A Discord.js based framework that makes creating Discord bots easy and fast.
     -   [Handling events](#handling-events)
     -   [Event types](#event-types)
 -   [Messages](#messages)
+    -   [Information messages](#information-messages)
+    -   [Help message](#help-message)
+-   [Issues](#issues)
 
 # Installation
 
@@ -284,4 +289,40 @@ where (\* - required):
 
 # Messages
 
-Coming soon...
+## Information messages
+
+There are 4 information messages:
+
+-   **ERROR** - "An error occurred" message (sent when error occurs)
+-   **SUCCESS** - "Task completed successfully" message (sent after successfully executing a command function)
+-   **PERMISSION** - "Insufficient permissions" message (sent when the caller doesn't have enough permissions)
+-   **NOT_FOUND** - "Command not found" message (sent when someone tries to call a command that does not exist)
+
+Each of these messages can be customized with these properties:
+
+-   **enabled** - _boolean_ - enables or disables the message
+-   **title** - _string_ - title of the message
+-   **bottomText** - _string_ - text below the title (also known as description)
+-   **accentColor** - _ColorResolvable_ - embed color
+-   **showTimestamp** - _boolean_ - whether to show date and time in the footer
+-   **footer** - _string_ - message footer
+
+## Help message
+
+You can customize the help message with these properties:
+
+-   **enabled** - _boolean_ - enables or disables the message
+-   **title** - _string_ - title of the message
+-   **bottomText** - _string_ - text below the title (also known as description)
+-   **accentColor** - _ColorResolvable_ - embed color
+-   **description** - _string_ - description shown in the message itself
+-   **usage** - _string_ - usage displayed in the message itself
+-   **visible** - _boolean_ - whether to show the help command in the list
+
+# Issues
+
+Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the _Issues_ tab on GitHub.
+
+Thank you.
+
+Created with ❤️ by [GRZANA](https://github.com/GRZ4NA)
