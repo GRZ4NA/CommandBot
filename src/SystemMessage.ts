@@ -8,8 +8,10 @@ export interface SystemMessageAppearance {
     title: string;
     bottomText?: string;
     accentColor?: ColorResolvable;
+    displayDetails?: boolean;
     showTimestamp?: boolean;
     footer?: string;
+    deleteTimeout?: number;
 }
 interface SystemMessageData {
     command?: Command;
@@ -31,6 +33,7 @@ export class SystemMessageManager {
             title: "👮‍♂️ Insufficient permissions",
             bottomText: "You don't have enough permissions to run this command",
             accentColor: "#1d1dc4",
+            displayDetails: true,
             showTimestamp: true,
             footer: botName,
         };
@@ -39,6 +42,7 @@ export class SystemMessageManager {
             title: "❌ An error occurred",
             bottomText: "Something went wrong while processing your request.",
             accentColor: "#ff0000",
+            displayDetails: true,
             showTimestamp: true,
             footer: botName,
         };
@@ -46,6 +50,7 @@ export class SystemMessageManager {
             enabled: true,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
+            displayDetails: true,
             showTimestamp: true,
             footer: botName,
         };
@@ -53,8 +58,10 @@ export class SystemMessageManager {
             enabled: true,
             title: "✅ Task completed successfully",
             accentColor: "#00ff00",
+            displayDetails: true,
             showTimestamp: true,
             footer: botName,
+            deleteTimeout: Infinity,
         };
         this.deleteTimeout = Infinity;
     }
@@ -77,7 +84,7 @@ export class SystemMessageManager {
             embed.setColor(this[type].accentColor || "#000");
             if (this[type].showTimestamp) embed.setTimestamp();
             if (this[type].footer) embed.setFooter(this[type].footer || "");
-            if (data) {
+            if (data && this[type].displayDetails) {
                 switch (type) {
                     case "ERROR":
                         if (data.command) {
@@ -124,14 +131,29 @@ export class SystemMessageManager {
             }
             if (interaction && !(interaction instanceof CommandInteraction)) {
                 const message = await interaction.reply({ embeds: [embed] });
-                if (this.deleteTimeout != Infinity && message.deletable) {
-                    setTimeout(async () => {
-                        await message.delete();
-                    }, this.deleteTimeout || 0);
+                if (message.deletable) {
+                    if (Number.isFinite(this[type].deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch();
+                        }, this[type].deleteTimeout);
+                    } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch();
+                        }, this.deleteTimeout);
+                    }
                 }
                 return message;
             } else if (interaction && interaction instanceof CommandInteraction) {
                 interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] });
+                if (Number.isFinite(this[type].deleteTimeout)) {
+                    setTimeout(async () => {
+                        await interaction.deleteReply().catch();
+                    }, this[type].deleteTimeout);
+                } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
+                    setTimeout(async () => {
+                        await interaction.deleteReply().catch();
+                    }, this.deleteTimeout);
+                }
             } else {
                 return embed;
             }
