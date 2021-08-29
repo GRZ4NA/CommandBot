@@ -32,8 +32,8 @@ export class Bot extends EventEmitter {
      * @constructor
      * @param {InitOptions} options - instance properties
      * @param {string} options.name - name of your bot
-     * @param {string} options.prefix - prefix used to call commands
-     * @param {string} [options.argumentSeparator=','] - used to get parameters from message
+     * @param {string} [options.prefix] - prefix used to call commands
+     * @param {string} [options.parameterSeparator=','] - used to get parameters from message
      * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
      * @param {string} options.token - bot token from Discord Developer Portal
      * @param {string} options.applicationId - Discord application ID used to register slash commands
