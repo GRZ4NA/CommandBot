@@ -19,6 +19,10 @@ A Discord.js based framework that makes creating Discord bots easy and fast.
         -   [Types](#types)
         -   [Defining](#defining)
         -   [Reading input value](#reading-input-value)
+-   [Events](#events)
+    -   [Handling events](#handling-events)
+    -   [Event types](#event-types)
+-   [Messages](#messages)
 
 # Installation
 
@@ -255,5 +259,29 @@ function: (p, m) => {
     }
 }
 ```
+
+# Events
+
+## Handling events
+
+CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _on_ method.
+
+```javascript
+bot.on(eventType, callbackFn);
+```
+
+where (\* - required):
+
+-   **eventType\*** - _"READY" | "COMMAND" | "MESSAGE" | "ERROR"_ - type of event that you want to listen to
+-   **callbackFn\*** - _Function_ - a function that will get executed when the event is emitted
+
+## Event types
+
+-   **READY** - emitted when the app has finished its initialization process
+-   **MESSAGE** - emitted when message is created (similar to _messageCreate_ event from Discord.js) (not emitted when command gets triggered) - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ object is being passed to the first argument
+-   **COMMAND** - emitted when command gets triggered - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ or _[CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ object is being passed to the first argument; an object containing fetched _Command_ object and input parameters is being passed to the second
+-   **ERROR** - emitted when a command function throws an error - an _Error_ object is being passed to the first argument
+
+# Messages
 
 Coming soon...
