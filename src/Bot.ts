@@ -73,6 +73,7 @@ export class Bot extends EventEmitter {
                 color: "#ff5500",
                 usage: "[command name (optional)]",
                 bottomText: "List of all available commands",
+                visible: true,
             },
             system: new SystemMessageManager(this.name),
         };

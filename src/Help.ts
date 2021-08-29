@@ -10,6 +10,7 @@ export class HelpMessage extends Command {
             usage: params.usage,
             permissions: undefined,
             description: params.description,
+            visible: params.visible,
             parameters: [
                 {
                     name: "command_name",

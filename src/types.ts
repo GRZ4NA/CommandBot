@@ -45,6 +45,7 @@ export interface HelpMessageParams {
     color: ColorResolvable;
     description: string;
     usage: string;
+    visible: boolean;
 }
 export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
 export type ParameterResolvable = string | boolean | number | ObjectID | undefined;
