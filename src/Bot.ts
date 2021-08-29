@@ -218,7 +218,7 @@ export class Bot extends EventEmitter {
             { headers: { Authorization: `Bot ${this.token}` } }
         );
         const guilds: any = {};
-        this.commands.list
+        await this.commands.list
             .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
             .map((c) => {
                 c.guilds?.map(async (g) => {
