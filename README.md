@@ -2,10 +2,23 @@
 
 A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.
 
-# Table of contents
+## Features
+
+-   Support for slash commands
+-   Intuitive usage
+-   Good customization
+-   Permission system
+-   Built-in help command
+-   Built-in information messages
+-   Automatic error catching
+-   Large documentation in README and using JSDoc
+-   Written in TypeScript
+
+## Table of contents
 
 -   [CommandBot](#commandbot)
--   [Table of contents](#table-of-contents)
+    -   [Features](#features)
+    -   [Table of contents](#table-of-contents)
 -   [Instalation](#installation)
     -   [System requirements](#system-requirements)
     -   [Creating a project](#creating-a-project)
