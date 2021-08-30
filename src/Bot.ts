@@ -32,8 +32,8 @@ export class Bot extends EventEmitter {
      * @constructor
      * @param {InitOptions} options - instance properties
      * @param {string} options.name - name of your bot
-     * @param {string} [options.prefix] - prefix used to call commands
-     * @param {string} [options.parameterSeparator=','] - used to get parameters from message
+     * @param {string} [options.prefix] - prefix used to call commands (if undefined, only slash commands will be available)
+     * @param {string} [options.parameterSeparator=','] - used to get parameters from message (only prefix interactions)
      * @param {ClientOptions} [options.clientOptions] - client options from Discord.js
      * @param {string} options.token - bot token from Discord Developer Portal
      * @param {string} options.applicationId - Discord application ID used to register slash commands
@@ -82,7 +82,7 @@ export class Bot extends EventEmitter {
     /**
      * Starts your Discord bot
      * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port
-     * @param {boolean} [register] - if true, the bot will register all slash commands in Discord API
+     * @param {boolean} [register] - if true or undefined, the bot will register all slash commands in Discord API
      * @returns *Promise<boolean>*
      */
     async start(port?: number, register?: boolean): Promise<boolean> {
@@ -208,7 +208,7 @@ export class Bot extends EventEmitter {
     }
 
     /**
-     * Registers commands in Discord API
+     * Registers commands from instance CommandManager in Discord API
      * @returns *Promise<void>*
      */
     async register(): Promise<void> {
