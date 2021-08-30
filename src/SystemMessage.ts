@@ -13,7 +13,7 @@ export interface SystemMessageAppearance {
     footer?: string;
     deleteTimeout?: number;
 }
-interface SystemMessageData {
+export interface SystemMessageData {
     command?: Command;
     phrase?: string;
     user?: GuildMember | User;
