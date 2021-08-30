@@ -1,17 +1,61 @@
 import { CategoryChannel, Guild, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ParameterType, ParameterResolvable } from "./types.js";
+/**
+ * @interface
+ * Properties required to build a {@link Parameter} object
+ * @exports
+ */
 export interface ParameterSchema {
+    /**
+     * Parameter name
+     * @type {string}
+     */
     name: string;
+    /**
+     * Parameter description
+     * @type {string}
+     */
     description?: string;
+    /**
+     * Whether this parameter is optional
+     * @type {boolean}
+     */
     optional: boolean;
+
     type: ParameterType;
+    /**
+     * List of value choices (available only when type is set to "STRING")
+     */
     choices?: string[];
 }
+/**
+ * @class Representation of command parameter
+ * @exports
+ */
 export class Parameter {
+    /**
+     * Parameter name
+     * @type {string}
+     */
     name: string;
+    /**
+     * Parameter description
+     * @type {string}
+     */
     description: string;
+    /**
+     * Whether this parameter is optional
+     * @type {boolean}
+     */
     optional: boolean;
+    /**
+     * Parameter input type
+     * @type {ParameterType}
+     */
     type: ParameterType;
+    /**
+     * List of value choices (available only when type is set to "STRING")
+     */
     choices?: string[];
 
     constructor(options: ParameterSchema) {
@@ -39,7 +83,16 @@ export class DefaultParameter extends Parameter {
         });
     }
 }
+/**
+ * @class Representation of input parameter (argument) coming from a message or an interaction
+ * @extends Parameter
+ * @exports
+ */
 export class InputParameter extends Parameter {
+    /**
+     * Input value
+     * @type {ParameterResolvable}
+     */
     value: ParameterResolvable;
 
     constructor(parameter: Parameter, value: ParameterResolvable) {

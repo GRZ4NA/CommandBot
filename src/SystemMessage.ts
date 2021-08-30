@@ -2,29 +2,108 @@ import { ColorResolvable, CommandInteraction, GuildMember, Message, MessageEmbed
 import { Command } from "./Command.js";
 import { PermissionsError } from "./errors.js";
 
+/**
+ * @type Type of message
+ */
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND" | "SUCCESS";
+/**
+ * @interface
+ * Configuration of system message
+ */
 export interface SystemMessageAppearance {
+    /**
+     * Whether this type of message is enabled
+     * @type {boolean}
+     */
     enabled: boolean;
+    /**
+     * Title field
+     * @type {string}
+     */
     title: string;
+    /**
+     * Text below the title
+     * @type {string}
+     */
     bottomText?: string;
+    /**
+     * Color of a message
+     * @type {ColorResolvable}
+     */
     accentColor?: ColorResolvable;
+    /**
+     * Whether to display detailed informations in the message
+     * @type {boolean}
+     */
     displayDetails?: boolean;
+    /**
+     * Whether to show current time and date in a footer
+     * @type {boolean}
+     */
     showTimestamp?: boolean;
+    /**
+     * Footer text
+     * @type {string}
+     */
     footer?: string;
+    /**
+     * Time (in ms) after a message of this type gets deleted (set to *Infinity* to not delete the message)
+     * @type {number}
+     */
     deleteTimeout?: number;
 }
+/**
+ * @interface
+ * System message data definition
+ */
 export interface SystemMessageData {
+    /**
+     * A {@link Command} instance
+     * @type {Command}
+     */
     command?: Command;
+    /**
+     * Phrase received from a Discord channel
+     * @type {string}
+     */
     phrase?: string;
+    /**
+     * User who used the bot
+     * @type {GuildMember | User}
+     */
     user?: GuildMember | User;
+    /**
+     * Error object
+     * @type {Error | PermissionsError | string}
+     */
     error?: Error | PermissionsError | string;
 }
 
 export class SystemMessageManager {
+    /**
+     * "Insufficient permissions" message
+     * @type {SystemMessageAppearance}
+     */
     PERMISSION: SystemMessageAppearance;
+    /**
+     * Error message
+     * @type {SystemMessageAppearance}
+     */
     ERROR: SystemMessageAppearance;
+    /**
+     * "Command not found" message
+     * @type {SystemMessageAppearance}
+     */
     NOT_FOUND: SystemMessageAppearance;
+    /**
+     * "Task completed successfully" message
+     * @type {SystemMessageAppearance}
+     */
     SUCCESS: SystemMessageAppearance;
+    /**
+     * Global time (in ms) after a message gets deleted
+     * @type {number}
+     */
     deleteTimeout: number;
 
     constructor(botName?: string) {
@@ -68,10 +147,10 @@ export class SystemMessageManager {
 
     /**
      * Generates and sends a system message
-     * @param {MessageType} type - 'ERROR' | 'PERMISSION' | 'NOT_FOUND'
+     * @param {MessageType} type - "ERROR" | "PERMISSION" | "NOT_FOUND" | "SUCCESS"
      * @param {SystemMessageData} [data] - additional data to include in the message
      * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
-     * @returns *Promise<MessageEmbed | Message | void>*
+     * @returns {Promise<MessageEmbed | Message | void>} A message that got sent or *void*
      */
     async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
         if (this[type]) {

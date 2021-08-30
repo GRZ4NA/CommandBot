@@ -7,7 +7,8 @@
         "allowSyntheticDefaultImports": true,
         "baseUrl": "src",
         "pretty": true,
-        "lib": ["esnext"]
+        "lib": ["esnext"],
+        "removeComments": false
     },
     "exclude": ["node_modules", "dist", "test"]
 }
