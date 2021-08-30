@@ -14,7 +14,8 @@
         "bot",
         "typescript",
         "discordjs",
-        "framework"
+        "framework",
+        "slashcommands"
     ],
     "scripts": {
         "compile": "rd dist /S /Q && tsc -p tsconfig-mjs.json && tsc -p tsconfig-cjs.json && package-create.bat",
