@@ -4,14 +4,30 @@ import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, Str
 import { Command } from "./Command.js";
 import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
 
+/**
+ * @class Command manager
+ */
 export class CommandManager {
+    /**
+     * List of commands registered in the manager
+     * @type {Array} {@link Command}
+     */
     list: Command[];
+    /**
+     * Prefix used as a way to trigger the bot using messages
+     * @type {string}
+     */
     prefix?: string;
+    /**
+     * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
+     * @type {string}
+     */
     parameterSeparator: string;
 
     /**
-     * @param  {string} prefix?
-     * @param  {string} parameterSeparator?
+     * @constructor
+     * @param {string} [prefix] - prefix used as a way to trigger the bot using messages
+     * @param {string} parameterSeparator - used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      */
     constructor(prefix?: string, parameterSeparator?: string) {
         this.list = [];
@@ -22,7 +38,7 @@ export class CommandManager {
     /**
      * Retrieves the command by name, alias or keyword
      * @param {string} phrase - command name, alias or keyword
-     * @returns *Command* | *null*
+     * @returns {Command | null} Retrieved {@link Command} object from the manager or *null*
      */
     get(phrase: string): Command | null {
         let command: Command | null = null;
@@ -41,9 +57,9 @@ export class CommandManager {
     }
 
     /**
-     * Adds the given command to the instance manager
-     * @param {Command} command - *Command* or *HelpMessage* object
-     * @returns *boolean*
+     * Adds the given {@link Command} to the instance manager with initial processing
+     * @param {Command} command - {@link Command} instance object
+     * @returns {boolean} Whether this command has been added successfully
      */
     add(command: Command): boolean {
         try {
@@ -79,9 +95,9 @@ export class CommandManager {
     }
 
     /**
-     * Fetches command and parameters from the given *Message* object
-     * @param {Message} message - *Message* object
-     * @returns *CommandMessagesStructure* | *null*
+     * Fetches {@link Command} and list of {@link InputParameter}s from the given {@link Message} object
+     * @param {Message} message - {@link Message} object
+     * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
      */
     fetchFromMessage(message: Message): CommandMessageStructure | null {
         if (!this.prefix) return null;
@@ -138,9 +154,9 @@ export class CommandManager {
     }
 
     /**
-     * Fetches command and parameters from the given *CommandInteraction* object
-     * @param {CommandInteraction} interaction - interaction object
-     * @returns *CommandMessagesStructure* | *null*
+     * Fetches command and parameters from the given {@link CommandInteraction} object
+     * @param {CommandInteraction} interaction - {@link CommandInteraction} object
+     * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
      */
     fetchFromInteraction(interaction: CommandInteraction): CommandMessageStructure | null {
         const cmd = this.get(interaction.commandName);
@@ -187,10 +203,6 @@ export class CommandManager {
         return null;
     }
 
-    /**
-     * @param  {string} phrase?
-     * @returns PhraseOccurrenceData
-     */
     private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
         this.list.map((c) => {

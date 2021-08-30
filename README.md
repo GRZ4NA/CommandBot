@@ -2,10 +2,23 @@
 
 A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.
 
-# Table of contents
+## Features
+
+-   Support for slash commands
+-   Intuitive usage
+-   Good customization
+-   Permission system
+-   Built-in help command
+-   Built-in information messages
+-   Automatic error catching
+-   Large documentation in README and using JSDoc
+-   Written in TypeScript
+
+## Table of contents
 
 -   [CommandBot](#commandbot)
--   [Table of contents](#table-of-contents)
+    -   [Features](#features)
+    -   [Table of contents](#table-of-contents)
 -   [Instalation](#installation)
     -   [System requirements](#system-requirements)
     -   [Creating a project](#creating-a-project)
@@ -298,26 +311,34 @@ There are 4 information messages:
 -   **PERMISSION** - "Insufficient permissions" message (sent when the caller doesn't have enough permissions)
 -   **NOT_FOUND** - "Command not found" message (sent when someone tries to call a command that does not exist)
 
-Each of these messages can be customized with these properties:
+Their configuration is stored in _messages.system_ property.
 
--   **enabled** - _boolean_ - enables or disables the message
--   **title** - _string_ - title of the message
+Each of these messages can be customized with these properties (\* - required):
+
+-   **enabled\*** - _boolean_ - enables or disables the message
+-   **title\*** - _string_ - title of the message
 -   **bottomText** - _string_ - text below the title (also known as description)
 -   **accentColor** - _ColorResolvable_ - embed color
+-   **displayDetails** - _boolean_ - whether to display additional informations
 -   **showTimestamp** - _boolean_ - whether to show date and time in the footer
 -   **footer** - _string_ - message footer
+-   **deleteTimeout** - _number_ - time (ms) after the message gets deleted
+
+There is also a global _deleteTimeout_ property (_messages.system.deleteTimeout_)
 
 ## Help message
 
-You can customize the help message with these properties:
+Its configuration is stored in _messages.help_ property.
 
--   **enabled** - _boolean_ - enables or disables the message
--   **title** - _string_ - title of the message
--   **bottomText** - _string_ - text below the title (also known as description)
--   **accentColor** - _ColorResolvable_ - embed color
--   **description** - _string_ - description shown in the message itself
--   **usage** - _string_ - usage displayed in the message itself
--   **visible** - _boolean_ - whether to show the help command in the list
+You can customize the help message with these properties (\* - required):
+
+-   **enabled\*** - _boolean_ - enables or disables the message
+-   **title\*** - _string_ - title of the message
+-   **bottomText\*** - _string_ - text below the title (also known as description)
+-   **accentColor\*** - _ColorResolvable_ - embed color
+-   **description\*** - _string_ - description shown in the message itself
+-   **usage\*** - _string_ - usage displayed in the message itself
+-   **visible\*** - _boolean_ - whether to show the help command in the list
 
 # Issues
 

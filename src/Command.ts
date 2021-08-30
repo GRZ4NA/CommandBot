@@ -5,18 +5,74 @@ import { OperationSuccess, PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
 //CLASSES
+/**
+ * @class Class that represents a command instance
+ * @exports
+ */
 export class Command {
+    /**
+     * Command name
+     * @type {string}
+     */
     name: string;
+    /**
+     * List of parameters that can passed to this command
+     * @type {Array} {@link Parameter}
+     */
     parameters: Parameter[];
+    /**
+     * List of different names that can be used to invoke a command (when using prefix interactions)
+     * @type {Array} *string*
+     */
     aliases?: string[];
+    /**
+     * Command description displayed in the help message (Default description: "No description")
+     * @type {string}
+     */
     description: string;
+    /**
+     * Command usage displayed in the help message
+     * @type {string}
+     */
     usage?: string;
+    /**
+     * Whether to check if a caller has all defined in *permissions* property permissions or at least one of them (doesn't apply to custom function permissions)
+     * @type {PermissionCheckTypes} "ALL" | "ANY"
+     */
     permissionCheck: PermissionCheckTypes;
+    /**
+     * Command permissions (if *undefined*, no permissions check will be performed)
+     * @type {PermissionResolvable}
+     * @type {Function} should return boolean value
+     */
     permissions?: Permissions | ((m?: Message | CommandInteraction) => boolean);
+    /**
+     * List of Discord guild (server) IDs in which this command can be used
+     * @type {Array} *string*
+     */
     guilds?: string[];
+    /**
+     * Whether this command is visible in the help message (default: true)
+     * @type {boolean}
+     */
     visible: boolean;
+    /**
+     * Whether this command should be registered as a slash command (default: true)
+     * @type {boolean}
+     */
     slash: boolean;
+    /**
+     * Whether to send a SUCCESS message if no other response is defined (default: true)
+     * @type {boolean}
+     */
     announceSuccess: boolean;
+    /**
+     * Command execution function (triggered when someone invokes the command)
+     * @type {Function}
+     * @param {Function} p - function to fetch input parameters' values
+     * @param {Message | CommandInteraction} i - interaction object
+     * @private
+     */
     private function: (
         params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
@@ -25,17 +81,7 @@ export class Command {
     /**
      * Command constructor
      * @constructor
-     * @param {CommandBuilder} options - all command properties
-     * @param {string} options.name - command name (used to trigger the command)
-     * @param {ParameterSchema} options.parameters - all parameters that can be passed with the command
-     * @param {string | string[]} [options.aliases] - other words that can trigger the command with prefix (not used in slash commands)
-     * @param {string} [options.description="No description"] - command description shown in the help message
-     * @param {string} [options.usage] - command usage description shown in the help message (usage message can be automatically generated using parameters)
-     * @param {PermissionCheckTypes} [options.permissionCheck='ANY'] - specifies if the caller has to have all of the specified permissions or any of that
-     * @param {PermissionResolvable} [options.permissions] - permissions needed to run the command
-     * @param {boolean} [options.visible=true] - show command in the help message (visible as a slash command)
-     * @param {boolean} [options.slash=true] - whether the command should be available as a slash command
-     * @param {Function} options.function - function that will trigger when the commands gets called
+     * @param {CommandBuilder} options - {@link CommandBuilder}
      */
     constructor(options: CommandBuilder) {
         this.name = options.name.split(" ").join("_");
@@ -65,10 +111,10 @@ export class Command {
     }
 
     /**
-     * Starts the command
-     * @param {Message | CommandInteraction} [interaction] - a *Message* or *CommandInteraction* object used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
-     * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord message
-     * @returns *Promise<void>*
+     * Invokes the command
+     * @param {Message | CommandInteraction} [interaction] - Used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
+     * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
+     * @returns {Promise<void>}
      */
     async start(interaction?: Message | CommandInteraction, cmdParams?: InputParameter[]): Promise<void> {
         const paramFindFn = function (query: string, returnType?: "value" | "object") {
@@ -124,7 +170,7 @@ export class Command {
     }
 
     /**
-     * Returns object that is ready to be registered in the Discord API
+     * Converts {@link Command} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
     toCommandObject() {
@@ -163,10 +209,6 @@ export class Command {
         };
     }
 
-    /**
-     * @param  {string|string[]} phrase?
-     * @returns string
-     */
     private static processPhrase(phrase?: string | string[]): string[] | undefined {
         if (Array.isArray(phrase)) {
             const buff = phrase.map((p) => {
@@ -187,9 +229,6 @@ export class Command {
         }
     }
 
-    /**
-     * @returns string
-     */
     private generateUsageFromArguments(): string {
         let usageTemplate: string = "";
         this.parameters &&

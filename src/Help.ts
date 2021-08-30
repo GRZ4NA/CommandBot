@@ -19,15 +19,18 @@ export class HelpMessage extends Command {
                     type: "string",
                 },
             ],
-            function: (param, _) => {
+            function: (p, i) => {
                 const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
-                    if (param("command_name")) {
-                        const cmd: Command | null = cmdManager.get(param("command_name")?.toString() || "");
+                    if (p("command_name")) {
+                        const cmd: Command | null = cmdManager.get(p("command_name")?.toString() || "");
                         if (cmd) {
+                            if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
+                                throw new ReferenceError(`Command "${cmd.name}" is not available`);
+                            }
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`);
                             helpMsg.setDescription(cmd.description);
                             if (cmd.usage) helpMsg.addField("Usage:", `${cmdManager.prefix || "/"}${cmd.name} ${cmd.usage}`, false);
@@ -49,15 +52,20 @@ export class HelpMessage extends Command {
                                 });
                                 helpMsg.addField("Aliases:", aList, false);
                             }
+                            helpMsg.addField("Slash command:", cmd.slash ? "ENABLED" : "DISABLED", false);
+                            helpMsg.addField("Command scope:", Array.isArray(cmd.guilds) && cmd.guilds.length > 0 ? "CUSTOM" : "GLOBAL", false);
                         } else {
-                            throw new ReferenceError(`Command "${param("command_name")}" does not exist`);
+                            throw new ReferenceError(`Command "${p("command_name")}" does not exist`);
                         }
                     } else {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
                         cmdManager.list.map((c) => {
-                            if (c.visible) {
+                            if (
+                                c.visible &&
+                                ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
+                            ) {
                                 helpMsg.addField(`${cmdManager.prefix || "/"}${c.name} ${c.usage}`, c.description, false);
                             }
                         });
