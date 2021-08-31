@@ -117,6 +117,8 @@ bot.start(
 );
 ```
 
+> **WARNING!** All commands have to be added to the instance **before starting the bot**. Adding commands while the bot is running is not possible and can cause issues.
+
 # Commands
 
 ## Creating and registering a command
