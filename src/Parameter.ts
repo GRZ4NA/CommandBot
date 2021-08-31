@@ -37,26 +37,26 @@ export class Parameter {
      * Parameter name
      * @type {string}
      */
-    name: string;
+    public readonly name: string;
     /**
      * Parameter description
      * @type {string}
      */
-    description: string;
+    public readonly description: string;
     /**
      * Whether this parameter is optional
      * @type {boolean}
      */
-    optional: boolean;
+    public readonly optional: boolean;
     /**
      * Parameter input type
      * @type {ParameterType}
      */
-    type: ParameterType;
+    public readonly type: ParameterType;
     /**
      * List of value choices (available only when type is set to "STRING")
      */
-    choices?: string[];
+    public readonly choices?: string[];
 
     constructor(options: ParameterSchema) {
         this.name = options.name;
@@ -93,7 +93,7 @@ export class InputParameter extends Parameter {
      * Input value
      * @type {ParameterResolvable}
      */
-    value: ParameterResolvable;
+    public readonly value: ParameterResolvable;
 
     constructor(parameter: Parameter, value: ParameterResolvable) {
         super(parameter);
@@ -148,7 +148,7 @@ export class ObjectParameter extends InputParameter {
     }
 }
 export class ObjectID {
-    id: string;
+    public readonly id: string;
     constructor(id: string) {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
     }

@@ -84,27 +84,27 @@ export class SystemMessageManager {
      * "Insufficient permissions" message
      * @type {SystemMessageAppearance}
      */
-    PERMISSION: SystemMessageAppearance;
+    public PERMISSION: SystemMessageAppearance;
     /**
      * Error message
      * @type {SystemMessageAppearance}
      */
-    ERROR: SystemMessageAppearance;
+    public ERROR: SystemMessageAppearance;
     /**
      * "Command not found" message
      * @type {SystemMessageAppearance}
      */
-    NOT_FOUND: SystemMessageAppearance;
+    public NOT_FOUND: SystemMessageAppearance;
     /**
      * "Task completed successfully" message
      * @type {SystemMessageAppearance}
      */
-    SUCCESS: SystemMessageAppearance;
+    public SUCCESS: SystemMessageAppearance;
     /**
      * Global time (in ms) after a message gets deleted
      * @type {number}
      */
-    deleteTimeout: number;
+    public deleteTimeout: number;
 
     constructor(botName?: string) {
         this.PERMISSION = {

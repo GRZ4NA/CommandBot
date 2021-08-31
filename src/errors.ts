@@ -9,8 +9,8 @@ import { ParameterType } from "./types.js";
  * @exports
  */
 export class PermissionsError extends Error {
-    private command: Command;
-    private user: GuildMember | null;
+    private readonly command: Command;
+    private readonly user: GuildMember | null;
     constructor(command: Command, user?: GuildMember | null) {
         super();
         this.command = command;
@@ -27,8 +27,8 @@ export class PermissionsError extends Error {
  * @exports
  */
 export class ParameterTypeError extends TypeError {
-    private stringContent: string;
-    private type: ParameterType;
+    private readonly stringContent: string;
+    private readonly type: ParameterType;
     constructor(s: string, type: ParameterType) {
         super();
         this.stringContent = s;
@@ -45,7 +45,7 @@ export class ParameterTypeError extends TypeError {
  * @exports
  */
 export class MissingParameterError extends ReferenceError {
-    private argument: Parameter;
+    private readonly argument: Parameter;
     constructor(a: Parameter) {
         super();
         this.argument = a;
@@ -60,7 +60,7 @@ export class MissingParameterError extends ReferenceError {
  * @exports
  */
 export class OperationSuccess {
-    command: Command;
+    public readonly command: Command;
     constructor(c: Command) {
         this.command = c;
     }

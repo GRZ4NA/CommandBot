@@ -12,17 +12,17 @@ export class CommandManager {
      * List of commands registered in the manager
      * @type {Array} {@link Command}
      */
-    list: Command[];
+    public readonly list: Command[];
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
      */
-    prefix?: string;
+    public readonly prefix?: string;
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      * @type {string}
      */
-    parameterSeparator: string;
+    public readonly parameterSeparator: string;
 
     /**
      * @constructor

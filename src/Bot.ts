@@ -26,32 +26,32 @@ export class Bot extends EventEmitter {
      * Bot name
      * @type {string}
      */
-    name: string;
+    public readonly name: string;
     /**
      * Discord.js {@link Client} instance
      * @type {Client}
      */
-    client: Client;
+    public readonly client: Client;
     /**
      * Instance command manager
      * @type {CommandManager}
      */
-    commands: CommandManager;
+    public readonly commands: CommandManager;
     /**
      * Discord bot token
      * @type {string}
      */
-    token: string;
+    public readonly token: string;
     /**
      * Discord API application ID
      * @type {string}
      */
-    applicationId: string;
+    public readonly applicationId: string;
     /**
      * Built-in messages configuration
      * @type {Object}
      */
-    messages: {
+    public readonly messages: {
         /**
          * Help message configuration
          * @type {HelpMessageParams}
