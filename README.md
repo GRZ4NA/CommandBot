@@ -342,6 +342,8 @@ You can customize the help message with these properties (\* - required):
 -   **usage\*** - _string_ - usage displayed in the message itself
 -   **visible\*** - _boolean_ - whether to show the help command in the list
 
+> **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
+
 # Issues
 
 Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the _Issues_ tab on GitHub.
