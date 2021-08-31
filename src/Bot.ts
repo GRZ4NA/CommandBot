@@ -132,7 +132,7 @@ export class Bot extends EventEmitter {
                 const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
-            Object.freeze(this.commands);
+            Object.freeze(this.commands.list);
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {
