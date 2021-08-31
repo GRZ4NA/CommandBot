@@ -132,7 +132,6 @@ export class Bot extends EventEmitter {
                 const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
-            Object.freeze(this.commands.list);
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {
@@ -248,11 +247,15 @@ export class Bot extends EventEmitter {
         process.stdout.write("Registering commands... ");
         await axios.put(
             `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-            this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toCommandObject()),
+            this.commands
+                .getList()
+                .filter((c) => !Array.isArray(c.guilds) && c.slash)
+                .map((c) => c.toCommandObject()),
             { headers: { Authorization: `Bot ${this.token}` } }
         );
         const guilds: any = {};
-        await this.commands.list
+        await this.commands
+            .getList()
             .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
             .map((c) => {
                 c.guilds?.map(async (g) => {

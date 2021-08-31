@@ -12,7 +12,7 @@ export class CommandManager {
      * List of commands registered in the manager
      * @type {Array} {@link Command}
      */
-    public readonly list: Command[];
+    private readonly list: Command[];
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
@@ -54,6 +54,15 @@ export class CommandManager {
                 });
         });
         return command;
+    }
+
+    /**
+     * Get all commands registered in a manager
+     * @returns {Command[]} List of registered commands in a manager
+     */
+    getList(): Command[] {
+        const list = this.list;
+        return list;
     }
 
     /**
