@@ -117,6 +117,8 @@ bot.start(
 );
 ```
 
+> **WARNING!** All commands have to be added to the instance **before starting the bot**. Adding commands while the bot is running is not possible and can cause issues.
+
 # Commands
 
 ## Creating and registering a command
@@ -339,6 +341,8 @@ You can customize the help message with these properties (\* - required):
 -   **description\*** - _string_ - description shown in the message itself
 -   **usage\*** - _string_ - usage displayed in the message itself
 -   **visible\*** - _boolean_ - whether to show the help command in the list
+
+> **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
 
 # Issues
 

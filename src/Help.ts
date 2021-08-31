@@ -61,7 +61,7 @@ export class HelpMessage extends Command {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
-                        cmdManager.list.map((c) => {
+                        cmdManager.getList().map((c) => {
                             if (
                                 c.visible &&
                                 ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
