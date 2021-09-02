@@ -3,6 +3,7 @@ import { MissingParameterError } from "./errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "./Parameter.js";
 import { Command } from "./Command.js";
 import { CommandMessageStructure, PhraseOccurrenceData } from "./types/Command.js";
+import { applicationState } from "./global/state.js";
 
 /**
  * @class Command manager
@@ -66,6 +67,9 @@ export class CommandManager {
      */
     public add(command: Command): boolean {
         try {
+            if (applicationState.running) {
+                throw new Error("Cannot add command while the application is running");
+            }
             if (!(command instanceof Command)) {
                 throw new TypeError("Inavlid argument type");
             }
@@ -204,13 +208,6 @@ export class CommandManager {
             return null;
         }
         return null;
-    }
-
-    public freezeList(): void {
-        if (!Object.isFrozen(this._list)) {
-            Object.freeze(this._list);
-        }
-        return;
     }
 
     private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {

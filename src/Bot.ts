@@ -10,6 +10,7 @@ import { SystemMessageManager } from "./SystemMessage.js";
 import { CommandMessageStructure } from "./types/Command.js";
 import { InitOptions } from "./types/Bot.js";
 import { HelpMessageParams } from "./types/HelpMessage.js";
+import { applicationState } from "./global/state.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
@@ -134,7 +135,7 @@ export class Bot extends EventEmitter {
                 const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
-            this.commands.freezeList();
+            applicationState.running = true;
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {
