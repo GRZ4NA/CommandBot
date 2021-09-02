@@ -8,11 +8,7 @@ import { CommandMessageStructure, PhraseOccurrenceData } from "./types/Command.j
  * @class Command manager
  */
 export class CommandManager {
-    /**
-     * List of commands registered in the manager
-     * @type {Array} {@link Command}
-     */
-    private readonly list: Command[];
+    private readonly _list: Command[] = [];
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
@@ -30,7 +26,6 @@ export class CommandManager {
      * @param {string} parameterSeparator - used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      */
     constructor(prefix?: string, parameterSeparator?: string) {
-        this.list = [];
         this.prefix = prefix;
         this.parameterSeparator = parameterSeparator || ",";
     }
@@ -42,7 +37,7 @@ export class CommandManager {
      */
     public get(phrase: string): Command | null {
         let command: Command | null = null;
-        this.list.map((c) => {
+        this._list.map((c) => {
             if (c.name == phrase) {
                 command = c;
             }
@@ -57,12 +52,11 @@ export class CommandManager {
     }
 
     /**
-     * Get list (array) of all {@link Command}s registered in a manager
-     * @returns {Command[]} Array of {@link Command}s registered in a manager
+     * List of commands registered in the manager
+     * @type {Array} {@link Command}
      */
-    public getList(): Command[] {
-        const list = [...this.list];
-        return list;
+    get list() {
+        return Object.freeze([...this._list]);
     }
 
     /**
@@ -95,7 +89,7 @@ export class CommandManager {
                         throw new Error('Parameter with defined choices must have a "string" type');
                     }
                 });
-            this.list.push(command);
+            this._list.push(command);
             return true;
         } catch (e) {
             console.error(`[❌ ERROR] ${e}`);
@@ -213,15 +207,15 @@ export class CommandManager {
     }
 
     public freezeList(): void {
-        if (!Object.isFrozen(this.list)) {
-            Object.freeze(this.list);
+        if (!Object.isFrozen(this._list)) {
+            Object.freeze(this._list);
         }
         return;
     }
 
     private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
-        this.list.map((c) => {
+        this._list.map((c) => {
             if (phrase == c.name) {
                 returnValue = {
                     command: c,
