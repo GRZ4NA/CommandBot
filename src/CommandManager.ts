@@ -98,7 +98,7 @@ export class CommandManager {
             this.list.push(command);
             return true;
         } catch (e) {
-            console.error(`[❌ ERROR] ${e.toString()}`);
+            console.error(`[❌ ERROR] ${e}`);
             return false;
         }
     }

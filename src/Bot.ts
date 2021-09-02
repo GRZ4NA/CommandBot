@@ -176,7 +176,7 @@ export class Bot extends EventEmitter {
                             {
                                 command: cmdMsg?.command,
                                 user: m.member || undefined,
-                                error: e,
+                                error: e as Error,
                             },
                             m
                         );
@@ -222,7 +222,7 @@ export class Bot extends EventEmitter {
                             {
                                 command: cmd?.command,
                                 user: (i.member as GuildMember) || undefined,
-                                error: e,
+                                error: e as Error,
                             },
                             i as CommandInteraction
                         );
@@ -234,7 +234,7 @@ export class Bot extends EventEmitter {
             return true;
         } catch (e) {
             console.log("❌");
-            console.error(`[❌ ERROR] ${e.toString()}`);
+            console.error(`[❌ ERROR] ${e}`);
             return false;
         }
     }
