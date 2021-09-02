@@ -7,7 +7,9 @@ import { CommandManager } from "./CommandManager.js";
 import { OperationSuccess, PermissionsError } from "./errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import { CommandMessageStructure, InitOptions, HelpMessageParams } from "./types.js";
+import { CommandMessageStructure } from "./types/Command.js";
+import { InitOptions } from "./types/Bot.js";
+import { HelpMessageParams } from "./types/HelpMessage.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;

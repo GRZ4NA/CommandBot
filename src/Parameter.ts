@@ -1,33 +1,6 @@
 import { CategoryChannel, Guild, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
-import { ParameterType, ParameterResolvable } from "./types.js";
-/**
- * @interface
- * Properties required to build a {@link Parameter} object
- * @exports
- */
-export interface ParameterSchema {
-    /**
-     * Parameter name
-     * @type {string}
-     */
-    name: string;
-    /**
-     * Parameter description
-     * @type {string}
-     */
-    description?: string;
-    /**
-     * Whether this parameter is optional
-     * @type {boolean}
-     */
-    optional: boolean;
+import { ParameterType, ParameterResolvable, ParameterSchema } from "./types/Parameter.js";
 
-    type: ParameterType;
-    /**
-     * List of value choices (available only when type is set to "STRING")
-     */
-    choices?: string[];
-}
 /**
  * @class Representation of command parameter
  * @exports
@@ -73,6 +46,7 @@ export class Parameter {
         return;
     }
 }
+
 export class DefaultParameter extends Parameter {
     constructor() {
         super({
@@ -83,6 +57,7 @@ export class DefaultParameter extends Parameter {
         });
     }
 }
+
 /**
  * @class Representation of input parameter (argument) coming from a message or an interaction
  * @extends Parameter
@@ -100,6 +75,7 @@ export class InputParameter extends Parameter {
         this.value = value;
     }
 }
+
 export class StringParameter extends InputParameter {
     constructor(parameter: Parameter, value: ParameterResolvable) {
         if (parameter.type != "string") {
@@ -117,6 +93,7 @@ export class StringParameter extends InputParameter {
         super(parameter, value?.toString());
     }
 }
+
 export class BooleanParameter extends InputParameter {
     constructor(parameter: Parameter, value: ParameterResolvable) {
         if (parameter.type != "boolean") {
@@ -131,6 +108,7 @@ export class BooleanParameter extends InputParameter {
         }
     }
 }
+
 export class NumberParameter extends InputParameter {
     constructor(parameter: Parameter, value: ParameterResolvable) {
         if (parameter.type != "number") {
@@ -139,6 +117,7 @@ export class NumberParameter extends InputParameter {
         super(parameter, parseFloat(value ? value.toString() : ""));
     }
 }
+
 export class ObjectParameter extends InputParameter {
     constructor(parameter: Parameter, value: ParameterResolvable) {
         if (parameter.type != "channel" && parameter.type != "mentionable" && parameter.type != "user" && parameter.type != "role") {
@@ -147,6 +126,7 @@ export class ObjectParameter extends InputParameter {
         super(parameter, new ObjectID(value?.toString() || ""));
     }
 }
+
 export class ObjectID {
     public readonly id: string;
     constructor(id: string) {

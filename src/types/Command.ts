@@ -1,46 +1,9 @@
-import { ClientOptions, ColorResolvable, CommandInteraction, ReplyMessageOptions } from "discord.js";
-import { InputParameter, ObjectID, ParameterSchema } from "./Parameter.js";
-import { PermissionResolvable, Message, MessageEmbed } from "discord.js";
-import type { Command } from "./Command.js";
+import { CommandInteraction, ReplyMessageOptions, PermissionResolvable, Message, MessageEmbed } from "discord.js";
+import { ParameterSchema, ParameterResolvable } from "./Parameter.js";
+import { InputParameter } from "../Parameter.js";
+import { Command } from "../Command.js";
+import { PermissionCheckTypes } from "./permissions.js";
 
-/**
- * @interface
- * Main object initialization options
- */
-export interface InitOptions {
-    /**
-     * Bot name
-     * @type {string}
-     */
-    name: string;
-    /**
-     * Prefix used as a way to trigger the bot using messages
-     * @type {string}
-     */
-    prefix?: string;
-    /**
-     * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
-     * @type {string}
-     */
-    parameterSeparator?: string;
-    /**
-     * Additional {@link ClientOptions} for Discord.js {@link Client} object
-     * @type {ClientOptions}
-     */
-    clientOptions?: ClientOptions;
-    /**
-     * Discord bot token
-     * @type {string}
-     */
-    token: string;
-    /**
-     * Discord API application ID
-     * @type {string}
-     */
-    applicationId: string;
-}
-export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
-export type PermissionCheckTypes = "ALL" | "ANY";
 /**
  * @interface
  * Options for building a {@link Command} object
@@ -113,54 +76,15 @@ export interface CommandBuilder {
         interaction?: Message | CommandInteraction
     ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 }
-export interface PhraseOccurrenceData {
-    command: Command;
-    type: "NAME" | "ALIAS";
-}
+
 export interface CommandMessageStructure {
     command: Command;
     parameters: InputParameter[];
 }
-/**
- * @interface
- * Help message properties
- */
-export interface HelpMessageParams {
-    /**
-     * Whether help message is enabled
-     * @type {boolean}
-     */
-    enabled: boolean;
-    /**
-     * Title field
-     * @type {string}
-     */
-    title: string;
-    /**
-     * Text below the title
-     * @type {string}
-     */
-    bottomText: string;
-    /**
-     * Color of a message
-     * @type {ColorResolvable}
-     */
-    color: ColorResolvable;
-    /**
-     * Description of the "help" command
-     * @type {string}
-     */
-    description: string;
-    /**
-     * Usage of the "help" command
-     * @type {string}
-     */
-    usage: string;
-    /**
-     * Whether the "help" command should be visible in the help message
-     * @type {boolean}
-     */
-    visible: boolean;
+
+export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
+
+export interface PhraseOccurrenceData {
+    command: Command;
+    type: "NAME" | "ALIAS";
 }
-export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
-export type ParameterResolvable = string | boolean | number | ObjectID | undefined;

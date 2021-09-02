@@ -2,7 +2,7 @@ import { CommandInteraction, Message } from "discord.js";
 import { MissingParameterError } from "./errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "./Parameter.js";
 import { Command } from "./Command.js";
-import { CommandMessageStructure, PhraseOccurrenceData } from "./types.js";
+import { CommandMessageStructure, PhraseOccurrenceData } from "./types/Command.js";
 
 /**
  * @class Command manager

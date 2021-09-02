@@ -1,10 +1,10 @@
-//IMPORTS
 import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions, PermissionResolvable } from "discord.js";
-import { CommandBuilder, ParameterResolvable, PermissionCheckTypes } from "./types.js";
+import { CommandBuilder } from "./types/Command.js";
+import { ParameterResolvable } from "./types/Parameter.js";
+import { PermissionCheckTypes } from "./types/permissions.js";
 import { OperationSuccess, PermissionsError } from "./errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
-//CLASSES
 /**
  * @class Class that represents a command instance
  * @exports
