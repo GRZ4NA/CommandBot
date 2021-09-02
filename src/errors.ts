@@ -16,7 +16,7 @@ export class PermissionsError extends Error {
         this.command = command;
         this.user = user || null;
     }
-    toString() {
+    public toString() {
         return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
     }
 }
@@ -34,7 +34,7 @@ export class ParameterTypeError extends TypeError {
         this.stringContent = s;
         this.type = type;
     }
-    toString() {
+    public toString() {
         return `Parameter "${this.stringContent}" cannot be converted to ${this.type}`;
     }
 }
@@ -50,7 +50,7 @@ export class MissingParameterError extends ReferenceError {
         super();
         this.argument = a;
     }
-    toString() {
+    public toString() {
         return `Your request is missing a "${this.argument.name}" parameter which is not optional`;
     }
 }

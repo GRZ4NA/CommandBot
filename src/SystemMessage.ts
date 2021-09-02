@@ -152,7 +152,7 @@ export class SystemMessageManager {
      * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns {Promise<MessageEmbed | Message | void>} A message that got sent or *void*
      */
-    async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
+    public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
                 return;

@@ -40,7 +40,7 @@ export class CommandManager {
      * @param {string} phrase - command name, alias or keyword
      * @returns {Command | null} Retrieved {@link Command} object from the manager or *null*
      */
-    get(phrase: string): Command | null {
+    public get(phrase: string): Command | null {
         let command: Command | null = null;
         this.list.map((c) => {
             if (c.name == phrase) {
@@ -60,7 +60,7 @@ export class CommandManager {
      * Get list (array) of all {@link Command}s registered in a manager
      * @returns {Command[]} Array of {@link Command}s registered in a manager
      */
-    getList(): Command[] {
+    public getList(): Command[] {
         const list = [...this.list];
         return list;
     }
@@ -70,7 +70,7 @@ export class CommandManager {
      * @param {Command} command - {@link Command} instance object
      * @returns {boolean} Whether this command has been added successfully
      */
-    add(command: Command): boolean {
+    public add(command: Command): boolean {
         try {
             if (!(command instanceof Command)) {
                 throw new TypeError("Inavlid argument type");
@@ -108,7 +108,7 @@ export class CommandManager {
      * @param {Message} message - {@link Message} object
      * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
      */
-    fetchFromMessage(message: Message): CommandMessageStructure | null {
+    public fetchFromMessage(message: Message): CommandMessageStructure | null {
         if (!this.prefix) return null;
         if (!message.author.bot && message.content.startsWith(this.prefix)) {
             const content = message.content.replace(this.prefix, "");
@@ -167,7 +167,7 @@ export class CommandManager {
      * @param {CommandInteraction} interaction - {@link CommandInteraction} object
      * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
      */
-    fetchFromInteraction(interaction: CommandInteraction): CommandMessageStructure | null {
+    public fetchFromInteraction(interaction: CommandInteraction): CommandMessageStructure | null {
         const cmd = this.get(interaction.commandName);
         if (cmd) {
             if (interaction.options?.data) {
@@ -212,7 +212,7 @@ export class CommandManager {
         return null;
     }
 
-    freezeList(): void {
+    public freezeList(): void {
         if (!Object.isFrozen(this.list)) {
             Object.freeze(this.list);
         }

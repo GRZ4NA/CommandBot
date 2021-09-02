@@ -152,7 +152,7 @@ export class ObjectID {
     constructor(id: string) {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
     }
-    async toObject(
+    public async toObject(
         guild: Guild,
         type: "channel" | "user" | "role"
     ): Promise<Role | TextChannel | VoiceChannel | CategoryChannel | GuildMember | NewsChannel | StoreChannel | StageChannel | null> {

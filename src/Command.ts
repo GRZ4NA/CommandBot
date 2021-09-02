@@ -116,7 +116,7 @@ export class Command {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    async start(interaction?: Message | CommandInteraction, cmdParams?: InputParameter[]): Promise<void> {
+    public async start(interaction?: Message | CommandInteraction, cmdParams?: InputParameter[]): Promise<void> {
         const paramFindFn = function (query: string, returnType?: "value" | "object") {
             return returnType === "object" ? cmdParams?.find((p) => p.name === query) || null : cmdParams?.find((p) => p.name === query)?.value || null;
         };
@@ -173,7 +173,7 @@ export class Command {
      * Converts {@link Command} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
-    toCommandObject() {
+    public toCommandObject() {
         let options: any[] = [];
         if (this.parameters) {
             options = this.parameters.map((p) => {

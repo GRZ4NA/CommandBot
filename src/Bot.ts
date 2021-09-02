@@ -116,7 +116,7 @@ export class Bot extends EventEmitter {
      * @param {boolean} [register=true] - if *true* or *undefined*, the bot will register all slash commands in Discord API
      * @returns {Promise<boolean>} whether this operation has been completed successfully
      */
-    async start(port?: number, register?: boolean): Promise<boolean> {
+    public async start(port?: number, register?: boolean): Promise<boolean> {
         try {
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
@@ -244,7 +244,7 @@ export class Bot extends EventEmitter {
      * Registers commands from {@link CommandManager} in Discord API
      * @returns {Promise<void>}
      */
-    async register(): Promise<void> {
+    public async register(): Promise<void> {
         process.stdout.write("Registering commands... ");
         await axios.put(
             `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
