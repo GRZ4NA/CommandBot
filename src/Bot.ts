@@ -251,7 +251,7 @@ export class Bot extends EventEmitter {
         process.stdout.write("Registering commands... ");
         await axios.put(
             `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-            this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toCommandObject()),
+            this.commands.list.filter((c) => !Array.isArray(c.guilds) && c.slash).map((c) => c.toObject()),
             { headers: { Authorization: `Bot ${this.token}` } }
         );
         const guilds: any = {};
@@ -263,10 +263,10 @@ export class Bot extends EventEmitter {
                         throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
                     }
                     if (guilds[g]) {
-                        guilds[g].push(c.toCommandObject());
+                        guilds[g].push(c.toObject());
                     } else {
                         guilds[g] = [];
-                        guilds[g].push(c.toCommandObject());
+                        guilds[g].push(c.toObject());
                     }
                 });
             });

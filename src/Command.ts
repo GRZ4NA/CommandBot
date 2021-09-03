@@ -173,7 +173,7 @@ export class Command {
      * Converts {@link Command} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
-    public toCommandObject() {
+    public toObject() {
         let options: any[] = [];
         if (this.parameters) {
             options = this.parameters.map((p) => {
