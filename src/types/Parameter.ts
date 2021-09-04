@@ -1,4 +1,4 @@
-import { ObjectID } from "../Parameter.js";
+import { ObjectID } from "../structures/Parameter.js";
 
 export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
 

@@ -1,9 +1,9 @@
 import { CommandInteraction, Message } from "discord.js";
-import { MissingParameterError } from "./errors.js";
-import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "./Parameter.js";
-import { Command } from "./Command.js";
-import { CommandMessageStructure, PhraseOccurrenceData } from "./types/Command.js";
-import { applicationState } from "./global/state.js";
+import { MissingParameterError } from "../errors.js";
+import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "../structures/Parameter.js";
+import { Command } from "../structures/Command.js";
+import { CommandMessageStructure, PhraseOccurrenceData } from "../types/Command.js";
+import { applicationState } from "../state.js";
 
 /**
  * @class Command manager

@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Command } from "./Command.js";
-import { CommandManager } from "./CommandManager.js";
-import { HelpMessageParams } from "./types/HelpMessage.js";
+import { CommandManager } from "../managers/CommandManager.js";
+import { HelpMessageParams } from "../types/HelpMessage.js";
 
 export class HelpMessage extends Command {
     constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {

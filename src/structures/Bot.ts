@@ -3,14 +3,14 @@ import { Client, CommandInteraction, GuildMember, Intents, Message } from "disco
 import { EventEmitter } from "events";
 import * as http from "http";
 import { Command } from "./Command.js";
-import { CommandManager } from "./CommandManager.js";
-import { OperationSuccess, PermissionsError } from "./errors.js";
+import { CommandManager } from "../managers/CommandManager.js";
+import { OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
-import { SystemMessageManager } from "./SystemMessage.js";
-import { CommandMessageStructure } from "./types/Command.js";
-import { InitOptions } from "./types/Bot.js";
-import { HelpMessageParams } from "./types/HelpMessage.js";
-import { applicationState } from "./global/state.js";
+import { SystemMessageManager } from "../managers/SystemMessage.js";
+import { CommandMessageStructure } from "../types/Command.js";
+import { InitOptions } from "../types/Bot.js";
+import { HelpMessageParams } from "../types/HelpMessage.js";
+import { applicationState } from "../state.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;

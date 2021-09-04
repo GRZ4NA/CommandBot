@@ -1,5 +1,5 @@
 import { ColorResolvable, GuildMember, User } from "discord.js";
-import { Command } from "../Command.js";
+import { Command } from "../structures/Command.js";
 import { PermissionsError } from "../errors.js";
 
 /**
