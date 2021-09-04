@@ -2,12 +2,12 @@ import axios from "axios";
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { Command } from "./Command.js";
+import { TextCommand } from "./TextCommand.js";
 import { CommandManager } from "../managers/CommandManager.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "../managers/SystemMessage.js";
-import { CommandMessageStructure } from "../types/Command.js";
+import { CommandMessageStructure } from "../types/TextCommand.js";
 import { InitOptions } from "../types/Bot.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 import { applicationState } from "../state.js";
@@ -132,7 +132,7 @@ export class Bot extends EventEmitter {
                 console.log("✔");
             }
             if (this.messages.help.enabled === true) {
-                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
+                const helpMsg: TextCommand = new HelpMessage(this.commands, this.messages.help, this.name);
                 this.commands.add(helpMsg);
             }
             applicationState.running = true;

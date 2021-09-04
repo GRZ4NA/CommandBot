@@ -1,9 +1,9 @@
 import { MessageEmbed } from "discord.js";
-import { Command } from "./Command.js";
+import { TextCommand } from "./TextCommand.js";
 import { CommandManager } from "../managers/CommandManager.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 
-export class HelpMessage extends Command {
+export class HelpMessage extends TextCommand {
     constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
         super({
             name: "help",
@@ -26,7 +26,7 @@ export class HelpMessage extends Command {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (p("command_name")) {
-                        const cmd: Command | null = cmdManager.get(p("command_name")?.toString() || "");
+                        const cmd: TextCommand | null = cmdManager.get(p("command_name")?.toString() || "");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);

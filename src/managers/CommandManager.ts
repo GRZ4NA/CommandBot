@@ -1,15 +1,15 @@
 import { CommandInteraction, Message } from "discord.js";
 import { MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "../structures/Parameter.js";
-import { Command } from "../structures/Command.js";
-import { CommandMessageStructure, PhraseOccurrenceData } from "../types/Command.js";
+import { TextCommand } from "../structures/TextCommand.js";
+import { CommandMessageStructure, PhraseOccurrenceData } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 
 /**
  * @class Command manager
  */
 export class CommandManager {
-    private readonly _list: Command[] = [];
+    private readonly _list: TextCommand[] = [];
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
@@ -34,10 +34,10 @@ export class CommandManager {
     /**
      * Retrieves the command by name, alias or keyword
      * @param {string} phrase - command name, alias or keyword
-     * @returns {Command | null} Retrieved {@link Command} object from the manager or *null*
+     * @returns {TextCommand | null} Retrieved {@link Command} object from the manager or *null*
      */
-    public get(phrase: string): Command | null {
-        let command: Command | null = null;
+    public get(phrase: string): TextCommand | null {
+        let command: TextCommand | null = null;
         this._list.map((c) => {
             if (c.name == phrase) {
                 command = c;
@@ -62,15 +62,15 @@ export class CommandManager {
 
     /**
      * Adds the given {@link Command} to the instance manager with initial processing
-     * @param {Command} command - {@link Command} instance object
+     * @param {TextCommand} command - {@link Command} instance object
      * @returns {boolean} Whether this command has been added successfully
      */
-    public add(command: Command): boolean {
+    public add(command: TextCommand): boolean {
         try {
             if (applicationState.running) {
                 throw new Error("Cannot add command while the application is running");
             }
-            if (!(command instanceof Command)) {
+            if (!(command instanceof TextCommand)) {
                 throw new TypeError("Inavlid argument type");
             }
             const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.name);

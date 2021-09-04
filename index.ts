@@ -1,8 +1,8 @@
 import { MessageEmbed } from "discord.js";
 import { Bot } from "./src/structures/Bot.js";
-import { Command } from "./src/structures/Command.js";
+import { TextCommand } from "./src/structures/TextCommand.js";
 import { InitOptions } from "./src/types/Bot.js";
-import { CommandBuilder, CommandMessageStructure } from "./src/types/Command.js";
+import { TextCommandInit, CommandMessageStructure } from "./src/types/TextCommand.js";
 import { HelpMessageParams } from "./src/types/HelpMessage.js";
 import { ParameterResolvable, ParameterType, ParameterSchema } from "./src/types/Parameter.js";
 import { SystemMessageAppearance, SystemMessageData } from "./src/types/SystemMessage.js";
@@ -12,10 +12,10 @@ import { PermissionsError, ParameterTypeError, MissingParameterError, OperationS
 export default Bot;
 export {
     Bot,
-    Command,
+    TextCommand,
     MessageEmbed,
     InitOptions,
-    CommandBuilder,
+    TextCommandInit,
     CommandMessageStructure,
     HelpMessageParams,
     ParameterResolvable,

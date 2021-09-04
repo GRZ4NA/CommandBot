@@ -1,14 +1,14 @@
 import { CommandInteraction, ReplyMessageOptions, PermissionResolvable, Message, MessageEmbed } from "discord.js";
 import { ParameterSchema, ParameterResolvable } from "./Parameter.js";
 import { InputParameter } from "../structures/Parameter.js";
-import { Command } from "../structures/Command.js";
+import { TextCommand } from "../structures/TextCommand.js";
 import { PermissionCheckTypes } from "./permissions.js";
 
 /**
  * @interface
  * Options for building a {@link Command} object
  */
-export interface CommandBuilder {
+export interface TextCommandInit {
     /**
      * Command name
      * @type {string}
@@ -78,13 +78,13 @@ export interface CommandBuilder {
 }
 
 export interface CommandMessageStructure {
-    command: Command;
+    command: TextCommand;
     parameters: InputParameter[];
 }
 
 export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 
 export interface PhraseOccurrenceData {
-    command: Command;
+    command: TextCommand;
     type: "NAME" | "ALIAS";
 }

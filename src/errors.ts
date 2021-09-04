@@ -1,4 +1,4 @@
-import { Command } from "./structures/Command.js";
+import { TextCommand } from "./structures/TextCommand.js";
 import { GuildMember } from "discord.js";
 import { Parameter } from "./structures/Parameter.js";
 import { ParameterType } from "./types/Parameter.js";
@@ -9,9 +9,9 @@ import { ParameterType } from "./types/Parameter.js";
  * @exports
  */
 export class PermissionsError extends Error {
-    private readonly command: Command;
+    private readonly command: TextCommand;
     private readonly user: GuildMember | null;
-    constructor(command: Command, user?: GuildMember | null) {
+    constructor(command: TextCommand, user?: GuildMember | null) {
         super();
         this.command = command;
         this.user = user || null;
@@ -60,8 +60,8 @@ export class MissingParameterError extends ReferenceError {
  * @exports
  */
 export class OperationSuccess {
-    public readonly command: Command;
-    constructor(c: Command) {
+    public readonly command: TextCommand;
+    constructor(c: TextCommand) {
         this.command = c;
     }
 }

@@ -1,5 +1,5 @@
 import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions, PermissionResolvable } from "discord.js";
-import { CommandBuilder } from "../types/Command.js";
+import { TextCommandInit } from "../types/TextCommand.js";
 import { ParameterResolvable } from "../types/Parameter.js";
 import { PermissionCheckTypes } from "../types/permissions.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
@@ -9,7 +9,7 @@ import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
  * @class Class that represents a command instance
  * @exports
  */
-export class Command {
+export class TextCommand {
     /**
      * Command name
      * @type {string}
@@ -81,9 +81,9 @@ export class Command {
     /**
      * Command constructor
      * @constructor
-     * @param {CommandBuilder} options - {@link CommandBuilder}
+     * @param {TextCommandInit} options - {@link CommandBuilder}
      */
-    constructor(options: CommandBuilder) {
+    constructor(options: TextCommandInit) {
         this.name = options.name.split(" ").join("_");
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
@@ -92,7 +92,7 @@ export class Command {
         } else {
             this.parameters = options.parameters.map((ps) => new Parameter(ps));
         }
-        this.aliases = Command.processPhrase(options.aliases);
+        this.aliases = TextCommand.processPhrase(options.aliases);
         this.description = options.description || "No description";
         this.usage = options.usage || this.generateUsageFromArguments();
         this.permissionCheck = options.permissionCheck == "ALL" || options.permissionCheck == "ANY" ? options.permissionCheck : "ANY";
@@ -170,7 +170,7 @@ export class Command {
     }
 
     /**
-     * Converts {@link Command} instance to object that is recognized by the Discord API
+     * Converts {@link TextCommand} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
     public toObject() {
