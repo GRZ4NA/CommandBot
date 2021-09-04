@@ -1,6 +1,5 @@
 export interface BaseCommandInit {
     name: string;
-    description?: string;
     type: CommandType;
 }
 

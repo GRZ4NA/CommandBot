@@ -1,4 +1,5 @@
 import { Permissions, Message, MessageEmbed, CommandInteraction, GuildMember, ReplyMessageOptions, PermissionResolvable } from "discord.js";
+import { BaseCommand } from "./BaseCommand.js";
 import { TextCommandInit } from "../types/TextCommand.js";
 import { ParameterResolvable } from "../types/Parameter.js";
 import { PermissionCheckTypes } from "../types/permissions.js";
@@ -9,12 +10,7 @@ import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
  * @class Class that represents a command instance
  * @exports
  */
-export class TextCommand {
-    /**
-     * Command name
-     * @type {string}
-     */
-    public readonly name: string;
+export class TextCommand extends BaseCommand {
     /**
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
@@ -77,37 +73,42 @@ export class TextCommand {
         params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
     ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
+    public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
+    public static descriptionRegExp: RegExp = /^[a-zA-Z]{1,100}$/;
 
     /**
      * Command constructor
      * @constructor
-     * @param {TextCommandInit} options - {@link CommandBuilder}
+     * @param {TextCommandInit} o - {@link CommandBuilder}
      */
-    constructor(options: TextCommandInit) {
-        this.name = options.name.split(" ").join("_");
-        if (options.parameters == "no_input" || !options.parameters) {
+    constructor(o: TextCommandInit) {
+        if (!TextCommand.nameRegExp.test(o.name)) {
+            throw new Error("Incorrect command name. Text and slash commands must match this regular expression: ^[w-]{1,32}$");
+        }
+        if (o.description && !TextCommand.descriptionRegExp.test(o.description)) {
+            throw new Error("Command descriptions must be 1-100 characters long");
+        }
+        super({
+            name: o.name,
+            type: "CHAT",
+        });
+        if (o.parameters == "no_input" || !o.parameters) {
             this.parameters = [];
-        } else if (options.parameters == "simple") {
+        } else if (o.parameters == "simple") {
             this.parameters = [new DefaultParameter()];
         } else {
-            this.parameters = options.parameters.map((ps) => new Parameter(ps));
+            this.parameters = o.parameters.map((ps) => new Parameter(ps));
         }
-        this.aliases = TextCommand.processPhrase(options.aliases);
-        this.description = options.description || "No description";
-        this.usage = options.usage || this.generateUsageFromArguments();
-        this.permissionCheck = options.permissionCheck == "ALL" || options.permissionCheck == "ANY" ? options.permissionCheck : "ANY";
-        this.permissions = options.permissions ? (options.permissions instanceof Function ? options.permissions : new Permissions(options.permissions)) : undefined;
-        this.guilds = options.guilds;
-        this.visible = options.visible !== undefined ? options.visible : true;
-        this.slash = options.slash !== undefined ? options.slash : true;
-        this.announceSuccess = options.announceSuccess !== undefined ? options.announceSuccess : true;
-        this.function = options.function;
-        if (!/^[\w-]{1,32}$/.test(this.name)) {
-            throw new Error(`Incorrect command name: ${this.name}`);
-        }
-        if (this.description.length > 100) {
-            throw new Error("Command description is too long");
-        }
+        this.aliases = TextCommand.processPhrase(o.aliases);
+        this.description = o.description || "No description";
+        this.usage = o.usage || this.generateUsageFromArguments();
+        this.permissionCheck = o.permissionCheck == "ALL" || o.permissionCheck == "ANY" ? o.permissionCheck : "ANY";
+        this.permissions = o.permissions ? (o.permissions instanceof Function ? o.permissions : new Permissions(o.permissions)) : undefined;
+        this.guilds = o.guilds;
+        this.visible = o.visible !== undefined ? o.visible : true;
+        this.slash = o.slash !== undefined ? o.slash : true;
+        this.announceSuccess = o.announceSuccess !== undefined ? o.announceSuccess : true;
+        this.function = o.function;
     }
 
     /**
