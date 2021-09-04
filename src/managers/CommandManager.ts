@@ -1,15 +1,19 @@
 import { CommandInteraction, Message } from "discord.js";
+import { BaseCommand } from "../structures/BaseCommand.js";
 import { MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "../structures/Parameter.js";
 import { TextCommand } from "../structures/TextCommand.js";
 import { CommandMessageStructure, PhraseOccurrenceData } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
+import { MessageCommand } from "../structures/MessageCommand.js";
 
 /**
  * @class Command manager
  */
 export class CommandManager {
-    private readonly _list: TextCommand[] = [];
+    private readonly _textCommandsList: TextCommand[] = [];
+    private readonly _messagesCommandsList: BaseCommand[] = [];
+    private readonly _userCommandsList: BaseCommand[] = [];
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
@@ -38,7 +42,7 @@ export class CommandManager {
      */
     public get(phrase: string): TextCommand | null {
         let command: TextCommand | null = null;
-        this._list.map((c) => {
+        this._textCommandsList.map((c) => {
             if (c.name == phrase) {
                 command = c;
             }
@@ -57,47 +61,46 @@ export class CommandManager {
      * @type {Array} {@link Command}
      */
     get list() {
-        return Object.freeze([...this._list]);
+        return Object.freeze([...this._textCommandsList]);
     }
 
     /**
      * Adds the given {@link Command} to the instance manager with initial processing
-     * @param {TextCommand} command - {@link Command} instance object
+     * @param {BaseCommand} command - {@link Command} instance object
      * @returns {boolean} Whether this command has been added successfully
      */
-    public add(command: TextCommand): boolean {
+    public add(command: TextCommand | MessageCommand): void {
         try {
             if (applicationState.running) {
-                throw new Error("Cannot add command while the application is running");
+                throw new Error("Cannot add a command while the application is running");
             }
-            if (!(command instanceof TextCommand)) {
-                throw new TypeError("Inavlid argument type");
+            if (command instanceof TextCommand) {
+                const nameOccurrence: PhraseOccurrenceData | null = this.findTextPhraseOccurrence(command.name);
+                if (nameOccurrence) {
+                    throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
+                }
+                command.aliases &&
+                    command.aliases.map((a, i, ar) => {
+                        const aliasOccurrence: PhraseOccurrenceData | null = this.findTextPhraseOccurrence(a);
+                        if (aliasOccurrence) {
+                            console.warn(
+                                `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
+                            );
+                            ar.splice(i, 1);
+                        }
+                    });
+                command.parameters &&
+                    command.parameters.map((p) => {
+                        if (p.type != "string" && p.choices) {
+                            throw new Error('Parameter with defined choices must have a "string" type');
+                        }
+                    });
+                this._textCommandsList.push(command);
+            } else {
+                throw new TypeError("Invalid argument type");
             }
-            const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.name);
-            if (nameOccurrence) {
-                throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
-            }
-            command.aliases &&
-                command.aliases.map((a, i, ar) => {
-                    const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(a);
-                    if (aliasOccurrence) {
-                        console.warn(
-                            `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
-                        );
-                        ar.splice(i, 1);
-                    }
-                });
-            command.parameters &&
-                command.parameters.map((p) => {
-                    if (p.type != "string" && p.choices) {
-                        throw new Error('Parameter with defined choices must have a "string" type');
-                    }
-                });
-            this._list.push(command);
-            return true;
         } catch (e) {
             console.error(`[❌ ERROR] ${e}`);
-            return false;
         }
     }
 
@@ -210,9 +213,9 @@ export class CommandManager {
         return null;
     }
 
-    private findPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
+    private findTextPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
-        this._list.map((c) => {
+        this._textCommandsList.map((c) => {
             if (phrase == c.name) {
                 returnValue = {
                     command: c,

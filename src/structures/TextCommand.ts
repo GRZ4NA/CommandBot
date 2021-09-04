@@ -5,6 +5,7 @@ import { ParameterResolvable } from "../types/Parameter.js";
 import { PermissionCheckTypes } from "../types/permissions.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
+import { CommandFunctionReturnTypes } from "../types/BaseCommand.js";
 
 /**
  * @class Class that represents a command instance
@@ -72,7 +73,7 @@ export class TextCommand extends BaseCommand {
     private readonly function: (
         params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
-    ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
+    ) => CommandFunctionReturnTypes;
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
     public static descriptionRegExp: RegExp = /^[a-zA-Z]{1,100}$/;
 

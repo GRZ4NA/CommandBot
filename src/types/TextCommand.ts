@@ -1,8 +1,9 @@
-import { CommandInteraction, ReplyMessageOptions, PermissionResolvable, Message, MessageEmbed } from "discord.js";
+import { CommandInteraction, PermissionResolvable, Message } from "discord.js";
 import { ParameterSchema, ParameterResolvable } from "./Parameter.js";
 import { InputParameter } from "../structures/Parameter.js";
 import { TextCommand } from "../structures/TextCommand.js";
 import { PermissionCheckTypes } from "./permissions.js";
+import { CommandFunctionReturnTypes } from "./BaseCommand.js";
 
 /**
  * @interface
@@ -74,7 +75,7 @@ export interface TextCommandInit {
     function: (
         params: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null,
         interaction?: Message | CommandInteraction
-    ) => void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
+    ) => CommandFunctionReturnTypes;
 }
 
 export interface CommandMessageStructure {
