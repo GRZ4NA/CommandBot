@@ -10,12 +10,15 @@ import { ParameterType } from "./types/Parameter.js";
  */
 export class PermissionsError extends Error {
     private readonly command: BaseCommand;
+
     private readonly user: GuildMember | null;
+
     constructor(command: BaseCommand, user?: GuildMember | null) {
         super();
         this.command = command;
         this.user = user || null;
     }
+
     public toString() {
         return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
     }
@@ -28,12 +31,15 @@ export class PermissionsError extends Error {
  */
 export class ParameterTypeError extends TypeError {
     private readonly stringContent: string;
+
     private readonly type: ParameterType;
+
     constructor(s: string, type: ParameterType) {
         super();
         this.stringContent = s;
         this.type = type;
     }
+
     public toString() {
         return `Parameter "${this.stringContent}" cannot be converted to ${this.type}`;
     }
@@ -46,10 +52,12 @@ export class ParameterTypeError extends TypeError {
  */
 export class MissingParameterError extends ReferenceError {
     private readonly argument: Parameter;
+
     constructor(a: Parameter) {
         super();
         this.argument = a;
     }
+
     public toString() {
         return `Your request is missing a "${this.argument.name}" parameter which is not optional`;
     }
@@ -61,6 +69,7 @@ export class MissingParameterError extends ReferenceError {
  */
 export class OperationSuccess {
     public readonly command: BaseCommand;
+
     constructor(c: BaseCommand) {
         this.command = c;
     }

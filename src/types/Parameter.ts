@@ -15,11 +15,13 @@ export interface ParameterSchema {
      * @type {string}
      */
     name: string;
+
     /**
      * Parameter description
      * @type {string}
      */
     description?: string;
+
     /**
      * Whether this parameter is optional
      * @type {boolean}
@@ -27,6 +29,7 @@ export interface ParameterSchema {
     optional: boolean;
 
     type: ParameterType;
+
     /**
      * List of value choices (available only when type is set to "STRING")
      */

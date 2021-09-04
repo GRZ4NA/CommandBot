@@ -12,13 +12,17 @@ import { MessageCommand } from "../structures/MessageCommand.js";
  */
 export class CommandManager {
     private readonly _textCommandsList: TextCommand[] = [];
+
     private readonly _messagesCommandsList: BaseCommand[] = [];
+
     private readonly _userCommandsList: BaseCommand[] = [];
+
     /**
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
      */
     public readonly prefix?: string;
+
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      * @type {string}

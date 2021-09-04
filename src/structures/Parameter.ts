@@ -11,21 +11,25 @@ export class Parameter {
      * @type {string}
      */
     public readonly name: string;
+
     /**
      * Parameter description
      * @type {string}
      */
     public readonly description: string;
+
     /**
      * Whether this parameter is optional
      * @type {boolean}
      */
     public readonly optional: boolean;
+
     /**
      * Parameter input type
      * @type {ParameterType}
      */
     public readonly type: ParameterType;
+
     /**
      * List of value choices (available only when type is set to "STRING")
      */
@@ -129,9 +133,11 @@ export class ObjectParameter extends InputParameter {
 
 export class ObjectID {
     public readonly id: string;
+
     constructor(id: string) {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
     }
+
     public async toObject(
         guild: Guild,
         type: "channel" | "user" | "role"

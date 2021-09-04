@@ -7,21 +7,25 @@ export class SystemMessageManager {
      * @type {SystemMessageAppearance}
      */
     public PERMISSION: SystemMessageAppearance;
+
     /**
      * Error message
      * @type {SystemMessageAppearance}
      */
     public ERROR: SystemMessageAppearance;
+
     /**
      * "Command not found" message
      * @type {SystemMessageAppearance}
      */
     public NOT_FOUND: SystemMessageAppearance;
+
     /**
      * "Task completed successfully" message
      * @type {SystemMessageAppearance}
      */
     public SUCCESS: SystemMessageAppearance;
+
     /**
      * Global time (in ms) after a message gets deleted
      * @type {number}

@@ -17,36 +17,43 @@ export interface SystemMessageAppearance {
      * @type {boolean}
      */
     enabled: boolean;
+
     /**
      * Title field
      * @type {string}
      */
     title: string;
+
     /**
      * Text below the title
      * @type {string}
      */
     bottomText?: string;
+
     /**
      * Color of a message
      * @type {ColorResolvable}
      */
     accentColor?: ColorResolvable;
+
     /**
      * Whether to display detailed informations in the message
      * @type {boolean}
      */
     displayDetails?: boolean;
+
     /**
      * Whether to show current time and date in a footer
      * @type {boolean}
      */
     showTimestamp?: boolean;
+
     /**
      * Footer text
      * @type {string}
      */
     footer?: string;
+
     /**
      * Time (in ms) after a message of this type gets deleted (set to *Infinity* to not delete the message)
      * @type {number}
@@ -64,16 +71,19 @@ export interface SystemMessageData {
      * @type {TextCommand}
      */
     command?: TextCommand;
+
     /**
      * Phrase received from a Discord channel
      * @type {string}
      */
     phrase?: string;
+
     /**
      * User who used the bot
      * @type {GuildMember | User}
      */
     user?: GuildMember | User;
+
     /**
      * Error object
      * @type {Error | PermissionsError | string}
