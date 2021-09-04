@@ -121,6 +121,9 @@ export class Bot extends EventEmitter {
      */
     public async start(port?: number, register?: boolean): Promise<boolean> {
         try {
+            if (applicationState.running) {
+                throw new Error("This bot is already running");
+            }
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
