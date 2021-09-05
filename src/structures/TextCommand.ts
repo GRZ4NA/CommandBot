@@ -44,7 +44,7 @@ export class TextCommand extends BaseCommand {
      */
     public readonly slash: boolean;
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
-    public static descriptionRegExp: RegExp = /^[a-zA-Z]{1,100}$/;
+    public static descriptionRegExp: RegExp = /^[a-zA-Z0-9_ ]{1,100}$/;
 
     /**
      * Command constructor
