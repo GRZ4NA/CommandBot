@@ -7,7 +7,7 @@ import { TextCommand } from "../structures/TextCommand.js";
 import { CommandMessageStructure } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
-import { CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
+import { CommandStructure, CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
 import { UserCommand } from "../structures/UserCommand.js";
 import { RegisteredCommandObject } from "../types/api.js";
 
@@ -52,19 +52,25 @@ export class CommandManager {
      * @param {string} phrase - command name, alias or keyword
      * @returns {TextCommand | null} Retrieved {@link Command} object from the manager or *null*
      */
-    public get(phrase: string): TextCommand | null {
-        let command: TextCommand | null = null;
-        this._chatCommandsList.map((c) => {
-            if (c.name == phrase) {
-                command = c;
-            }
-            c.aliases &&
-                c.aliases.map((a) => {
-                    if (a == phrase) {
-                        command = c;
-                    }
-                });
-        });
+    public get<T extends CommandType>(phrase: string, type: T): CommandStructure<T> | null {
+        let command: CommandStructure<T> | null = null;
+        if (type === "CHAT") {
+            this._chatCommandsList.map((c) => {
+                if (c.name == phrase) {
+                    command = c as CommandStructure<T>;
+                }
+                c.aliases &&
+                    c.aliases.map((a) => {
+                        if (a == phrase) {
+                            command = c as CommandStructure<T>;
+                        }
+                    });
+            });
+        } else if (type === "MESSAGE") {
+            command = (this._messagesCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+        } else if (type === "USER") {
+            command = (this._userCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+        }
         return command;
     }
 
@@ -155,108 +161,106 @@ export class CommandManager {
         }
     }
 
-    /**
-     * Fetches {@link Command} and list of {@link InputParameter}s from the given {@link Message} object
-     * @param {Message} message - {@link Message} object
-     * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
-     */
-    public fetchFromMessage(message: Message): CommandMessageStructure | null {
-        if (!this.prefix) return null;
-        if (!message.author.bot && message.content.startsWith(this.prefix)) {
-            const content = message.content.replace(this.prefix, "");
-            const name = content.split(" ")[0];
-            const command = this.get(name);
-            if (command) {
-                const argumentsText = content.replace(name, "");
-                const paramsList = argumentsText.split(this.parameterSeparator).map((a) => {
-                    return a.replace(" ", "");
-                });
-                if ((paramsList[0] == "" || paramsList[0] == " ") && paramsList.length == 1) {
-                    paramsList.splice(0, 1);
+    public fetch(i: Message | CommandInteraction): CommandMessageStructure | null {
+        if (i instanceof Message) {
+            if (!this.prefix) return null;
+            if (!i.author.bot && i.content.startsWith(this.prefix)) {
+                const content = i.content.replace(this.prefix, "");
+                const name = content.split(" ")[0];
+                const command = this.get(name, "CHAT");
+                if (command) {
+                    const argumentsText = content.replace(name, "");
+                    const paramsList = argumentsText.split(this.parameterSeparator).map((a) => {
+                        return a.replace(" ", "");
+                    });
+                    if ((paramsList[0] == "" || paramsList[0] == " ") && paramsList.length == 1) {
+                        paramsList.splice(0, 1);
+                    }
+                    const parameters: InputParameter[] = [];
+                    command instanceof TextCommand &&
+                        command.parameters.map((p, i) => {
+                            if (!p.optional && !paramsList[i]) {
+                                throw new MissingParameterError(p);
+                            } else if (p.optional && !paramsList[i]) {
+                                return;
+                            }
+                            switch (p.type) {
+                                case "mentionable":
+                                case "channel":
+                                case "role":
+                                case "user":
+                                    parameters.push(new ObjectParameter(p, paramsList[i]));
+                                    break;
+                                case "string":
+                                    parameters.push(new StringParameter(p, paramsList[i]));
+                                    break;
+                                case "boolean":
+                                    parameters.push(new BooleanParameter(p, paramsList[i]));
+                                    break;
+                                case "number":
+                                    parameters.push(new NumberParameter(p, paramsList[i]));
+                                    break;
+                                default:
+                                    parameters.push(new InputParameter(p, paramsList[i]));
+                                    break;
+                            }
+                        });
+                    return {
+                        command: command,
+                        parameters: parameters,
+                    };
+                } else {
+                    return null;
                 }
-                const parameters: InputParameter[] = [];
-                command.parameters.map((p, i) => {
-                    if (!p.optional && !paramsList[i]) {
-                        throw new MissingParameterError(p);
-                    } else if (p.optional && !paramsList[i]) {
-                        return;
-                    }
-                    switch (p.type) {
-                        case "mentionable":
-                        case "channel":
-                        case "role":
-                        case "user":
-                            parameters.push(new ObjectParameter(p, paramsList[i]));
-                            break;
-                        case "string":
-                            parameters.push(new StringParameter(p, paramsList[i]));
-                            break;
-                        case "boolean":
-                            parameters.push(new BooleanParameter(p, paramsList[i]));
-                            break;
-                        case "number":
-                            parameters.push(new NumberParameter(p, paramsList[i]));
-                            break;
-                        default:
-                            parameters.push(new InputParameter(p, paramsList[i]));
-                            break;
-                    }
-                });
-                return {
-                    command: command,
-                    parameters: parameters,
-                };
             } else {
                 return null;
             }
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Fetches command and parameters from the given {@link CommandInteraction} object
-     * @param {CommandInteraction} interaction - {@link CommandInteraction} object
-     * @returns {CommandMessagesStructure | null} {@link CommandMessageStructure} or *null*
-     */
-    public fetchFromInteraction(interaction: CommandInteraction): CommandMessageStructure | null {
-        const cmd = this.get(interaction.commandName);
-        if (cmd) {
-            if (interaction.options?.data) {
-                const paramsList = interaction.options.data;
-                const parameters: InputParameter[] = [];
-                cmd.parameters.map((p) => {
-                    const inputParam = paramsList.find((d) => d.name == p.name);
-                    if (!p.optional && !inputParam) {
-                        throw new MissingParameterError(p);
-                    } else if (p.optional && !inputParam) {
-                        return;
-                    }
-                    switch (p.type) {
-                        case "mentionable":
-                        case "channel":
-                        case "role":
-                        case "user":
-                            parameters.push(new ObjectParameter(p, inputParam?.value));
-                            break;
-                        case "string":
-                            parameters.push(new StringParameter(p, inputParam?.value));
-                            break;
-                        case "boolean":
-                            parameters.push(new BooleanParameter(p, inputParam?.value));
-                            break;
-                        case "number":
-                            parameters.push(new NumberParameter(p, inputParam?.value));
-                            break;
-                        default:
-                            parameters.push(new InputParameter(p, inputParam?.value));
-                            break;
-                    }
-                });
-                return {
-                    command: cmd,
-                    parameters: parameters,
-                };
+        } else if (i instanceof CommandInteraction) {
+            let cmd: BaseCommand | null = null;
+            if (i.isContextMenu()) {
+                cmd = this.get(i.commandName, i.targetType);
+            } else {
+                cmd = this.get(i.commandName, "CHAT");
+            }
+            if (cmd && CommandManager.isTextCommand(cmd)) {
+                if (i.options?.data) {
+                    const paramsList = i.options.data;
+                    const parameters: InputParameter[] = [];
+                    cmd.parameters.map((p) => {
+                        const inputParam = paramsList.find((d) => d.name == p.name);
+                        if (!p.optional && !inputParam) {
+                            throw new MissingParameterError(p);
+                        } else if (p.optional && !inputParam) {
+                            return;
+                        }
+                        switch (p.type) {
+                            case "mentionable":
+                            case "channel":
+                            case "role":
+                            case "user":
+                                parameters.push(new ObjectParameter(p, inputParam?.value));
+                                break;
+                            case "string":
+                                parameters.push(new StringParameter(p, inputParam?.value));
+                                break;
+                            case "boolean":
+                                parameters.push(new BooleanParameter(p, inputParam?.value));
+                                break;
+                            case "number":
+                                parameters.push(new NumberParameter(p, inputParam?.value));
+                                break;
+                            default:
+                                parameters.push(new InputParameter(p, inputParam?.value));
+                                break;
+                        }
+                    });
+                    return {
+                        command: cmd,
+                        parameters: parameters,
+                    };
+                }
+            } else {
+                return null;
             }
         } else {
             return null;
@@ -305,5 +309,17 @@ export class CommandManager {
                 break;
         }
         return returnValue;
+    }
+
+    public static isTextCommand(c: BaseCommand): c is TextCommand {
+        return (c as TextCommand).type === "CHAT" && c instanceof TextCommand;
+    }
+
+    public static isMessageCommand(c: BaseCommand): c is MessageCommand {
+        return c.type === "MESSAGE" && c instanceof MessageCommand;
+    }
+
+    public static isUserCommand(c: BaseCommand): c is UserCommand {
+        return c.type === "USER" && c instanceof UserCommand;
     }
 }
