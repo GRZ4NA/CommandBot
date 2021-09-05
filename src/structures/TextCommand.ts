@@ -2,6 +2,7 @@ import { Message, CommandInteraction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { TextCommandInit } from "../types/TextCommand.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
+import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../types/api.js";
 
 /**
  * @class Class that represents a command instance
@@ -96,40 +97,67 @@ export class TextCommand extends BaseCommand {
      * Converts {@link TextCommand} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
-    public toObject() {
-        let options: any[] = [];
-        if (this.parameters) {
-            options = this.parameters.map((p) => {
-                let type = 3;
-                if (!/^[\w-]{1,32}$/.test(p.name)) {
-                    throw new Error(`Failed to register ${p.name} parameter for ${this.name}: The option name is incorrect`);
-                }
-                if ((p.description || "No description").length > 100) {
-                    throw new Error(`Failed to register ${p.name} parameter for ${this.name}: The description is too long`);
-                }
-                if (p.type == "boolean") type = 5;
-                else if (p.type == "user") type = 6;
-                else if (p.type == "channel") type = 7;
-                else if (p.type == "role") type = 8;
-                else if (p.type == "mentionable") type = 9;
-                else if (p.type == "number") type = 10;
-                return {
-                    name: p.name,
-                    description: p.description || "No description",
-                    required: !p.optional,
-                    type: p.choices ? 3 : type,
-                    choices:
-                        p.choices?.map((c) => {
-                            return { name: c, value: c };
-                        }) || [],
-                };
-            });
-        }
-        return {
-            name: this.name,
+    public toObject(): TextCommandObject {
+        const obj: TextCommandObject = {
+            ...super.toObject(),
             description: this.description,
-            options: options,
         };
+        let options: TextCommandOptionObject[] = [];
+        if (this.parameters) {
+            options = this.parameters
+                .map((p) => {
+                    let type = 3;
+                    switch (p.type) {
+                        case "boolean":
+                            type = 5;
+                            break;
+                        case "user":
+                            type = 6;
+                            break;
+                        case "channel":
+                            type = 7;
+                            break;
+                        case "role":
+                            type = 8;
+                            break;
+                        case "mentionable":
+                            type = 9;
+                            break;
+                        case "number":
+                            type = 10;
+                            break;
+                        default:
+                            type = 3;
+                            break;
+                    }
+                    const choices: TextCommandOptionChoiceObject[] = [];
+                    if (p.choices) {
+                        p.choices.map((c) => {
+                            choices.push({ name: c, value: c });
+                        });
+                    }
+                    const optionObj: TextCommandOptionObject = {
+                        name: p.name,
+                        description: p.description,
+                        required: !p.optional,
+                        options: options,
+                        type: p.choices ? 3 : type,
+                        choices: choices.length > 0 ? choices : undefined,
+                    };
+                    return optionObj;
+                })
+                .sort((a, b) => {
+                    if (a.required && !b.required) {
+                        return -1;
+                    } else if (a.required && b.required) {
+                        return 0;
+                    } else if (!a.required && b.required) {
+                        return 1;
+                    }
+                    return 0;
+                });
+        }
+        return obj;
     }
 
     private static processPhrase(phrase?: string | string[]): string[] | undefined {

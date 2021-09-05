@@ -3,6 +3,7 @@ import { PermissionCheckTypes } from "types/permissions.js";
 import { CommandType, BaseCommandInit, CommandFunction } from "../types/BaseCommand.js";
 import { InputParameter } from "./Parameter.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
+import { BaseCommandObject } from "../types/api.js";
 
 export class BaseCommand {
     /**
@@ -104,7 +105,18 @@ export class BaseCommand {
         }
     }
 
-    public toObject() {}
+    /**
+     * Converts a command object to Discord API type object
+     * @return {Object} An object that is accepted by the Discord API
+     */
+    public toObject(): BaseCommandObject {
+        const obj: BaseCommandObject = {
+            name: this.name,
+            type: this.type === "MESSAGE" ? 2 : this.type === "USER" ? 3 : 1,
+            default_permissions: true,
+        };
+        return obj;
+    }
 
     private createAccessor(args: InputParameter[]) {
         return function (query: string, returnType?: "value" | "object") {
