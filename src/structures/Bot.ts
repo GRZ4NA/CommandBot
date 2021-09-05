@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";

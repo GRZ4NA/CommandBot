@@ -2,7 +2,7 @@ import { MessageCommandInit } from "../types/MessageCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
 
 export class MessageCommand extends BaseCommand {
-    public static nameRegExp: RegExp = /^[a-zA-Z]{1,32}$/;
+    public static nameRegExp: RegExp = /^.{1,32}$/;
 
     constructor(o: MessageCommandInit) {
         if (!MessageCommand.nameRegExp.test(o.name)) {
