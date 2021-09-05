@@ -19,7 +19,10 @@ export class HelpMessage extends TextCommand {
                     type: "string",
                 },
             ],
-            function: (p, i) => {
+            function: (i, p) => {
+                if (!p) {
+                    return;
+                }
                 const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();

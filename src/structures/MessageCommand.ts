@@ -1,17 +1,20 @@
-import { CommandInteraction } from "discord.js";
 import { MessageCommandInit } from "../types/MessageCommand.js";
-import { CommandFunctionReturnTypes } from "../types/BaseCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
 
 export class MessageCommand extends BaseCommand {
-    private readonly function: (i: CommandInteraction) => CommandFunctionReturnTypes;
     public static nameRegExp: RegExp = /^[a-zA-Z]{1,32}$/;
 
     constructor(o: MessageCommandInit) {
-        super({
+        if (!MessageCommand.nameRegExp.test(o.name)) {
+            throw new Error("Incorrect command name. Command names must have 1-32 characters");
+        }
+        super("MESSAGE", {
             name: o.name,
-            type: "MESSAGE",
+            function: o.function,
+            announceSuccess: o.announceSuccess,
+            guilds: o.guilds,
+            permissionCheck: o.permissionCheck,
+            permissions: o.permissions,
         });
-        this.function = o.function;
     }
 }
