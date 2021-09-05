@@ -106,6 +106,8 @@ export class BaseCommand {
         }
     }
 
+    public toObject() {}
+
     private createAccessor(args: InputParameter[]) {
         return function (query: string, returnType?: "value" | "object") {
             return returnType === "object" ? args.find((p) => p.name === query) || null : args.find((p) => p.name === query)?.value || null;

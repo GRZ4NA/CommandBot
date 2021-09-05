@@ -6,12 +6,13 @@ import { TextCommand } from "../structures/TextCommand.js";
 import { CommandMessageStructure, PhraseOccurrenceData } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
+import { CommandType } from "../types/BaseCommand.js";
 
 /**
  * @class Command manager
  */
 export class CommandManager {
-    private readonly _textCommandsList: TextCommand[] = [];
+    private readonly _chatCommandsList: TextCommand[] = [];
 
     private readonly _messagesCommandsList: BaseCommand[] = [];
 
@@ -46,7 +47,7 @@ export class CommandManager {
      */
     public get(phrase: string): TextCommand | null {
         let command: TextCommand | null = null;
-        this._textCommandsList.map((c) => {
+        this._chatCommandsList.map((c) => {
             if (c.name == phrase) {
                 command = c;
             }
@@ -61,11 +62,21 @@ export class CommandManager {
     }
 
     /**
-     * List of commands registered in the manager
-     * @type {Array} {@link Command}
+     *
+     * @param {CommandType} filter - type of commands included in the list
+     * @returns {BaseCommand[]} List of commands registered in the manager
      */
-    get list() {
-        return Object.freeze([...this._textCommandsList]);
+    public getList(filter?: CommandType): readonly BaseCommand[] {
+        switch (filter) {
+            case "CHAT":
+                return Object.freeze([...this._chatCommandsList]);
+            case "MESSAGE":
+                return Object.freeze([...this._messagesCommandsList]);
+            case "USER":
+                return Object.freeze([...this._userCommandsList]);
+            default:
+                return Object.freeze([...this._chatCommandsList, ...this._messagesCommandsList, ...this._userCommandsList]);
+        }
     }
 
     /**
@@ -99,7 +110,7 @@ export class CommandManager {
                             throw new Error('Parameter with defined choices must have a "string" type');
                         }
                     });
-                this._textCommandsList.push(command);
+                this._chatCommandsList.push(command);
             } else {
                 throw new TypeError("Invalid argument type");
             }
@@ -219,7 +230,7 @@ export class CommandManager {
 
     private findTextPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
-        this._textCommandsList.map((c) => {
+        this._chatCommandsList.map((c) => {
             if (phrase == c.name) {
                 returnValue = {
                     command: c,

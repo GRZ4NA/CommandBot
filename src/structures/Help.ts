@@ -64,8 +64,9 @@ export class HelpMessage extends TextCommand {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
-                        cmdManager.list.map((c) => {
+                        cmdManager.getList("CHAT").map((c) => {
                             if (
+                                c instanceof TextCommand &&
                                 c.visible &&
                                 ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
                             ) {
