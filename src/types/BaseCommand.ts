@@ -1,5 +1,5 @@
 import { MessageEmbed, ReplyMessageOptions, Message, CommandInteraction } from "discord.js";
-import { InputParameter } from "structures/Parameter.js";
+import { InputParameter } from "../structures/Parameter.js";
 import { ParameterResolvable } from "./Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
 import { BaseCommand } from "../structures/BaseCommand.js";

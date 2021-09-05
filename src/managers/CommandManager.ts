@@ -8,8 +8,8 @@ import { CommandMessageStructure } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
 import { CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
-import { UserCommand } from "structures/UserCommand.js";
-import { RegisteredCommandObject } from "types/api.js";
+import { UserCommand } from "../structures/UserCommand.js";
+import { RegisteredCommandObject } from "../types/api.js";
 
 /**
  * @class Command manager

@@ -1,6 +1,7 @@
-import { MessageEmbed } from "discord.js";
 import { Bot } from "./src/structures/Bot.js";
 import { TextCommand } from "./src/structures/TextCommand.js";
+import { MessageCommand } from "./src/structures/MessageCommand.js";
+import { UserCommand } from "./src/structures/UserCommand.js";
 import { InitOptions } from "./src/types/Bot.js";
 import { TextCommandInit, CommandMessageStructure } from "./src/types/TextCommand.js";
 import { HelpMessageParams } from "./src/types/HelpMessage.js";
@@ -13,7 +14,8 @@ export default Bot;
 export {
     Bot,
     TextCommand,
-    MessageEmbed,
+    MessageCommand,
+    UserCommand,
     InitOptions,
     TextCommandInit,
     CommandMessageStructure,
