@@ -97,7 +97,7 @@ export class BaseCommand {
     public async start(interaction: Message | CommandInteraction, args?: InputParameter[]): Promise<void> {
         if (this.permissionChecker(interaction)) {
             if (interaction instanceof CommandInteraction) {
-                await interaction.deleteReply();
+                await interaction.deferReply();
             }
             await this.handleReply(interaction, await this.function.call(this, interaction, this.createAccessor(args || [])));
         } else {
