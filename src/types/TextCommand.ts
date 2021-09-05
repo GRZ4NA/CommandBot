@@ -91,7 +91,6 @@ export interface TextCommandInit {
 
 export interface CommandMessageStructure {
     command: TextCommand;
-
     parameters: InputParameter[];
 }
 
@@ -99,6 +98,5 @@ export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
 
 export interface PhraseOccurrenceData {
     command: TextCommand;
-
     type: "NAME" | "ALIAS";
 }

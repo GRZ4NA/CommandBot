@@ -13,9 +13,7 @@ import { CommandType } from "../types/BaseCommand.js";
  */
 export class CommandManager {
     private readonly _chatCommandsList: TextCommand[] = [];
-
     private readonly _messagesCommandsList: BaseCommand[] = [];
-
     private readonly _userCommandsList: BaseCommand[] = [];
 
     /**

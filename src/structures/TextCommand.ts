@@ -42,9 +42,7 @@ export class TextCommand extends BaseCommand {
      * @type {boolean}
      */
     public readonly slash: boolean;
-
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
-
     public static descriptionRegExp: RegExp = /^[a-zA-Z]{1,100}$/;
 
     /**

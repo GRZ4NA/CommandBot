@@ -47,9 +47,7 @@ export class BaseCommand {
      * @private
      */
     private readonly function: CommandFunction;
-
     private readonly permissionChecker: (i: Message | CommandInteraction) => boolean;
-
     public static nameRegExp: RegExp = /^[a-zA-Z]{1,32}$/;
 
     /**

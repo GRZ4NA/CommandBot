@@ -9,7 +9,6 @@ import { ParameterType } from "./types/Parameter.js";
  */
 export class PermissionsError extends Error {
     private readonly command: BaseCommand;
-
     private readonly user: GuildMember | null;
 
     constructor(command: BaseCommand, user?: GuildMember | null) {
@@ -29,7 +28,6 @@ export class PermissionsError extends Error {
  */
 export class ParameterTypeError extends TypeError {
     private readonly stringContent: string;
-
     private readonly type: ParameterType;
 
     constructor(s: string, type: ParameterType) {
