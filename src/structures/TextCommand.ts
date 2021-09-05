@@ -140,7 +140,6 @@ export class TextCommand extends BaseCommand {
                         name: p.name,
                         description: p.description,
                         required: !p.optional,
-                        options: options,
                         type: p.choices ? 3 : type,
                         choices: choices.length > 0 ? choices : undefined,
                     };
@@ -156,6 +155,7 @@ export class TextCommand extends BaseCommand {
                     }
                     return 0;
                 });
+            obj.options = options;
         }
         return obj;
     }
