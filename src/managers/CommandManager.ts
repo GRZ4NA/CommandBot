@@ -1,3 +1,4 @@
+import axios from "axios";
 import { CommandInteraction, Message } from "discord.js";
 import { BaseCommand } from "../structures/BaseCommand.js";
 import { MissingParameterError } from "../errors.js";
@@ -7,6 +8,8 @@ import { CommandMessageStructure, PhraseOccurrenceData } from "../types/TextComm
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
 import { CommandType } from "../types/BaseCommand.js";
+import { UserCommand } from "structures/UserCommand.js";
+import { RegisteredCommandObject } from "types/api.js";
 
 /**
  * @class Command manager
@@ -27,6 +30,12 @@ export class CommandManager {
      * @type {string}
      */
     public readonly parameterSeparator: string;
+
+    /**
+     * List of registered entities
+     * @type {RegisteredCommandObject[]} Array of registered objects
+     */
+    public globalRegisteredCommands: RegisteredCommandObject[] = [];
 
     /**
      * @constructor
@@ -82,19 +91,19 @@ export class CommandManager {
      * @param {BaseCommand} command - {@link Command} instance object
      * @returns {boolean} Whether this command has been added successfully
      */
-    public add(command: TextCommand | MessageCommand): void {
+    public add(command: TextCommand | MessageCommand | UserCommand): void {
         try {
             if (applicationState.running) {
                 throw new Error("Cannot add a command while the application is running");
             }
             if (command instanceof TextCommand) {
-                const nameOccurrence: PhraseOccurrenceData | null = this.findTextPhraseOccurrence(command.name);
+                const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.type, command.name);
                 if (nameOccurrence) {
                     throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
                 }
                 command.aliases &&
                     command.aliases.map((a, i, ar) => {
-                        const aliasOccurrence: PhraseOccurrenceData | null = this.findTextPhraseOccurrence(a);
+                        const aliasOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.type, a);
                         if (aliasOccurrence) {
                             console.warn(
                                 `[⚠ WARN] The name "${a}" is already registered as ${aliasOccurrence.type} in the "${aliasOccurrence.command.name}" command. It will be removed from the "${command.name}" command.`
@@ -109,11 +118,40 @@ export class CommandManager {
                         }
                     });
                 this._chatCommandsList.push(command);
+            } else if (command instanceof MessageCommand) {
+                const nameOccurrence = this.findPhraseOccurrence(command.type, command.name);
+                if (nameOccurrence) {
+                    throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
+                }
+                this._messagesCommandsList.push(command);
+            } else if (command instanceof UserCommand) {
+                const nameOccurrence = this.findPhraseOccurrence(command.type, command.name);
+                if (nameOccurrence) {
+                    throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
+                }
+                this._userCommandsList.push(command);
             } else {
                 throw new TypeError("Invalid argument type");
             }
         } catch (e) {
             console.error(`[❌ ERROR] ${e}`);
+        }
+    }
+
+    /**
+     * Registers commands from a manager in the Discord API
+     *
+     * @returns
+     */
+    public async register(applicationId: string, token: string) {
+        const globalList = [
+            ...this._chatCommandsList.filter((c) => (!Array.isArray(c.guilds) || c.guilds.length === 0) && c.slash).map((c) => c.toObject()),
+            ...this._messagesCommandsList.filter((c) => !Array.isArray(c.guilds) || c.guilds.length === 0).map((c) => c.toObject()),
+            ...this._userCommandsList.filter((c) => !Array.isArray(c.guilds) || c.guilds.length === 0).map((c) => c.toObject()),
+        ];
+        const globalRegisterRq = await axios.put(`https://discord.com/api/v8/applications/${applicationId}/commands`, globalList, { headers: { Authorization: `Bot ${token}` } });
+        if (globalRegisterRq.status === 201) {
+            this.globalRegisteredCommands = globalRegisterRq.data as RegisteredCommandObject[];
         }
     }
 
@@ -226,21 +264,46 @@ export class CommandManager {
         return null;
     }
 
-    private findTextPhraseOccurrence(phrase?: string): PhraseOccurrenceData | null {
+    private findPhraseOccurrence(type: CommandType, phrase?: string): PhraseOccurrenceData | null {
         let returnValue: PhraseOccurrenceData | null = null;
-        this._chatCommandsList.map((c) => {
-            if (phrase == c.name) {
-                returnValue = {
-                    command: c,
-                    type: "NAME",
-                };
-            } else if (c.aliases && c.aliases.indexOf(phrase || "") != -1) {
-                returnValue = {
-                    command: c,
-                    type: "ALIAS",
-                };
-            }
-        });
+        switch (type) {
+            case "CHAT":
+                this._chatCommandsList.map((c) => {
+                    if (phrase == c.name) {
+                        returnValue = {
+                            command: c,
+                            type: "NAME",
+                        };
+                    } else if (c.aliases && c.aliases.indexOf(phrase || "") != -1) {
+                        returnValue = {
+                            command: c,
+                            type: "ALIAS",
+                        };
+                    }
+                });
+                break;
+            case "MESSAGE":
+                this._messagesCommandsList.map((c) => {
+                    if (phrase == c.name) {
+                        returnValue = {
+                            command: c,
+                            type: "NAME",
+                        };
+                    }
+                });
+                break;
+            case "USER":
+                this._userCommandsList.map((c) => {
+                    if (phrase == c.name) {
+                        returnValue = {
+                            command: c,
+                            type: "NAME",
+                        };
+                    }
+                });
+            default:
+                break;
+        }
         return returnValue;
     }
 }
