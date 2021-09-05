@@ -148,7 +148,9 @@ export class Bot extends EventEmitter {
             this.client.on("ready", async () => {
                 if (register === undefined || register === true) {
                     console.log("✔");
-                    this.register();
+                    process.stdout.write(`Registering commands... `);
+                    await this.commands.register(this.applicationId, this.token);
+                    console.log("✔");
                 } else {
                     console.log("✔\n");
                 }
@@ -247,46 +249,6 @@ export class Bot extends EventEmitter {
             console.error(`[❌ ERROR] ${e}`);
             return false;
         }
-    }
-
-    /**
-     * @method
-     * Registers commands from {@link CommandManager} in Discord API
-     * @returns {Promise<void>}
-     */
-    public async register(): Promise<void> {
-        process.stdout.write("Registering commands... ");
-        await axios.put(
-            `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-            this.commands
-                .getList()
-                .filter((c) => !Array.isArray(c.guilds) && c instanceof TextCommand && c.slash)
-                .map((c) => c.toObject()),
-            { headers: { Authorization: `Bot ${this.token}` } }
-        );
-        const guilds: any = {};
-        await this.commands
-            .getList()
-            .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
-            .map((c) => {
-                c.guilds?.map(async (g) => {
-                    if (!(await this.client.guilds.fetch(g))) {
-                        throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
-                    }
-                    if (guilds[g]) {
-                        guilds[g].push(c.toObject());
-                    } else {
-                        guilds[g] = [];
-                        guilds[g].push(c.toObject());
-                    }
-                });
-            });
-        for (let i in guilds) {
-            await axios.put(`https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`, guilds[i], {
-                headers: { Authorization: `Bot ${this.token}` },
-            });
-        }
-        console.log("✔\n");
     }
 }
 
