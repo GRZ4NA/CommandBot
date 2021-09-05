@@ -34,17 +34,20 @@ export class Parameter {
      */
     public readonly choices?: string[];
 
+    public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
+    public static descriptionRegExp: RegExp = /^[a-zA-Z0-9_ ]{1,100}$/;
+
     constructor(options: ParameterSchema) {
         this.name = options.name;
         this.description = options.description || "No description";
         this.optional = options.optional;
         this.type = options.type;
         this.choices = options.choices;
-        if (!/^[\w-]{1,32}$/.test(this.name)) {
+        if (!Parameter.nameRegExp.test(this.name)) {
             throw new Error(`Parameter name ${this.name} doesn't match the pattern`);
         }
-        if (this.description.length > 100) {
-            throw new Error(`Parameter ${this.name}: Description too long`);
+        if (!Parameter.descriptionRegExp.test(this.description)) {
+            throw new Error(`Parameter ${this.name}: Incorrect description`);
         }
         return;
     }
