@@ -2,6 +2,7 @@ import { MessageEmbed, ReplyMessageOptions, Message, CommandInteraction } from "
 import { InputParameter } from "structures/Parameter.js";
 import { ParameterResolvable } from "./Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
+import { BaseCommand } from "../structures/BaseCommand.js";
 
 export interface BaseCommandInit {
     name: string;
@@ -20,3 +21,8 @@ export type CommandFunction = (
     interaction: Message | CommandInteraction,
     argumentAccessor?: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null
 ) => CommandFunctionReturnTypes;
+
+export interface PhraseOccurrenceData {
+    command: BaseCommand;
+    type: "NAME" | "ALIAS";
+}

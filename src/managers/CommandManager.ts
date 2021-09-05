@@ -4,10 +4,10 @@ import { BaseCommand } from "../structures/BaseCommand.js";
 import { MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "../structures/Parameter.js";
 import { TextCommand } from "../structures/TextCommand.js";
-import { CommandMessageStructure, PhraseOccurrenceData } from "../types/TextCommand.js";
+import { CommandMessageStructure } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
-import { CommandType } from "../types/BaseCommand.js";
+import { CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
 import { UserCommand } from "structures/UserCommand.js";
 import { RegisteredCommandObject } from "types/api.js";
 
