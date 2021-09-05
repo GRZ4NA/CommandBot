@@ -158,7 +158,7 @@ export class Bot extends EventEmitter {
             this.client.on("messageCreate", async (m) => {
                 let cmdMsg: CommandMessageStructure | null = null;
                 try {
-                    cmdMsg = this.commands.fetchFromMessage(m);
+                    cmdMsg = this.commands.fetch(m);
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
@@ -200,7 +200,7 @@ export class Bot extends EventEmitter {
                 let cmd: CommandMessageStructure | null = null;
                 try {
                     if (!i.isCommand()) return;
-                    cmd = this.commands.fetchFromInteraction(i);
+                    cmd = this.commands.fetch(i);
                     if (cmd) {
                         this.emit("COMMAND", i, cmd);
                         await cmd.command.start(i, cmd.parameters);

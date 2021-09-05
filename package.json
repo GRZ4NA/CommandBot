@@ -29,7 +29,7 @@
     "homepage": "https://github.com/GRZ4NA/CommandBot#readme",
     "dependencies": {
         "axios": "^0.21.1",
-        "discord.js": "^13.0.1"
+        "discord.js": "^13.1.0"
     },
     "devDependencies": {
         "@types/node": "^15.12.4",

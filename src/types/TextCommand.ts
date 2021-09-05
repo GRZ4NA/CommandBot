@@ -1,9 +1,9 @@
 import { CommandInteraction, Message } from "discord.js";
 import { ParameterSchema, ParameterResolvable } from "./Parameter.js";
 import { InputParameter } from "../structures/Parameter.js";
-import { TextCommand } from "../structures/TextCommand.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
 import { CommandFunctionReturnTypes } from "./BaseCommand.js";
+import { BaseCommand } from "../structures/BaseCommand.js";
 
 /**
  * @interface
@@ -90,7 +90,7 @@ export interface TextCommandInit {
 }
 
 export interface CommandMessageStructure {
-    command: TextCommand;
+    command: BaseCommand;
     parameters: InputParameter[];
 }
 
