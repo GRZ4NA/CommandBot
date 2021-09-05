@@ -3,6 +3,9 @@ import { InputParameter } from "../structures/Parameter.js";
 import { ParameterResolvable } from "./Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
 import { BaseCommand } from "../structures/BaseCommand.js";
+import { TextCommand } from "../structures/TextCommand.js";
+import { MessageCommand } from "../structures/MessageCommand.js";
+import { UserCommand } from "../structures/UserCommand.js";
 
 export interface BaseCommandInit {
     name: string;
@@ -26,3 +29,5 @@ export interface PhraseOccurrenceData {
     command: BaseCommand;
     type: "NAME" | "ALIAS";
 }
+
+export type CommandStructure<T> = T extends "MESSAGE" ? MessageCommand : T extends "USER" ? UserCommand : T extends "CHAT" ? TextCommand : never;
