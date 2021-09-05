@@ -7,7 +7,6 @@ export type ParameterResolvable = string | boolean | number | ObjectID | undefin
 /**
  * @interface
  * Properties required to build a {@link Parameter} object
- * @exports
  */
 export interface ParameterSchema {
     /**

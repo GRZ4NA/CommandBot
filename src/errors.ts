@@ -6,7 +6,6 @@ import { ParameterType } from "./types/Parameter.js";
 /**
  * @class Error indicating that a caller doesn't have enough permissions to execute a command
  * @extends Error
- * @exports
  */
 export class PermissionsError extends Error {
     private readonly command: BaseCommand;
@@ -27,7 +26,6 @@ export class PermissionsError extends Error {
 /**
  * @class Error indicating that an input value cannot be converted to a expected type
  * @extends TypeError
- * @exports
  */
 export class ParameterTypeError extends TypeError {
     private readonly stringContent: string;
@@ -48,7 +46,6 @@ export class ParameterTypeError extends TypeError {
 /**
  * @class Error indicating that a required parameter is missing in the request
  * @extends ReferenceError
- * @exports
  */
 export class MissingParameterError extends ReferenceError {
     private readonly argument: Parameter;
@@ -65,7 +62,6 @@ export class MissingParameterError extends ReferenceError {
 
 /**
  * @class Entity indicating command execution success
- * @exports
  */
 export class OperationSuccess {
     public readonly command: BaseCommand;

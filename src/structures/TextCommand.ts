@@ -5,7 +5,6 @@ import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 
 /**
  * @class Class that represents a command instance
- * @exports
  */
 export class TextCommand extends BaseCommand {
     /**

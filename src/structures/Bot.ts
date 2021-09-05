@@ -22,7 +22,6 @@ export declare interface Bot {
 /**
  * @class  Class that represents your bot instance
  * @extends {EventEmitter}
- * @exports
  */
 export class Bot extends EventEmitter {
     /**

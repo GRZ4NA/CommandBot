@@ -3,7 +3,6 @@ import { ParameterType, ParameterResolvable, ParameterSchema } from "../types/Pa
 
 /**
  * @class Representation of command parameter
- * @exports
  */
 export class Parameter {
     /**
@@ -65,7 +64,6 @@ export class DefaultParameter extends Parameter {
 /**
  * @class Representation of input parameter (argument) coming from a message or an interaction
  * @extends Parameter
- * @exports
  */
 export class InputParameter extends Parameter {
     /**
