@@ -146,4 +146,20 @@ export class BaseCommand {
             await interaction.deleteReply();
         }
     }
+
+    public static isCommand(o: any): o is BaseCommand {
+        return (
+            "name" in o &&
+            typeof o.name === "string" &&
+            BaseCommand.nameRegExp.test(o.name) &&
+            "type" in o &&
+            (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "MESSAGE") &&
+            "permissionCheckMethod" in o &&
+            (o.permissionCheckMethod === "ALL" || o.permissionCheckMethod === "ANY") &&
+            "announceSuccess" in o &&
+            typeof o.announceSuccess === "boolean" &&
+            "function" in o &&
+            o.function instanceof Function
+        );
+    }
 }

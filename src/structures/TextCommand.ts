@@ -188,4 +188,18 @@ export class TextCommand extends BaseCommand {
             });
         return usageTemplate;
     }
+
+    public static isCommand(o: any): o is TextCommand {
+        return (
+            "description" in o &&
+            typeof o.description === "string" &&
+            TextCommand.descriptionRegExp.test(o.description) &&
+            "parameters" in o &&
+            Array.isArray(o.parameters) &&
+            "visible" in o &&
+            typeof o.visible === "boolean" &&
+            BaseCommand.isCommand(o) &&
+            TextCommand.nameRegExp.test(o.name)
+        );
+    }
 }

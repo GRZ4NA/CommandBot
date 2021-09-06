@@ -17,4 +17,8 @@ export class MessageCommand extends BaseCommand {
             permissions: o.permissions,
         });
     }
+
+    public static isCommand(o: any): o is MessageCommand {
+        return BaseCommand.isCommand(o) && MessageCommand.nameRegExp.test(o.name);
+    }
 }
