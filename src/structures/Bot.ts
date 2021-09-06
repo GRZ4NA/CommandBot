@@ -199,7 +199,7 @@ export class Bot extends EventEmitter {
             this.client.on("interactionCreate", async (i) => {
                 let cmd: CommandMessageStructure | null = null;
                 try {
-                    if (!i.isCommand()) return;
+                    if (!i.isCommand() && !i.isContextMenu()) return;
                     cmd = this.commands.fetch(i);
                     if (cmd) {
                         this.emit("COMMAND", i, cmd);
