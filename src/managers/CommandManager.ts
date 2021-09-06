@@ -2,7 +2,7 @@ import { applicationState } from "../state";
 import { BaseCommand } from "../structures/BaseCommand";
 
 export class CommandManager {
-    private readonly _list: BaseCommand[] = [];
+    protected readonly _list: BaseCommand[] = [];
 
     public get(q: string): BaseCommand | null {
         return this._list.find((c) => c.name === q) || null;
