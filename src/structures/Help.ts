@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { TextCommand } from "./TextCommand.js";
-import { CommandManager } from "../managers/CommandManager.js";
+import { CommandManager } from "../managers/CommandManager.old.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 
 export class HelpMessage extends TextCommand {

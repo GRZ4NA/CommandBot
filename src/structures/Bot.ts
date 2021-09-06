@@ -2,7 +2,7 @@ import { Client, CommandInteraction, GuildMember, Intents, Message } from "disco
 import { EventEmitter } from "events";
 import * as http from "http";
 import { TextCommand } from "./TextCommand.js";
-import { CommandManager } from "../managers/CommandManager.js";
+import { CommandManager } from "../managers/CommandManager.old.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "../managers/SystemMessage.js";
