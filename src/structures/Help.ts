@@ -29,7 +29,7 @@ export class HelpMessage extends TextCommand {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (p("command_name")) {
-                        const cmd: TextCommand | null = cmdManager.get(p("command_name")?.toString() || "");
+                        const cmd: TextCommand | null = cmdManager.get(p("command_name")?.toString() || "", "CHAT");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);
