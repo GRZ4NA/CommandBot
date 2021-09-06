@@ -7,17 +7,17 @@ import { TextCommand } from "../structures/TextCommand.js";
 import { CommandMessageStructure } from "../types/TextCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
-import { CommandStructure, CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
+import { CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
 import { UserCommand } from "../structures/UserCommand.js";
-import { RegisteredCommandObject } from "../types/api.js";
+import { CommandResolvable, CommandStructure } from "../types/commands.js";
 
 /**
  * @class Command manager
  */
 export class CommandManager {
     private readonly _chatCommandsList: TextCommand[] = [];
-    private readonly _messagesCommandsList: BaseCommand[] = [];
-    private readonly _userCommandsList: BaseCommand[] = [];
+    private readonly _messagesCommandsList: MessageCommand[] = [];
+    private readonly _userCommandsList: UserCommand[] = [];
 
     /**
      * Prefix used as a way to trigger the bot using messages
@@ -32,12 +32,6 @@ export class CommandManager {
     public readonly parameterSeparator: string;
 
     /**
-     * List of registered entities
-     * @type {RegisteredCommandObject[]} Array of registered objects
-     */
-    public globalRegisteredCommands: RegisteredCommandObject[] = [];
-
-    /**
      * @constructor
      * @param {string} [prefix] - prefix used as a way to trigger the bot using messages
      * @param {string} parameterSeparator - used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
@@ -50,26 +44,33 @@ export class CommandManager {
     /**
      * Retrieves the command by name, alias or keyword
      * @param {string} phrase - command name, alias or keyword
-     * @returns {TextCommand | null} Retrieved {@link Command} object from the manager or *null*
+     * @returns {TextCommand | MessageCommand | UserCommand | null} Retrieved extension of {@link BaseCommand} object from the manager or *null*
      */
     public get<T extends CommandType>(phrase: string, type: T): CommandStructure<T> | null {
         let command: CommandStructure<T> | null = null;
-        if (type === "CHAT") {
-            this._chatCommandsList.map((c) => {
-                if (c.name == phrase) {
-                    command = c as CommandStructure<T>;
-                }
-                c.aliases &&
-                    c.aliases.map((a) => {
-                        if (a == phrase) {
-                            command = c as CommandStructure<T>;
+        switch (type) {
+            case "CHAT":
+                command = (this._chatCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+                if (!command) {
+                    this._chatCommandsList.map((c) => {
+                        if (c.aliases) {
+                            c.aliases.map((a) => {
+                                if (a === phrase) {
+                                    command = c as CommandStructure<T>;
+                                }
+                            });
                         }
                     });
-            });
-        } else if (type === "MESSAGE") {
-            command = (this._messagesCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
-        } else if (type === "USER") {
-            command = (this._userCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+                }
+                break;
+            case "MESSAGE":
+                command = (this._messagesCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+                break;
+            case "USER":
+                command = (this._userCommandsList.find((c) => c.name === phrase) as CommandStructure<T>) || null;
+                break;
+            default:
+                return null;
         }
         return command;
     }
@@ -79,16 +80,16 @@ export class CommandManager {
      * @param {CommandType} filter - type of commands included in the list
      * @returns {BaseCommand[]} List of commands registered in the manager
      */
-    public getList(filter?: CommandType): readonly BaseCommand[] {
+    public getList<T extends CommandType>(filter?: T): readonly CommandStructure<T>[] {
         switch (filter) {
             case "CHAT":
-                return Object.freeze([...this._chatCommandsList]);
+                return Object.freeze([...this._chatCommandsList]) as readonly CommandStructure<T>[];
             case "MESSAGE":
-                return Object.freeze([...this._messagesCommandsList]);
+                return Object.freeze([...this._messagesCommandsList]) as readonly CommandStructure<T>[];
             case "USER":
-                return Object.freeze([...this._userCommandsList]);
+                return Object.freeze([...this._userCommandsList]) as readonly CommandStructure<T>[];
             default:
-                return Object.freeze([...this._chatCommandsList, ...this._messagesCommandsList, ...this._userCommandsList]);
+                return Object.freeze([...this._chatCommandsList, ...this._messagesCommandsList, ...this._userCommandsList]) as CommandStructure<T>[];
         }
     }
 
@@ -97,7 +98,7 @@ export class CommandManager {
      * @param {BaseCommand} command - {@link Command} instance object
      * @returns {boolean} Whether this command has been added successfully
      */
-    public add(command: TextCommand | MessageCommand | UserCommand): void {
+    public add(command: CommandResolvable): void {
         try {
             if (applicationState.running) {
                 throw new Error("Cannot add a command while the application is running");
@@ -156,9 +157,6 @@ export class CommandManager {
             ...this._userCommandsList.filter((c) => !Array.isArray(c.guilds) || c.guilds.length === 0).map((c) => c.toObject()),
         ];
         const globalRegisterRq = await axios.put(`https://discord.com/api/v8/applications/${applicationId}/commands`, globalList, { headers: { Authorization: `Bot ${token}` } });
-        if (globalRegisterRq.status === 201) {
-            this.globalRegisteredCommands = globalRegisterRq.data as RegisteredCommandObject[];
-        }
     }
 
     public fetch(i: Message | CommandInteraction): CommandMessageStructure | null {
