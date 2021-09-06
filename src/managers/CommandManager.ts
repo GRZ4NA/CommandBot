@@ -222,38 +222,39 @@ export class CommandManager {
             } else {
                 cmd = this.get(i.commandName, "CHAT");
             }
-            if (cmd && CommandManager.isTextCommand(cmd)) {
+            if (cmd) {
                 if (i.options?.data) {
                     const paramsList = i.options.data;
                     const parameters: InputParameter[] = [];
-                    cmd.parameters.map((p) => {
-                        const inputParam = paramsList.find((d) => d.name == p.name);
-                        if (!p.optional && !inputParam) {
-                            throw new MissingParameterError(p);
-                        } else if (p.optional && !inputParam) {
-                            return;
-                        }
-                        switch (p.type) {
-                            case "mentionable":
-                            case "channel":
-                            case "role":
-                            case "user":
-                                parameters.push(new ObjectParameter(p, inputParam?.value));
-                                break;
-                            case "string":
-                                parameters.push(new StringParameter(p, inputParam?.value));
-                                break;
-                            case "boolean":
-                                parameters.push(new BooleanParameter(p, inputParam?.value));
-                                break;
-                            case "number":
-                                parameters.push(new NumberParameter(p, inputParam?.value));
-                                break;
-                            default:
-                                parameters.push(new InputParameter(p, inputParam?.value));
-                                break;
-                        }
-                    });
+                    cmd instanceof TextCommand &&
+                        cmd.parameters.map((p) => {
+                            const inputParam = paramsList.find((d) => d.name == p.name);
+                            if (!p.optional && !inputParam) {
+                                throw new MissingParameterError(p);
+                            } else if (p.optional && !inputParam) {
+                                return;
+                            }
+                            switch (p.type) {
+                                case "mentionable":
+                                case "channel":
+                                case "role":
+                                case "user":
+                                    parameters.push(new ObjectParameter(p, inputParam?.value));
+                                    break;
+                                case "string":
+                                    parameters.push(new StringParameter(p, inputParam?.value));
+                                    break;
+                                case "boolean":
+                                    parameters.push(new BooleanParameter(p, inputParam?.value));
+                                    break;
+                                case "number":
+                                    parameters.push(new NumberParameter(p, inputParam?.value));
+                                    break;
+                                default:
+                                    parameters.push(new InputParameter(p, inputParam?.value));
+                                    break;
+                            }
+                        });
                     return {
                         command: cmd,
                         parameters: parameters,
@@ -309,17 +310,5 @@ export class CommandManager {
                 break;
         }
         return returnValue;
-    }
-
-    public static isTextCommand(c: BaseCommand): c is TextCommand {
-        return (c as TextCommand).type === "CHAT" && c instanceof TextCommand;
-    }
-
-    public static isMessageCommand(c: BaseCommand): c is MessageCommand {
-        return c.type === "MESSAGE" && c instanceof MessageCommand;
-    }
-
-    public static isUserCommand(c: BaseCommand): c is UserCommand {
-        return c.type === "USER" && c instanceof UserCommand;
     }
 }
