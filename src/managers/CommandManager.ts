@@ -17,7 +17,7 @@ export class CommandManager {
             if (applicationState.running) {
                 throw new Error("Cannot add a command while the application is running");
             }
-            if (command instanceof BaseCommand) {
+            if (BaseCommand.isCommand(command)) {
                 if (this.get(command.name)) {
                     throw new Error(`A command with name "${command.name}" is already registered in this manager`);
                 } else {
