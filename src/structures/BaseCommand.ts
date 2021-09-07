@@ -112,7 +112,7 @@ export class BaseCommand {
     public toObject(): BaseCommandObject {
         const obj: BaseCommandObject = {
             name: this.name,
-            type: this.type === "MESSAGE" ? 2 : this.type === "USER" ? 3 : 1,
+            type: this.type === "MESSAGE" ? 3 : this.type === "USER" ? 2 : 1,
             default_permissions: true,
         };
         return obj;
