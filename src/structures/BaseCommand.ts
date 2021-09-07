@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
+import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
 import { PermissionCheckTypes } from "../types/permissions.js";
 import { CommandType, BaseCommandInit, CommandFunction } from "../types/BaseCommand.js";
 import { InputParameter } from "./Parameter.js";
@@ -34,7 +34,7 @@ export class BaseCommand {
      * Command permissions (if *undefined*, no permissions check will be performed)
      * @type {Permissions | Function}
      */
-    public readonly permissions?: Permissions | ((i: Message | CommandInteraction) => boolean);
+    public readonly permissions?: Permissions | ((i: Message | Interaction) => boolean);
 
     /**
      * Whether to send a SUCCESS message if no other response is defined (default: true)
@@ -48,7 +48,7 @@ export class BaseCommand {
      * @private
      */
     private readonly function: CommandFunction;
-    private readonly permissionChecker: (i: Message | CommandInteraction) => boolean;
+    private readonly permissionChecker: (i: Message | Interaction) => boolean;
     public static nameRegExp: RegExp = /^.{1,32}$/;
 
     /**
@@ -90,13 +90,14 @@ export class BaseCommand {
 
     /**
      * Invoke the command
-     * @param {Message | CommandInteraction} [interaction] - Used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
+     * @param {Message | Interaction} [interaction] - Used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(interaction: Message | CommandInteraction, args?: InputParameter[]): Promise<void> {
+    public async start(interaction: Message | Interaction, args?: InputParameter[]): Promise<void> {
+        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) return;
         if (this.permissionChecker(interaction)) {
-            if (interaction instanceof CommandInteraction) {
+            if (interaction instanceof Interaction) {
                 await interaction.deferReply();
             }
             await this.handleReply(interaction, await this.function.call(this, interaction, this.createAccessor(args || [])));
@@ -124,25 +125,26 @@ export class BaseCommand {
         };
     }
 
-    private async handleReply(interaction: Message | CommandInteraction, result: void | string | MessageEmbed | ReplyMessageOptions) {
+    private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
+        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) return null;
         if (
             result instanceof Object &&
             ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))
         ) {
             if (interaction instanceof Message) await interaction.reply(result as ReplyMessageOptions);
-            else if (interaction instanceof CommandInteraction) await interaction.editReply(result as ReplyMessageOptions);
+            else if (interaction instanceof Interaction) await interaction.editReply(result as ReplyMessageOptions);
         } else if (typeof result == "string") {
             if (interaction instanceof Message) await interaction?.reply({ content: result });
-            else if (interaction instanceof CommandInteraction)
+            else if (interaction instanceof Interaction)
                 await interaction.editReply({
                     content: result,
                 });
         } else if (result instanceof MessageEmbed) {
             if (interaction instanceof Message) await interaction?.reply({ embeds: [result] });
-            else if (interaction instanceof CommandInteraction) await interaction.editReply({ embeds: [result] });
-        } else if (this.announceSuccess && (interaction instanceof CommandInteraction ? !interaction.replied : true)) {
+            else if (interaction instanceof Interaction) await interaction.editReply({ embeds: [result] });
+        } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
             throw new OperationSuccess(this);
-        } else if (interaction instanceof CommandInteraction && !interaction.replied) {
+        } else if (interaction instanceof Interaction && !interaction.replied) {
             await interaction.deleteReply();
         }
     }

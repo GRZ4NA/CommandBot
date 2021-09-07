@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import * as http from "http";
 import { ChatCommand } from "./ChatCommand.js";
 import { ChatCommandManager } from "../managers/ChatCommandManager.js";
-import { OperationSuccess, PermissionsError } from "../errors.js";
+import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "../managers/SystemMessage.js";
 import { CommandInteractionData } from "../types/commands.js";
@@ -171,9 +171,6 @@ export class Bot extends EventEmitter {
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
-                    } else if (this.chatCommands.prefix && m.content.startsWith(this.chatCommands.prefix)) {
-                        this.emit("MESSAGE", m);
-                        await this.messages.system.send("NOT_FOUND", { phrase: m.content, user: m.member || undefined }, m);
                     } else {
                         this.emit("MESSAGE", m);
                     }
@@ -190,6 +187,8 @@ export class Bot extends EventEmitter {
                         this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, m);
+                    } else if (e instanceof CommandNotFound) {
+                        await this.messages.system.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
                     } else {
                         await this.messages.system.send(
                             "ERROR",
@@ -208,20 +207,20 @@ export class Bot extends EventEmitter {
             this.client.on("interactionCreate", async (i) => {
                 let cmd: CommandInteractionData | null = null;
                 try {
-                    if (!i.isCommand() && !i.isContextMenu()) return;
-                    cmd = this.chatCommands.fetch(i);
+                    if (i.isContextMenu()) {
+                        switch (i.targetType) {
+                            case "MESSAGE":
+                                cmd = this.messageCommands.fetch(i);
+                                break;
+                            case "USER":
+                                break;
+                        }
+                    } else if (i.isCommand()) {
+                        cmd = this.chatCommands.fetch(i);
+                    }
                     if (cmd) {
                         this.emit("COMMAND", i, cmd);
                         await cmd.command.start(i, cmd.parameters);
-                    } else {
-                        await this.messages.system.send(
-                            "NOT_FOUND",
-                            {
-                                phrase: i.commandName,
-                                user: i.member as GuildMember,
-                            },
-                            i as CommandInteraction
-                        );
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {
@@ -236,6 +235,8 @@ export class Bot extends EventEmitter {
                         this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
+                    } else if (e instanceof CommandNotFound) {
+                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query });
                     } else {
                         await this.messages.system.send(
                             "ERROR",

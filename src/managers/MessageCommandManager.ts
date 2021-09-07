@@ -1,9 +1,9 @@
-import { CommandInteraction } from "discord.js";
-import { CommandInteractionData } from "../types/commands";
-import { MessageCommand } from "../structures/MessageCommand";
+import { Interaction } from "discord.js";
+import { CommandInteractionData } from "../types/commands.js";
+import { MessageCommand } from "../structures/MessageCommand.js";
 import { CommandManager } from "./CommandManager.js";
-import { CommandNotFound } from "errors";
-import { ObjectParameter, Parameter } from "structures/Parameter";
+import { CommandNotFound } from "../errors.js";
+import { ObjectParameter, Parameter } from "../structures/Parameter.js";
 
 export class MessageCommandManager extends CommandManager {
     protected readonly _list: MessageCommand[] = [];
@@ -20,7 +20,7 @@ export class MessageCommandManager extends CommandManager {
         }
     }
 
-    public fetch(i: CommandInteraction): CommandInteractionData | null {
+    public fetch(i: Interaction): CommandInteractionData | null {
         if (!i.isContextMenu() || i.targetType !== "MESSAGE") return null;
         const command = this.get(i.commandName);
         if (!command) {

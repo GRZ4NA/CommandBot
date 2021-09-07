@@ -1,5 +1,5 @@
 import { CommandInteraction, Message } from "discord.js";
-import { CommandNotFound, MissingParameterError } from "../errors";
+import { CommandNotFound, MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter.js";
 import { CommandInteractionData } from "../types/commands.js";
 import { ChatCommand } from "../structures/ChatCommand.js";
@@ -96,7 +96,7 @@ export class ChatCommandManager extends CommandManager {
                     throw new CommandNotFound(messageContentRaw[0]);
                 }
             }
-        } else if (i instanceof CommandInteraction && i.isCommand()) {
+        } else if (i instanceof CommandInteraction) {
             const command = this.get(i.commandName);
             if (command) {
                 if (command.parameters.length > 0) {
