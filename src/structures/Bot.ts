@@ -2,7 +2,7 @@ import { Client, CommandInteraction, GuildMember, Intents, Message } from "disco
 import { EventEmitter } from "events";
 import * as http from "http";
 import { ChatCommand } from "./ChatCommand.js";
-import { CommandManager } from "../managers/CommandManager.old.js";
+import { ChatCommandManager } from "../managers/ChatCommandManager.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "../managers/SystemMessage.js";
@@ -37,9 +37,9 @@ export class Bot extends EventEmitter {
 
     /**
      * Instance command manager
-     * @type {CommandManager}
+     * @type {ChatCommandManager}
      */
-    public readonly commands: CommandManager;
+    public readonly chatCommands: ChatCommandManager;
 
     /**
      * Discord bot token
@@ -98,7 +98,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(options.prefix, options.parameterSeparator);
+        this.chatCommands = new ChatCommandManager(options.prefix, options.parameterSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
@@ -128,7 +128,7 @@ export class Bot extends EventEmitter {
                 throw new Error("This bot is already running");
             }
             console.log(`\nBot name: ${this.name}`);
-            console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
+            console.log(`Prefix: ${this.chatCommands.prefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
@@ -138,8 +138,8 @@ export class Bot extends EventEmitter {
                 console.log("✔");
             }
             if (this.messages.help.enabled === true) {
-                const helpMsg: ChatCommand = new HelpMessage(this.commands, this.messages.help, this.name);
-                this.commands.add(helpMsg);
+                const helpMsg: ChatCommand = new HelpMessage(this.chatCommands, this.messages.help, this.name);
+                this.chatCommands.add(helpMsg);
             }
             applicationState.running = true;
             process.stdout.write("Connecting to Discord... ");
@@ -148,8 +148,9 @@ export class Bot extends EventEmitter {
                 if (register === undefined || register === true) {
                     console.log("✔");
                     process.stdout.write(`Registering commands... `);
-                    await this.commands.register(this.applicationId, this.token);
-                    console.log("✔");
+                    //await this.chatCommands.register(this.applicationId, this.token);
+                    //console.log("✔");
+                    console.log("❌ [Registration module is not functional in this version]");
                 } else {
                     console.log("✔\n");
                 }
@@ -158,11 +159,11 @@ export class Bot extends EventEmitter {
             this.client.on("messageCreate", async (m) => {
                 let cmdMsg: CommandMessageStructure | null = null;
                 try {
-                    cmdMsg = this.commands.fetch(m);
+                    cmdMsg = this.chatCommands.fetch(m);
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
-                    } else if (this.commands.prefix && m.content.startsWith(this.commands.prefix)) {
+                    } else if (this.chatCommands.prefix && m.content.startsWith(this.chatCommands.prefix)) {
                         this.emit("MESSAGE", m);
                         await this.messages.system.send("NOT_FOUND", { phrase: m.content, user: m.member || undefined }, m);
                     } else {
@@ -200,7 +201,7 @@ export class Bot extends EventEmitter {
                 let cmd: CommandMessageStructure | null = null;
                 try {
                     if (!i.isCommand() && !i.isContextMenu()) return;
-                    cmd = this.commands.fetch(i);
+                    cmd = this.chatCommands.fetch(i);
                     if (cmd) {
                         this.emit("COMMAND", i, cmd);
                         await cmd.command.start(i, cmd.parameters);

@@ -1,10 +1,10 @@
 import { MessageEmbed } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { CommandManager } from "../managers/CommandManager.old.js";
+import { ChatCommandManager } from "../managers/ChatCommandManager.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 
 export class HelpMessage extends ChatCommand {
-    constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
+    constructor(cmdManager: ChatCommandManager, params: HelpMessageParams, botName?: string) {
         super({
             name: "help",
             usage: params.usage,
@@ -29,7 +29,7 @@ export class HelpMessage extends ChatCommand {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (p("command_name")) {
-                        const cmd: ChatCommand | null = cmdManager.get(p("command_name")?.toString() || "", "CHAT");
+                        const cmd: ChatCommand | null = cmdManager.get(p("command_name")?.toString() || "");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);
@@ -64,7 +64,7 @@ export class HelpMessage extends ChatCommand {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
-                        cmdManager.getList("CHAT").map((c) => {
+                        cmdManager.list.map((c) => {
                             if (
                                 c instanceof ChatCommand &&
                                 c.visible &&
