@@ -95,7 +95,7 @@ export class StringParameter extends InputParameter {
                 return;
             }
         }
-        super(parameter, value?.toString());
+        super(parameter, value?.toString() || "");
     }
 }
 

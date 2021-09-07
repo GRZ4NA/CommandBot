@@ -1,9 +1,10 @@
-import { CommandInteraction, CommandInteractionOption, Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { CommandNotFound, MissingParameterError } from "../errors";
-import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter";
-import { CommandMessageStructure as ChatCommandInteractionData } from "../types/ChatCommand";
-import { ChatCommand } from "../structures/ChatCommand";
+import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter.js";
+import { CommandMessageStructure as ChatCommandInteractionData } from "../types/ChatCommand.js";
+import { ChatCommand } from "../structures/ChatCommand.js";
 import { CommandManager } from "./CommandManager.js";
+import { ParameterResolvable } from "../types/Parameter.js";
 
 export class ChatCommandManager extends CommandManager {
     protected readonly _list: ChatCommand[] = [];
@@ -99,7 +100,7 @@ export class ChatCommandManager extends CommandManager {
             const command = this.get(i.commandName);
             if (command) {
                 if (command.parameters.length > 0) {
-                    const argsRaw = i.options.data.map((a) => a.value?.toString() || "");
+                    const argsRaw = i.options.data.map((a) => a.value || null);
                     const args = this.processRawInput(argsRaw, command.parameters);
                     return {
                         command: command,
@@ -118,7 +119,7 @@ export class ChatCommandManager extends CommandManager {
         }
     }
 
-    private processRawInput(args: string[], schema: Parameter[]): InputParameter[] {
+    private processRawInput(args: ParameterResolvable[], schema: Parameter[]): InputParameter[] {
         return schema.map((p, i) => {
             if (!p.optional && !args[i]) {
                 throw new MissingParameterError(p);

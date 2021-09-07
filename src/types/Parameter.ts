@@ -2,7 +2,7 @@ import { ObjectID } from "../structures/Parameter.js";
 
 export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
 
-export type ParameterResolvable = string | boolean | number | ObjectID | null | undefined; //remove "undefined"
+export type ParameterResolvable = string | boolean | number | ObjectID | null;
 
 /**
  * @interface
