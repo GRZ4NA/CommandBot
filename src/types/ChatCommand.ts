@@ -9,7 +9,7 @@ import { BaseCommand } from "../structures/BaseCommand.js";
  * @interface
  * Options for building a {@link Command} object
  */
-export interface TextCommandInit {
+export interface ChatCommandInit {
     /**
      * Command name
      * @type {string}

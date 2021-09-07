@@ -1,9 +1,9 @@
 import { MessageEmbed } from "discord.js";
-import { TextCommand } from "./TextCommand.js";
+import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../managers/CommandManager.old.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 
-export class HelpMessage extends TextCommand {
+export class HelpMessage extends ChatCommand {
     constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
         super({
             name: "help",
@@ -29,7 +29,7 @@ export class HelpMessage extends TextCommand {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (p("command_name")) {
-                        const cmd: TextCommand | null = cmdManager.get(p("command_name")?.toString() || "", "CHAT");
+                        const cmd: ChatCommand | null = cmdManager.get(p("command_name")?.toString() || "", "CHAT");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);
@@ -66,7 +66,7 @@ export class HelpMessage extends TextCommand {
 
                         cmdManager.getList("CHAT").map((c) => {
                             if (
-                                c instanceof TextCommand &&
+                                c instanceof ChatCommand &&
                                 c.visible &&
                                 ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
                             ) {

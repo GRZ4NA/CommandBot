@@ -3,8 +3,8 @@ import { CommandInteraction, Message } from "discord.js";
 import { BaseCommand } from "../structures/BaseCommand.js";
 import { MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NumberParameter, ObjectParameter, StringParameter } from "../structures/Parameter.js";
-import { TextCommand } from "../structures/TextCommand.js";
-import { CommandMessageStructure } from "../types/TextCommand.js";
+import { ChatCommand } from "../structures/ChatCommand.js";
+import { CommandMessageStructure } from "../types/ChatCommand.js";
 import { applicationState } from "../state.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
 import { CommandType, PhraseOccurrenceData } from "../types/BaseCommand.js";
@@ -15,7 +15,7 @@ import { CommandResolvable, CommandStructure } from "../types/commands.js";
  * @class Command manager
  */
 export class CommandManager {
-    private readonly _chatCommandsList: TextCommand[] = [];
+    private readonly _chatCommandsList: ChatCommand[] = [];
     private readonly _messagesCommandsList: MessageCommand[] = [];
     private readonly _userCommandsList: UserCommand[] = [];
 
@@ -44,7 +44,7 @@ export class CommandManager {
     /**
      * Retrieves the command by name, alias or keyword
      * @param {string} phrase - command name, alias or keyword
-     * @returns {TextCommand | MessageCommand | UserCommand | null} Retrieved extension of {@link BaseCommand} object from the manager or *null*
+     * @returns {ChatCommand | MessageCommand | UserCommand | null} Retrieved extension of {@link BaseCommand} object from the manager or *null*
      */
     public get<T extends CommandType>(phrase: string, type: T): CommandStructure<T> | null {
         let command: CommandStructure<T> | null = null;
@@ -103,7 +103,7 @@ export class CommandManager {
             if (applicationState.running) {
                 throw new Error("Cannot add a command while the application is running");
             }
-            if (command instanceof TextCommand) {
+            if (command instanceof ChatCommand) {
                 const nameOccurrence: PhraseOccurrenceData | null = this.findPhraseOccurrence(command.type, command.name);
                 if (nameOccurrence) {
                     throw new Error(`The name "${command.name}" has already been registered as ${nameOccurrence.type} in the "${nameOccurrence.command.name}" command.`);
@@ -175,7 +175,7 @@ export class CommandManager {
                         paramsList.splice(0, 1);
                     }
                     const parameters: InputParameter[] = [];
-                    command instanceof TextCommand &&
+                    command instanceof ChatCommand &&
                         command.parameters.map((p, i) => {
                             if (!p.optional && !paramsList[i]) {
                                 throw new MissingParameterError(p);
@@ -224,7 +224,7 @@ export class CommandManager {
                 if (i.options?.data) {
                     const paramsList = i.options.data;
                     const parameters: InputParameter[] = [];
-                    cmd instanceof TextCommand &&
+                    cmd instanceof ChatCommand &&
                         cmd.parameters.map((p) => {
                             const inputParam = paramsList.find((d) => d.name == p.name);
                             if (!p.optional && !inputParam) {

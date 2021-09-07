@@ -1,9 +1,9 @@
 import { Bot } from "./src/structures/Bot.js";
-import { TextCommand } from "./src/structures/TextCommand.js";
+import { ChatCommand } from "./src/structures/ChatCommand.js";
 import { MessageCommand } from "./src/structures/MessageCommand.js";
 import { UserCommand } from "./src/structures/UserCommand.js";
 import { InitOptions } from "./src/types/Bot.js";
-import { TextCommandInit, CommandMessageStructure } from "./src/types/TextCommand.js";
+import { ChatCommandInit, CommandMessageStructure } from "./src/types/ChatCommand.js";
 import { HelpMessageParams } from "./src/types/HelpMessage.js";
 import { ParameterResolvable, ParameterType, ParameterSchema } from "./src/types/Parameter.js";
 import { SystemMessageAppearance, SystemMessageData } from "./src/types/SystemMessage.js";
@@ -13,11 +13,11 @@ import { PermissionsError, ParameterTypeError, MissingParameterError, OperationS
 export default Bot;
 export {
     Bot,
-    TextCommand,
+    ChatCommand,
     MessageCommand,
     UserCommand,
     InitOptions,
-    TextCommandInit,
+    ChatCommandInit,
     CommandMessageStructure,
     HelpMessageParams,
     ParameterResolvable,

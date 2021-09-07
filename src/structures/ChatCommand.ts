@@ -1,13 +1,13 @@
 import { Message, CommandInteraction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
-import { TextCommandInit } from "../types/TextCommand.js";
+import { ChatCommandInit } from "../types/ChatCommand.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../types/api.js";
 
 /**
  * @class Class that represents a command instance
  */
-export class TextCommand extends BaseCommand {
+export class ChatCommand extends BaseCommand {
     /**
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
@@ -49,13 +49,13 @@ export class TextCommand extends BaseCommand {
     /**
      * Command constructor
      * @constructor
-     * @param {TextCommandInit} o - {@link CommandBuilder}
+     * @param {ChatCommandInit} o - {@link CommandBuilder}
      */
-    constructor(o: TextCommandInit) {
-        if (!TextCommand.nameRegExp.test(o.name)) {
+    constructor(o: ChatCommandInit) {
+        if (!ChatCommand.nameRegExp.test(o.name)) {
             throw new Error("Incorrect command name. Text and slash commands must match this regular expression: ^[w-]{1,32}$");
         }
-        if (o.description && !TextCommand.descriptionRegExp.test(o.description)) {
+        if (o.description && !ChatCommand.descriptionRegExp.test(o.description)) {
             throw new Error("Command descriptions must be 1-100 characters long");
         }
         super("CHAT", {
@@ -73,7 +73,7 @@ export class TextCommand extends BaseCommand {
         } else {
             this.parameters = o.parameters.map((ps) => new Parameter(ps));
         }
-        this.aliases = TextCommand.processPhrase(o.aliases);
+        this.aliases = ChatCommand.processPhrase(o.aliases);
         this.description = o.description || "No description";
         this.usage = o.usage || this.generateUsageFromArguments();
         this.visible = o.visible !== undefined ? o.visible : true;
@@ -94,7 +94,7 @@ export class TextCommand extends BaseCommand {
     }
 
     /**
-     * Converts {@link TextCommand} instance to object that is recognized by the Discord API
+     * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
     public toObject(): TextCommandObject {
@@ -189,17 +189,17 @@ export class TextCommand extends BaseCommand {
         return usageTemplate;
     }
 
-    public static isCommand(o: any): o is TextCommand {
+    public static isCommand(o: any): o is ChatCommand {
         return (
             "description" in o &&
             typeof o.description === "string" &&
-            TextCommand.descriptionRegExp.test(o.description) &&
+            ChatCommand.descriptionRegExp.test(o.description) &&
             "parameters" in o &&
             Array.isArray(o.parameters) &&
             "visible" in o &&
             typeof o.visible === "boolean" &&
             BaseCommand.isCommand(o) &&
-            TextCommand.nameRegExp.test(o.name)
+            ChatCommand.nameRegExp.test(o.name)
         );
     }
 }
