@@ -3,7 +3,7 @@ import { CommandInteractionData } from "../types/commands.js";
 import { MessageCommand } from "../structures/MessageCommand.js";
 import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound } from "../errors.js";
-import { ObjectParameter, Parameter } from "../structures/Parameter.js";
+import { Parameter, TargetParameter } from "../structures/Parameter.js";
 
 export class MessageCommandManager extends CommandManager {
     protected readonly _list: MessageCommand[] = [];
@@ -31,7 +31,7 @@ export class MessageCommandManager extends CommandManager {
             optional: false,
             type: "target",
         });
-        const inputParameter = new ObjectParameter(parameter, i.targetId);
+        const inputParameter = new TargetParameter(parameter, i.targetId);
         return {
             command: command,
             parameters: [inputParameter],

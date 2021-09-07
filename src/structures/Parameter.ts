@@ -162,3 +162,17 @@ export class NullParameter extends InputParameter {
         super(parameter, null);
     }
 }
+
+export class TargetParameter extends InputParameter {
+    constructor(parameter: Parameter, targetId: string) {
+        super(parameter, targetId);
+    }
+
+    toMessage(c: TextChannel) {
+        return c.messages.cache.get(this.value?.toString() || "");
+    }
+
+    async toUser(g: Guild) {
+        return await g.members.fetch({ query: this.value?.toString() });
+    }
+}

@@ -236,7 +236,7 @@ export class Bot extends EventEmitter {
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
                     } else if (e instanceof CommandNotFound) {
-                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query });
+                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
                     } else {
                         await this.messages.system.send(
                             "ERROR",

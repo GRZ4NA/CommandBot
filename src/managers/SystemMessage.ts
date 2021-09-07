@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { Interaction, Message, MessageEmbed } from "discord.js";
 import { SystemMessageAppearance, SystemMessageData, MessageType } from "../types/SystemMessage.js";
 
 export class SystemMessageManager {
@@ -78,7 +78,7 @@ export class SystemMessageManager {
      * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns {Promise<MessageEmbed | Message | void>} A message that got sent or *void*
      */
-    public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | CommandInteraction): Promise<MessageEmbed | Message | void> {
+    public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | Interaction): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
                 return;
@@ -134,7 +134,7 @@ export class SystemMessageManager {
                         break;
                 }
             }
-            if (interaction && !(interaction instanceof CommandInteraction)) {
+            if (interaction && !(interaction instanceof Interaction)) {
                 const message = await interaction.reply({ embeds: [embed] });
                 if (message.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
@@ -148,7 +148,7 @@ export class SystemMessageManager {
                     }
                 }
                 return message;
-            } else if (interaction && interaction instanceof CommandInteraction) {
+            } else if (interaction && interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
                 interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] });
                 if (Number.isFinite(this[type].deleteTimeout)) {
                     setTimeout(async () => {
