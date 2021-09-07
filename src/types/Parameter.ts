@@ -1,8 +1,8 @@
-import { ObjectID } from "../structures/Parameter.js";
+import { ObjectID, TargetID } from "../structures/Parameter.js";
 
 export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable" | "target";
 
-export type ParameterResolvable = string | boolean | number | ObjectID | null;
+export type ParameterResolvable = string | boolean | number | ObjectID | TargetID | null;
 
 /**
  * @interface

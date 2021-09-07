@@ -1,4 +1,4 @@
-import { CategoryChannel, Guild, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
+import { CategoryChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ParameterType, ParameterResolvable, ParameterSchema } from "../types/Parameter.js";
 
 /**
@@ -164,15 +164,23 @@ export class NullParameter extends InputParameter {
 }
 
 export class TargetParameter extends InputParameter {
-    constructor(parameter: Parameter, targetId: string) {
+    constructor(parameter: Parameter, targetId: TargetID) {
         super(parameter, targetId);
+    }
+}
+
+export class TargetID {
+    public readonly id: string;
+
+    constructor(id: string) {
+        this.id = id;
     }
 
     toMessage(c: TextChannel) {
-        return c.messages.cache.get(this.value?.toString() || "");
+        return c.messages.cache.get(this.id.toString() || "");
     }
 
     async toUser(g: Guild) {
-        return await g.members.fetch({ query: this.value?.toString() });
+        return await g.members.fetch({ query: this.id.toString() });
     }
 }
