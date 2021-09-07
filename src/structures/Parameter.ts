@@ -153,3 +153,9 @@ export class ObjectID {
         }
     }
 }
+
+export class NullParameter extends InputParameter {
+    constructor(parameter: Parameter) {
+        super(parameter, null);
+    }
+}
