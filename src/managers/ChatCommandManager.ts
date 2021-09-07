@@ -1,7 +1,7 @@
 import { CommandInteraction, Message } from "discord.js";
 import { CommandNotFound, MissingParameterError } from "../errors";
 import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter.js";
-import { CommandMessageStructure as ChatCommandInteractionData } from "../types/ChatCommand.js";
+import { CommandInteractionData } from "../types/commands.js";
 import { ChatCommand } from "../structures/ChatCommand.js";
 import { CommandManager } from "./CommandManager.js";
 import { ParameterResolvable } from "../types/Parameter.js";
@@ -65,7 +65,7 @@ export class ChatCommandManager extends CommandManager {
         }
     }
 
-    public fetch(i: Message | CommandInteraction): ChatCommandInteractionData | null {
+    public fetch(i: Message | CommandInteraction): CommandInteractionData | null {
         if (i instanceof Message) {
             if (!this.prefix || i.author.bot || !i.content.startsWith(this.prefix)) return null;
             else {

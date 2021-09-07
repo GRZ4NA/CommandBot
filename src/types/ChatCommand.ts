@@ -89,9 +89,4 @@ export interface ChatCommandInit {
     ) => CommandFunctionReturnTypes;
 }
 
-export interface CommandMessageStructure {
-    command: BaseCommand;
-    parameters: InputParameter[];
-}
-
 export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
