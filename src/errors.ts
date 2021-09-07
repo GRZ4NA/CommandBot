@@ -68,3 +68,12 @@ export class OperationSuccess {
         this.command = c;
     }
 }
+
+export class CommandNotFound extends Error {
+    public readonly query?: string;
+
+    constructor(q?: string) {
+        super("Command not found");
+        this.query = q;
+    }
+}
