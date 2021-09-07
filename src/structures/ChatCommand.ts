@@ -126,6 +126,8 @@ export class ChatCommand extends BaseCommand {
                         case "number":
                             type = 10;
                             break;
+                        case "target":
+                            throw new Error(`"target" parameter cannot be used in chat commands`);
                         default:
                             type = 3;
                             break;

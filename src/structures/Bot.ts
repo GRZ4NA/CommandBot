@@ -6,15 +6,16 @@ import { ChatCommandManager } from "../managers/ChatCommandManager.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "./Help.js";
 import { SystemMessageManager } from "../managers/SystemMessage.js";
-import { CommandMessageStructure } from "../types/ChatCommand.js";
+import { CommandInteractionData } from "../types/commands.js";
 import { InitOptions } from "../types/Bot.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";
 import { applicationState } from "../state.js";
+import { MessageCommandManager } from "../managers/MessageCommandManager.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
     on(event: "MESSAGE", listener: (m: Message) => void): this;
-    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: CommandMessageStructure) => void): this;
+    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: CommandInteractionData) => void): this;
     on(event: "ERROR", listener: (e: any) => void): this;
 }
 
@@ -36,10 +37,16 @@ export class Bot extends EventEmitter {
     public readonly client: Client;
 
     /**
-     * Instance command manager
+     * Instance command manager for chat commands
      * @type {ChatCommandManager}
      */
     public readonly chatCommands: ChatCommandManager;
+
+    /**
+     * Instance command manager for message context menu commands
+     * @type {MessageCommandManager}
+     */
+    public readonly messageCommands: MessageCommandManager;
 
     /**
      * Discord bot token
@@ -99,6 +106,7 @@ export class Bot extends EventEmitter {
             }
         );
         this.chatCommands = new ChatCommandManager(options.prefix, options.parameterSeparator);
+        this.messageCommands = new MessageCommandManager();
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
@@ -157,7 +165,7 @@ export class Bot extends EventEmitter {
                 this.emit("READY");
             });
             this.client.on("messageCreate", async (m) => {
-                let cmdMsg: CommandMessageStructure | null = null;
+                let cmdMsg: CommandInteractionData | null = null;
                 try {
                     cmdMsg = this.chatCommands.fetch(m);
                     if (cmdMsg) {
@@ -198,7 +206,7 @@ export class Bot extends EventEmitter {
                 }
             });
             this.client.on("interactionCreate", async (i) => {
-                let cmd: CommandMessageStructure | null = null;
+                let cmd: CommandInteractionData | null = null;
                 try {
                     if (!i.isCommand() && !i.isContextMenu()) return;
                     cmd = this.chatCommands.fetch(i);

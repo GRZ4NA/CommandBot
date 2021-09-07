@@ -156,6 +156,9 @@ export class ObjectID {
 
 export class NullParameter extends InputParameter {
     constructor(parameter: Parameter) {
+        if (parameter.optional === false) {
+            throw new Error(`Parameter "${parameter.name}" cannot be null`);
+        }
         super(parameter, null);
     }
 }

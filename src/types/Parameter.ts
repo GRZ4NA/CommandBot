@@ -1,6 +1,6 @@
 import { ObjectID } from "../structures/Parameter.js";
 
-export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable";
+export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable" | "target";
 
 export type ParameterResolvable = string | boolean | number | ObjectID | null;
 
