@@ -1,4 +1,4 @@
-import { Message, CommandInteraction } from "discord.js";
+import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommandInit } from "../types/ChatCommand.js";
 import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
@@ -86,8 +86,8 @@ export class ChatCommand extends BaseCommand {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(interaction: Message | CommandInteraction, cmdParams?: InputParameter[]): Promise<void> {
-        if (!this.slash && interaction instanceof CommandInteraction) {
+    public async start(interaction: Message | Interaction, cmdParams?: InputParameter[]): Promise<void> {
+        if (!this.slash && interaction instanceof Interaction) {
             throw new Error("This command is not available as a slash command");
         }
         super.start(interaction, cmdParams);
