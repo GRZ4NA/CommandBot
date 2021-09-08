@@ -8,7 +8,7 @@ export type CommandStructure<T> = T extends "MESSAGE" ? MessageCommand : T exten
 
 export type CommandResolvable = BaseCommand | ChatCommand | MessageCommand | UserCommand;
 
-export interface CommandInteractionData {
-    command: BaseCommand;
+export interface CommandInteractionData<T extends CommandResolvable> {
+    command: T;
     parameters: InputParameter[];
 }
