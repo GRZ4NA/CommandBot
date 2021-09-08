@@ -4,7 +4,7 @@ import { ChatCommandInit } from "./types/ChatCommand.js";
 import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
-import { MissingParameterError, ParameterTypeError } from "errors.js";
+import { MissingParameterError, ParameterTypeError } from "../errors.js";
 
 /**
  * @class Class that represents a command instance
