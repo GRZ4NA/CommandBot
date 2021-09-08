@@ -42,7 +42,7 @@ export class CommandManager {
             this._commands.push(command);
             return;
         } else if (command.isContextMenuCommand()) {
-            if (this.list("MESSAGE").find((c) => c.name === command.name)) {
+            if (this.list("CONTEXT").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
                 return;
             }
@@ -53,7 +53,7 @@ export class CommandManager {
 
     public get(q: string, t?: undefined): BaseCommand | null;
     public get(q: string, t: "CHAT"): ChatCommand | null;
-    public get(q: string, t: "MESSAGE"): ContextMenuCommand | null;
+    public get(q: string, t: "CONTEXT"): ContextMenuCommand | null;
     public get(q: string, t?: CommandType): BaseCommand | null {
         if (t) {
             switch (t) {
@@ -70,7 +70,7 @@ export class CommandManager {
                             }
                         }) || null
                     );
-                case "MESSAGE":
+                case "CONTEXT":
                     return this.list(t).find((c) => c.name === q) || null;
             }
         } else {
@@ -81,14 +81,13 @@ export class CommandManager {
 
     public list(): readonly BaseCommand[];
     public list(f: "CHAT"): readonly ChatCommand[];
-    public list(f: "MESSAGE"): readonly ContextMenuCommand[];
+    public list(f: "CONTEXT"): readonly ContextMenuCommand[];
     public list(f?: CommandType): readonly BaseCommand[] {
         switch (f) {
             case "CHAT":
                 return Object.freeze([...this._commands.filter((c) => c.type === "CHAT")]);
-            case "USER":
-            case "MESSAGE":
-                return Object.freeze([...this._commands.filter((c) => c.type === "MESSAGE" || c.type === "USER")]);
+            case "CONTEXT":
+                return Object.freeze([...this._commands.filter((c) => c.type === "CONTEXT")]);
             default:
                 return Object.freeze([...this._commands]);
         }
@@ -108,7 +107,7 @@ export class CommandManager {
                     throw new CommandNotFound(i.commandName);
                 }
             } else if (i.isContextMenu()) {
-                const cmd = this.get(i.commandName, "MESSAGE");
+                const cmd = this.get(i.commandName, "CONTEXT");
                 if (cmd) {
                     const target = new TargetID(i.targetId, i.targetType);
                     return {

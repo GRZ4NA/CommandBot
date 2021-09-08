@@ -7,7 +7,7 @@ import { CommandInteraction, Message, MessageEmbed, ReplyMessageOptions } from "
 
 export type CommandResolvable = BaseCommand | ChatCommand | ContextMenuCommand;
 
-export type CommandType = "CHAT" | "MESSAGE" | "USER";
+export type CommandType = "CHAT" | "CONTEXT";
 
 export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 

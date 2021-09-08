@@ -10,7 +10,7 @@ export class ContextMenuCommand extends BaseCommand {
         if (!ContextMenuCommand.nameRegExp.test(o.name)) {
             throw new Error("Incorrect command name. Command names must have 1-32 characters");
         }
-        super("MESSAGE", {
+        super("CONTEXT", {
             name: o.name,
             function: o.function,
             announceSuccess: o.announceSuccess,
