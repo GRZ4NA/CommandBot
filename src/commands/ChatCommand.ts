@@ -1,8 +1,10 @@
 import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommandInit } from "./types/ChatCommand.js";
-import { DefaultParameter, InputParameter, Parameter } from "../structures/Parameter.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
+import { ParameterResolvable } from "../structures/types/Parameter.js";
+import { MissingParameterError, ParameterTypeError } from "errors.js";
 
 /**
  * @class Class that represents a command instance
@@ -160,6 +162,47 @@ export class ChatCommand extends BaseCommand {
             obj.options = options;
         }
         return obj;
+    }
+
+    public processArguments(args: ParameterResolvable[]): ReadonlyMap<string, ParameterResolvable> {
+        if (this.parameters) {
+            const mapEntries: [string, ParameterResolvable][] = this.parameters.map((p, i) => {
+                if (!p.optional && !args[i]) {
+                    throw new MissingParameterError(p);
+                } else if (p.optional && !args[i]) {
+                    return [p.name, null];
+                } else if (p.type === "channel" || p.type === "mentionable" || p.type === "role" || p.type === "user") {
+                    return [p.name, new ObjectID(args[i]?.toString() || "")];
+                } else {
+                    switch (p.type) {
+                        case "boolean":
+                            if (args[i] === true || args[i]?.toString().toLowerCase() === "true") {
+                                return [p.name, true];
+                            } else if (args[i] === false || args[i]?.toString().toLowerCase() === "false") {
+                                return [p.name, false];
+                            } else {
+                                throw new ParameterTypeError(args[i]?.toString() || "null", p.type);
+                            }
+                        case "number":
+                            if (isNaN(parseInt(args[i]?.toString() || "null"))) {
+                                throw new ParameterTypeError(args[i]?.toString() || "null", p.type);
+                            }
+                            return [p.name, parseInt(args[i]?.toString() || "null")];
+                        case "string":
+                            if (typeof args[i] !== "string") {
+                                return [p.name, args[i]?.toString() || "null"];
+                            } else {
+                                return [p.name, args[i] || "null"];
+                            }
+                        default:
+                            return [p.name, args[i] || "null"];
+                    }
+                }
+            });
+            return new Map([...mapEntries]);
+        } else {
+            return new Map([]);
+        }
     }
 
     private static processPhrase(phrase?: string | string[]): string[] | undefined {
