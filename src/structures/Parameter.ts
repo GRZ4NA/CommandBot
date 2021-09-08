@@ -1,4 +1,4 @@
-import { CategoryChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
+import { CategoryChannel, DMChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ParameterType, ParameterResolvable, ParameterSchema } from "./types/Parameter.js";
 
 /**
@@ -163,24 +163,37 @@ export class NullParameter extends InputParameter {
     }
 }
 
-export class TargetParameter extends InputParameter {
-    constructor(parameter: Parameter, targetId: TargetID) {
-        super(parameter, targetId);
-    }
-}
+// export class TargetParameter extends InputParameter {
+//     constructor(parameter: Parameter, targetId: TargetID) {
+//         super(parameter, targetId);
+//     }
+// }
 
 export class TargetID {
     public readonly id: string;
+    private readonly type: "MESSAGE" | "USER";
 
-    constructor(id: string) {
+    constructor(id: string, type: "MESSAGE" | "USER") {
         this.id = id;
+        this.type = type;
     }
 
-    toMessage(c: TextChannel) {
-        return c.messages.cache.get(this.id.toString() || "");
-    }
-
-    async toUser(g: Guild) {
-        return await g.members.fetch({ query: this.id.toString() });
+    toObject(r: Guild): GuildMember | null;
+    toObject(r: TextChannel | DMChannel): Message | null;
+    toObject(r: Guild | TextChannel | DMChannel): GuildMember | Message | null {
+        switch (this.type) {
+            case "MESSAGE":
+                if (r instanceof TextChannel || r instanceof DMChannel) {
+                    return r.messages.cache.get(this.id) || null;
+                } else {
+                    return null;
+                }
+            case "USER":
+                if (r instanceof Guild) {
+                    return r.members.cache.get(this.id) || null;
+                } else {
+                    return null;
+                }
+        }
     }
 }

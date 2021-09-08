@@ -8,7 +8,7 @@ import { TargetID } from "structures/Parameter.js";
 
 export type CommandResolvable = BaseCommand | ChatCommand | MessageCommand | UserCommand;
 
-export interface CommandInteractionData<T extends Interaction | Message> {
-    command: T extends Interaction ? BaseCommand : ChatCommand;
+export interface CommandInteractionData {
+    command: BaseCommand;
     parameters: ReadonlyMap<string, ParameterResolvable> | TargetID;
 }
