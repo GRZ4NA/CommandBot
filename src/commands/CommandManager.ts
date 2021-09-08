@@ -76,7 +76,6 @@ export class CommandManager {
         } else {
             return this.list().find((c) => c.name === q) || null;
         }
-        return null;
     }
 
     public list(): readonly BaseCommand[];
