@@ -1,5 +1,7 @@
 # CommandBot
 
+> **WARNING!** This README was created for CommandBot 3
+
 A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.
 
 ## Features
