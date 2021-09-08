@@ -128,7 +128,7 @@ export class Bot extends EventEmitter {
                 throw new Error("This bot is already running");
             }
             if (applicationState.dev) {
-                console.warn(`[⚠️ WARNING] You're using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
+                console.warn(`[⚠️ WARNING] You are using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
             }
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
