@@ -92,7 +92,7 @@ export class ChatCommand extends BaseCommand {
         if (!this.slash && interaction instanceof Interaction) {
             throw new Error("This command is not available as a slash command");
         }
-        super.start(args, interaction, target);
+        await super.start(args, interaction, target);
     }
 
     /**
