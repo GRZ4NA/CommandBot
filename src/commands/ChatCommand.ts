@@ -190,18 +190,4 @@ export class ChatCommand extends BaseCommand {
             });
         return usageTemplate;
     }
-
-    public static isCommand(o: any): o is ChatCommand {
-        return (
-            "description" in o &&
-            typeof o.description === "string" &&
-            ChatCommand.descriptionRegExp.test(o.description) &&
-            "parameters" in o &&
-            Array.isArray(o.parameters) &&
-            "visible" in o &&
-            typeof o.visible === "boolean" &&
-            BaseCommand.isCommand(o) &&
-            ChatCommand.nameRegExp.test(o.name)
-        );
-    }
 }

@@ -4,6 +4,8 @@ import { CommandType, BaseCommandInit, CommandFunction } from "./types/BaseComma
 import { InputParameter } from "../structures/Parameter.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
+import { ChatCommand } from "./ChatCommand.js";
+import { MessageCommand } from "./MessageCommand.js";
 
 export class BaseCommand {
     /**
@@ -147,6 +149,14 @@ export class BaseCommand {
         } else if (interaction instanceof Interaction && !interaction.replied) {
             await interaction.deleteReply();
         }
+    }
+
+    public isChatCommand(): this is ChatCommand {
+        return "description" in this && "parameters" in this && "visible" in this;
+    }
+
+    public isContextMenuCommand(): this is MessageCommand {
+        return "contextType" in this;
     }
 
     public static isCommand(o: any): o is BaseCommand {
