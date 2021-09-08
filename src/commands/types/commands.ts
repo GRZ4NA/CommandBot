@@ -11,9 +11,10 @@ export type CommandType = "CHAT" | "CONTEXT";
 
 export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 
-export type CommandFunction = (args: ReadonlyMap<string, ParameterResolvable> | TargetID, interaction?: Message | CommandInteraction) => CommandFunctionReturnTypes;
+export type CommandFunction = (args: ReadonlyMap<string, ParameterResolvable>, i: Message | CommandInteraction, t?: TargetID) => CommandFunctionReturnTypes;
 
 export interface CommandInteractionData {
     command: BaseCommand;
-    parameters: ReadonlyMap<string, ParameterResolvable> | TargetID;
+    parameters: ReadonlyMap<string, ParameterResolvable>;
+    target?: TargetID;
 }

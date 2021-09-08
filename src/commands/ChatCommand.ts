@@ -88,11 +88,11 @@ export class ChatCommand extends BaseCommand {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(args: ReadonlyMap<string, ParameterResolvable> | TargetID, interaction: Message | Interaction): Promise<void> {
+    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
         if (!this.slash && interaction instanceof Interaction) {
             throw new Error("This command is not available as a slash command");
         }
-        super.start(args, interaction);
+        super.start(args, interaction, target);
     }
 
     /**

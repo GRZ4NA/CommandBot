@@ -205,7 +205,7 @@ export class Bot extends EventEmitter {
                     cmd = this.commands.fetch(i);
                     if (cmd) {
                         this.emit("COMMAND", i, cmd);
-                        await cmd.command.start(cmd.parameters, i);
+                        await cmd.command.start(cmd.parameters, i, cmd.target);
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {

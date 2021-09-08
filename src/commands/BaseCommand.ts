@@ -98,13 +98,13 @@ export class BaseCommand {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(args: ReadonlyMap<string, ParameterResolvable> | TargetID, interaction: Message | Interaction): Promise<void> {
+    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
         if (this.permissionChecker(interaction)) {
             if (interaction instanceof Interaction) {
                 await interaction.deferReply();
             }
-            await this.handleReply(interaction, await this.function(args, interaction));
+            await this.handleReply(interaction, await this.function(args, interaction, target));
         } else {
             throw new PermissionsError(this, interaction.member as GuildMember);
         }

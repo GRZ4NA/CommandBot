@@ -112,7 +112,8 @@ export class CommandManager {
                     const target = new TargetID(i.targetId, i.targetType);
                     return {
                         command: cmd,
-                        parameters: target,
+                        parameters: new Map(),
+                        target: target,
                     };
                 } else {
                     throw new CommandNotFound(i.commandName);

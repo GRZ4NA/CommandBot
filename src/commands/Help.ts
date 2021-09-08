@@ -20,16 +20,13 @@ export class HelpMessage extends ChatCommand {
                 },
             ],
             function: (args, i) => {
-                if (!(args instanceof Map)) {
-                    return;
-                }
                 const helpMsg = new MessageEmbed();
                 helpMsg.setColor(params.color);
                 helpMsg.setTimestamp();
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (args.get("command_name")) {
-                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name") || "", "CHAT");
+                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name")?.toString() || "", "CHAT");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);
