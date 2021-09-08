@@ -1,8 +1,9 @@
 import { Interaction, Message } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
+import { MessageCommand } from "./MessageCommand.js";
 import { CommandType } from "./types/BaseCommand.js";
-import { Command, CommandInteractionData, CommandList } from "./types/commands.js";
+import { CommandInteractionData } from "./types/commands.js";
 
 export class CommandManager {
     private readonly _commands: BaseCommand[] = [];
@@ -16,23 +17,21 @@ export class CommandManager {
 
     public add(command: BaseCommand): void {}
 
-    public get<T extends CommandType>(q: string, t?: T): Command<T> | null {
+    public get(q: string, t?: undefined): BaseCommand | null;
+    public get(q: string, t: "CHAT"): ChatCommand | null;
+    public get(q: string, t: "MESSAGE"): MessageCommand | null;
+    public get(q: string, t?: CommandType): BaseCommand | null {
         return null;
     }
 
-    public list<T extends CommandType>(filter?: T): CommandList<T> {
-        switch (filter) {
-            case "CHAT":
-                return Object.freeze([...this._commands.filter((c) => c.type === "CHAT")]) as CommandList<T>;
-            case "USER":
-            case "MESSAGE":
-                return Object.freeze([...this._commands.filter((c) => c.type === "MESSAGE" || c.type === "USER")]) as CommandList<T>;
-            default:
-                return Object.freeze([...this._commands]) as CommandList<T>;
-        }
+    public list(): BaseCommand[];
+    public list(f: "CHAT"): ChatCommand[];
+    public list(f: "MESSAGE"): MessageCommand[];
+    public list(f?: CommandType): BaseCommand[] {
+        return [];
     }
 
-    public fetch<T extends Interaction | Message>(i: T): CommandInteractionData<T extends Interaction ? BaseCommand : ChatCommand> | null {
+    public fetch<T extends Interaction | Message>(interaction: T): CommandInteractionData<T> | null {
         return null;
     }
 }
