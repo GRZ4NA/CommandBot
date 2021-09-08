@@ -4,7 +4,7 @@ import { CommandType, BaseCommandInit, CommandFunction } from "./types/BaseComma
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { MessageCommand } from "./MessageCommand.js";
+import { MessageCommand } from "./ContextMenuCommand.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
 

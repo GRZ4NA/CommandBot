@@ -4,7 +4,7 @@ import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { MessageCommand } from "./MessageCommand.js";
+import { MessageCommand } from "./ContextMenuCommand.js";
 import { CommandType } from "./types/BaseCommand.js";
 import { CommandInteractionData } from "./types/commands.js";
 
