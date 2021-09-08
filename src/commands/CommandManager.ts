@@ -4,8 +4,8 @@ import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { MessageCommand } from "./ContextMenuCommand.js";
-import { CommandType } from "./types/BaseCommand.js";
+import { ContextMenuCommand } from "./ContextMenuCommand.js";
+import { CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
 
 export class CommandManager {
@@ -53,7 +53,7 @@ export class CommandManager {
 
     public get(q: string, t?: undefined): BaseCommand | null;
     public get(q: string, t: "CHAT"): ChatCommand | null;
-    public get(q: string, t: "MESSAGE"): MessageCommand | null;
+    public get(q: string, t: "MESSAGE"): ContextMenuCommand | null;
     public get(q: string, t?: CommandType): BaseCommand | null {
         if (t) {
             switch (t) {
@@ -81,7 +81,7 @@ export class CommandManager {
 
     public list(): readonly BaseCommand[];
     public list(f: "CHAT"): readonly ChatCommand[];
-    public list(f: "MESSAGE"): readonly MessageCommand[];
+    public list(f: "MESSAGE"): readonly ContextMenuCommand[];
     public list(f?: CommandType): readonly BaseCommand[] {
         switch (f) {
             case "CHAT":

@@ -1,10 +1,11 @@
 import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
 import { PermissionCheckTypes } from "./types/permissions.js";
-import { CommandType, BaseCommandInit, CommandFunction } from "./types/BaseCommand.js";
+import { CommandType, CommandFunction } from "./types/commands.js";
+import { BaseCommandInit } from "./types/BaseCommand.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { MessageCommand } from "./ContextMenuCommand.js";
+import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
 
@@ -150,7 +151,7 @@ export class BaseCommand {
         return "description" in this && "parameters" in this && "visible" in this;
     }
 
-    public isContextMenuCommand(): this is MessageCommand {
+    public isContextMenuCommand(): this is ContextMenuCommand {
         return "contextType" in this;
     }
 

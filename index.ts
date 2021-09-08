@@ -1,6 +1,6 @@
 import { Bot } from "./src/structures/Bot.js";
 import { ChatCommand } from "./src/commands/ChatCommand.js";
-import { MessageCommand } from "./src/commands/ContextMenuCommand.js";
+import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
 import { InitOptions } from "./src/structures/types/Bot.js";
 import { ChatCommandInit } from "./src/commands/types/ChatCommand.js";
 import { HelpMessageParams } from "./src/commands/types/HelpMessage.js";
@@ -14,7 +14,7 @@ export default Bot;
 export {
     Bot,
     ChatCommand,
-    MessageCommand,
+    ContextMenuCommand,
     InitOptions,
     ChatCommandInit,
     CommandInteractionData,

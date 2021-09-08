@@ -1,6 +1,6 @@
 import { ParameterSchema } from "../../structures/types/Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
-import { CommandFunction } from "./BaseCommand.js";
+import { CommandFunction } from "./commands.js";
 
 /**
  * @interface
@@ -82,5 +82,3 @@ export interface ChatCommandInit {
      */
     function: CommandFunction;
 }
-
-export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";
