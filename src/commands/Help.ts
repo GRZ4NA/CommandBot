@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { ChatCommandManager } from "../managers/ChatCommandManager.js";
-import { HelpMessageParams } from "../types/HelpMessage.js";
+import { HelpMessageParams } from "./types/HelpMessage.js";
 
 export class HelpMessage extends ChatCommand {
     constructor(cmdManager: ChatCommandManager, params: HelpMessageParams, botName?: string) {

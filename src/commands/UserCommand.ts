@@ -1,4 +1,4 @@
-import { BaseCommandInit } from "../types/BaseCommand.js";
+import { BaseCommandInit } from "./types/BaseCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
 
 export class UserCommand extends BaseCommand {

@@ -1,5 +1,5 @@
 import { CategoryChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
-import { ParameterType, ParameterResolvable, ParameterSchema } from "../types/Parameter.js";
+import { ParameterType, ParameterResolvable, ParameterSchema } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter

@@ -1,8 +1,8 @@
 import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
-import { ChatCommandInit } from "../types/ChatCommand.js";
+import { ChatCommandInit } from "./types/ChatCommand.js";
 import { DefaultParameter, InputParameter, Parameter } from "../structures/Parameter.js";
-import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../types/api.js";
+import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
 
 /**
  * @class Class that represents a command instance

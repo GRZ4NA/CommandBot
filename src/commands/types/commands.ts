@@ -1,8 +1,8 @@
-import { BaseCommand } from "../commands/BaseCommand.js";
-import { ChatCommand } from "../commands/ChatCommand.js";
-import { MessageCommand } from "../commands/MessageCommand.js";
-import { UserCommand } from "../commands/UserCommand.js";
-import { InputParameter } from "../structures/Parameter.js";
+import { BaseCommand } from "../BaseCommand.js";
+import { ChatCommand } from "../ChatCommand.js";
+import { MessageCommand } from "../MessageCommand.js";
+import { UserCommand } from "../UserCommand.js";
+import { InputParameter } from "../../structures/Parameter.js";
 
 export type CommandStructure<T> = T extends "MESSAGE" ? MessageCommand : T extends "USER" ? UserCommand : T extends "CHAT" ? ChatCommand : BaseCommand;
 

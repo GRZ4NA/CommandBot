@@ -1,6 +1,6 @@
 import { ColorResolvable, GuildMember, User } from "discord.js";
-import { PermissionsError } from "../errors.js";
-import { BaseCommand } from "../commands/BaseCommand.js";
+import { PermissionsError } from "../../errors.js";
+import { BaseCommand } from "../../commands/BaseCommand.js";
 
 /**
  * @type Type of message

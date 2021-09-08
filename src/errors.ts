@@ -1,7 +1,7 @@
 import { BaseCommand } from "./commands/BaseCommand.js";
 import { GuildMember } from "discord.js";
 import { Parameter } from "./structures/Parameter.js";
-import { ParameterType } from "./types/Parameter.js";
+import { ParameterType } from "./structures/types/Parameter.js";
 
 /**
  * @class Error indicating that a caller doesn't have enough permissions to execute a command

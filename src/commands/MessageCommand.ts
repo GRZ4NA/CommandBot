@@ -1,4 +1,4 @@
-import { MessageCommandInit } from "../types/MessageCommand.js";
+import { MessageCommandInit } from "./types/MessageCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
 
 export class MessageCommand extends BaseCommand {

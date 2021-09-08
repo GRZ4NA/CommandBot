@@ -1,5 +1,5 @@
 import { Interaction, Message, MessageEmbed } from "discord.js";
-import { SystemMessageAppearance, SystemMessageData, MessageType } from "../types/SystemMessage.js";
+import { SystemMessageAppearance, SystemMessageData, MessageType } from "./types/SystemMessage.js";
 
 export class SystemMessageManager {
     /**

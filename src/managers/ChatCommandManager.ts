@@ -1,10 +1,10 @@
 import { CommandInteraction, Message } from "discord.js";
 import { CommandNotFound, MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter.js";
-import { CommandInteractionData } from "../types/commands.js";
+import { CommandInteractionData } from "../commands/types/commands.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
 import { CommandManager } from "./CommandManager.js";
-import { ParameterResolvable } from "../types/Parameter.js";
+import { ParameterResolvable } from "../structures/types/Parameter.js";
 
 export class ChatCommandManager extends CommandManager {
     protected readonly _list: ChatCommand[] = [];

@@ -1,8 +1,8 @@
 import { MessageEmbed, ReplyMessageOptions, Message, CommandInteraction } from "discord.js";
-import { InputParameter } from "../structures/Parameter.js";
-import { ParameterResolvable } from "./Parameter.js";
+import { InputParameter } from "../../structures/Parameter.js";
+import { ParameterResolvable } from "../../structures/types/Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
-import { BaseCommand } from "../commands/BaseCommand.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export interface BaseCommandInit {
     name: string;

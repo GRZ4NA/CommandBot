@@ -6,9 +6,9 @@ import { ChatCommandManager } from "../managers/ChatCommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "../commands/Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import { CommandInteractionData } from "../types/commands.js";
-import { InitOptions } from "../types/Bot.js";
-import { HelpMessageParams } from "../types/HelpMessage.js";
+import { CommandInteractionData } from "../commands/types/commands.js";
+import { InitOptions } from "./types/Bot.js";
+import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { applicationState } from "../state.js";
 import { MessageCommandManager } from "../managers/MessageCommandManager.js";
 
