@@ -1,5 +1,7 @@
 import { Interaction, Message } from "discord.js";
-import { applicationState } from "state.js";
+import { TargetID } from "structures/Parameter.js";
+import { CommandNotFound } from "../errors.js";
+import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { MessageCommand } from "./MessageCommand.js";
@@ -92,7 +94,61 @@ export class CommandManager {
         }
     }
 
-    public fetch<T extends Interaction | Message>(interaction: T): CommandInteractionData<T> | null {
-        return null;
+    public fetch(i: Interaction | Message): CommandInteractionData | null {
+        if (i instanceof Interaction) {
+            if (i.isCommand()) {
+                const cmd = this.get(i.commandName, "CHAT");
+                if (cmd) {
+                    const args = cmd.processArguments(i.options.data.map((d) => d.value || null));
+                    return {
+                        command: cmd,
+                        parameters: args,
+                    };
+                } else {
+                    throw new CommandNotFound(i.commandName);
+                }
+            } else if (i.isContextMenu()) {
+                const cmd = this.get(i.commandName, "MESSAGE");
+                if (cmd) {
+                    const target = new TargetID(i.targetId, i.targetType);
+                    return {
+                        command: cmd,
+                        parameters: target,
+                    };
+                } else {
+                    throw new CommandNotFound(i.commandName);
+                }
+            } else {
+                return null;
+            }
+        } else if (this.prefix && i instanceof Message) {
+            if (i.content.startsWith(this.prefix)) {
+                const cmdName = i.content.replace(this.prefix, "").split(" ")[0];
+                const cmd = this.get(cmdName, "CHAT");
+                if (cmd) {
+                    const argsRaw = i.content
+                        .replace(`${this.prefix}${cmdName} `, "")
+                        .split(this.argumentSeparator)
+                        .map((a) => {
+                            if (a.startsWith(" ")) {
+                                return a.replace(" ", "");
+                            } else {
+                                return a;
+                            }
+                        });
+                    const args = cmd.processArguments(argsRaw);
+                    return {
+                        command: cmd,
+                        parameters: args,
+                    };
+                } else {
+                    throw new CommandNotFound(cmdName);
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 }
