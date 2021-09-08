@@ -1,5 +1,5 @@
 import { applicationState } from "../state.js";
-import { BaseCommand } from "../structures/BaseCommand.js";
+import { BaseCommand } from "../commands/BaseCommand.js";
 
 export class CommandManager {
     protected readonly _list: BaseCommand[] = [];

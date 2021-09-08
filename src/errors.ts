@@ -1,4 +1,4 @@
-import { BaseCommand } from "./structures/BaseCommand.js";
+import { BaseCommand } from "./commands/BaseCommand.js";
 import { GuildMember } from "discord.js";
 import { Parameter } from "./structures/Parameter.js";
 import { ParameterType } from "./types/Parameter.js";

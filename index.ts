@@ -1,7 +1,7 @@
 import { Bot } from "./src/structures/Bot.js";
-import { ChatCommand } from "./src/structures/ChatCommand.js";
-import { MessageCommand } from "./src/structures/MessageCommand.js";
-import { UserCommand } from "./src/structures/UserCommand.js";
+import { ChatCommand } from "./src/commands/ChatCommand.js";
+import { MessageCommand } from "./src/commands/MessageCommand.js";
+import { UserCommand } from "./src/commands/UserCommand.js";
 import { InitOptions } from "./src/types/Bot.js";
 import { ChatCommandInit } from "./src/types/ChatCommand.js";
 import { HelpMessageParams } from "./src/types/HelpMessage.js";

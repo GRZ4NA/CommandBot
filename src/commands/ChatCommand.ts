@@ -1,7 +1,7 @@
 import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommandInit } from "../types/ChatCommand.js";
-import { DefaultParameter, InputParameter, Parameter } from "./Parameter.js";
+import { DefaultParameter, InputParameter, Parameter } from "../structures/Parameter.js";
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../types/api.js";
 
 /**

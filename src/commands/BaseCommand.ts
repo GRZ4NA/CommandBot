@@ -1,7 +1,7 @@
 import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
 import { PermissionCheckTypes } from "../types/permissions.js";
 import { CommandType, BaseCommandInit, CommandFunction } from "../types/BaseCommand.js";
-import { InputParameter } from "./Parameter.js";
+import { InputParameter } from "../structures/Parameter.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../types/api.js";
 

@@ -1,6 +1,6 @@
 import { Interaction } from "discord.js";
 import { CommandInteractionData } from "../types/commands.js";
-import { MessageCommand } from "../structures/MessageCommand.js";
+import { MessageCommand } from "../commands/MessageCommand.js";
 import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound } from "../errors.js";
 import { Parameter, TargetID, TargetParameter } from "../structures/Parameter.js";

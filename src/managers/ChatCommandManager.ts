@@ -2,7 +2,7 @@ import { CommandInteraction, Message } from "discord.js";
 import { CommandNotFound, MissingParameterError } from "../errors.js";
 import { BooleanParameter, InputParameter, NullParameter, NumberParameter, ObjectParameter, Parameter, StringParameter } from "../structures/Parameter.js";
 import { CommandInteractionData } from "../types/commands.js";
-import { ChatCommand } from "../structures/ChatCommand.js";
+import { ChatCommand } from "../commands/ChatCommand.js";
 import { CommandManager } from "./CommandManager.js";
 import { ParameterResolvable } from "../types/Parameter.js";
 

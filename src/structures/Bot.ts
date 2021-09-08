@@ -1,11 +1,11 @@
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { ChatCommand } from "./ChatCommand.js";
+import { ChatCommand } from "../commands/ChatCommand.js";
 import { ChatCommandManager } from "../managers/ChatCommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
-import { HelpMessage } from "./Help.js";
-import { SystemMessageManager } from "../managers/SystemMessage.js";
+import { HelpMessage } from "../commands/Help.js";
+import { SystemMessageManager } from "./SystemMessage.js";
 import { CommandInteractionData } from "../types/commands.js";
 import { InitOptions } from "../types/Bot.js";
 import { HelpMessageParams } from "../types/HelpMessage.js";

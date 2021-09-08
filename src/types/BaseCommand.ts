@@ -2,7 +2,7 @@ import { MessageEmbed, ReplyMessageOptions, Message, CommandInteraction } from "
 import { InputParameter } from "../structures/Parameter.js";
 import { ParameterResolvable } from "./Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
-import { BaseCommand } from "../structures/BaseCommand.js";
+import { BaseCommand } from "../commands/BaseCommand.js";
 
 export interface BaseCommandInit {
     name: string;

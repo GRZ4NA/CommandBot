@@ -1,3 +1,3 @@
-import { StateManager } from "./managers/StateManager.js";
+import { StateManager } from "./structures/StateManager.js";
 
 export const applicationState = new StateManager();
