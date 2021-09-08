@@ -1,5 +1,5 @@
 import { Interaction, Message } from "discord.js";
-import { TargetID } from "structures/parameter.js";
+import { TargetID } from "../structures/parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
