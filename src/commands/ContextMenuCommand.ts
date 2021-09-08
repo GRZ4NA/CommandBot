@@ -1,6 +1,6 @@
 import { ContextMenuCommandInit, ContextType } from "./types/ContextMenuCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
-import { BaseCommandObject } from "structures/types/api.js";
+import { BaseCommandObject } from "../structures/types/api.js";
 
 export class ContextMenuCommand extends BaseCommand {
     public readonly contextType: ContextType;

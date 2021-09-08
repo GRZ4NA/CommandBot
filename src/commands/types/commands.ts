@@ -1,8 +1,8 @@
 import { BaseCommand } from "../BaseCommand.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { ContextMenuCommand } from "../ContextMenuCommand.js";
-import { ParameterResolvable } from "structures/types/Parameter.js";
-import { TargetID } from "structures/parameter.js";
+import { ParameterResolvable } from "../../structures/types/parameter.js";
+import { TargetID } from "../../structures/parameter.js";
 import { CommandInteraction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
 
 export type CommandResolvable = BaseCommand | ChatCommand | ContextMenuCommand;
