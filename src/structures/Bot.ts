@@ -127,6 +127,9 @@ export class Bot extends EventEmitter {
             if (applicationState.running) {
                 throw new Error("This bot is already running");
             }
+            if (applicationState.dev) {
+                console.warn(`[⚠️ WARNING] You're using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
+            }
             console.log(`\nBot name: ${this.name}`);
             console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
@@ -162,7 +165,7 @@ export class Bot extends EventEmitter {
                     cmdMsg = this.commands.fetch(m);
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
-                        await cmdMsg.command.start(m, cmdMsg.parameters);
+                        await cmdMsg.command.start(cmdMsg.parameters, m);
                     } else {
                         this.emit("MESSAGE", m);
                     }
@@ -199,49 +202,39 @@ export class Bot extends EventEmitter {
             this.client.on("interactionCreate", async (i) => {
                 let cmd: CommandInteractionData | null = null;
                 try {
-                    // if (i.isContextMenu()) {
-                    //     switch (i.targetType) {
-                    //         case "MESSAGE":
-                    //             cmd = this.messageCommands.fetch(i);
-                    //             break;
-                    //         case "USER":
-                    //             break;
-                    //     }
-                    // } else if (i.isCommand()) {
-                    //     cmd = this.commands.fetch(i);
-                    // }
-                    // if (cmd) {
-                    //     this.emit("COMMAND", i, cmd);
-                    //     await cmd.command.start(i, cmd.parameters);
-                    // }
+                    cmd = this.commands.fetch(i);
+                    if (cmd) {
+                        this.emit("COMMAND", i, cmd);
+                        await cmd.command.start(cmd.parameters, i);
+                    }
                 } catch (e) {
-                    // if (e instanceof PermissionsError) {
-                    //     await this.messages.system.send(
-                    //         "PERMISSION",
-                    //         {
-                    //             user: (i.member as GuildMember) || undefined,
-                    //             command: cmd?.command,
-                    //         },
-                    //         i as CommandInteraction
-                    //     );
-                    //     this.emit("ERROR", e);
-                    // } else if (e instanceof OperationSuccess) {
-                    //     await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
-                    // } else if (e instanceof CommandNotFound) {
-                    //     await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
-                    // } else {
-                    //     await this.messages.system.send(
-                    //         "ERROR",
-                    //         {
-                    //             command: cmd?.command,
-                    //             user: (i.member as GuildMember) || undefined,
-                    //             error: e as Error,
-                    //         },
-                    //         i as CommandInteraction
-                    //     );
-                    //     this.emit("ERROR", e);
-                    // }
-                    // return;
+                    if (e instanceof PermissionsError) {
+                        await this.messages.system.send(
+                            "PERMISSION",
+                            {
+                                user: (i.member as GuildMember) || undefined,
+                                command: cmd?.command,
+                            },
+                            i as CommandInteraction
+                        );
+                        this.emit("ERROR", e);
+                    } else if (e instanceof OperationSuccess) {
+                        await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
+                    } else if (e instanceof CommandNotFound) {
+                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
+                    } else {
+                        await this.messages.system.send(
+                            "ERROR",
+                            {
+                                command: cmd?.command,
+                                user: (i.member as GuildMember) || undefined,
+                                error: e as Error,
+                            },
+                            i as CommandInteraction
+                        );
+                        this.emit("ERROR", e);
+                    }
+                    return;
                 }
             });
             return true;

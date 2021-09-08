@@ -1,10 +1,10 @@
 import { MessageEmbed } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { ChatCommandManager } from "../managers/ChatCommandManager.js";
+import { CommandManager } from "../commands/CommandManager.js";
 import { HelpMessageParams } from "./types/HelpMessage.js";
 
 export class HelpMessage extends ChatCommand {
-    constructor(cmdManager: ChatCommandManager, params: HelpMessageParams, botName?: string) {
+    constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
         super({
             name: "help",
             usage: params.usage,
@@ -19,8 +19,8 @@ export class HelpMessage extends ChatCommand {
                     type: "string",
                 },
             ],
-            function: (i, p) => {
-                if (!p) {
+            function: (args, i) => {
+                if (!(args instanceof Map)) {
                     return;
                 }
                 const helpMsg = new MessageEmbed();
@@ -28,8 +28,8 @@ export class HelpMessage extends ChatCommand {
                 helpMsg.setTimestamp();
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
-                    if (p("command_name")) {
-                        const cmd: ChatCommand | null = cmdManager.get(p("command_name")?.toString() || "");
+                    if (args.get("command_name")) {
+                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name") || "", "CHAT");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);
@@ -58,15 +58,14 @@ export class HelpMessage extends ChatCommand {
                             helpMsg.addField("Slash command:", cmd.slash ? "ENABLED" : "DISABLED", false);
                             helpMsg.addField("Command scope:", Array.isArray(cmd.guilds) && cmd.guilds.length > 0 ? "CUSTOM" : "GLOBAL", false);
                         } else {
-                            throw new ReferenceError(`Command "${p("command_name")}" does not exist`);
+                            throw new ReferenceError(`Command "${args.get("command_name")}" does not exist`);
                         }
                     } else {
                         helpMsg.setTitle(params.title);
                         helpMsg.setDescription(params.bottomText);
 
-                        cmdManager.list.map((c) => {
+                        cmdManager.list("CHAT").map((c) => {
                             if (
-                                c instanceof ChatCommand &&
                                 c.visible &&
                                 ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
                             ) {
