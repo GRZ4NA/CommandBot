@@ -7,7 +7,7 @@ import { ChatCommandInit } from "./src/commands/types/ChatCommand.js";
 import { HelpMessageParams } from "./src/commands/types/HelpMessage.js";
 import { ParameterResolvable, ParameterType, ParameterSchema } from "./src/structures/types/Parameter.js";
 import { SystemMessageAppearance, SystemMessageData } from "./src/structures/types/SystemMessage.js";
-import { ObjectID, InputParameter, StringParameter, BooleanParameter, NumberParameter, ObjectParameter, Parameter } from "./src/structures/Parameter.js";
+import { ObjectID, Parameter } from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
 import { CommandInteractionData } from "./src/commands/types/commands.js";
 
@@ -28,11 +28,6 @@ export {
     SystemMessageData,
     ParameterSchema,
     Parameter,
-    InputParameter,
-    StringParameter,
-    BooleanParameter,
-    NumberParameter,
-    ObjectParameter,
     PermissionsError,
     ParameterTypeError,
     MissingParameterError,

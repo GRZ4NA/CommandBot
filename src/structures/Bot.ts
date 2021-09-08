@@ -2,7 +2,7 @@ import { Client, CommandInteraction, GuildMember, Intents, Message } from "disco
 import { EventEmitter } from "events";
 import * as http from "http";
 import { ChatCommand } from "../commands/ChatCommand.js";
-import { ChatCommandManager } from "../managers/ChatCommandManager.js";
+import { CommandManager } from "../commands/CommandManager";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { HelpMessage } from "../commands/Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
@@ -10,7 +10,6 @@ import { CommandInteractionData } from "../commands/types/commands.js";
 import { InitOptions } from "./types/Bot.js";
 import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { applicationState } from "../state.js";
-import { MessageCommandManager } from "../managers/MessageCommandManager.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
@@ -37,16 +36,10 @@ export class Bot extends EventEmitter {
     public readonly client: Client;
 
     /**
-     * Instance command manager for chat commands
+     * Instance command manager
      * @type {ChatCommandManager}
      */
-    public readonly chatCommands: ChatCommandManager;
-
-    /**
-     * Instance command manager for message context menu commands
-     * @type {MessageCommandManager}
-     */
-    public readonly messageCommands: MessageCommandManager;
+    public readonly commands: CommandManager;
 
     /**
      * Discord bot token
@@ -105,8 +98,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.chatCommands = new ChatCommandManager(options.prefix, options.parameterSeparator);
-        this.messageCommands = new MessageCommandManager();
+        this.commands = new CommandManager(options.prefix, options.parameterSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
@@ -136,7 +128,7 @@ export class Bot extends EventEmitter {
                 throw new Error("This bot is already running");
             }
             console.log(`\nBot name: ${this.name}`);
-            console.log(`Prefix: ${this.chatCommands.prefix || "/ (only slash commands)"} \n`);
+            console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
@@ -146,8 +138,8 @@ export class Bot extends EventEmitter {
                 console.log("✔");
             }
             if (this.messages.help.enabled === true) {
-                const helpMsg: ChatCommand = new HelpMessage(this.chatCommands, this.messages.help, this.name);
-                this.chatCommands.add(helpMsg);
+                const helpMsg: ChatCommand = new HelpMessage(this.commands, this.messages.help, this.name);
+                this.commands.add(helpMsg);
             }
             applicationState.running = true;
             process.stdout.write("Connecting to Discord... ");
@@ -167,7 +159,7 @@ export class Bot extends EventEmitter {
             this.client.on("messageCreate", async (m) => {
                 let cmdMsg: CommandInteractionData | null = null;
                 try {
-                    cmdMsg = this.chatCommands.fetch(m);
+                    cmdMsg = this.commands.fetch(m);
                     if (cmdMsg) {
                         this.emit("COMMAND", m, cmdMsg);
                         await cmdMsg.command.start(m, cmdMsg.parameters);
@@ -207,49 +199,49 @@ export class Bot extends EventEmitter {
             this.client.on("interactionCreate", async (i) => {
                 let cmd: CommandInteractionData | null = null;
                 try {
-                    if (i.isContextMenu()) {
-                        switch (i.targetType) {
-                            case "MESSAGE":
-                                cmd = this.messageCommands.fetch(i);
-                                break;
-                            case "USER":
-                                break;
-                        }
-                    } else if (i.isCommand()) {
-                        cmd = this.chatCommands.fetch(i);
-                    }
-                    if (cmd) {
-                        this.emit("COMMAND", i, cmd);
-                        await cmd.command.start(i, cmd.parameters);
-                    }
+                    // if (i.isContextMenu()) {
+                    //     switch (i.targetType) {
+                    //         case "MESSAGE":
+                    //             cmd = this.messageCommands.fetch(i);
+                    //             break;
+                    //         case "USER":
+                    //             break;
+                    //     }
+                    // } else if (i.isCommand()) {
+                    //     cmd = this.commands.fetch(i);
+                    // }
+                    // if (cmd) {
+                    //     this.emit("COMMAND", i, cmd);
+                    //     await cmd.command.start(i, cmd.parameters);
+                    // }
                 } catch (e) {
-                    if (e instanceof PermissionsError) {
-                        await this.messages.system.send(
-                            "PERMISSION",
-                            {
-                                user: (i.member as GuildMember) || undefined,
-                                command: cmd?.command,
-                            },
-                            i as CommandInteraction
-                        );
-                        this.emit("ERROR", e);
-                    } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
-                    } else if (e instanceof CommandNotFound) {
-                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
-                    } else {
-                        await this.messages.system.send(
-                            "ERROR",
-                            {
-                                command: cmd?.command,
-                                user: (i.member as GuildMember) || undefined,
-                                error: e as Error,
-                            },
-                            i as CommandInteraction
-                        );
-                        this.emit("ERROR", e);
-                    }
-                    return;
+                    // if (e instanceof PermissionsError) {
+                    //     await this.messages.system.send(
+                    //         "PERMISSION",
+                    //         {
+                    //             user: (i.member as GuildMember) || undefined,
+                    //             command: cmd?.command,
+                    //         },
+                    //         i as CommandInteraction
+                    //     );
+                    //     this.emit("ERROR", e);
+                    // } else if (e instanceof OperationSuccess) {
+                    //     await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
+                    // } else if (e instanceof CommandNotFound) {
+                    //     await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
+                    // } else {
+                    //     await this.messages.system.send(
+                    //         "ERROR",
+                    //         {
+                    //             command: cmd?.command,
+                    //             user: (i.member as GuildMember) || undefined,
+                    //             error: e as Error,
+                    //         },
+                    //         i as CommandInteraction
+                    //     );
+                    //     this.emit("ERROR", e);
+                    // }
+                    // return;
                 }
             });
             return true;

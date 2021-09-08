@@ -1,5 +1,5 @@
 import { CategoryChannel, DMChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
-import { ParameterType, ParameterResolvable, ParameterSchema } from "./types/Parameter.js";
+import { ParameterType, ParameterSchema } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter
@@ -64,74 +64,6 @@ export class DefaultParameter extends Parameter {
     }
 }
 
-/**
- * @class Representation of input parameter (argument) coming from a message or an interaction
- * @extends Parameter
- */
-export class InputParameter extends Parameter {
-    /**
-     * Input value
-     * @type {ParameterResolvable}
-     */
-    public readonly value: ParameterResolvable;
-
-    constructor(parameter: Parameter, value: ParameterResolvable) {
-        super(parameter);
-        this.value = value;
-    }
-}
-
-export class StringParameter extends InputParameter {
-    constructor(parameter: Parameter, value: ParameterResolvable) {
-        if (parameter.type != "string") {
-            throw new Error(`Parameter type mismatch`);
-        }
-        if (parameter.choices) {
-            const match = parameter.choices.filter((c) => c.toLowerCase() === value?.toString().toLowerCase());
-            if (match.length === 0) {
-                throw new Error(`Parameter "${parameter.name}" has incorrect value. Please enter one of the following values: ${parameter.choices.join(", ")}`);
-            } else {
-                super(parameter, match[0]);
-                return;
-            }
-        }
-        super(parameter, value?.toString() || "");
-    }
-}
-
-export class BooleanParameter extends InputParameter {
-    constructor(parameter: Parameter, value: ParameterResolvable) {
-        if (parameter.type != "boolean") {
-            throw new Error(`Parameter type mismatch`);
-        }
-        if (value?.toString().toLowerCase() === "true") {
-            super(parameter, true);
-        } else if (value?.toString().toLowerCase() === "false") {
-            super(parameter, false);
-        } else {
-            throw new Error(`Cannot convert "${parameter.name}" parameter to boolean. Please enter either "true" or "false".`);
-        }
-    }
-}
-
-export class NumberParameter extends InputParameter {
-    constructor(parameter: Parameter, value: ParameterResolvable) {
-        if (parameter.type != "number") {
-            throw new Error(`Parameter type mismatch`);
-        }
-        super(parameter, parseFloat(value ? value.toString() : ""));
-    }
-}
-
-export class ObjectParameter extends InputParameter {
-    constructor(parameter: Parameter, value: ParameterResolvable) {
-        if (parameter.type != "channel" && parameter.type != "mentionable" && parameter.type != "user" && parameter.type != "role") {
-            throw new Error(`Parameter type mismatch`);
-        }
-        super(parameter, new ObjectID(value?.toString() || ""));
-    }
-}
-
 export class ObjectID {
     public readonly id: string;
 
@@ -153,21 +85,6 @@ export class ObjectID {
         }
     }
 }
-
-export class NullParameter extends InputParameter {
-    constructor(parameter: Parameter) {
-        if (parameter.optional === false) {
-            throw new Error(`Parameter "${parameter.name}" cannot be null`);
-        }
-        super(parameter, null);
-    }
-}
-
-// export class TargetParameter extends InputParameter {
-//     constructor(parameter: Parameter, targetId: TargetID) {
-//         super(parameter, targetId);
-//     }
-// }
 
 export class TargetID {
     public readonly id: string;

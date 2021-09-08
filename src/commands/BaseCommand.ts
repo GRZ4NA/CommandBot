@@ -1,11 +1,12 @@
 import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
 import { PermissionCheckTypes } from "./types/permissions.js";
 import { CommandType, BaseCommandInit, CommandFunction } from "./types/BaseCommand.js";
-import { InputParameter } from "../structures/Parameter.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { MessageCommand } from "./MessageCommand.js";
+import { ParameterResolvable } from "../structures/types/Parameter.js";
+import { TargetID } from "../structures/parameter.js";
 
 export class BaseCommand {
     /**
@@ -96,13 +97,13 @@ export class BaseCommand {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(interaction: Message | Interaction, args?: InputParameter[]): Promise<void> {
-        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) return;
+    public async start(args: ReadonlyMap<string, ParameterResolvable> | TargetID, interaction: Message | Interaction): Promise<void> {
+        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
         if (this.permissionChecker(interaction)) {
             if (interaction instanceof Interaction) {
                 await interaction.deferReply();
             }
-            await this.handleReply(interaction, await this.function.call(this, interaction, this.createAccessor(args || [])));
+            await this.handleReply(interaction, await this.function(args, interaction));
         } else {
             throw new PermissionsError(this, interaction.member as GuildMember);
         }
@@ -121,14 +122,8 @@ export class BaseCommand {
         return obj;
     }
 
-    private createAccessor(args: InputParameter[]) {
-        return function (query: string, returnType?: "value" | "object") {
-            return returnType === "object" ? args.find((p) => p.name === query) || null : args.find((p) => p.name === query)?.value || null;
-        };
-    }
-
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
-        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) return null;
+        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
         if (
             result instanceof Object &&
             ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))

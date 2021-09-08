@@ -1,8 +1,6 @@
-import { CommandInteraction, Message } from "discord.js";
-import { ParameterSchema, ParameterResolvable } from "../../structures/types/Parameter.js";
-import { InputParameter } from "../../structures/Parameter.js";
+import { ParameterSchema } from "../../structures/types/Parameter.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
-import { CommandFunctionReturnTypes } from "./BaseCommand.js";
+import { CommandFunction } from "./BaseCommand.js";
 
 /**
  * @interface
@@ -82,10 +80,7 @@ export interface ChatCommandInit {
      * @param {Function} p - function to fetch input parameters' values
      * @param {Message | CommandInteraction} i - interaction object
      */
-    function: (
-        interaction: Message | CommandInteraction,
-        params?: (query: string, returnType?: "value" | "object") => ParameterResolvable | InputParameter | null
-    ) => CommandFunctionReturnTypes;
+    function: CommandFunction;
 }
 
 export type GetMode = "ALL" | "PREFIX" | "NO_PREFIX";

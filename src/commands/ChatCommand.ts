@@ -1,7 +1,7 @@
 import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommandInit } from "./types/ChatCommand.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
+import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { MissingParameterError, ParameterTypeError } from "errors.js";
@@ -88,11 +88,11 @@ export class ChatCommand extends BaseCommand {
      * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
      * @returns {Promise<void>}
      */
-    public async start(interaction: Message | Interaction, cmdParams?: InputParameter[]): Promise<void> {
+    public async start(args: ReadonlyMap<string, ParameterResolvable> | TargetID, interaction: Message | Interaction): Promise<void> {
         if (!this.slash && interaction instanceof Interaction) {
             throw new Error("This command is not available as a slash command");
         }
-        super.start(interaction, cmdParams);
+        super.start(args, interaction);
     }
 
     /**
