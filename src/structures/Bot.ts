@@ -151,9 +151,8 @@ export class Bot extends EventEmitter {
                 if (register === undefined || register === true) {
                     console.log("✔");
                     process.stdout.write(`Registering commands... `);
-                    //await this.chatCommands.register(this.applicationId, this.token);
-                    //console.log("✔");
-                    console.log("❌ [Registration module is not functional in this version]");
+                    await this.commands.register(this);
+                    console.log("✔");
                 } else {
                     console.log("✔\n");
                 }

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Interaction, Message } from "discord.js";
 import { TargetID } from "../structures/parameter.js";
 import { CommandNotFound } from "../errors.js";
@@ -7,6 +8,8 @@ import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
+import { BaseCommandObject } from "../structures/types/api.js";
+import { Bot } from "../structures/Bot.js";
 
 export class CommandManager {
     private readonly _commands: BaseCommand[] = [];
@@ -149,5 +152,40 @@ export class CommandManager {
         } else {
             return null;
         }
+    }
+
+    public async register(client: Bot) {
+        const globalCommands = this._commands
+            .filter((c) => {
+                if (!Array.isArray(c.guilds) || c.guilds.length === 0) {
+                    if (c.isChatCommand() && !c.slash) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            })
+            .map((c) => c.toObject());
+        const guildCommands: Map<string, BaseCommandObject[]> = new Map();
+        this._commands
+            .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
+            .map((c) => {
+                c.guilds?.map((gId) => {
+                    if (!client.client.guilds.cache.get(gId)) {
+                        throw new Error(`"${gId}" is not a valid ID for this client.`);
+                    }
+                    const existingEntry = guildCommands.get(gId);
+                    if (!existingEntry) {
+                        guildCommands.set(gId, [c.toObject()]);
+                    } else {
+                        guildCommands.set(gId, [...existingEntry, c.toObject()]);
+                    }
+                });
+            });
+
+        await axios.put(`https://discord.com/api/v8/applications/${client.applicationId}/commands`, globalCommands, { headers: { Authorization: `Bot ${client.token}` } });
+        await guildCommands.forEach(async (g, k) => {
+            await axios.put(`https://discord.com/api/v8/applications/${client.applicationId}/guilds/${k}/commands`, g, { headers: { Authorization: `Bot ${client.token}` } });
+        });
     }
 }
