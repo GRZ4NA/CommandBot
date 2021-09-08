@@ -127,7 +127,7 @@ export class CommandManager {
                 const cmd = this.get(cmdName, "CHAT");
                 if (cmd) {
                     const argsRaw = i.content
-                        .replace(`${this.prefix}${cmdName} `, "")
+                        .replace(`${this.prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
                         .map((a) => {
                             if (a.startsWith(" ")) {
