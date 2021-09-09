@@ -32,4 +32,5 @@ export interface RegisteredCommandObject {
     description: string;
     options?: TextCommandOptionObject[];
     default_permission?: boolean;
+    version: string;
 }
