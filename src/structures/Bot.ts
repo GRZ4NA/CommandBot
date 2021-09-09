@@ -98,7 +98,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(options.prefix, options.parameterSeparator);
+        this.commands = new CommandManager(this, options.prefix, options.parameterSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
         this.messages = {
@@ -151,7 +151,7 @@ export class Bot extends EventEmitter {
                 if (register === undefined || register === true) {
                     console.log("✔");
                     process.stdout.write(`Registering commands... `);
-                    await this.commands.register(this);
+                    await this.commands.register();
                     console.log("✔");
                 } else {
                     console.log("✔\n");
