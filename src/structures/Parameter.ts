@@ -71,6 +71,9 @@ export class ObjectID {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
     }
 
+    public async toObject(guild: Guild, type: "channel"): Promise<TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | null>;
+    public async toObject(guild: Guild, type: "user"): Promise<GuildMember | null>;
+    public async toObject(guild: Guild, type: "role"): Promise<Role | null>;
     public async toObject(
         guild: Guild,
         type: "channel" | "user" | "role"
