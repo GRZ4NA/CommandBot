@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
 import { TargetID } from "../structures/parameter.js";
 import { CommandNotFound } from "../errors.js";
@@ -88,35 +88,40 @@ export class CommandManager {
 
     public async getApi(id: string, guild?: Guild | string, noCache?: boolean): Promise<RegisteredCommandObject> {
         const guildId = guild instanceof Guild ? guild.id : guild;
-        if (guildId) {
-            if (!noCache) {
-                const rqC = this.getCache(id, guildId);
-                if (rqC) {
-                    return rqC;
-                }
-            }
-            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands/${id}`);
-            if (rq.status === 200) {
-                this.updateCache(rq.data, guildId);
-                return rq.data as RegisteredCommandObject;
-            } else {
-                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
-            }
-        } else {
-            if (!noCache) {
-                const rqC = this.getCache(id, guildId);
-                if (rqC) {
-                    return rqC;
-                }
-            }
-            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands/${id}`, { headers: `Bot ${this._client.token}` });
-            if (rq.status === 200) {
-                this.updateCache(rq.data);
-                return rq.data as RegisteredCommandObject;
-            } else {
-                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+        if (!noCache) {
+            const rqC = this.getCache(id, guildId);
+            if (rqC) {
+                return rqC;
             }
         }
+        let rq: AxiosResponse<RegisteredCommandObject>;
+        if (guildId) {
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands/${id}`, {
+                headers: { Authorization: `Bot ${this._client.token}` },
+            });
+        } else {
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands/${id}`, {
+                headers: { Authorization: `Bot ${this._client.token}` },
+            });
+        }
+        if (rq.status === 200) {
+            this.updateCache(rq.data);
+            return rq.data as RegisteredCommandObject;
+        } else {
+            throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+        }
+    }
+
+    public async getIdApi(name: string, type: CommandType, guild?: Guild | string): Promise<string | null> {
+        let map: Map<string, RegisteredCommandObject> = await this.listApi(guild);
+        let result: string | null = null;
+        map?.forEach((c) => {
+            const typeC: CommandType = c.type === 1 ? "CHAT" : "CONTEXT";
+            if (c.name === name && typeC === type) {
+                result = c.id;
+            }
+        });
+        return result;
     }
 
     public list(): readonly BaseCommand[];
@@ -133,26 +138,23 @@ export class CommandManager {
         }
     }
 
-    public async listApi(g?: Guild | string): Promise<RegisteredCommandObject[]> {
+    public async listApi(g?: Guild | string): Promise<Map<string, RegisteredCommandObject>> {
         const guildId = g instanceof Guild ? g.id : g;
+        let rq: AxiosResponse<RegisteredCommandObject[]>;
         if (guildId) {
-            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/{guild.id}/commands`, {
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/{guild.id}/commands`, {
                 headers: { Authorization: `Bot ${this._client.token}` },
             });
-            if (rq.status === 200) {
-                this.updateCache(rq.data, guildId);
-                return rq.data as RegisteredCommandObject[];
-            } else {
-                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
-            }
         } else {
-            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, { headers: `Bot ${this._client.token}` });
-            if (rq.status === 200) {
-                this.updateCache(rq.data);
-                return rq.data as RegisteredCommandObject[];
-            } else {
-                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
-            }
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, {
+                headers: { Authorization: `Bot ${this._client.token}` },
+            });
+        }
+        if (rq.status === 200) {
+            this.updateCache(rq.data, guildId);
+            return this.arrayToMap(rq.data);
+        } else {
+            throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
         }
     }
 
@@ -215,7 +217,7 @@ export class CommandManager {
         }
     }
 
-    public async register() {
+    public async register(): Promise<void> {
         const globalCommands = this._commands
             .filter((c) => {
                 if (!Array.isArray(c.guilds) || c.guilds.length === 0) {
@@ -256,11 +258,7 @@ export class CommandManager {
 
     private updateCache(commands: RegisteredCommandObject[] | RegisteredCommandObject, guildId?: string): void {
         if (Array.isArray(commands)) {
-            const commandMap: Map<string, RegisteredCommandObject> = new Map();
-            commands.map((rc) => {
-                commandMap.set(rc.id, rc);
-            });
-            this._registerCache.set(guildId || this._globalEntryName, commandMap);
+            this._registerCache.set(guildId || this._globalEntryName, this.arrayToMap(commands));
             return;
         } else {
             this._registerCache.get(guildId || this._globalEntryName)?.set(commands.id, commands);
@@ -269,5 +267,13 @@ export class CommandManager {
 
     private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
         return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
+    }
+
+    private arrayToMap(a: RegisteredCommandObject[]): Map<string, RegisteredCommandObject> {
+        const map: Map<string, RegisteredCommandObject> = new Map();
+        a.map((rc) => {
+            map.set(rc.id, rc);
+        });
+        return map;
     }
 }
