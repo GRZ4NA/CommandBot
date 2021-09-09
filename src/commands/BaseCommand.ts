@@ -72,7 +72,12 @@ export class BaseCommand {
         this.function = o.function;
         this.permissionChecker =
             this.permissions instanceof Function
-                ? this.permissions
+                ? (i) => {
+                      if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
+                          return false;
+                      }
+                      return (this.permissions as Function)(i);
+                  }
                 : this.permissions instanceof Permissions
                 ? (i) => {
                       if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
@@ -89,7 +94,12 @@ export class BaseCommand {
                           }
                       }
                   }
-                : () => true;
+                : (i) => {
+                      if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
+                          return false;
+                      }
+                      return true;
+                  };
     }
 
     /**
