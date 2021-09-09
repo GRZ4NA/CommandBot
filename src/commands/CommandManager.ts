@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Interaction, Message } from "discord.js";
+import { Guild, Interaction, Message } from "discord.js";
 import { TargetID } from "../structures/parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
@@ -8,15 +8,20 @@ import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
-import { BaseCommandObject } from "../structures/types/api.js";
+import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
 
 export class CommandManager {
+    private readonly _client: Bot;
     private readonly _commands: BaseCommand[] = [];
+    private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
+    private readonly _globalEntryName: string = "global";
     public readonly prefix?: string;
     public readonly argumentSeparator: string;
+    public static readonly baseApiUrl: string = "https://discord.com/api/v8";
 
-    constructor(prefix?: string, argSep?: string) {
+    constructor(client: Bot, prefix?: string, argSep?: string) {
+        this._client = client;
         this.prefix = prefix;
         this.argumentSeparator = argSep || ",";
     }
@@ -81,6 +86,39 @@ export class CommandManager {
         }
     }
 
+    public async getApi(id: string, guild?: Guild | string, noCache?: boolean): Promise<RegisteredCommandObject> {
+        const guildId = guild instanceof Guild ? guild.id : guild;
+        if (guildId) {
+            if (!noCache) {
+                const rqC = this.getCache(id, guildId);
+                if (rqC) {
+                    return rqC;
+                }
+            }
+            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands/${id}`);
+            if (rq.status === 200) {
+                this.updateCache(rq.data, guildId);
+                return rq.data as RegisteredCommandObject;
+            } else {
+                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+            }
+        } else {
+            if (!noCache) {
+                const rqC = this.getCache(id, guildId);
+                if (rqC) {
+                    return rqC;
+                }
+            }
+            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands/${id}`, { headers: `Bot ${this._client.token}` });
+            if (rq.status === 200) {
+                this.updateCache(rq.data);
+                return rq.data as RegisteredCommandObject;
+            } else {
+                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+            }
+        }
+    }
+
     public list(): readonly BaseCommand[];
     public list(f: "CHAT"): readonly ChatCommand[];
     public list(f: "CONTEXT"): readonly ContextMenuCommand[];
@@ -92,6 +130,29 @@ export class CommandManager {
                 return Object.freeze([...this._commands.filter((c) => c.type === "CONTEXT")]);
             default:
                 return Object.freeze([...this._commands]);
+        }
+    }
+
+    public async listApi(g?: Guild | string): Promise<RegisteredCommandObject[]> {
+        const guildId = g instanceof Guild ? g.id : g;
+        if (guildId) {
+            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/{guild.id}/commands`, {
+                headers: { Authorization: `Bot ${this._client.token}` },
+            });
+            if (rq.status === 200) {
+                this.updateCache(rq.data, guildId);
+                return rq.data as RegisteredCommandObject[];
+            } else {
+                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+            }
+        } else {
+            const rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, { headers: `Bot ${this._client.token}` });
+            if (rq.status === 200) {
+                this.updateCache(rq.data);
+                return rq.data as RegisteredCommandObject[];
+            } else {
+                throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
+            }
         }
     }
 
@@ -154,7 +215,7 @@ export class CommandManager {
         }
     }
 
-    public async register(client: Bot) {
+    public async register() {
         const globalCommands = this._commands
             .filter((c) => {
                 if (!Array.isArray(c.guilds) || c.guilds.length === 0) {
@@ -171,7 +232,7 @@ export class CommandManager {
             .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
             .map((c) => {
                 c.guilds?.map((gId) => {
-                    if (!client.client.guilds.cache.get(gId)) {
+                    if (!this._client.client.guilds.cache.get(gId)) {
                         throw new Error(`"${gId}" is not a valid ID for this client.`);
                     }
                     const existingEntry = guildCommands.get(gId);
@@ -183,9 +244,30 @@ export class CommandManager {
                 });
             });
 
-        await axios.put(`https://discord.com/api/v8/applications/${client.applicationId}/commands`, globalCommands, { headers: { Authorization: `Bot ${client.token}` } });
-        await guildCommands.forEach(async (g, k) => {
-            await axios.put(`https://discord.com/api/v8/applications/${client.applicationId}/guilds/${k}/commands`, g, { headers: { Authorization: `Bot ${client.token}` } });
+        await axios.put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, globalCommands, {
+            headers: { Authorization: `Bot ${this._client.token}` },
         });
+        await guildCommands.forEach(async (g, k) => {
+            await axios.put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${k}/commands`, g, {
+                headers: { Authorization: `Bot ${this._client.token}` },
+            });
+        });
+    }
+
+    private updateCache(commands: RegisteredCommandObject[] | RegisteredCommandObject, guildId?: string): void {
+        if (Array.isArray(commands)) {
+            const commandMap: Map<string, RegisteredCommandObject> = new Map();
+            commands.map((rc) => {
+                commandMap.set(rc.id, rc);
+            });
+            this._registerCache.set(guildId || this._globalEntryName, commandMap);
+            return;
+        } else {
+            this._registerCache.get(guildId || this._globalEntryName)?.set(commands.id, commands);
+        }
+    }
+
+    private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
+        return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
     }
 }
