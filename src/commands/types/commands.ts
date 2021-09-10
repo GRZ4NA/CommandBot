@@ -18,3 +18,9 @@ export interface CommandInteractionData {
     parameters: ReadonlyMap<string, ParameterResolvable>;
     target?: TargetID;
 }
+
+export const CommandRegExps = {
+    baseName: /^.{1,32}$/,
+    chatName: /^[\w-]{1,32}$/,
+    chatDescription: /^.{1,100}$/,
+};
