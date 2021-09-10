@@ -1,13 +1,13 @@
 import { ContextMenuCommandInit, ContextType } from "./types/ContextMenuCommand.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { BaseCommandObject } from "../structures/types/api.js";
+import { CommandRegExps } from "./types/commands.js";
 
 export class ContextMenuCommand extends BaseCommand {
     public readonly contextType: ContextType;
-    public static nameRegExp: RegExp = /^.{1,32}$/;
 
     constructor(o: ContextMenuCommandInit) {
-        if (!ContextMenuCommand.nameRegExp.test(o.name)) {
+        if (!CommandRegExps.baseName.test(o.name)) {
             throw new Error("Incorrect command name. Command names must have 1-32 characters");
         }
         super("CONTEXT", {

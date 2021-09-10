@@ -1,6 +1,6 @@
 import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
 import { PermissionCheckTypes } from "./types/permissions.js";
-import { CommandType, CommandFunction } from "./types/commands.js";
+import { CommandType, CommandFunction, CommandRegExps } from "./types/commands.js";
 import { BaseCommandInit } from "./types/BaseCommand.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
@@ -53,14 +53,13 @@ export class BaseCommand {
      */
     private readonly function: CommandFunction;
     private readonly permissionChecker: (i: Message | Interaction) => boolean;
-    public static nameRegExp: RegExp = /^.{1,32}$/;
 
     /**
      * @constructor
      * @param {BaseCommandInit} o - BaseCommand initialization options
      */
     constructor(type: CommandType, o: BaseCommandInit) {
-        if (!BaseCommand.nameRegExp.test(o.name)) {
+        if (!CommandRegExps.baseName.test(o.name)) {
             throw new Error("Incorrect command name");
         }
         this.name = o.name;
@@ -169,7 +168,7 @@ export class BaseCommand {
         return (
             "name" in o &&
             typeof o.name === "string" &&
-            BaseCommand.nameRegExp.test(o.name) &&
+            CommandRegExps.baseName.test(o.name) &&
             "type" in o &&
             (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "MESSAGE") &&
             "permissionCheckMethod" in o &&

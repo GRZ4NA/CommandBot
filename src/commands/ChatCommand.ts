@@ -5,6 +5,7 @@ import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/p
 import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
+import { CommandRegExps } from "./types/commands.js";
 
 /**
  * @class Class that represents a command instance
@@ -45,8 +46,6 @@ export class ChatCommand extends BaseCommand {
      * @type {boolean}
      */
     public readonly slash: boolean;
-    public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
-    public static descriptionRegExp: RegExp = /^.{1,100}$/;
 
     /**
      * Command constructor
@@ -54,10 +53,10 @@ export class ChatCommand extends BaseCommand {
      * @param {ChatCommandInit} o - {@link CommandBuilder}
      */
     constructor(o: ChatCommandInit) {
-        if (!ChatCommand.nameRegExp.test(o.name)) {
+        if (!CommandRegExps.chatName.test(o.name)) {
             throw new Error("Incorrect command name. Text and slash commands must match this regular expression: ^[w-]{1,32}$");
         }
-        if (o.description && !ChatCommand.descriptionRegExp.test(o.description)) {
+        if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
             throw new Error("Command descriptions must be 1-100 characters long");
         }
         super("CHAT", {
