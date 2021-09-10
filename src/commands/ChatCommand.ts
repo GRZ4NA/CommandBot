@@ -59,6 +59,19 @@ export class ChatCommand extends BaseCommand {
         if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
             throw new Error("Command descriptions must be 1-100 characters long");
         }
+        if (o.aliases) {
+            if (Array.isArray(o.aliases)) {
+                o.aliases.map((a) => {
+                    if (!CommandRegExps.chatName.test(a)) {
+                        throw new Error(`"${a}" is not a valid alias name`);
+                    }
+                });
+            } else {
+                if (!CommandRegExps.chatName.test(o.aliases)) {
+                    throw new Error(`"${o.aliases}" is not a valid alias name`);
+                }
+            }
+        }
         super("CHAT", {
             name: o.name,
             function: o.function,
@@ -74,7 +87,7 @@ export class ChatCommand extends BaseCommand {
         } else {
             this.parameters = o.parameters.map((ps) => new Parameter(ps));
         }
-        this.aliases = ChatCommand.processPhrase(o.aliases);
+        this.aliases = o.aliases ? (Array.isArray(o.aliases) ? o.aliases : [o.aliases]) : undefined;
         this.description = o.description || "No description";
         this.usage = o.usage || this.generateUsageFromArguments();
         this.visible = o.visible !== undefined ? o.visible : true;
@@ -201,26 +214,6 @@ export class ChatCommand extends BaseCommand {
             return new Map([...mapEntries]);
         } else {
             return new Map([]);
-        }
-    }
-
-    private static processPhrase(phrase?: string | string[]): string[] | undefined {
-        if (Array.isArray(phrase)) {
-            const buff = phrase.map((p) => {
-                return p.split(" ").join("_");
-            });
-            buff.map((e, i, a) => {
-                if (e == "" || e == " ") {
-                    a.splice(i, 1);
-                }
-            });
-            return buff;
-        } else if (typeof phrase == "string" && phrase != "" && phrase != " ") {
-            const buff = [];
-            buff.push(phrase.split(" ").join("_"));
-            return buff;
-        } else {
-            return undefined;
         }
     }
 
