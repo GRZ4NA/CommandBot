@@ -26,15 +26,15 @@ export class CommandManager {
         this.argumentSeparator = argSep || ",";
     }
 
-    public add(command: BaseCommand): void {
+    public add(command: BaseCommand): BaseCommand {
         if (applicationState.running) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
-            return;
+            return command;
         }
         if (command.isChatCommand()) {
             if (this.list("CHAT").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ChatCommand in this manager.`);
-                return;
+                return command;
             }
             command.aliases &&
                 command.aliases.length > 0 &&
@@ -48,15 +48,16 @@ export class CommandManager {
                     }
                 });
             this._commands.push(command);
-            return;
+            return command;
         } else if (command.isContextMenuCommand()) {
             if (this.list("CONTEXT").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
-                return;
+                return command;
             }
             this._commands.push(command);
-            return;
+            return command;
         }
+        return command;
     }
 
     public get(q: string, t?: undefined): BaseCommand | null;
