@@ -8,7 +8,7 @@ export class ContextMenuCommand extends BaseCommand {
 
     constructor(o: ContextMenuCommandInit) {
         if (!CommandRegExps.baseName.test(o.name)) {
-            throw new Error("Incorrect command name. Command names must have 1-32 characters");
+            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.baseName})`);
         }
         super("CONTEXT", {
             name: o.name,

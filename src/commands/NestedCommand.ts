@@ -19,7 +19,7 @@ export class NestedCommand extends BaseCommand {
             },
         });
         if (!CommandRegExps.chatName.test(o.name)) {
-            throw new Error("Incorrect command name. Text and slash commands must match this regular expression: ^[w-]{1,32}$");
+            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
     }
 }

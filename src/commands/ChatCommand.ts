@@ -54,21 +54,21 @@ export class ChatCommand extends BaseCommand {
      */
     constructor(o: ChatCommandInit) {
         if (!CommandRegExps.chatName.test(o.name)) {
-            throw new Error("Incorrect command name. Text and slash commands must match this regular expression: ^[w-]{1,32}$");
+            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
         if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
-            throw new Error("Command descriptions must be 1-100 characters long");
+            throw new Error(`The description of "${o.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
         }
         if (o.aliases) {
             if (Array.isArray(o.aliases)) {
                 o.aliases.map((a) => {
                     if (!CommandRegExps.chatName.test(a)) {
-                        throw new Error(`"${a}" is not a valid alias name`);
+                        throw new Error(`"${a}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
                     }
                 });
             } else {
                 if (!CommandRegExps.chatName.test(o.aliases)) {
-                    throw new Error(`"${o.aliases}" is not a valid alias name`);
+                    throw new Error(`"${o.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
                 }
             }
         }

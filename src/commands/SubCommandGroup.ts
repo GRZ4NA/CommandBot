@@ -9,7 +9,7 @@ export class SubCommandGroup {
 
     constructor(o: SubCommandGroupInit) {
         if (!CommandRegExps.chatName.test(o.name)) {
-            throw new Error("Incorrect group name");
+            throw new Error(`"${o.name}" is not a valid group name (regexp: ${CommandRegExps.chatName})`);
         }
         this.name = o.name;
     }
@@ -18,7 +18,7 @@ export class SubCommandGroup {
         if (!this._parent) {
             this._parent = p;
         } else {
-            throw new Error("Parent already registered");
+            throw new Error("Parent has already been registered");
         }
     }
 

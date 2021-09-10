@@ -60,7 +60,7 @@ export class BaseCommand {
      */
     constructor(type: CommandType, o: BaseCommandInit) {
         if (!CommandRegExps.baseName.test(o.name)) {
-            throw new Error("Incorrect command name");
+            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.baseName})`);
         }
         this.name = o.name;
         this.type = type;
