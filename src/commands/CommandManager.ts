@@ -10,6 +10,8 @@ import { CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
 import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
+import { SubCommand } from "./SubCommand.js";
+import { SubCommandGroup } from "./SubCommandGroup.js";
 
 export class CommandManager {
     private readonly _client: Bot;
@@ -30,6 +32,11 @@ export class CommandManager {
         if (applicationState.running) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
+        }
+        if (command instanceof SubCommand || command instanceof SubCommandGroup) {
+            throw new Error(
+                "Registering subcommands and subcommand groups through the 'add' method is not allowed. Use NestedCommand.append or SubCommandGroup.append to register."
+            );
         }
         if (command.isChatCommand()) {
             if (this.list("CHAT").find((c) => c.name === command.name)) {
