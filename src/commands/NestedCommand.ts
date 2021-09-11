@@ -84,4 +84,17 @@ export class NestedCommand extends BaseCommand {
             type: 1,
         };
     }
+
+    public getSubcommand(name: string, group?: string): SubCommand | null {
+        if (group) {
+            const gr = this._children.filter((c) => c instanceof SubCommandGroup).find((g) => g.name === group) as SubCommandGroup;
+            if (gr) {
+                return gr.children.find((c) => c.name === name) || null;
+            } else {
+                return null;
+            }
+        } else {
+            return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
+        }
+    }
 }
