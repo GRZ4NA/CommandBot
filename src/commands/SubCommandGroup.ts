@@ -1,9 +1,10 @@
 import { NestedCommand } from "./NestedCommand.js";
+import { SubCommand } from "./SubCommand.js";
 import { CommandRegExps } from "./types/commands.js";
 import { SubCommandGroupInit } from "./types/SubCommandGroup.js";
 
 export class SubCommandGroup {
-    private readonly _children: any[] = [];
+    private readonly _children: SubCommand[] = [];
     private _parent?: NestedCommand | SubCommandGroup;
     public readonly name: string;
 
@@ -22,5 +23,17 @@ export class SubCommandGroup {
         }
     }
 
-    public append() {}
+    get children() {
+        return Object.freeze([...this._children]);
+    }
+
+    public append(sc: SubCommand): SubCommand {
+        if (this._children.find((c) => sc.name === c.name)) {
+            throw new Error(`There is already a command with the name "${sc.name}" registered in "${this.name}"`);
+        } else {
+            sc.parent = this;
+            this._children.push(sc);
+            return sc;
+        }
+    }
 }
