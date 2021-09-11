@@ -1,4 +1,5 @@
 import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
+import { NestedCommandObject } from "structures/types/api.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
@@ -68,5 +69,13 @@ export class NestedCommand extends BaseCommand {
             this._children.push(sc);
             return sc;
         }
+    }
+
+    public toObject(): NestedCommandObject {
+        return {
+            ...super.toObject(),
+            options: this._children.map((c) => c.toObject()),
+            type: 1,
+        };
     }
 }

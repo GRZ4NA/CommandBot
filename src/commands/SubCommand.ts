@@ -1,3 +1,4 @@
+import { ChatCommandObject } from "../structures/types/api.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { NestedCommand } from "./NestedCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
@@ -29,5 +30,9 @@ export class SubCommand extends ChatCommand {
         } else {
             throw new Error("Parent has already been registered");
         }
+    }
+
+    public toObject(): ChatCommandObject {
+        return super.toObject();
     }
 }
