@@ -5,7 +5,7 @@ import { ContextMenuCommand } from "../ContextMenuCommand.js";
 import { ParameterResolvable } from "../../structures/types/parameter.js";
 import { TargetID } from "../../structures/parameter.js";
 import { NestedCommand } from "../NestedCommand.js";
-import { SubCommand } from "commands/SubCommand.js";
+import { SubCommand } from "../../commands/SubCommand.js";
 
 export type CommandResolvable = BaseCommand | ChatCommand | ContextMenuCommand | NestedCommand | SubCommand;
 

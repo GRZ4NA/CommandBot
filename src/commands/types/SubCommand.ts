@@ -1,4 +1,4 @@
-import { ParameterSchema } from "structures/types/parameter.js";
+import { ParameterSchema } from "../../structures/types/parameter.js";
 import { CommandFunction } from "./commands.js";
 import { PermissionCheckTypes, PermissionTypes } from "./permissions.js";
 
