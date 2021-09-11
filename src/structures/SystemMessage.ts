@@ -135,7 +135,7 @@ export class SystemMessageManager {
                 }
             }
             if (interaction && !(interaction instanceof Interaction)) {
-                const message = await interaction.reply({ embeds: [embed] });
+                const message = await interaction.reply({ embeds: [embed] }).catch();
                 if (message.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
                         setTimeout(async () => {
@@ -149,7 +149,7 @@ export class SystemMessageManager {
                 }
                 return message;
             } else if (interaction && interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
-                interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] });
+                interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] }).catch();
                 if (Number.isFinite(this[type].deleteTimeout)) {
                     setTimeout(async () => {
                         await interaction.deleteReply().catch();
