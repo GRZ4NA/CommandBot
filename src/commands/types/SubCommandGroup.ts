@@ -1,4 +1,4 @@
 export interface SubCommandGroupInit {
     name: string;
-    description: string;
+    description?: string;
 }

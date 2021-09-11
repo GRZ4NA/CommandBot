@@ -28,6 +28,7 @@ export interface TextCommandOptionChoiceObject {
 
 export interface NestedCommandObject extends BaseCommandObject {
     type: 1;
+    description: string;
     options: (ChatCommandObject | SubCommandGroupObject)[];
 }
 

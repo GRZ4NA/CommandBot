@@ -8,6 +8,7 @@ import { NestedCommandInit } from "./types/NestedCommand.js";
 
 export class NestedCommand extends BaseCommand {
     private readonly _children: (SubCommand | SubCommandGroup)[] = [];
+    public readonly description: string;
 
     constructor(o: NestedCommandInit) {
         super("CHAT", {
@@ -55,6 +56,10 @@ export class NestedCommand extends BaseCommand {
         if (!CommandRegExps.chatName.test(o.name)) {
             throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
+        if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
+            throw new Error(`The description of "${o.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        }
+        this.description = o.description || "No description";
     }
 
     get children() {
@@ -75,6 +80,7 @@ export class NestedCommand extends BaseCommand {
         return {
             ...super.toObject(),
             options: this._children.map((c) => c.toObject()),
+            description: this.description,
             type: 1,
         };
     }

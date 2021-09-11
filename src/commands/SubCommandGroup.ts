@@ -14,7 +14,7 @@ export class SubCommandGroup {
         if (!CommandRegExps.chatName.test(o.name)) {
             throw new Error(`"${o.name}" is not a valid group name (regexp: ${CommandRegExps.chatName})`);
         }
-        if (!CommandRegExps.chatDescription.test(o.description)) {
+        if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
             throw new Error(`The description of "${o.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
         }
         this.name = o.name;
