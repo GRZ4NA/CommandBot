@@ -158,15 +158,15 @@ export class BaseCommand {
     }
 
     public isChatCommand(): this is ChatCommand {
-        return "description" in this && "parameters" in this && "visible" in this;
+        return "description" in this && "parameters" in this && "visible" in this && "slash" in this && (this as BaseCommand).type === "CHAT";
     }
 
     public isContextMenuCommand(): this is ContextMenuCommand {
-        return "contextType" in this;
+        return "contextType" in this && (this as BaseCommand).type === "CONTEXT";
     }
 
     public isNestedCommand(): this is NestedCommand {
-        return "children" in this && "append" in this;
+        return "children" in this && "append" in this && (this as BaseCommand).type === "CHAT";
     }
 
     public static isCommand(o: any): o is BaseCommand {
