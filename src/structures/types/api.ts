@@ -4,23 +4,38 @@ export interface BaseCommandObject {
     default_permissions: true;
 }
 
-export interface TextCommandObject extends BaseCommandObject {
+export interface ChatCommandObject extends BaseCommandObject {
+    type: 1;
     description: string;
-    options?: TextCommandOptionObject[];
+    options?: ChatCommandOptionObject[];
 }
 
-export interface TextCommandOptionObject {
+export interface ChatCommandOptionObject {
     name: string;
     description: string;
-    type: number;
+    type: ChatCommandOptionType;
     required?: boolean;
     choices?: TextCommandOptionChoiceObject[];
-    options?: TextCommandOptionObject[];
+    options?: ChatCommandOptionObject[];
 }
+
+export type ChatCommandOptionType = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 export interface TextCommandOptionChoiceObject {
     name: string;
     value: string;
+}
+
+export interface NestedCommandObject extends BaseCommandObject {
+    type: 1;
+    options: (ChatCommandObject | SubCommandGroupObject)[];
+}
+
+export interface SubCommandGroupObject {
+    type: 2;
+    name: string;
+    description: string;
+    options: ChatCommandObject[];
 }
 
 export interface RegisteredCommandObject {
@@ -30,7 +45,7 @@ export interface RegisteredCommandObject {
     guild_id?: string;
     name: string;
     description: string;
-    options?: TextCommandOptionObject[];
-    default_permission?: boolean;
+    options?: ChatCommandOptionObject[];
+    default_permissions?: boolean;
     version: string;
 }
