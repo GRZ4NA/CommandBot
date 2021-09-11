@@ -26,7 +26,7 @@ export class HelpMessage extends ChatCommand {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (args.get("command_name")) {
-                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name")?.toString() || "", "CHAT");
+                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name")?.toString() || "", "CHAT", true);
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);

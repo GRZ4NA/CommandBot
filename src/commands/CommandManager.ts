@@ -12,6 +12,7 @@ import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/
 import { Bot } from "../structures/Bot.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
+import { NestedCommand } from "./NestedCommand.js";
 
 export class CommandManager {
     private readonly _client: Bot;
@@ -74,13 +75,14 @@ export class CommandManager {
     }
 
     public get(q: string, t?: undefined): BaseCommand | null;
-    public get(q: string, t: "CHAT"): ChatCommand | null;
+    public get(q: string, t: "CHAT"): ChatCommand | NestedCommand | null;
+    public get(q: string, t: "CHAT", noNested: true): ChatCommand | null;
     public get(q: string, t: "CONTEXT"): ContextMenuCommand | null;
-    public get(q: string, t?: CommandType): BaseCommand | null {
+    public get(q: string, t?: CommandType, noNested?: boolean): BaseCommand | null {
         if (t) {
             switch (t) {
                 case "CHAT":
-                    return (
+                    const result =
                         this.list(t).find((c) => {
                             if (c.name === q) {
                                 return true;
@@ -90,8 +92,12 @@ export class CommandManager {
                             } else {
                                 return false;
                             }
-                        }) || null
-                    );
+                        }) || null;
+                    if (result instanceof NestedCommand && noNested) {
+                        return null;
+                    } else {
+                        return result;
+                    }
                 case "CONTEXT":
                     return this.list(t).find((c) => c.name === q) || null;
             }
@@ -176,12 +182,15 @@ export class CommandManager {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT");
-                if (cmd) {
+                if (cmd instanceof ChatCommand) {
                     const args = cmd.processArguments(i.options.data.map((d) => d.value || null));
                     return {
                         command: cmd,
                         parameters: args,
                     };
+                } else if (cmd instanceof NestedCommand) {
+                    const subCmd = null;
+                    return null;
                 } else {
                     throw new CommandNotFound(i.commandName);
                 }
@@ -203,7 +212,7 @@ export class CommandManager {
         } else if (this.prefix && i instanceof Message) {
             if (i.content.startsWith(this.prefix)) {
                 const cmdName = i.content.replace(this.prefix, "").split(" ")[0];
-                const cmd = this.get(cmdName, "CHAT");
+                const cmd = this.get(cmdName, "CHAT", true);
                 if (cmd) {
                     const argsRaw = i.content
                         .replace(`${this.prefix}${cmdName}`, "")
