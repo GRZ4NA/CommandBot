@@ -1,5 +1,5 @@
 import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
-import { NestedCommandObject } from "structures/types/api.js";
+import { NestedCommandObject } from "../structures/types/api.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";

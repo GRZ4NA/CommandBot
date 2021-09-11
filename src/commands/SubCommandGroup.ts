@@ -1,4 +1,4 @@
-import { SubCommandGroupObject } from "structures/types/api.js";
+import { SubCommandGroupObject } from "../structures/types/api.js";
 import { NestedCommand } from "./NestedCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { CommandRegExps } from "./types/commands.js";
