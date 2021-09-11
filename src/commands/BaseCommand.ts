@@ -8,6 +8,7 @@ import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
+import { NestedCommand } from "./NestedCommand.js";
 
 export class BaseCommand {
     /**
@@ -162,6 +163,10 @@ export class BaseCommand {
 
     public isContextMenuCommand(): this is ContextMenuCommand {
         return "contextType" in this;
+    }
+
+    public isNestedCommand(): this is NestedCommand {
+        return "children" in this && "append" in this;
     }
 
     public static isCommand(o: any): o is BaseCommand {
