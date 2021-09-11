@@ -229,8 +229,14 @@ export class CommandManager {
         const globalCommands = this._commands
             .filter((c) => {
                 if (!Array.isArray(c.guilds) || c.guilds.length === 0) {
-                    if (c.isChatCommand() && !c.slash) {
-                        return false;
+                    if (c.isChatCommand()) {
+                        if (!c.slash) {
+                            return false;
+                        }
+                    } else if (c.isContextMenuCommand()) {
+                        return true;
+                    } else if (c.isNestedCommand()) {
+                        return true;
                     } else {
                         return true;
                     }
