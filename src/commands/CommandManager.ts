@@ -28,7 +28,7 @@ export class CommandManager {
         this.argumentSeparator = argSep || ",";
     }
 
-    public add(command: BaseCommand): CommandResolvable {
+    public add<T extends CommandResolvable>(command: T): T {
         if (applicationState.running) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
