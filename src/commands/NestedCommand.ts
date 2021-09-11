@@ -61,7 +61,7 @@ export class NestedCommand extends BaseCommand {
         return Object.freeze([...this._children]);
     }
 
-    public append(sc: SubCommand | SubCommandGroup): SubCommand | SubCommandGroup {
+    public append<T extends SubCommand | SubCommandGroup>(sc: T): T {
         if (this._children.find((c) => c.name === sc.name)) {
             throw new Error(`The name "${sc.name}" is already registered in "${this.name}"`);
         } else {
