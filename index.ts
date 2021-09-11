@@ -9,12 +9,18 @@ import { SystemMessageAppearance, SystemMessageData } from "./src/structures/typ
 import { ObjectID, Parameter } from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
 import { CommandInteractionData } from "./src/commands/types/commands.js";
+import { NestedCommand } from "./src/commands/NestedCommand.js";
+import { SubCommandGroup } from "./src/commands/SubCommandGroup.js";
+import { SubCommand } from "./src/commands/SubCommand.js";
 
 export default Bot;
 export {
     Bot,
     ChatCommand,
     ContextMenuCommand,
+    NestedCommand,
+    SubCommandGroup,
+    SubCommand,
     InitOptions,
     ChatCommandInit,
     CommandInteractionData,
