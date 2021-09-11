@@ -1,11 +1,13 @@
+import { CommandInteraction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
 import { BaseCommand } from "../BaseCommand.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { ContextMenuCommand } from "../ContextMenuCommand.js";
 import { ParameterResolvable } from "../../structures/types/parameter.js";
 import { TargetID } from "../../structures/parameter.js";
-import { CommandInteraction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
+import { NestedCommand } from "../NestedCommand.js";
+import { SubCommand } from "commands/SubCommand.js";
 
-export type CommandResolvable = BaseCommand | ChatCommand | ContextMenuCommand;
+export type CommandResolvable = BaseCommand | ChatCommand | ContextMenuCommand | NestedCommand | SubCommand;
 
 export type CommandType = "CHAT" | "CONTEXT";
 

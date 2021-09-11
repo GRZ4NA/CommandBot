@@ -6,7 +6,7 @@ import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
-import { CommandType } from "./types/commands.js";
+import { CommandResolvable, CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
 import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
@@ -28,7 +28,7 @@ export class CommandManager {
         this.argumentSeparator = argSep || ",";
     }
 
-    public add(command: BaseCommand): BaseCommand {
+    public add(command: BaseCommand): CommandResolvable {
         if (applicationState.running) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
