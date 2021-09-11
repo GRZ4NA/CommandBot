@@ -2,7 +2,7 @@ import { Message, Interaction } from "discord.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommandInit } from "./types/ChatCommand.js";
 import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
-import { TextCommandObject, TextCommandOptionChoiceObject, TextCommandOptionObject } from "../structures/types/api.js";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { CommandRegExps } from "./types/commands.js";
@@ -111,12 +111,13 @@ export class ChatCommand extends BaseCommand {
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {Object} object
      */
-    public toObject(): TextCommandObject {
-        const obj: TextCommandObject = {
+    public toObject(): ChatCommandObject {
+        const obj: ChatCommandObject = {
             ...super.toObject(),
+            type: 1,
             description: this.description,
         };
-        let options: TextCommandOptionObject[] = [];
+        let options: ChatCommandOptionObject[] = [];
         if (this.parameters) {
             options = this.parameters
                 .map((p) => {
@@ -152,11 +153,11 @@ export class ChatCommand extends BaseCommand {
                             choices.push({ name: c, value: c });
                         });
                     }
-                    const optionObj: TextCommandOptionObject = {
+                    const optionObj: ChatCommandOptionObject = {
                         name: p.name,
                         description: p.description,
                         required: !p.optional,
-                        type: p.choices ? 3 : type,
+                        type: p.choices ? 3 : (type as ChatCommandOptionType),
                         choices: choices.length > 0 ? choices : undefined,
                     };
                     return optionObj;
