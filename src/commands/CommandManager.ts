@@ -63,6 +63,12 @@ export class CommandManager {
             }
             this._commands.push(command);
             return command;
+        } else if (command.isNestedCommand()) {
+            if (this.list("CHAT").find((c) => c.name === command.name)) {
+                console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
+                return command;
+            }
+            this._commands.push(command);
         }
         return command;
     }
@@ -229,14 +235,8 @@ export class CommandManager {
         const globalCommands = this._commands
             .filter((c) => {
                 if (!Array.isArray(c.guilds) || c.guilds.length === 0) {
-                    if (c.isChatCommand()) {
-                        if (!c.slash) {
-                            return false;
-                        }
-                    } else if (c.isContextMenuCommand()) {
-                        return true;
-                    } else if (c.isNestedCommand()) {
-                        return true;
+                    if (c.isChatCommand() && c.slash === false) {
+                        return false;
                     } else {
                         return true;
                     }
