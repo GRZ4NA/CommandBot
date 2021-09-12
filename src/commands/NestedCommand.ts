@@ -1,9 +1,9 @@
-import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
+import { CommandInteractionOption, Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 import { NestedCommandObject } from "../structures/types/api.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
-import { CommandRegExps } from "./types/commands.js";
+import { CommandInteractionData, CommandRegExps } from "./types/commands.js";
 import { NestedCommandInit } from "./types/NestedCommand.js";
 
 export class NestedCommand extends BaseCommand {
@@ -83,6 +83,44 @@ export class NestedCommand extends BaseCommand {
             description: this.description,
             type: 1,
         };
+    }
+
+    public fetchSubcommand(options: CommandInteractionOption[]): CommandInteractionData | null {
+        if (options[0]) {
+            if (options[0].type === "SUB_COMMAND_GROUP") {
+                const grName = options[0].name;
+                const group = this._children.filter((c) => c instanceof SubCommandGroup).find((c) => c.name === grName) as SubCommandGroup;
+                const scOpt = options[0].options;
+                if (group && scOpt) {
+                    const scName = scOpt[0].name;
+                    const cmd = group.children.filter((c) => c instanceof SubCommand).find((c) => c.name === scName) as SubCommand;
+                    if (cmd && scOpt[0].options) {
+                        return {
+                            command: cmd,
+                            parameters: cmd.processArguments(scOpt[0].options.map((o) => o.value || null)) || new Map(),
+                        };
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else if (options[0].type === "SUB_COMMAND") {
+                const cmd = this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === options[0].name) as SubCommand;
+                if (cmd) {
+                    return {
+                        command: cmd,
+                        parameters: options[0].options ? cmd.processArguments(options[0].options.map((o) => o.value || null)) : new Map(),
+                    };
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public getSubcommand(name: string, group?: string): SubCommand | null {
