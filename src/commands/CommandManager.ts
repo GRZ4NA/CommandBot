@@ -6,7 +6,7 @@ import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
-import { CommandResolvable, CommandType } from "./types/commands.js";
+import { CommandRegExps, CommandResolvable, CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
 import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
@@ -21,12 +21,24 @@ export class CommandManager {
     private readonly _globalEntryName: string = "global";
     public readonly prefix?: string;
     public readonly argumentSeparator: string;
+    public readonly commandSeparator: string;
     public static readonly baseApiUrl: string = "https://discord.com/api/v8";
 
-    constructor(client: Bot, prefix?: string, argSep?: string) {
+    constructor(client: Bot, prefix?: string, argSep?: string, cmdSep?: string) {
+        if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
+            throw new Error("Incorrect separators");
+        }
         this._client = client;
         this.prefix = prefix;
         this.argumentSeparator = argSep || ",";
+        this.commandSeparator = cmdSep || "/";
+        if (this.commandSeparator === this.argumentSeparator) {
+            throw new Error("Command separator and argument separator have the same value");
+        }
+    }
+
+    get client() {
+        return this._client;
     }
 
     public add<T extends CommandResolvable>(command: T): T {
@@ -215,7 +227,7 @@ export class CommandManager {
             }
         } else if (this.prefix && i instanceof Message) {
             if (i.content.startsWith(this.prefix)) {
-                const cmdName = i.content.replace(this.prefix, "").split(" ")[0];
+                const cmdName = i.content.replace(this.prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT");
                 if (cmd instanceof ChatCommand) {
                     const argsRaw = i.content
@@ -234,10 +246,27 @@ export class CommandManager {
                         parameters: args,
                     };
                 } else if (cmd instanceof NestedCommand) {
-                    return {
-                        command: cmd,
-                        parameters: new Map(),
-                    };
+                    const nesting = i.content.split(" ")[0].replace(`${this.prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
+                    const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
+                    if (subCmd) {
+                        const argsRaw = i.content
+                            .replace(`${this.prefix}${cmdName}${this.commandSeparator}${nesting.join(this.commandSeparator)}`, "")
+                            .split(this.argumentSeparator)
+                            .map((a) => {
+                                if (a.startsWith(" ")) {
+                                    return a.replace(" ", "");
+                                } else {
+                                    return a;
+                                }
+                            });
+                        const args = subCmd.processArguments(argsRaw);
+                        return {
+                            command: subCmd,
+                            parameters: args,
+                        };
+                    } else {
+                        throw new CommandNotFound(i.content.split(" ")[0]);
+                    }
                 } else {
                     throw new CommandNotFound(cmdName);
                 }

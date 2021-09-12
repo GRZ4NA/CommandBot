@@ -21,7 +21,9 @@ export interface InitOptions {
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      * @type {string}
      */
-    parameterSeparator?: string;
+    argumentSeparator?: string;
+
+    commandSeparator?: string;
 
     /**
      * Additional {@link ClientOptions} for Discord.js {@link Client} object
