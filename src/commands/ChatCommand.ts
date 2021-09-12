@@ -6,6 +6,7 @@ import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObje
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { CommandRegExps } from "./types/commands.js";
+import { CommandManager } from "./CommandManager.js";
 
 /**
  * @class Class that represents a command instance
@@ -52,7 +53,7 @@ export class ChatCommand extends BaseCommand {
      * @constructor
      * @param {ChatCommandInit} o - {@link CommandBuilder}
      */
-    constructor(o: ChatCommandInit) {
+    constructor(manager: CommandManager, o: ChatCommandInit) {
         if (!CommandRegExps.chatName.test(o.name)) {
             throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
@@ -72,7 +73,7 @@ export class ChatCommand extends BaseCommand {
                 }
             }
         }
-        super("CHAT", {
+        super(manager, "CHAT", {
             name: o.name,
             function: o.function,
             announceSuccess: o.announceSuccess,

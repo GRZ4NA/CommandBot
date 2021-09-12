@@ -9,8 +9,10 @@ import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
 import { NestedCommand } from "./NestedCommand.js";
+import { CommandManager } from "./CommandManager.js";
 
 export class BaseCommand {
+    protected readonly _manager: CommandManager;
     /**
      * Command name
      * @type {string}
@@ -59,10 +61,11 @@ export class BaseCommand {
      * @constructor
      * @param {BaseCommandInit} o - BaseCommand initialization options
      */
-    constructor(type: CommandType, o: BaseCommandInit) {
+    constructor(manager: CommandManager, type: CommandType, o: BaseCommandInit) {
         if (!CommandRegExps.baseName.test(o.name)) {
             throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.baseName})`);
         }
+        this._manager = manager;
         this.name = o.name;
         this.type = type;
         this.guilds = o.guilds;
@@ -100,6 +103,10 @@ export class BaseCommand {
                       }
                       return true;
                   };
+    }
+
+    get manager() {
+        return this._manager;
     }
 
     /**

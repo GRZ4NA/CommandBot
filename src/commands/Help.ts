@@ -5,7 +5,7 @@ import { HelpMessageParams } from "./types/HelpMessage.js";
 
 export class HelpMessage extends ChatCommand {
     constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
-        super({
+        super(cmdManager, {
             name: "help",
             usage: params.usage,
             permissions: undefined,
@@ -26,7 +26,7 @@ export class HelpMessage extends ChatCommand {
                 helpMsg.setFooter(botName || "");
                 if (helpMsg != null) {
                     if (args.get("command_name")) {
-                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name")?.toString() || "", "CHAT", true);
+                        const cmd: ChatCommand | null = cmdManager.get(args.get("command_name")?.toString() || "", "CHAT");
                         if (cmd) {
                             if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                                 throw new ReferenceError(`Command "${cmd.name}" is not available`);

@@ -6,13 +6,16 @@ import { applicationState } from "../state.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
-import { CommandRegExps, CommandResolvable, CommandType } from "./types/commands.js";
+import { Command, CommandInit, CommandRegExps, CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
 import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { NestedCommand } from "./NestedCommand.js";
+import { ChatCommandInit } from "./types/ChatCommand.js";
+import { NestedCommandInit } from "./types/NestedCommand.js";
+import { ContextMenuCommandInit } from "./types/ContextMenuCommand.js";
 
 export class CommandManager {
     private readonly _client: Bot;
@@ -41,7 +44,18 @@ export class CommandManager {
         return this._client;
     }
 
-    public add<T extends CommandResolvable>(command: T): T {
+    public add<T extends CommandType>(type: T, options: CommandInit<T>): Command<T> {
+        const command: Command<T> | null =
+            type === "CHAT"
+                ? (new ChatCommand(this, options as ChatCommandInit) as Command<T>)
+                : type === "NESTED"
+                ? (new NestedCommand(this, options as NestedCommandInit) as Command<T>)
+                : type === "CONTEXT"
+                ? (new ContextMenuCommand(this, options as ContextMenuCommandInit) as Command<T>)
+                : null;
+        if (!command) {
+            throw new TypeError("Incorrect command type");
+        }
         if (applicationState.running) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
@@ -87,14 +101,14 @@ export class CommandManager {
     }
 
     public get(q: string, t?: undefined): BaseCommand | null;
-    public get(q: string, t: "CHAT"): ChatCommand | NestedCommand | null;
-    public get(q: string, t: "CHAT", noNested: true): ChatCommand | null;
+    public get(q: string, t: "CHAT"): ChatCommand | null;
+    public get(q: string, t: "NESTED"): NestedCommand | null;
     public get(q: string, t: "CONTEXT"): ContextMenuCommand | null;
-    public get(q: string, t?: CommandType, noNested?: boolean): BaseCommand | null {
+    public get(q: string, t?: CommandType): BaseCommand | null {
         if (t) {
             switch (t) {
                 case "CHAT":
-                    const result =
+                    return (
                         this.list(t).find((c) => {
                             if (c.name === q) {
                                 return true;
@@ -104,12 +118,18 @@ export class CommandManager {
                             } else {
                                 return false;
                             }
-                        }) || null;
-                    if (result instanceof NestedCommand && noNested) {
-                        return null;
-                    } else {
-                        return result;
-                    }
+                        }) || null
+                    );
+                case "NESTED":
+                    return (
+                        this.list(t).find((c) => {
+                            if (c.name === q) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }) || null
+                    );
                 case "CONTEXT":
                     return this.list(t).find((c) => c.name === q) || null;
             }
@@ -159,6 +179,7 @@ export class CommandManager {
     public list(): readonly BaseCommand[];
     public list(f: "CHAT"): readonly ChatCommand[];
     public list(f: "CONTEXT"): readonly ContextMenuCommand[];
+    public list(f: "NESTED"): readonly NestedCommand[];
     public list(f?: CommandType): readonly BaseCommand[] {
         switch (f) {
             case "CHAT":
@@ -193,7 +214,7 @@ export class CommandManager {
     public fetch(i: Interaction | Message): CommandInteractionData | null {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
-                const cmd = this.get(i.commandName, "CHAT");
+                const cmd = this.get(i.commandName, "CHAT") || this.get(i.commandName, "NESTED");
                 if (cmd instanceof ChatCommand) {
                     const args = cmd.processArguments(i.options.data.map((d) => d.value || null));
                     return {
@@ -228,7 +249,7 @@ export class CommandManager {
         } else if (this.prefix && i instanceof Message) {
             if (i.content.startsWith(this.prefix)) {
                 const cmdName = i.content.replace(this.prefix, "").split(" ")[0].split(this.commandSeparator)[0];
-                const cmd = this.get(cmdName, "CHAT");
+                const cmd = this.get(cmdName, "CHAT") || this.get(cmdName, "NESTED");
                 if (cmd instanceof ChatCommand) {
                     const argsRaw = i.content
                         .replace(`${this.prefix}${cmdName}`, "")

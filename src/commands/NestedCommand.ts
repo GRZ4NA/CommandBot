@@ -1,17 +1,20 @@
 import { CommandInteractionOption, Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 import { NestedCommandObject } from "../structures/types/api.js";
 import { BaseCommand } from "./BaseCommand.js";
+import { CommandManager } from "./CommandManager.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
-import { CommandInteractionData, CommandRegExps } from "./types/commands.js";
+import { ChildCommand, ChildCommandInit, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
 import { NestedCommandInit } from "./types/NestedCommand.js";
+import { SubCommandInit } from "./types/SubCommand.js";
+import { SubCommandGroupInit } from "./types/SubCommandGroup.js";
 
 export class NestedCommand extends BaseCommand {
     private readonly _children: (SubCommand | SubCommandGroup)[] = [];
     public readonly description: string;
 
-    constructor(o: NestedCommandInit) {
-        super("CHAT", {
+    constructor(manager: CommandManager, o: NestedCommandInit) {
+        super(manager, "NESTED", {
             name: o.name,
             guilds: o.guilds,
             announceSuccess: false,
@@ -45,11 +48,19 @@ export class NestedCommand extends BaseCommand {
         return Object.freeze([...this._children]);
     }
 
-    public append<T extends SubCommand | SubCommandGroup>(sc: T): T {
+    public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommand<T> {
+        const sc: ChildCommand<T> | null =
+            type === "COMMAND"
+                ? (new SubCommand(this, options as SubCommandInit) as ChildCommand<T>)
+                : type === "GROUP"
+                ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommand<T>)
+                : null;
+        if (!sc) {
+            throw new TypeError("Incorrect command type");
+        }
         if (this._children.find((c) => c.name === sc.name)) {
             throw new Error(`The name "${sc.name}" is already registered in "${this.name}"`);
         } else {
-            sc.parent = this;
             this._children.push(sc);
             return sc;
         }
