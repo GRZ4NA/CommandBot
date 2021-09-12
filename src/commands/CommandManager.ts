@@ -16,6 +16,8 @@ import { NestedCommand } from "./NestedCommand.js";
 import { ChatCommandInit } from "./types/ChatCommand.js";
 import { NestedCommandInit } from "./types/NestedCommand.js";
 import { ContextMenuCommandInit } from "./types/ContextMenuCommand.js";
+import { HelpMessageParams } from "./types/HelpMessage.js";
+import { HelpMessage } from "./Help.js";
 
 export class CommandManager {
     private readonly _client: Bot;
@@ -27,7 +29,7 @@ export class CommandManager {
     public readonly commandSeparator: string;
     public static readonly baseApiUrl: string = "https://discord.com/api/v8";
 
-    constructor(client: Bot, prefix?: string, argSep?: string, cmdSep?: string) {
+    constructor(client: Bot, helpMsg: HelpMessageParams, prefix?: string, argSep?: string, cmdSep?: string) {
         if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
             throw new Error("Incorrect separators");
         }
@@ -37,6 +39,9 @@ export class CommandManager {
         this.commandSeparator = cmdSep || "/";
         if (this.commandSeparator === this.argumentSeparator) {
             throw new Error("Command separator and argument separator have the same value");
+        }
+        if (helpMsg.enabled === true) {
+            this._commands.push(new HelpMessage(this, helpMsg));
         }
     }
 

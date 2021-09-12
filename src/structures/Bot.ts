@@ -1,10 +1,8 @@
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { ChatCommand } from "../commands/ChatCommand.js";
 import { CommandManager } from "../commands/CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
-import { HelpMessage } from "../commands/Help.js";
 import { SystemMessageManager } from "./SystemMessage.js";
 import { CommandInteractionData } from "../commands/types/commands.js";
 import { InitOptions } from "./types/Bot.js";
@@ -98,9 +96,6 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(this, options.prefix, options.argumentSeparator, options.commandSeparator);
-        this.token = options.token;
-        this.applicationId = options.applicationId;
         this.messages = {
             help: {
                 enabled: true,
@@ -113,6 +108,9 @@ export class Bot extends EventEmitter {
             },
             system: new SystemMessageManager(this.name),
         };
+        this.commands = new CommandManager(this, this.messages.help, options.prefix, options.argumentSeparator, options.commandSeparator);
+        this.token = options.token;
+        this.applicationId = options.applicationId;
     }
 
     /**
@@ -139,10 +137,6 @@ export class Bot extends EventEmitter {
                 process.stdout.write(`Creating http server on port ${port}... `);
                 http.createServer().listen(port);
                 console.log("✔");
-            }
-            if (this.messages.help.enabled === true) {
-                const helpMsg: ChatCommand = new HelpMessage(this.commands, this.messages.help, this.name);
-                this.commands.add(helpMsg);
             }
             applicationState.running = true;
             process.stdout.write("Connecting to Discord... ");
