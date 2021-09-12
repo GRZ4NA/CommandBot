@@ -220,13 +220,13 @@ export class CommandManager {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT") || this.get(i.commandName, "NESTED");
-                if (cmd instanceof ChatCommand) {
+                if (cmd?.isChatCommand()) {
                     const args = cmd.processArguments(i.options.data.map((d) => d.value || null));
                     return {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd instanceof NestedCommand) {
+                } else if (cmd?.isNestedCommand()) {
                     const subCmd = cmd.fetchSubcommand([...i.options.data]);
                     if (subCmd) {
                         return subCmd;
@@ -255,7 +255,7 @@ export class CommandManager {
             if (i.content.startsWith(this.prefix)) {
                 const cmdName = i.content.replace(this.prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT") || this.get(cmdName, "NESTED");
-                if (cmd instanceof ChatCommand) {
+                if (cmd?.isChatCommand()) {
                     const argsRaw = i.content
                         .replace(`${this.prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -271,7 +271,7 @@ export class CommandManager {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd instanceof NestedCommand) {
+                } else if (cmd?.isNestedCommand()) {
                     const nesting = i.content.split(" ")[0].replace(`${this.prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
                     const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
                     if (subCmd) {
@@ -291,7 +291,10 @@ export class CommandManager {
                             parameters: args,
                         };
                     } else {
-                        throw new CommandNotFound(i.content.split(" ")[0]);
+                        return {
+                            command: cmd,
+                            parameters: new Map(),
+                        };
                     }
                 } else {
                     throw new CommandNotFound(cmdName);
