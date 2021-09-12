@@ -24,10 +24,10 @@ export class NestedCommand extends BaseCommand {
                     this._children.map((c) => {
                         if (c instanceof SubCommandGroup) {
                             c.children.map((ch) => {
-                                msg.addField(`${c.name} ${ch.name}`, ch.description, false);
+                                msg.addField(`${this.name}${this._manager.commandSeparator}${c.name}${this._manager.commandSeparator}${ch.name}`, ch.description, false);
                             });
                         } else {
-                            msg.addField(c.name, c.description, false);
+                            msg.addField(`${this.name}${this._manager.commandSeparator}${c.name}`, c.description, false);
                         }
                     });
                 } else {
