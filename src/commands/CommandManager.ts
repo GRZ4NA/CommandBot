@@ -189,8 +189,12 @@ export class CommandManager {
                         parameters: args,
                     };
                 } else if (cmd instanceof NestedCommand) {
-                    const subCmd = null;
-                    return null;
+                    const subCmd = cmd.fetchSubcommand([...i.options.data]);
+                    if (subCmd) {
+                        return subCmd;
+                    } else {
+                        throw new CommandNotFound();
+                    }
                 } else {
                     throw new CommandNotFound(i.commandName);
                 }
@@ -212,8 +216,8 @@ export class CommandManager {
         } else if (this.prefix && i instanceof Message) {
             if (i.content.startsWith(this.prefix)) {
                 const cmdName = i.content.replace(this.prefix, "").split(" ")[0];
-                const cmd = this.get(cmdName, "CHAT", true);
-                if (cmd) {
+                const cmd = this.get(cmdName, "CHAT");
+                if (cmd instanceof ChatCommand) {
                     const argsRaw = i.content
                         .replace(`${this.prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -228,6 +232,11 @@ export class CommandManager {
                     return {
                         command: cmd,
                         parameters: args,
+                    };
+                } else if (cmd instanceof NestedCommand) {
+                    return {
+                        command: cmd,
+                        parameters: new Map(),
                     };
                 } else {
                     throw new CommandNotFound(cmdName);
