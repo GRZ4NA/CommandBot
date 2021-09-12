@@ -173,7 +173,7 @@ export class BaseCommand {
     }
 
     public isNestedCommand(): this is NestedCommand {
-        return "children" in this && "append" in this && (this as BaseCommand).type === "CHAT";
+        return "children" in this && "append" in this && (this as BaseCommand).type === "NESTED";
     }
 
     public static isCommand(o: any): o is BaseCommand {
