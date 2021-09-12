@@ -15,7 +15,7 @@ export class NestedCommand extends BaseCommand {
             name: o.name,
             guilds: o.guilds,
             announceSuccess: false,
-            function: (i) => {
+            function: (_, i) => {
                 if (i instanceof Message) {
                     const msg = new MessageEmbed({
                         title: `${this.name}`,
@@ -35,7 +35,7 @@ export class NestedCommand extends BaseCommand {
                                     return {
                                         label: ch.name,
                                         description: ch.description,
-                                        value: c.name,
+                                        value: ch.name,
                                     };
                                 });
                                 return nested;
