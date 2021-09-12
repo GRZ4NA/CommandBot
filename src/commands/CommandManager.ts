@@ -162,7 +162,7 @@ export class CommandManager {
         const guildId = g instanceof Guild ? g.id : g;
         let rq: AxiosResponse<RegisteredCommandObject[]>;
         if (guildId) {
-            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/{guild.id}/commands`, {
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands`, {
                 headers: { Authorization: `Bot ${this._client.token}` },
             });
         } else {
