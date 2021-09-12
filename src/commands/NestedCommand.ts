@@ -30,6 +30,7 @@ export class NestedCommand extends BaseCommand {
                             msg.addField(`${this.name}${this._manager.commandSeparator}${c.name}`, c.description, false);
                         }
                     });
+                    return msg;
                 } else {
                     throw new Error("Illegal command call");
                 }
