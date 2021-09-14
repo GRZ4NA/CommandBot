@@ -25,7 +25,7 @@ export class NestedCommand extends BaseCommand {
                         if (c instanceof SubCommandGroup) {
                             c.children.map((ch) => {
                                 msg.addField(
-                                    `${this._manager.prefix.get(i.guild ?? "global") || "/"}${this.name}${this._manager.commandSeparator}${c.name}${
+                                    `${this._manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this._manager.commandSeparator}${c.name}${
                                         this._manager.commandSeparator
                                     }${ch.name}`,
                                     ch.description,
@@ -33,7 +33,7 @@ export class NestedCommand extends BaseCommand {
                                 );
                             });
                         } else {
-                            msg.addField(`${this._manager.prefix.get(i.guild ?? "global") || "/"}${this.name}${this._manager.commandSeparator}${c.name}`, c.description, false);
+                            msg.addField(`${this._manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this._manager.commandSeparator}${c.name}`, c.description, false);
                         }
                     });
                     return msg;
