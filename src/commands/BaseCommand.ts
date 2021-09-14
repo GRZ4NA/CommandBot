@@ -10,6 +10,7 @@ import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
 import { NestedCommand } from "./NestedCommand.js";
 import { CommandManager } from "./CommandManager.js";
+import { CheckPermissions } from "./CheckPermissions.js";
 
 export class BaseCommand {
     protected readonly _manager: CommandManager;
@@ -32,16 +33,10 @@ export class BaseCommand {
     public readonly guilds?: string[];
 
     /**
-     * Whether to check if a caller has all defined in *permissions* property permissions or at least one of them (doesn't apply to custom function permissions)
-     * @type {PermissionCheckTypes} "ALL" | "ANY"
-     */
-    public readonly permissionCheckMethod: PermissionCheckTypes;
-
-    /**
      * Command permissions (if *undefined*, no permissions check will be performed)
      * @type {Permissions | Function}
      */
-    public readonly permissions?: Permissions | ((i: Message | Interaction) => boolean);
+    public readonly permissions?: CheckPermissions | ((i: Message | Interaction) => boolean);
 
     /**
      * Whether to send a SUCCESS message if no other response is defined (default: true)
@@ -71,8 +66,11 @@ export class BaseCommand {
         this.name = o.name;
         this.type = type;
         this.guilds = o.guilds;
-        this.permissionCheckMethod = o.permissionCheck ?? "ANY";
-        this.permissions = o.permissions ? (!(o.permissions instanceof Function) ? new Permissions(o.permissions) : o.permissions) : undefined;
+        this.permissions = o.permissions
+            ? !(o.permissions instanceof Function)
+                ? new CheckPermissions(o.permissions.resolvables, o.permissions.checkType ?? "ANY")
+                : o.permissions
+            : undefined;
         this.announceSuccess = o.announceSuccess ?? true;
         this.dm = o.dm ?? true;
         this.function = o.function;
@@ -87,7 +85,7 @@ export class BaseCommand {
                       }
                       return (this.permissions as Function)(i);
                   }
-                : this.permissions instanceof Permissions
+                : this.permissions instanceof CheckPermissions
                 ? (i) => {
                       if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
                           return false;
@@ -99,7 +97,7 @@ export class BaseCommand {
                       if (!memberPermissions) {
                           return false;
                       } else {
-                          if (this.permissionCheckMethod === "ALL") {
+                          if ((this.permissions as CheckPermissions).checkType === "ALL") {
                               return memberPermissions.has(this.permissions as Permissions, true);
                           } else {
                               return memberPermissions.any(this.permissions as Permissions, true);
