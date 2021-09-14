@@ -1,5 +1,5 @@
 import { CommandFunction } from "./commands.js";
-import { PermissionTypes } from "./permissions.js";
+import { PermissionTypes } from "./CommandPermissions.js";
 
 export interface BaseCommandInit {
     name: string;
