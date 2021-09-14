@@ -78,7 +78,6 @@ export class ChatCommand extends BaseCommand {
             function: o.function,
             announceSuccess: o.announceSuccess,
             guilds: o.guilds,
-            permissionCheck: o.permissionCheck,
             permissions: o.permissions,
         });
         if (o.parameters == "no_input" || !o.parameters) {

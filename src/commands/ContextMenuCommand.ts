@@ -16,7 +16,6 @@ export class ContextMenuCommand extends BaseCommand {
             function: o.function,
             announceSuccess: o.announceSuccess,
             guilds: o.guilds,
-            permissionCheck: o.permissionCheck,
             permissions: o.permissions,
         });
         this.contextType = o.contextType;
