@@ -25,9 +25,9 @@ export class PrefixManager {
         return this._prefixes.get(this.global) || null;
     }
 
-    public get(g?: Guild | string, noDefault?: boolean): string | null {
+    public get(g?: Guild | string, noGlobal?: boolean): string | null {
         const guildId = g instanceof Guild ? g.id : g;
-        return this._prefixes.get(guildId ?? "") ?? noDefault === true ? null : this.globalPrefix;
+        return this._prefixes.get(guildId ?? "") ?? noGlobal === true ? null : this.globalPrefix;
     }
 
     public set(prefix: string, scope: Guild | string | "global"): void {
