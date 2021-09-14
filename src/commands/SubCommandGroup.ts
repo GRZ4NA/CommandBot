@@ -6,7 +6,7 @@ import { SubCommandInit } from "./types/SubCommand.js";
 import { SubCommandGroupInit } from "./types/SubCommandGroup.js";
 
 export class SubCommandGroup {
-    protected _parent: NestedCommand;
+    protected readonly _parent: NestedCommand;
     private readonly _children: SubCommand[] = [];
     public readonly name: string;
     public readonly description: string;

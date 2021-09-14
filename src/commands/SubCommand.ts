@@ -5,7 +5,7 @@ import { SubCommandGroup } from "./SubCommandGroup.js";
 import { SubCommandInit } from "./types/SubCommand.js";
 
 export class SubCommand extends ChatCommand {
-    private _parent: SubCommandGroup | NestedCommand;
+    private readonly _parent: SubCommandGroup | NestedCommand;
 
     constructor(parent: SubCommandGroup | NestedCommand, o: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, {
