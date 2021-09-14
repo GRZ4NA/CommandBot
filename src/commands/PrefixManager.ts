@@ -34,7 +34,7 @@ export class PrefixManager {
         if (scope === "global") return this.globalPrefix;
         else {
             const id = scope instanceof Guild ? scope.id : scope;
-            return this._prefixes.get(id) || null;
+            return this._prefixes.get(id) || this.globalPrefix;
         }
     }
 
