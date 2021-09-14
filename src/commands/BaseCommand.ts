@@ -152,30 +152,6 @@ export class BaseCommand {
         return obj;
     }
 
-    private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
-        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
-        if (
-            result instanceof Object &&
-            ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))
-        ) {
-            if (interaction instanceof Message) await interaction.reply(result as ReplyMessageOptions);
-            else if (interaction instanceof Interaction) await interaction.editReply(result as ReplyMessageOptions);
-        } else if (typeof result == "string") {
-            if (interaction instanceof Message) await interaction?.reply({ content: result });
-            else if (interaction instanceof Interaction)
-                await interaction.editReply({
-                    content: result,
-                });
-        } else if (result instanceof MessageEmbed) {
-            if (interaction instanceof Message) await interaction?.reply({ embeds: [result] });
-            else if (interaction instanceof Interaction) await interaction.editReply({ embeds: [result] });
-        } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
-            throw new OperationSuccess(this);
-        } else if (interaction instanceof Interaction && !interaction.replied) {
-            await interaction.deleteReply();
-        }
-    }
-
     public isChatCommand(): this is ChatCommand {
         return "description" in this && "parameters" in this && "visible" in this && "slash" in this && (this as BaseCommand).type === "CHAT";
     }
@@ -202,5 +178,29 @@ export class BaseCommand {
             "function" in o &&
             o.function instanceof Function
         );
+    }
+
+    private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
+        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
+        if (
+            result instanceof Object &&
+            ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))
+        ) {
+            if (interaction instanceof Message) await interaction.reply(result as ReplyMessageOptions);
+            else if (interaction instanceof Interaction) await interaction.editReply(result as ReplyMessageOptions);
+        } else if (typeof result == "string") {
+            if (interaction instanceof Message) await interaction?.reply({ content: result });
+            else if (interaction instanceof Interaction)
+                await interaction.editReply({
+                    content: result,
+                });
+        } else if (result instanceof MessageEmbed) {
+            if (interaction instanceof Message) await interaction?.reply({ embeds: [result] });
+            else if (interaction instanceof Interaction) await interaction.editReply({ embeds: [result] });
+        } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
+            throw new OperationSuccess(this);
+        } else if (interaction instanceof Interaction && !interaction.replied) {
+            await interaction.deleteReply();
+        }
     }
 }
