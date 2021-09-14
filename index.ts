@@ -11,6 +11,7 @@ import { SystemMessageAppearance, SystemMessageData } from "./src/structures/typ
 import { ObjectID, TargetID, Parameter } from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
 import { CommandInteractionData, CommandType, ChildCommandType, Command, ChildCommand, CommandInit, ChildCommandInit } from "./src/commands/types/commands.js";
+import { PermissionOptions } from "./src/commands/types/permissions.js";
 
 export default Bot;
 export {
@@ -41,4 +42,5 @@ export {
     ChildCommand,
     CommandInit,
     ChildCommandInit,
+    PermissionOptions,
 };
