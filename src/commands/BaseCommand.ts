@@ -162,22 +162,6 @@ export class BaseCommand {
         return "children" in this && "append" in this && (this as BaseCommand).type === "NESTED";
     }
 
-    public static isCommand(o: any): o is BaseCommand {
-        return (
-            "name" in o &&
-            typeof o.name === "string" &&
-            CommandRegExps.baseName.test(o.name) &&
-            "type" in o &&
-            (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "MESSAGE") &&
-            "permissionCheckMethod" in o &&
-            (o.permissionCheckMethod === "ALL" || o.permissionCheckMethod === "ANY") &&
-            "announceSuccess" in o &&
-            typeof o.announceSuccess === "boolean" &&
-            "function" in o &&
-            o.function instanceof Function
-        );
-    }
-
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
         if (
@@ -200,5 +184,21 @@ export class BaseCommand {
         } else if (interaction instanceof Interaction && !interaction.replied) {
             await interaction.deleteReply();
         }
+    }
+
+    public static isCommand(o: any): o is BaseCommand {
+        return (
+            "name" in o &&
+            typeof o.name === "string" &&
+            CommandRegExps.baseName.test(o.name) &&
+            "type" in o &&
+            (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "MESSAGE") &&
+            "permissionCheckMethod" in o &&
+            (o.permissionCheckMethod === "ALL" || o.permissionCheckMethod === "ANY") &&
+            "announceSuccess" in o &&
+            typeof o.announceSuccess === "boolean" &&
+            "function" in o &&
+            o.function instanceof Function
+        );
     }
 }
