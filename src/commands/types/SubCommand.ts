@@ -10,5 +10,6 @@ export interface SubCommandInit {
     permissionCheck?: PermissionCheckTypes;
     permissions?: PermissionTypes;
     announceSuccess?: boolean;
+    dm?: boolean;
     function: CommandFunction;
 }
