@@ -32,6 +32,8 @@ export class BaseCommand {
      */
     public readonly guilds?: string[];
 
+    public readonly dm: boolean;
+
     /**
      * Command permissions (if *undefined*, no permissions check will be performed)
      * @type {Permissions | Function}
@@ -43,8 +45,6 @@ export class BaseCommand {
      * @type {boolean}
      */
     public readonly announceSuccess: boolean;
-
-    public readonly dm: boolean;
 
     /**
      * Command execution function (triggered when someone invokes the command)
@@ -66,13 +66,13 @@ export class BaseCommand {
         this.name = o.name;
         this.type = type;
         this.guilds = o.guilds;
+        this.dm = o.dm ?? true;
         this.permissions = o.permissions
             ? !(o.permissions instanceof Function)
                 ? new CheckPermissions(o.permissions.resolvables, o.permissions.checkType ?? "ANY")
                 : o.permissions
             : undefined;
         this.announceSuccess = o.announceSuccess ?? true;
-        this.dm = o.dm ?? true;
         this.function = o.function;
         this.permissionChecker =
             this.permissions instanceof Function
@@ -184,21 +184,5 @@ export class BaseCommand {
         } else if (interaction instanceof Interaction && !interaction.replied) {
             await interaction.deleteReply();
         }
-    }
-
-    public static isCommand(o: any): o is BaseCommand {
-        return (
-            "name" in o &&
-            typeof o.name === "string" &&
-            CommandRegExps.baseName.test(o.name) &&
-            "type" in o &&
-            (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "MESSAGE") &&
-            "permissionCheckMethod" in o &&
-            (o.permissionCheckMethod === "ALL" || o.permissionCheckMethod === "ANY") &&
-            "announceSuccess" in o &&
-            typeof o.announceSuccess === "boolean" &&
-            "function" in o &&
-            o.function instanceof Function
-        );
     }
 }

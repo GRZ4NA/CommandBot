@@ -368,4 +368,20 @@ export class CommandManager {
         });
         return map;
     }
+
+    public static isCommand(o: any): o is BaseCommand {
+        return (
+            "name" in o &&
+            typeof o.name === "string" &&
+            CommandRegExps.baseName.test(o.name) &&
+            "type" in o &&
+            (o.type === "CHAT" || o.type === "MESSAGE" || o.type === "NESTED") &&
+            "dm" in o &&
+            typeof o.dm === "boolean" &&
+            "announceSuccess" in o &&
+            typeof o.announceSuccess === "boolean" &&
+            "function" in o &&
+            o.function instanceof Function
+        );
+    }
 }
