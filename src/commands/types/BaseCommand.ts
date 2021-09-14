@@ -7,5 +7,6 @@ export interface BaseCommandInit {
     permissionCheck?: PermissionCheckTypes;
     permissions?: PermissionTypes;
     announceSuccess?: boolean;
+    dm?: boolean;
     function: CommandFunction;
 }

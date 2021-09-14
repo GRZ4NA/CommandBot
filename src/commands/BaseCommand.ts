@@ -49,6 +49,8 @@ export class BaseCommand {
      */
     public readonly announceSuccess: boolean;
 
+    public readonly dm: boolean;
+
     /**
      * Command execution function (triggered when someone invokes the command)
      * @type {Function}
@@ -69,9 +71,10 @@ export class BaseCommand {
         this.name = o.name;
         this.type = type;
         this.guilds = o.guilds;
-        this.permissionCheckMethod = o.permissionCheck !== undefined ? o.permissionCheck : "ANY";
+        this.permissionCheckMethod = o.permissionCheck ?? "ANY";
         this.permissions = o.permissions ? (!(o.permissions instanceof Function) ? new Permissions(o.permissions) : o.permissions) : undefined;
-        this.announceSuccess = o.announceSuccess !== undefined ? o.announceSuccess : true;
+        this.announceSuccess = o.announceSuccess ?? true;
+        this.dm = o.dm ?? true;
         this.function = o.function;
         this.permissionChecker =
             this.permissions instanceof Function
@@ -79,11 +82,17 @@ export class BaseCommand {
                       if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
                           return false;
                       }
+                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
+                          return false;
+                      }
                       return (this.permissions as Function)(i);
                   }
                 : this.permissions instanceof Permissions
                 ? (i) => {
                       if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
+                          return false;
+                      }
+                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
                           return false;
                       }
                       const memberPermissions = (i.member?.permissions as Permissions) || new Permissions();
@@ -99,6 +108,9 @@ export class BaseCommand {
                   }
                 : (i) => {
                       if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
+                          return false;
+                      }
+                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
                           return false;
                       }
                       return true;
