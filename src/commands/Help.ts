@@ -33,7 +33,7 @@ export class HelpMessage extends ChatCommand {
                             }
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`);
                             helpMsg.setDescription(cmd.description);
-                            if (cmd.usage) helpMsg.addField("Usage:", `${cmdManager.prefix.get(i.guild || undefined) || "/"}${cmd.name} ${cmd.usage}`, false);
+                            if (cmd.usage) helpMsg.addField("Usage:", `${cmdManager.prefix.get(i.guild ?? "global") || "/"}${cmd.name} ${cmd.usage}`, false);
                             if (cmd.permissions) {
                                 if (cmd.permissions instanceof Function) {
                                     helpMsg.addField("Permissions:", "Custom", false);
@@ -66,7 +66,7 @@ export class HelpMessage extends ChatCommand {
                                 c.visible &&
                                 ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
                             ) {
-                                helpMsg.addField(`${cmdManager.prefix.get(i.guild || undefined) || "/"}${c.name} ${c.usage}`, c.description, false);
+                                helpMsg.addField(`${cmdManager.prefix.get(i.guild ?? "global") || "/"}${c.name} ${c.usage}`, c.description, false);
                             }
                         });
                     }

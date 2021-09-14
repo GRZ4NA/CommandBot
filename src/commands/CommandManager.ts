@@ -218,7 +218,7 @@ export class CommandManager {
     }
 
     public fetch(i: Interaction | Message): CommandInteractionData | null {
-        const prefix = this.prefix.get(i.guild || undefined);
+        const prefix = this.prefix.get(i.guild || "global");
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT") || this.get(i.commandName, "NESTED");
