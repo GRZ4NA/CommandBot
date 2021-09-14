@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "./CommandManager.js";
-import { CommandRegExps } from "./types/commands";
+import { CommandRegExps } from "./types/commands.js";
 
 export class PrefixManager {
     private readonly _manager: CommandManager;
@@ -27,12 +27,12 @@ export class PrefixManager {
 
     public get(g?: Guild | string, noDefault?: boolean): string | null {
         const guildId = g instanceof Guild ? g.id : g;
-        return this._prefixes.get(noDefault ? guildId ?? "" : guildId ?? this.global) || null;
+        return this._prefixes.get(guildId ?? "") ?? noDefault === true ? null : this.globalPrefix;
     }
 
     public set(prefix: string, g?: Guild | string): void {
-        if (typeof g === "string" && !this._manager.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild ID`);
         const guildId = g instanceof Guild ? g.id : g;
+        if (guildId && !this._manager.client.client.guilds.cache.get(guildId)) throw new Error(`${guildId} is not a valid guild ID`);
         if (!CommandRegExps.prefix.test(prefix)) throw new Error(`Prefix value for ${guildId} is incorrect`);
         this._prefixes.set(guildId ?? this.global, prefix);
     }
