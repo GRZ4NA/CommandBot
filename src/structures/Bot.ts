@@ -230,6 +230,9 @@ export class Bot extends EventEmitter {
                     return;
                 }
             });
+            this.client.on("error", (e) => {
+                this.emit("ERROR", e);
+            });
             return true;
         } catch (e) {
             console.log("❌");
