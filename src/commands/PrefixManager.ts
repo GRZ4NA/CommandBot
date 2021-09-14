@@ -26,10 +26,6 @@ export class PrefixManager {
         return this._prefixes.get(this._global) || null;
     }
 
-    get prefixes() {
-        return Object.freeze(new Object(this._prefixes));
-    }
-
     public get(scope?: ScopeResolvable): string | null {
         if (!scope) return this.globalPrefix;
         else {
