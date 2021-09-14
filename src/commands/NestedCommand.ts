@@ -18,6 +18,7 @@ export class NestedCommand extends BaseCommand {
             name: o.name,
             guilds: o.guilds,
             announceSuccess: false,
+            dm: o.dm,
             function: (_, i) => {
                 if (i instanceof Message) {
                     const msg = new MessageEmbed().setColor("#ff5500").setTitle("Subcommand").setDescription("This is a subcommand. Please enter one of the following options.");

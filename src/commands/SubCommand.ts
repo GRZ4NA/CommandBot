@@ -15,11 +15,11 @@ export class SubCommand extends ChatCommand {
             announceSuccess: o.announceSuccess,
             guilds: undefined,
             parameters: o.parameters,
-            permissionCheck: o.permissionCheck,
             permissions: o.permissions,
             slash: true,
             usage: o.usage,
             visible: true,
+            dm: o.dm,
             function: o.function,
         });
         this._parent = parent;

@@ -79,6 +79,7 @@ export class ChatCommand extends BaseCommand {
             announceSuccess: o.announceSuccess,
             guilds: o.guilds,
             permissions: o.permissions,
+            dm: o.dm,
         });
         if (o.parameters == "no_input" || !o.parameters) {
             this.parameters = [];
