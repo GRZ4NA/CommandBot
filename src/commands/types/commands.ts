@@ -48,6 +48,6 @@ export const CommandRegExps = {
     baseName: /^.{1,32}$/,
     chatName: /^[\w-]{1,32}$/,
     chatDescription: /^.{1,100}$/,
-    separator: /[^ ]$/,
-    prefix: /[^/ ]$/,
+    separator: /[^ ]{1,}$/,
+    prefix: /[^/ ]{1,}$/,
 };
