@@ -108,7 +108,7 @@ export class Bot extends EventEmitter {
             },
             system: new SystemMessageManager(this.name),
         };
-        this.commands = new CommandManager(this, this.messages.help, options.prefix, options.argumentSeparator, options.commandSeparator);
+        this.commands = new CommandManager(this, this.messages.help, options.globalPrefix, options.argumentSeparator, options.commandSeparator);
         this.token = options.token;
         this.applicationId = options.applicationId;
     }
@@ -129,7 +129,7 @@ export class Bot extends EventEmitter {
                 console.warn(`[⚠️ WARNING] You are using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
             }
             console.log(`\nBot name: ${this.name}`);
-            console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
+            console.log(`Global prefix: ${this.commands.prefix.globalPrefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }

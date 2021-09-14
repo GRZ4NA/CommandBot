@@ -15,7 +15,7 @@ export interface InitOptions {
      * Prefix used as a way to trigger the bot using messages
      * @type {string}
      */
-    prefix?: string;
+    globalPrefix?: string;
 
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)

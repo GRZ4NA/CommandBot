@@ -18,13 +18,14 @@ import { NestedCommandInit } from "./types/NestedCommand.js";
 import { ContextMenuCommandInit } from "./types/ContextMenuCommand.js";
 import { HelpMessageParams } from "./types/HelpMessage.js";
 import { HelpMessage } from "./Help.js";
+import { PrefixManager } from "./PrefixManager.js";
 
 export class CommandManager {
     private readonly _client: Bot;
     private readonly _commands: BaseCommand[] = [];
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
-    public readonly prefix?: string;
+    public readonly prefix: PrefixManager;
     public readonly argumentSeparator: string;
     public readonly commandSeparator: string;
     public static readonly baseApiUrl: string = "https://discord.com/api/v8";
@@ -34,7 +35,7 @@ export class CommandManager {
             throw new Error("Incorrect separators");
         }
         this._client = client;
-        this.prefix = prefix;
+        this.prefix = new PrefixManager(this, prefix);
         this.argumentSeparator = argSep || ",";
         this.commandSeparator = cmdSep || "/";
         if (this.commandSeparator === this.argumentSeparator) {
@@ -217,6 +218,7 @@ export class CommandManager {
     }
 
     public fetch(i: Interaction | Message): CommandInteractionData | null {
+        const prefix = this.prefix.get(i.guild || undefined);
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT") || this.get(i.commandName, "NESTED");
@@ -251,13 +253,13 @@ export class CommandManager {
             } else {
                 return null;
             }
-        } else if (this.prefix && i instanceof Message) {
-            if (i.content.startsWith(this.prefix)) {
-                const cmdName = i.content.replace(this.prefix, "").split(" ")[0].split(this.commandSeparator)[0];
+        } else if (prefix && i instanceof Message) {
+            if (i.content.startsWith(prefix)) {
+                const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT") || this.get(cmdName, "NESTED");
                 if (cmd?.isChatCommand()) {
                     const argsRaw = i.content
-                        .replace(`${this.prefix}${cmdName}`, "")
+                        .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
                         .map((a) => {
                             if (a.startsWith(" ")) {
@@ -272,11 +274,11 @@ export class CommandManager {
                         parameters: args,
                     };
                 } else if (cmd?.isNestedCommand()) {
-                    const nesting = i.content.split(" ")[0].replace(`${this.prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
+                    const nesting = i.content.split(" ")[0].replace(`${prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
                     const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
                     if (subCmd) {
                         const argsRaw = i.content
-                            .replace(`${this.prefix}${cmdName}${this.commandSeparator}${nesting.join(this.commandSeparator)}`, "")
+                            .replace(`${prefix}${cmdName}${this.commandSeparator}${nesting.join(this.commandSeparator)}`, "")
                             .split(this.argumentSeparator)
                             .map((a) => {
                                 if (a.startsWith(" ")) {
