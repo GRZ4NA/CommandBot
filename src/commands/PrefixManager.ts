@@ -30,23 +30,27 @@ export class PrefixManager {
         return Object.freeze(new Object(this._prefixes));
     }
 
-    public get(scope: ScopeResolvable): string | null {
-        if (scope === "global") return this.globalPrefix;
+    public get(scope?: ScopeResolvable): string | null {
+        if (!scope) return this.globalPrefix;
         else {
             const id = scope instanceof Guild ? scope.id : scope;
             return this._prefixes.get(id) || this.globalPrefix;
         }
     }
 
-    public set(prefix: string, scope: ScopeResolvable): void {
-        const guildId = scope instanceof Guild ? scope.id : scope !== "global" ? scope : null;
-        if (guildId && !this._manager.client.client.guilds.cache.get(guildId)) throw new Error(`${guildId} is not a valid guild ID`);
-        if (!CommandRegExps.prefix.test(prefix)) throw new Error(`Prefix value for ${guildId} is incorrect`);
-        this._prefixes.set(guildId ?? this._global, prefix);
+    public set(prefix: string, scope?: ScopeResolvable): void {
+        if (!CommandRegExps.prefix.test(prefix)) throw new Error(`"${prefix}" is not a valid prefix`);
+        if (!scope) {
+            this._prefixes.set(this._global, prefix);
+        } else {
+            const id = scope instanceof Guild ? scope.id : scope;
+            if (!this._manager.client.client.guilds.cache.get(id)) throw new Error(`${id} is not a valid guild ID`);
+            this._prefixes.set(id, prefix);
+        }
     }
 
-    public remove(scope: ScopeResolvable): boolean {
-        if (scope === "global") return this._prefixes.delete(this._global);
+    public remove(scope?: ScopeResolvable): boolean {
+        if (!scope) return this._prefixes.delete(this._global);
         const id = scope instanceof Guild ? scope.id : scope;
         return this._prefixes.delete(id);
     }
