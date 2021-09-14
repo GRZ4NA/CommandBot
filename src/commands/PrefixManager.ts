@@ -5,15 +5,15 @@ import { CommandRegExps } from "./types/commands.js";
 export class PrefixManager {
     private readonly _manager: CommandManager;
     private readonly _prefixes: Map<string, string> = new Map();
-    private readonly global: string = "GLOBAL";
+    private readonly _global: string = "GLOBAL";
 
     constructor(manager: CommandManager, defaultPrefix?: string) {
         this._manager = manager;
         if (defaultPrefix) {
             if (!CommandRegExps.prefix.test(defaultPrefix)) {
-                throw new Error(`Prefix value for ${this.global} is incorrect`);
+                throw new Error(`Prefix value for ${this._global} is incorrect`);
             }
-            this._prefixes.set(this.global, defaultPrefix);
+            this._prefixes.set(this._global, defaultPrefix);
         }
     }
 
@@ -22,7 +22,11 @@ export class PrefixManager {
     }
 
     get globalPrefix() {
-        return this._prefixes.get(this.global) || null;
+        return this._prefixes.get(this._global) || null;
+    }
+
+    get prefixes() {
+        return Object.freeze(new Object(this._prefixes));
     }
 
     public get(g?: Guild | string, noGlobal?: boolean): string | null {
@@ -34,7 +38,7 @@ export class PrefixManager {
         const guildId = scope instanceof Guild ? scope.id : scope !== "global" ? scope : null;
         if (guildId && !this._manager.client.client.guilds.cache.get(guildId)) throw new Error(`${guildId} is not a valid guild ID`);
         if (!CommandRegExps.prefix.test(prefix)) throw new Error(`Prefix value for ${guildId} is incorrect`);
-        this._prefixes.set(guildId ?? this.global, prefix);
+        this._prefixes.set(guildId ?? this._global, prefix);
     }
 
     public remove(g: Guild | string | "global") {
