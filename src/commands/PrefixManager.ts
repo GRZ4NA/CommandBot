@@ -30,8 +30,8 @@ export class PrefixManager {
         return this._prefixes.get(guildId ?? "") ?? noDefault === true ? null : this.globalPrefix;
     }
 
-    public set(prefix: string, g?: Guild | string): void {
-        const guildId = g instanceof Guild ? g.id : g;
+    public set(prefix: string, scope: Guild | string | "global"): void {
+        const guildId = scope instanceof Guild ? scope.id : scope !== "global" ? scope : null;
         if (guildId && !this._manager.client.client.guilds.cache.get(guildId)) throw new Error(`${guildId} is not a valid guild ID`);
         if (!CommandRegExps.prefix.test(prefix)) throw new Error(`Prefix value for ${guildId} is incorrect`);
         this._prefixes.set(guildId ?? this.global, prefix);
