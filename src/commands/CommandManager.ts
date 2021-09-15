@@ -148,41 +148,33 @@ export class CommandManager {
      * @param {string} q - command name or alias
      * @param {CommandType} t - type of command you want to get from this manager
      */
-    public get(q: string, t?: undefined): BaseCommand | null;
-    public get(q: string, t: "CHAT"): ChatCommand | null;
-    public get(q: string, t: "NESTED"): NestedCommand | null;
-    public get(q: string, t: "CONTEXT"): ContextMenuCommand | null;
-    public get(q: string, t?: CommandType): BaseCommand | null {
-        if (t) {
-            switch (t) {
-                case "CHAT":
-                    return (
-                        this.list(t).find((c) => {
-                            if (c.name === q) {
-                                return true;
-                            }
-                            if (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q)) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }) || null
-                    );
-                case "NESTED":
-                    return (
-                        this.list(t).find((c) => {
-                            if (c.name === q) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }) || null
-                    );
-                case "CONTEXT":
-                    return this.list(t).find((c) => c.name === q) || null;
-            }
-        } else {
-            return this.list().find((c) => c.name === q) || null;
+    public get<T extends CommandType>(q: string, t?: T): Command<T> | null {
+        switch (t) {
+            case "CHAT":
+                return (
+                    (this.list(t).find((c) => {
+                        if (c.name === q) {
+                            return true;
+                        }
+                        if (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }) as Command<T>) || null
+                );
+            case "NESTED":
+                return (this.list(t).find((c) => {
+                    if (c.name === q) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }) || null) as Command<T>;
+            case "CONTEXT":
+                return (this.list(t).find((c) => c.name === q) as Command<T>) || null;
+            default:
+                return (this.list().find((c) => c.name === q) as Command<T>) || null;
         }
     }
 
