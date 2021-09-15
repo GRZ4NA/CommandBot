@@ -2,9 +2,9 @@ import { PermissionResolvable, Message, Interaction } from "discord.js";
 
 export type PermissionCheckTypes = "ALL" | "ANY";
 
-export type PermissionTypes = PermissionOptions | ((m?: Message | Interaction) => boolean);
+export type PermissionFunction = (i: Interaction | Message) => boolean;
 
-export interface PermissionOptions {
-    resolvables: PermissionResolvable;
+export interface CommandPermissionsInit {
+    resolvable?: PermissionResolvable | PermissionFunction;
     checkType?: PermissionCheckTypes;
 }

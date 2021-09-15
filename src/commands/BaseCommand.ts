@@ -1,13 +1,10 @@
 import { Interaction, Message, Permissions, ReplyMessageOptions, MessageEmbed, GuildMember } from "discord.js";
-import { CommandType, CommandFunction, CommandRegExps } from "./types/commands.js";
+import { CommandType, CommandFunction, CommandRegExps, Command } from "./types/commands.js";
 import { BaseCommandInit } from "./types/BaseCommand.js";
 import { OperationSuccess, PermissionsError } from "../errors.js";
 import { BaseCommandObject } from "../structures/types/api.js";
-import { ChatCommand } from "./ChatCommand.js";
-import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { TargetID } from "../structures/parameter.js";
-import { NestedCommand } from "./NestedCommand.js";
 import { CommandManager } from "./CommandManager.js";
 import { CommandPermissions } from "./CommandPermissions.js";
 
@@ -37,7 +34,7 @@ export class BaseCommand {
      * Command permissions (if *undefined*, no permissions check will be performed)
      * @type {Permissions | Function}
      */
-    public readonly permissions?: CommandPermissions | ((i: Message | Interaction) => boolean);
+    public readonly permissions: CommandPermissions;
 
     /**
      * Whether to send a SUCCESS message if no other response is defined (default: true)
@@ -51,7 +48,6 @@ export class BaseCommand {
      * @private
      */
     private readonly function: CommandFunction;
-    private readonly permissionChecker: (i: Message | Interaction) => boolean;
 
     /**
      * @constructor
@@ -66,52 +62,9 @@ export class BaseCommand {
         this.type = type;
         this.guilds = o.guilds;
         this.dm = o.dm ?? true;
-        this.permissions = o.permissions
-            ? !(o.permissions instanceof Function)
-                ? new CommandPermissions(o.permissions.resolvables, o.permissions.checkType ?? "ANY")
-                : o.permissions
-            : undefined;
+        this.permissions = new CommandPermissions(this, o.permissions);
         this.announceSuccess = o.announceSuccess ?? true;
         this.function = o.function;
-        this.permissionChecker =
-            this.permissions instanceof Function
-                ? (i) => {
-                      if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
-                          return false;
-                      }
-                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
-                          return false;
-                      }
-                      return (this.permissions as Function)(i);
-                  }
-                : this.permissions instanceof CommandPermissions
-                ? (i) => {
-                      if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
-                          return false;
-                      }
-                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
-                          return false;
-                      }
-                      const memberPermissions = (i.member?.permissions as Permissions) || new Permissions();
-                      if (!memberPermissions) {
-                          return false;
-                      } else {
-                          if ((this.permissions as CommandPermissions).checkType === "ALL") {
-                              return memberPermissions.has(this.permissions as Permissions, true);
-                          } else {
-                              return memberPermissions.any(this.permissions as Permissions, true);
-                          }
-                      }
-                  }
-                : (i) => {
-                      if (Array.isArray(this.guilds) && this.guilds.length > 0 && !this.guilds.find((g) => g == i.guild?.id)) {
-                          return false;
-                      }
-                      if (this.dm === false && (i instanceof Interaction ? !i.inGuild() : !i.guild)) {
-                          return false;
-                      }
-                      return true;
-                  };
     }
 
     get manager() {
@@ -126,7 +79,7 @@ export class BaseCommand {
      */
     public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
-        if (this.permissionChecker(interaction)) {
+        if (this.permissions.check(interaction)) {
             if (interaction instanceof Interaction) {
                 await interaction.deferReply();
             }
@@ -149,16 +102,17 @@ export class BaseCommand {
         return obj;
     }
 
-    public isChatCommand(): this is ChatCommand {
-        return "description" in this && "parameters" in this && "visible" in this && "slash" in this && (this as BaseCommand).type === "CHAT";
-    }
-
-    public isContextMenuCommand(): this is ContextMenuCommand {
-        return "contextType" in this && (this as BaseCommand).type === "CONTEXT";
-    }
-
-    public isNestedCommand(): this is NestedCommand {
-        return "children" in this && "append" in this && (this as BaseCommand).type === "NESTED";
+    public isCommandType<T extends CommandType>(type: T): this is Command<T> {
+        switch (type) {
+            case "CHAT":
+                return "description" in this && "parameters" in this && "visible" in this && "slash" in this && (this as BaseCommand).type === "CHAT";
+            case "CONTEXT":
+                return "contextType" in this && (this as BaseCommand).type === "CONTEXT";
+            case "NESTED":
+                return "children" in this && "append" in this && (this as BaseCommand).type === "NESTED";
+            default:
+                return false;
+        }
     }
 
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {

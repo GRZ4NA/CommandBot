@@ -1,10 +1,10 @@
 import { CommandFunction } from "./commands.js";
-import { PermissionTypes } from "./CommandPermissions.js";
+import { CommandPermissionsInit } from "./CommandPermissions.js";
 
 export interface BaseCommandInit {
     name: string;
     guilds?: string[];
-    permissions?: PermissionTypes;
+    permissions?: CommandPermissionsInit;
     announceSuccess?: boolean;
     dm?: boolean;
     function: CommandFunction;

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, Permissions } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../commands/CommandManager.js";
 import { HelpMessageParams } from "./types/HelpMessage.js";
@@ -34,16 +34,14 @@ export class HelpMessage extends ChatCommand {
                             helpMsg.setTitle(`${cmd.name} ${cmd.visible ? "" : "[HIDDEN]"}`);
                             helpMsg.setDescription(cmd.description);
                             if (cmd.usage) helpMsg.addField("Usage:", `${cmdManager.prefix.get(i.guild || undefined) || "/"}${cmd.name} ${cmd.usage}`, false);
-                            if (cmd.permissions) {
-                                if (cmd.permissions instanceof Function) {
-                                    helpMsg.addField("Permissions:", "Custom", false);
-                                } else if (cmd.permissions.toArray(false).length > 0) {
-                                    let permList: string = "";
-                                    cmd.permissions.toArray(false).map((p) => {
-                                        permList += p + "\n";
-                                    });
-                                    helpMsg.addField("Permissions:", permList, false);
-                                }
+                            if (cmd.permissions.isCustom) {
+                                helpMsg.addField("Permissions:", "Custom", false);
+                            } else {
+                                let permList: string = "";
+                                (cmd.permissions.permissions as Permissions).toArray(false).map((p) => {
+                                    permList += p + "\n";
+                                });
+                                helpMsg.addField("Permissions:", permList, false);
                             }
                             if (cmd.aliases && cmd.aliases.length > 0) {
                                 let aList: string = "";

@@ -1,6 +1,6 @@
 import { ParameterSchema } from "../../structures/types/parameter.js";
 import { CommandFunction } from "./commands.js";
-import { PermissionCheckTypes, PermissionTypes } from "./CommandPermissions.js";
+import { CommandPermissionsInit, PermissionCheckTypes } from "./CommandPermissions.js";
 
 export interface SubCommandInit {
     name: string;
@@ -8,7 +8,7 @@ export interface SubCommandInit {
     parameters?: ParameterSchema[] | "simple" | "no_input";
     usage?: string;
     permissionCheck?: PermissionCheckTypes;
-    permissions?: PermissionTypes;
+    permissions?: CommandPermissionsInit;
     announceSuccess?: boolean;
     dm?: boolean;
     function: CommandFunction;
