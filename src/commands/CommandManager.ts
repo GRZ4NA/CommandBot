@@ -25,11 +25,39 @@ export class CommandManager {
     private readonly _commands: BaseCommand[] = [];
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
+
+    /**
+     * Prefix used to respond to message interactions
+     * @type {string}
+     */
     public readonly prefix: PrefixManager;
+
+    /**
+     * A string used to split all incoming input data from Discord messages
+     * @type {string}
+     */
     public readonly argumentSeparator: string;
+
+    /**
+     * A string used to separate subcommand groups and subcommands
+     * @type {string}
+     */
     public readonly commandSeparator: string;
+
+    /**
+     * Discord API URL
+     * @type {string}
+     */
     public static readonly baseApiUrl: string = "https://discord.com/api/v8";
 
+    /**
+     *
+     * @param {Bot} client - client that this manager belongs to
+     * @param {HelpMessageParams} helpMsg - parameters defining appearance of the help message
+     * @param {string} prefix - prefix used to respond to message interactions
+     * @param {string} argSep - a string used to split all incoming input data from Discord messages
+     * @param {string} cmdSep - a string used to separate subcommand groups and subcommands
+     */
     constructor(client: Bot, helpMsg: HelpMessageParams, prefix?: string, argSep?: string, cmdSep?: string) {
         if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
             throw new Error("Incorrect separators");
@@ -46,10 +74,19 @@ export class CommandManager {
         }
     }
 
+    /**
+     * @returns {Bot} A {@link Bot} object that this manager belongs to
+     */
     get client() {
         return this._client;
     }
 
+    /**
+     *
+     * @param {CommandType} type - a type of command that will be created and added to this manager
+     * @param {CommandInit} options - an object containing all properties required to create this type of command
+     * @returns {Command} A computed command object that inherits from {@link BaseCommand}
+     */
     public add<T extends CommandType>(type: T, options: CommandInit<T>): Command<T> {
         const command: Command<T> | null =
             type === "CHAT"
@@ -106,6 +143,11 @@ export class CommandManager {
         return command;
     }
 
+    /**
+     *
+     * @param {string} q - command name or alias
+     * @param {CommandType} t - type of command you want to get from this manager
+     */
     public get(q: string, t?: undefined): BaseCommand | null;
     public get(q: string, t: "CHAT"): ChatCommand | null;
     public get(q: string, t: "NESTED"): NestedCommand | null;
@@ -144,6 +186,13 @@ export class CommandManager {
         }
     }
 
+    /**
+     *
+     * @param {string} id - Discord command ID
+     * @param {Guild | string} guild - ID of guild that this command belongs to
+     * @param {boolean} noCache - whether to use cached data
+     * @returns {RegisteredCommandObject} Discord command object
+     */
     public async getApi(id: string, guild?: Guild | string, noCache?: boolean): Promise<RegisteredCommandObject> {
         const guildId = guild instanceof Guild ? guild.id : guild;
         if (!noCache) {
@@ -170,6 +219,13 @@ export class CommandManager {
         }
     }
 
+    /**
+     *
+     * @param {string} name - name of the command
+     * @param {string} type - command type you want to get ID for
+     * @param {string} guild - ID of guild that this command belongs to
+     * @returns {string} Command ID from Discord API
+     */
     public async getIdApi(name: string, type: CommandType, guild?: Guild | string): Promise<string | null> {
         let map: Map<string, RegisteredCommandObject> = await this.listApi(guild);
         let result: string | null = null;
@@ -182,6 +238,10 @@ export class CommandManager {
         return result;
     }
 
+    /**
+     * @param {CommandType} [f] - type of commands to return
+     * @returns {BaseCommand[]} An array of commands registered in this manager
+     */
     public list(): readonly BaseCommand[];
     public list(f: "CHAT"): readonly ChatCommand[];
     public list(f: "CONTEXT"): readonly ContextMenuCommand[];

@@ -8,6 +8,9 @@ import { TargetID } from "../structures/parameter.js";
 import { CommandManager } from "./CommandManager.js";
 import { CommandPermissions } from "./CommandPermissions.js";
 
+/**
+ * @class Base command instance
+ */
 export class BaseCommand {
     protected readonly _manager: CommandManager;
     /**
@@ -17,7 +20,7 @@ export class BaseCommand {
     public readonly name: string;
 
     /**
-     * Application command type
+     * Command type
      * @type {CommandType}
      */
     public readonly type: CommandType;
@@ -28,11 +31,15 @@ export class BaseCommand {
      */
     public readonly guilds?: string[];
 
+    /**
+     * If set to *false*, all interactions from direct messages will result a PermissionError
+     * @type {boolean}
+     */
     public readonly dm: boolean;
 
     /**
-     * Command permissions (if *undefined*, no permissions check will be performed)
-     * @type {Permissions | Function}
+     * Object containing check functions and permission bitfields
+     * @type {CommandPermissions}
      */
     public readonly permissions: CommandPermissions;
 
@@ -51,6 +58,8 @@ export class BaseCommand {
 
     /**
      * @constructor
+     * @param {CommandManager} manager - Command manager that this command belongs to
+     * @param {CommandType} type - command type
      * @param {BaseCommandInit} o - BaseCommand initialization options
      */
     constructor(manager: CommandManager, type: CommandType, o: BaseCommandInit) {
@@ -67,14 +76,17 @@ export class BaseCommand {
         this.function = o.function;
     }
 
+    /**
+     * @returns {CommandManager} A {@link CommandManager} instance that this command belongs to
+     */
     get manager() {
         return this._manager;
     }
 
     /**
      * Invoke the command
-     * @param {Message | Interaction} [interaction] - Used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
-     * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
+     * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
+     * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
      * @returns {Promise<void>}
      */
     public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
@@ -90,8 +102,8 @@ export class BaseCommand {
     }
 
     /**
-     * Converts a command object to Discord API type object
-     * @return {Object} An object that is accepted by the Discord API
+     * Converts a command object {@link BaseCommandObject}
+     * @return {BaseCommandObject} An object that is accepted by the Discord API
      */
     public toObject(): BaseCommandObject {
         const obj: BaseCommandObject = {
@@ -102,6 +114,11 @@ export class BaseCommand {
         return obj;
     }
 
+    /**
+     *
+     * @param {CommandType} type - command type to check
+     * @returns {boolean} - *true* if this command matches the type given in the argument
+     */
     public isCommandType<T extends CommandType>(type: T): this is Command<T> {
         switch (type) {
             case "CHAT":

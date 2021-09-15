@@ -9,7 +9,7 @@ import { CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "./CommandManager.js";
 
 /**
- * @class Class that represents a command instance
+ * @class A representation of CHAT_INPUT command (also known as a slash command)
  */
 export class ChatCommand extends BaseCommand {
     /**
@@ -25,7 +25,7 @@ export class ChatCommand extends BaseCommand {
     public readonly aliases?: string[];
 
     /**
-     * Command description displayed in the help message (Default description: "No description")
+     * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
      */
     public readonly description: string;
@@ -51,7 +51,8 @@ export class ChatCommand extends BaseCommand {
     /**
      * Command constructor
      * @constructor
-     * @param {ChatCommandInit} o - {@link CommandBuilder}
+     * @param {CommandManager} manager - a manager that this command belongs to
+     * @param {ChatCommandInit} o - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
     constructor(manager: CommandManager, o: ChatCommandInit) {
         if (!CommandRegExps.chatName.test(o.name)) {
@@ -96,9 +97,9 @@ export class ChatCommand extends BaseCommand {
     }
 
     /**
-     * Invokes the command
-     * @param {Message | CommandInteraction} [interaction] - Used to check caller's permissions. It will get passed to the execution function (specified in *function* property of command's constructor)
-     * @param {InputParameter[]} [cmdParams] - list of processed parameters passed in a Discord interaction
+     * Invoke the command
+     * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
+     * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
      * @returns {Promise<void>}
      */
     public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
@@ -110,7 +111,7 @@ export class ChatCommand extends BaseCommand {
 
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
-     * @returns {Object} object
+     * @returns {ChatCommandObject} object
      */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {
@@ -178,6 +179,11 @@ export class ChatCommand extends BaseCommand {
         return obj;
     }
 
+    /**
+     *
+     * @param {ParameterResolvable[]} args - array of input data from Discord
+     * @returns {ReadonlyMap<string, ParameterResolvable>} A map containing all input data bound to parameter names
+     */
     public processArguments(args: ParameterResolvable[]): ReadonlyMap<string, ParameterResolvable> {
         if (this.parameters) {
             const mapEntries: [string, ParameterResolvable][] = this.parameters.map((p, i) => {
