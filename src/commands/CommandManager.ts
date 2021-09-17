@@ -8,7 +8,7 @@ import { ChatCommand } from "./ChatCommand.js";
 import { ContextMenuCommand } from "./ContextMenuCommand.js";
 import { Command, CommandInit, CommandRegExps, CommandType } from "./types/commands.js";
 import { CommandInteractionData } from "./types/commands.js";
-import { BaseCommandObject, RegisteredCommandObject } from "../structures/types/api.js";
+import { BaseCommandObject, CommandPermission, RegisteredCommandObject } from "../structures/types/api.js";
 import { Bot } from "../structures/Bot.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
@@ -77,8 +77,16 @@ export class CommandManager {
     /**
      * @returns {Bot} A {@link Bot} object that this manager belongs to
      */
-    get client() {
+    get client(): Readonly<Bot> {
         return this._client;
+    }
+
+    get cache(): Readonly<Map<string, Map<string, RegisteredCommandObject>>> {
+        return this._registerCache;
+    }
+
+    get commandsCount(): Readonly<number> {
+        return this._commands.length;
     }
 
     /**
@@ -398,6 +406,39 @@ export class CommandManager {
                 headers: { Authorization: `Bot ${this._client.token}` },
             });
         });
+    }
+
+    public async setPermissionsApi(id: string, permissions: CommandPermission[], g?: Guild | string) {
+        if (typeof g === "string" && !this._client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
+        const response = await axios.put(
+            `${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
+            {
+                permissions: permissions,
+            },
+            {
+                headers: {
+                    Authorization: `Bot ${this._client.token}`,
+                },
+            }
+        );
+        if (response.status !== 200) {
+            throw new Error(`HTTP request failed with code ${response.status}: ${response.statusText}`);
+        }
+    }
+
+    public async getPermissionsApi(id: string, g?: Guild | string) {
+        if (typeof g === "string" && !this._client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
+        const response = await axios.get(
+            `${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
+            {
+                headers: {
+                    Authorization: `Bot ${this._client.token}`,
+                },
+            }
+        );
+        if (response.status !== 200) {
+            throw new Error(`HTTP request failed with code ${response.status}: ${response.statusText}`);
+        }
     }
 
     private updateCache(commands: RegisteredCommandObject[] | RegisteredCommandObject, guildId?: string): void {
