@@ -377,6 +377,8 @@ export class CommandManager {
     }
 
     public async register(): Promise<void> {
+        console.warn("[⚠️ WARNING] Command registering is not functional in this build because of the huge structure rework. It will be available again soon.");
+        return;
         const globalCommands = this._commands
             .filter((c) => {
                 if (c.isGuildCommand() && (!Array.isArray(c.guilds) || c.guilds.length === 0)) {
