@@ -43,7 +43,9 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
     type: "USER" | "MESSAGE";
 }
 
-export interface NestedCommandInit extends GuildCommandInit {
+export interface NestedCommandInit extends APICommandInit {
+    dm?: boolean;
+    guilds?: string[];
     description?: string;
 }
 
