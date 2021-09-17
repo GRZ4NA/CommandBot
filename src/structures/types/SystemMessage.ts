@@ -1,6 +1,6 @@
+import { APICommand } from "../../commands/base/APICommand.js";
 import { ColorResolvable, GuildMember, User } from "discord.js";
 import { PermissionsError } from "../../errors.js";
-import { BaseCommand } from "../../commands/BaseCommand.js";
 
 /**
  * @type Type of message
@@ -70,7 +70,7 @@ export interface SystemMessageData {
      * A {@link Command} instance
      * @type {TextCommand}
      */
-    command?: BaseCommand;
+    command?: APICommand;
 
     /**
      * Phrase received from a Discord channel

@@ -1,17 +1,17 @@
 import { Message, Interaction } from "discord.js";
-import { BaseCommand } from "./BaseCommand.js";
-import { ChatCommandInit } from "./types/ChatCommand.js";
+import { ChatCommandInit } from "./types/InitOptions.js";
 import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { CommandRegExps } from "./types/commands.js";
-import { CommandManager } from "./CommandManager.js";
+import { CommandManager } from "../structures/CommandManager.js";
+import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 
 /**
  * @class A representation of CHAT_INPUT command (also known as a slash command)
  */
-export class ChatCommand extends BaseCommand {
+export class ChatCommand extends PermissionGuildCommand {
     /**
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
@@ -52,48 +52,49 @@ export class ChatCommand extends BaseCommand {
      * Command constructor
      * @constructor
      * @param {CommandManager} manager - a manager that this command belongs to
-     * @param {ChatCommandInit} o - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
+     * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
-    constructor(manager: CommandManager, o: ChatCommandInit) {
-        if (!CommandRegExps.chatName.test(o.name)) {
-            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
+    constructor(manager: CommandManager, options: ChatCommandInit) {
+        if (!CommandRegExps.chatName.test(options.name)) {
+            throw new Error(`"${options.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
-        if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
-            throw new Error(`The description of "${o.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        if (options.description && !CommandRegExps.chatDescription.test(options.description)) {
+            throw new Error(`The description of "${options.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
         }
-        if (o.aliases) {
-            if (Array.isArray(o.aliases)) {
-                o.aliases.map((a) => {
+        if (options.aliases) {
+            if (Array.isArray(options.aliases)) {
+                options.aliases.map((a) => {
                     if (!CommandRegExps.chatName.test(a)) {
                         throw new Error(`"${a}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
                     }
                 });
             } else {
-                if (!CommandRegExps.chatName.test(o.aliases)) {
-                    throw new Error(`"${o.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
+                if (!CommandRegExps.chatName.test(options.aliases)) {
+                    throw new Error(`"${options.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
                 }
             }
         }
-        super(manager, "CHAT", {
-            name: o.name,
-            function: o.function,
-            announceSuccess: o.announceSuccess,
-            guilds: o.guilds,
-            permissions: o.permissions,
-            dm: o.dm,
+        super(manager, {
+            name: options.name,
+            type: "CHAT_INPUT",
+            function: options.function,
+            announceSuccess: options.announceSuccess,
+            guilds: options.guilds,
+            permissions: options.permissions,
+            dm: options.dm,
         });
-        if (o.parameters == "no_input" || !o.parameters) {
+        if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
-        } else if (o.parameters == "simple") {
+        } else if (options.parameters == "simple") {
             this.parameters = [new DefaultParameter()];
         } else {
-            this.parameters = o.parameters.map((ps) => new Parameter(ps));
+            this.parameters = options.parameters.map((ps) => new Parameter(ps));
         }
-        this.aliases = o.aliases ? (Array.isArray(o.aliases) ? o.aliases : [o.aliases]) : undefined;
-        this.description = o.description || "No description";
-        this.usage = o.usage || this.generateUsageFromArguments();
-        this.visible = o.visible !== undefined ? o.visible : true;
-        this.slash = o.slash !== undefined ? o.slash : true;
+        this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
+        this.description = options.description || "No description";
+        this.usage = options.usage || this.generateUsageFromArguments();
+        this.visible = options.visible !== undefined ? options.visible : true;
+        this.slash = options.slash !== undefined ? options.slash : true;
     }
 
     /**

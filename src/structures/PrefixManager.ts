@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "./CommandManager.js";
-import { CommandRegExps } from "./types/commands.js";
+import { CommandRegExps } from "../commands/types/commands.js";
 import { ScopeResolvable } from "./types/PrefixManager.js";
 
 export class PrefixManager {

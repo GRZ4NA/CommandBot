@@ -1,10 +1,10 @@
-export interface BaseCommandObject {
+export interface APICommandObject {
     name: string;
     type: number;
-    default_permissions: boolean;
+    default_permission: boolean;
 }
 
-export interface ChatCommandObject extends BaseCommandObject {
+export interface ChatCommandObject extends APICommandObject {
     type: 1;
     description: string;
     options?: ChatCommandOptionObject[];
@@ -26,7 +26,7 @@ export interface TextCommandOptionChoiceObject {
     value: string;
 }
 
-export interface NestedCommandObject extends BaseCommandObject {
+export interface NestedCommandObject extends APICommandObject {
     type: 1;
     description: string;
     options: (ChatCommandObject | SubCommandGroupObject)[];

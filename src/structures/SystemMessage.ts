@@ -117,14 +117,16 @@ export class SystemMessageManager {
                         }
                         if (data.command) {
                             embed.addField("Command name:", data.command.name, false);
-                            if (data.command.permissions.isCustom) {
-                                embed.addField("Required permissions:", "CUSTOM", false);
-                            } else {
-                                let permList = "";
-                                (data.command.permissions.permissions as Permissions).toArray(false).map((p) => {
-                                    permList += `${p}\n`;
-                                });
-                                embed.addField("Required permissions:", permList, false);
+                            if (data.command.isPermissionCommand()) {
+                                if (data.command.permissions.isCustom) {
+                                    embed.addField("Required permissions:", "CUSTOM", false);
+                                } else {
+                                    let permList = "";
+                                    (data.command.permissions.permissions as Permissions).toArray(false).map((p) => {
+                                        permList += `${p}\n`;
+                                    });
+                                    embed.addField("Required permissions:", permList, false);
+                                }
                             }
                         }
                         break;

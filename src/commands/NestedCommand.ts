@@ -1,24 +1,22 @@
-import { CommandInteractionOption, Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
-import { NestedCommandObject } from "../structures/types/api.js";
-import { BaseCommand } from "./BaseCommand.js";
-import { CommandManager } from "./CommandManager.js";
+import { CommandInteractionOption, Message, MessageEmbed } from "discord.js";
+import { CommandManager } from "../structures/CommandManager.js";
+import { GuildCommand } from "./base/GuildCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { ChildCommand, ChildCommandInit, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
-import { NestedCommandInit } from "./types/NestedCommand.js";
-import { SubCommandInit } from "./types/SubCommand.js";
-import { SubCommandGroupInit } from "./types/SubCommandGroup.js";
+import { NestedCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
 
-export class NestedCommand extends BaseCommand {
+export class NestedCommand extends GuildCommand {
     private readonly _children: (SubCommand | SubCommandGroup)[] = [];
     public readonly description: string;
 
-    constructor(manager: CommandManager, o: NestedCommandInit) {
-        super(manager, "NESTED", {
-            name: o.name,
-            guilds: o.guilds,
+    constructor(manager: CommandManager, options: NestedCommandInit) {
+        super(manager, {
+            name: options.name,
+            type: "CHAT_INPUT",
+            guilds: options.guilds,
             announceSuccess: false,
-            dm: true,
+            dm: options.dm,
             function: (_, i) => {
                 if (i instanceof Message) {
                     const msg = new MessageEmbed().setColor("#ff5500").setTitle("Subcommand").setDescription("This is a subcommand. Please enter one of the following options.");
@@ -43,13 +41,13 @@ export class NestedCommand extends BaseCommand {
                 }
             },
         });
-        if (!CommandRegExps.chatName.test(o.name)) {
-            throw new Error(`"${o.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
+        if (!CommandRegExps.chatName.test(options.name)) {
+            throw new Error(`"${options.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
-        if (o.description && !CommandRegExps.chatDescription.test(o.description)) {
-            throw new Error(`The description of "${o.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        if (options.description && !CommandRegExps.chatDescription.test(options.description)) {
+            throw new Error(`The description of "${options.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
         }
-        this.description = o.description || "No description";
+        this.description = options.description || "No description";
     }
 
     get children() {
@@ -72,15 +70,6 @@ export class NestedCommand extends BaseCommand {
             this._children.push(sc);
             return sc;
         }
-    }
-
-    public toObject(): NestedCommandObject {
-        return {
-            ...super.toObject(),
-            options: this._children.map((c) => c.toObject()),
-            description: this.description,
-            type: 1,
-        };
     }
 
     public fetchSubcommand(options: CommandInteractionOption[]): CommandInteractionData | null {

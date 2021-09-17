@@ -1,7 +1,7 @@
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { CommandManager } from "../commands/CommandManager.js";
+import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { SystemMessageManager } from "./SystemMessage.js";
 import { CommandInteractionData } from "../commands/types/commands.js";

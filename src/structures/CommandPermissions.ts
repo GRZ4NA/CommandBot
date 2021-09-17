@@ -1,13 +1,13 @@
 import { Interaction, Permissions, Message } from "discord.js";
-import { BaseCommand } from "./BaseCommand.js";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./types/CommandPermissions.js";
+import { PermissionCommand } from "../commands/base/PermissionCommand.js";
+import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions.js";
 
 export class CommandPermissions {
-    private readonly _command: BaseCommand;
+    private readonly _command: PermissionCommand;
     public readonly permissions: Permissions | PermissionFunction;
     public readonly checkType: PermissionCheckTypes;
 
-    constructor(command: BaseCommand, o?: CommandPermissionsInit) {
+    constructor(command: PermissionCommand, o?: CommandPermissionsInit) {
         this._command = command;
         this.checkType = o?.checkType ?? "ANY";
         this.permissions = o?.resolvable instanceof Function ? o.resolvable : new Permissions(o?.resolvable ?? BigInt(0));
@@ -21,11 +21,12 @@ export class CommandPermissions {
         return this.permissions instanceof Function ? BigInt(NaN) : BigInt(this.permissions.bitfield);
     }
 
-    get command(): Readonly<BaseCommand> {
+    get command(): Readonly<PermissionCommand> {
         return this._command;
     }
 
     public check(i: Interaction | Message): boolean {
+        if (!this._command.isPermissionGuildCommand()) return false;
         if (Array.isArray(this._command.guilds) && this._command.guilds.length > 0 && !this._command.guilds.find((id) => id === i.guild?.id)) return false;
         if (this._command.dm === true && !i.guild) return false;
         if (this.permissions instanceof Function) {
