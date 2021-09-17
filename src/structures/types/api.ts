@@ -1,3 +1,5 @@
+export type APICommandType = "CHAT_INPUT" | "USER" | "MESSAGE";
+
 export interface APICommandObject {
     name: string;
     type: number;

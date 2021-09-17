@@ -1,12 +1,12 @@
 import { Message, Interaction } from "discord.js";
 import { ChatCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
+import { DefaultParameter, Parameter, TargetID } from "../structures/parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
-import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "../structures/CommandManager.js";
 import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
+import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
 
 /**
  * @class A representation of CHAT_INPUT command (also known as a slash command)
@@ -74,9 +74,8 @@ export class ChatCommand extends PermissionGuildCommand {
                 }
             }
         }
-        super(manager, {
+        super(manager, "CHAT_INPUT", {
             name: options.name,
-            type: "CHAT_INPUT",
             function: options.function,
             announceSuccess: options.announceSuccess,
             guilds: options.guilds,
@@ -92,7 +91,7 @@ export class ChatCommand extends PermissionGuildCommand {
         }
         this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
         this.description = options.description || "No description";
-        this.usage = options.usage || this.generateUsageFromArguments();
+        this.usage = options.usage || generateUsageFromArguments(this);
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
     }
@@ -178,60 +177,5 @@ export class ChatCommand extends PermissionGuildCommand {
             obj.options = options;
         }
         return obj;
-    }
-
-    /**
-     *
-     * @param {ParameterResolvable[]} args - array of input data from Discord
-     * @returns {ReadonlyMap<string, ParameterResolvable>} A map containing all input data bound to parameter names
-     */
-    public processArguments(args: ParameterResolvable[]): ReadonlyMap<string, ParameterResolvable> {
-        if (this.parameters) {
-            const mapEntries: [string, ParameterResolvable][] = this.parameters.map((p, i) => {
-                if (!p.optional && !args[i]) {
-                    throw new MissingParameterError(p);
-                } else if (p.optional && !args[i]) {
-                    return [p.name, null];
-                } else if (p.type === "channel" || p.type === "mentionable" || p.type === "role" || p.type === "user") {
-                    return [p.name, new ObjectID(args[i]?.toString() || "")];
-                } else {
-                    switch (p.type) {
-                        case "boolean":
-                            if (args[i] === true || args[i]?.toString().toLowerCase() === "true") {
-                                return [p.name, true];
-                            } else if (args[i] === false || args[i]?.toString().toLowerCase() === "false") {
-                                return [p.name, false];
-                            } else {
-                                throw new ParameterTypeError(args[i]?.toString() || "null", p.type);
-                            }
-                        case "number":
-                            if (isNaN(parseInt(args[i]?.toString() || "null"))) {
-                                throw new ParameterTypeError(args[i]?.toString() || "null", p.type);
-                            }
-                            return [p.name, parseInt(args[i]?.toString() || "null")];
-                        case "string":
-                            if (typeof args[i] !== "string") {
-                                return [p.name, args[i]?.toString() || "null"];
-                            } else {
-                                return [p.name, args[i] || "null"];
-                            }
-                        default:
-                            return [p.name, args[i] || "null"];
-                    }
-                }
-            });
-            return new Map([...mapEntries]);
-        } else {
-            return new Map([]);
-        }
-    }
-
-    private generateUsageFromArguments(): string {
-        let usageTemplate: string = "";
-        this.parameters &&
-            this.parameters.map((e) => {
-                usageTemplate += `[${e.name} (${e.choices ? e.choices.join(" / ") : e.type}${e.optional ? ", optional" : ""})] `;
-            });
-        return usageTemplate;
     }
 }

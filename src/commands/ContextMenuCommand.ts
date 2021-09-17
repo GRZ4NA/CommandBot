@@ -4,9 +4,8 @@ import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 
 export class ContextMenuCommand extends PermissionGuildCommand {
     constructor(manager: CommandManager, options: ContextMenuCommandInit) {
-        super(manager, {
+        super(manager, options.type, {
             name: options.name,
-            type: options.type,
             function: options.function,
             announceSuccess: options.announceSuccess,
             guilds: options.guilds,

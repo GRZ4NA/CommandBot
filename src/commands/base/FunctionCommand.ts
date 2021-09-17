@@ -6,15 +6,15 @@ import { APICommand } from "./APICommand.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandFunction } from "../types/commands.js";
 import { FunctionCommandInit } from "../types/InitOptions.js";
+import { APICommandType } from "../../structures/types/api.js";
 
 export class FunctionCommand extends APICommand {
     private readonly _function: CommandFunction;
     public readonly announceSuccess: boolean;
 
-    constructor(manager: CommandManager, options: FunctionCommandInit) {
-        super(manager, {
+    constructor(manager: CommandManager, type: APICommandType, options: FunctionCommandInit) {
+        super(manager, type, {
             name: options.name,
-            type: options.type,
             default_permission: options.default_permission,
         });
         this._function = options.function;

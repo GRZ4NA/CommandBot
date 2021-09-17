@@ -1,7 +1,8 @@
-import { PermissionGuildCommandInit } from "commands/types/InitOptions.js";
-import { CommandManager } from "structures/CommandManager";
+import { PermissionGuildCommandInit } from "../types/InitOptions.js";
+import { CommandManager } from "../../structures/CommandManager";
 import { GuildCommand } from "./GuildCommand.js";
 import { PermissionCommand } from "./PermissionCommand.js";
+import { APICommandType } from "../../structures/types/api.js";
 
 export class PermissionGuildCommand extends PermissionCommand implements GuildCommand {
     /**
@@ -16,11 +17,10 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
      */
     public readonly dm: boolean;
 
-    constructor(manager: CommandManager, options: PermissionGuildCommandInit) {
-        super(manager, {
+    constructor(manager: CommandManager, type: APICommandType, options: PermissionGuildCommandInit) {
+        super(manager, type, {
             name: options.name,
             announceSuccess: options.announceSuccess,
-            type: options.type,
             default_permission: options.default_permission,
             permissions: options.permissions,
             function: options.function,

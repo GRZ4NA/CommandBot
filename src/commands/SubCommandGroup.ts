@@ -10,9 +10,8 @@ export class SubCommandGroup extends APICommand {
     public readonly description: string;
 
     constructor(parent: NestedCommand, options: SubCommandGroupInit) {
-        super(parent.manager, {
+        super(parent.manager, "CHAT_INPUT", {
             name: options.name,
-            type: "CHAT_INPUT",
             default_permission: options.default_permission,
         });
         if (!CommandRegExps.chatName.test(options.name)) {

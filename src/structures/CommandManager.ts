@@ -7,7 +7,7 @@ import { ChatCommand } from "../commands/ChatCommand.js";
 import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
 import { Command, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
 import { CommandInteractionData } from "../commands/types/commands.js";
-import { APICommandObject, CommandPermission, RegisteredCommandObject } from "./types/api.js";
+import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
 import { Bot } from "./Bot.js";
 import { SubCommand } from "../commands/SubCommand.js";
 import { SubCommandGroup } from "../commands/SubCommandGroup.js";
@@ -17,6 +17,7 @@ import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
 import { APICommand } from "../commands/base/APICommand.js";
+import { processArguments } from "../utils/processArguments.js";
 
 export class CommandManager {
     private readonly _client: Bot;
@@ -89,11 +90,11 @@ export class CommandManager {
 
     /**
      *
-     * @param {CommandType} type - a type of command that will be created and added to this manager
+     * @param {APICommandType} type - a type of command that will be created and added to this manager
      * @param {CommandInit} options - an object containing all properties required to create this type of command
      * @returns {Command} A computed command object that inherits from {@link BaseCommand}
      */
-    public add<T extends CommandType | "NESTED">(type: T, options: CommandInit<T>): Command<T> {
+    public add<T extends CommandType>(type: T, options: CommandInit<T>): Command<T> {
         const command: Command<T> | null =
             type === "CHAT_INPUT"
                 ? (new ChatCommand(this, options as ChatCommandInit) as Command<T>)
@@ -152,11 +153,11 @@ export class CommandManager {
     /**
      *
      * @param {string} q - command name or alias
-     * @param {CommandType} t - type of command you want to get from this manager
+     * @param {APICommandType} t - type of command you want to get from this manager
      */
     public get<T extends CommandType>(q: string, t?: T): Command<T> | null {
         switch (t) {
-            case "CHAT":
+            case "CHAT_INPUT":
                 return (
                     (this.list(t).find((c) => {
                         if (c.name === q) {
@@ -177,7 +178,8 @@ export class CommandManager {
                         return false;
                     }
                 }) || null) as Command<T>;
-            case "CONTEXT":
+            case "USER":
+            case "MESSAGE":
                 return (this.list(t).find((c) => c.name === q) as Command<T>) || null;
             default:
                 return (this.list().find((c) => c.name === q) as Command<T>) || null;
@@ -224,11 +226,11 @@ export class CommandManager {
      * @param {string} guild - ID of guild that this command belongs to
      * @returns {string} Command ID from Discord API
      */
-    public async getIdApi(name: string, type: CommandType, guild?: Guild | string): Promise<string | null> {
+    public async getIdApi(name: string, type: APICommandType, guild?: Guild | string): Promise<string | null> {
         let map: Map<string, RegisteredCommandObject> = await this.listApi(guild);
         let result: string | null = null;
         map?.forEach((c) => {
-            const typeC: CommandType = c.type === 1 ? "CHAT_INPUT" : c.type === 2 ? "USER" : "MESSAGE";
+            const typeC: APICommandType = c.type === 1 ? "CHAT_INPUT" : c.type === 2 ? "USER" : "MESSAGE";
             if (c.name === name && typeC === type) {
                 result = c.id;
             }
@@ -237,20 +239,23 @@ export class CommandManager {
     }
 
     /**
-     * @param {CommandType} [f] - type of commands to return
+     * @param {APICommandType} [f] - type of commands to return
      * @returns {BaseCommand[]} An array of commands registered in this manager
      */
     public list(): readonly APICommand[];
     public list(f: "CHAT_INPUT"): readonly ChatCommand[];
     public list(f: "USER" | "MESSAGE"): readonly ContextMenuCommand[];
     public list(f: "NESTED"): readonly NestedCommand[];
-    public list(f?: CommandType | "NESTED"): readonly APICommand[] {
+    public list(f?: CommandType): readonly APICommand[] {
         switch (f) {
             case "CHAT_INPUT":
                 return Object.freeze([...this._commands.filter((c) => c.type === "CHAT_INPUT")]);
             case "USER":
+                return Object.freeze([...this._commands.filter((c) => c.type === "USER")]);
             case "MESSAGE":
-                return Object.freeze([...this._commands.filter((c) => c.type === "USER" || c.type === "MESSAGE")]);
+                return Object.freeze([...this._commands.filter((c) => c.type === "MESSAGE")]);
+            case "NESTED":
+                return Object.freeze([...this._commands.filter((c) => c.type === "CHAT_INPUT" && (c as NestedCommand).isNested)]);
             default:
                 return Object.freeze([...this._commands]);
         }
@@ -282,7 +287,10 @@ export class CommandManager {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT_INPUT");
                 if (cmd?.isChatCommand()) {
-                    const args = cmd.processArguments(i.options.data.map((d) => d.value || null));
+                    const args = processArguments(
+                        cmd,
+                        i.options.data.map((d) => d.value || null)
+                    );
                     return {
                         command: cmd,
                         parameters: args,
@@ -298,7 +306,7 @@ export class CommandManager {
                     throw new CommandNotFound(i.commandName);
                 }
             } else if (i.isContextMenu()) {
-                const cmd = this.get(i.commandName, "USER");
+                const cmd = this.get(i.commandName, "USER") ?? this.get(i.commandName, "MESSAGE");
                 if (cmd) {
                     const target = new TargetID(i.targetId, i.targetType);
                     return {
@@ -327,7 +335,7 @@ export class CommandManager {
                                 return a;
                             }
                         });
-                    const args = cmd.processArguments(argsRaw);
+                    const args = processArguments(cmd, argsRaw);
                     return {
                         command: cmd,
                         parameters: args,
@@ -346,7 +354,7 @@ export class CommandManager {
                                     return a;
                                 }
                             });
-                        const args = subCmd.processArguments(argsRaw);
+                        const args = processArguments(subCmd, argsRaw);
                         return {
                             command: subCmd,
                             parameters: args,

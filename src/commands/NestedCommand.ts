@@ -1,4 +1,5 @@
 import { CommandInteractionOption, Message, MessageEmbed } from "discord.js";
+import { processArguments } from "../utils/processArguments.js";
 import { CommandManager } from "../structures/CommandManager.js";
 import { GuildCommand } from "./base/GuildCommand.js";
 import { SubCommand } from "./SubCommand.js";
@@ -9,11 +10,11 @@ import { NestedCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/
 export class NestedCommand extends GuildCommand {
     private readonly _children: (SubCommand | SubCommandGroup)[] = [];
     public readonly description: string;
+    public readonly isNested: boolean = true;
 
     constructor(manager: CommandManager, options: NestedCommandInit) {
-        super(manager, {
+        super(manager, "CHAT_INPUT", {
             name: options.name,
-            type: "CHAT_INPUT",
             guilds: options.guilds,
             announceSuccess: false,
             dm: options.dm,
@@ -84,7 +85,11 @@ export class NestedCommand extends GuildCommand {
                     if (cmd && scOpt[0].options) {
                         return {
                             command: cmd,
-                            parameters: cmd.processArguments(scOpt[0].options.map((o) => o.value || null)) || new Map(),
+                            parameters:
+                                processArguments(
+                                    cmd,
+                                    scOpt[0].options.map((o) => o.value || null)
+                                ) || new Map(),
                         };
                     } else {
                         return null;
@@ -97,7 +102,12 @@ export class NestedCommand extends GuildCommand {
                 if (cmd) {
                     return {
                         command: cmd,
-                        parameters: options[0].options ? cmd.processArguments(options[0].options.map((o) => o.value || null)) : new Map(),
+                        parameters: options[0].options
+                            ? processArguments(
+                                  cmd,
+                                  options[0].options.map((o) => o.value || null)
+                              )
+                            : new Map(),
                     };
                 } else {
                     return null;

@@ -1,4 +1,5 @@
-import { CommandRegExps, CommandType } from "../types/commands.js";
+import { CommandRegExps } from "../types/commands.js";
+import { APICommandType } from "../../structures/types/api.js";
 import { CommandManager } from "../../structures/CommandManager";
 import { APICommandObject } from "../../structures/types/api";
 import { APICommandInit } from "../types/InitOptions.js";
@@ -16,13 +17,13 @@ import { NestedCommand } from "../NestedCommand.js";
 export class APICommand {
     protected readonly _manager: CommandManager;
     public readonly name: string;
-    public readonly type: CommandType;
+    public readonly type: APICommandType;
     public readonly default_permission: boolean;
 
-    constructor(manager: CommandManager, options: APICommandInit) {
+    constructor(manager: CommandManager, type: APICommandType, options: APICommandInit) {
         this._manager = manager;
         this.name = options.name;
-        this.type = options.type;
+        this.type = type;
         this.default_permission = options.default_permission ?? true;
 
         if (!CommandRegExps.baseName.test(this.name)) {

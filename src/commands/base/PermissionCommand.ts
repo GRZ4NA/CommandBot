@@ -6,6 +6,7 @@ import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { PermissionCommandInit } from "../types/InitOptions.js";
+import { APICommandType } from "../../structures/types/api.js";
 
 export class PermissionCommand extends FunctionCommand {
     /**
@@ -14,10 +15,9 @@ export class PermissionCommand extends FunctionCommand {
      */
     public readonly permissions: CommandPermissions;
 
-    constructor(manager: CommandManager, options: PermissionCommandInit) {
-        super(manager, {
+    constructor(manager: CommandManager, type: APICommandType, options: PermissionCommandInit) {
+        super(manager, type, {
             name: options.name,
-            type: options.type,
             announceSuccess: options.announceSuccess,
             default_permission: options.default_permission,
             function: options.function,

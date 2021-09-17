@@ -10,16 +10,17 @@ import { APICommand } from "../base/APICommand.js";
 import { FunctionCommand } from "../base/FunctionCommand.js";
 import { PermissionCommand } from "../base/PermissionCommand.js";
 import { APICommandInit, ChatCommandInit, ContextMenuCommandInit, NestedCommandInit, SubCommandGroupInit, SubCommandInit } from "./InitOptions.js";
+import { APICommandType } from "../../structures/types/api.js";
 
 export type CommandResolvable = APICommand | FunctionCommand | PermissionCommand | ChatCommand | ContextMenuCommand | NestedCommand;
 
 export type SubCommandResolvable = SubCommandGroup | SubCommand;
 
-export type CommandType = "CHAT_INPUT" | "USER" | "MESSAGE";
+export type CommandType = APICommandType | "NESTED";
 
 export type ChildCommandType = "COMMAND" | "GROUP";
 
-export type Command<T extends CommandType | "NESTED"> = T extends "CHAT_INPUT"
+export type Command<T extends CommandType> = T extends "CHAT_INPUT"
     ? ChatCommand
     : T extends "NESTED"
     ? NestedCommand
@@ -31,7 +32,7 @@ export type Command<T extends CommandType | "NESTED"> = T extends "CHAT_INPUT"
 
 export type ChildCommand<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
 
-export type CommandInit<T extends CommandType | "NESTED"> = T extends "CHAT_INPUT"
+export type CommandInit<T extends CommandType> = T extends "CHAT_INPUT"
     ? ChatCommandInit
     : T extends "NESTED"
     ? NestedCommandInit

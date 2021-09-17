@@ -1,11 +1,9 @@
 import { ParameterSchema } from "../../structures/types/Parameter.js";
 import { CommandPermissionsInit } from "./permissions.js";
 import { CommandFunction } from "./commands.js";
-import { CommandType } from "./commands.js";
 
 export interface APICommandInit {
     name: string;
-    type: CommandType;
     default_permission?: boolean;
 }
 
@@ -33,7 +31,6 @@ export interface PermissionGuildCommandInit extends PermissionCommandInit {
  * Options for building a {@link Command} object
  */
 export interface ChatCommandInit extends PermissionGuildCommandInit {
-    type: "CHAT_INPUT";
     parameters?: ParameterSchema[] | "simple" | "no_input";
     aliases?: string[] | string;
     description?: string;
@@ -47,18 +44,15 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
 }
 
 export interface NestedCommandInit extends GuildCommandInit {
-    type: "CHAT_INPUT";
     description?: string;
 }
 
 export interface SubCommandInit extends PermissionCommandInit {
-    type: "CHAT_INPUT";
     description?: string;
     parameters?: ParameterSchema[] | "simple" | "no_input";
     usage?: string;
 }
 
 export interface SubCommandGroupInit extends APICommandInit {
-    type: "CHAT_INPUT";
     description?: string;
 }

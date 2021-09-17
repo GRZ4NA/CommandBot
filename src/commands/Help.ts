@@ -7,7 +7,6 @@ export class HelpMessage extends ChatCommand {
     constructor(cmdManager: CommandManager, params: HelpMessageParams, botName?: string) {
         super(cmdManager, {
             name: "help",
-            type: "CHAT_INPUT",
             usage: params.usage,
             permissions: undefined,
             description: params.description,
@@ -42,14 +41,14 @@ export class HelpMessage extends ChatCommand {
                                 (cmd.permissions.permissions as Permissions).toArray(false).map((p) => {
                                     permList += p + "\n";
                                 });
-                                helpMsg.addField("Permissions:", permList, false);
+                                permList && helpMsg.addField("Permissions:", permList, false);
                             }
                             if (cmd.aliases && cmd.aliases.length > 0) {
                                 let aList: string = "";
                                 cmd.aliases.map((a) => {
                                     aList += a + "\n";
                                 });
-                                helpMsg.addField("Aliases:", aList, false);
+                                aList && helpMsg.addField("Aliases:", aList, false);
                             }
                             helpMsg.addField("Slash command:", cmd.slash ? "ENABLED" : "DISABLED", false);
                             helpMsg.addField("Command scope:", Array.isArray(cmd.guilds) && cmd.guilds.length > 0 ? "CUSTOM" : "GLOBAL", false);
