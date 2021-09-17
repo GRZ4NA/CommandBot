@@ -26,9 +26,10 @@ export class CommandPermissions {
     }
 
     public check(i: Interaction | Message): boolean {
-        if (!this._command.isPermissionGuildCommand()) return false;
-        if (Array.isArray(this._command.guilds) && this._command.guilds.length > 0 && !this._command.guilds.find((id) => id === i.guild?.id)) return false;
-        if (this._command.dm === true && !i.guild) return false;
+        if (this._command.isGuildCommand()) {
+            if (Array.isArray(this._command.guilds) && this._command.guilds.length > 0 && !this._command.guilds.find((id) => id === i.guild?.id)) return false;
+            if (this._command.dm === true && !i.guild) return false;
+        }
         if (this.permissions instanceof Function) {
             return this.permissions(i);
         } else {
