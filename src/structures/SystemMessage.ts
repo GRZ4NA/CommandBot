@@ -125,7 +125,7 @@ export class SystemMessageManager {
                                     (data.command.permissions.permissions as Permissions).toArray(false).map((p) => {
                                         permList += `${p}\n`;
                                     });
-                                    embed.addField("Required permissions:", permList, false);
+                                    permList && embed.addField("Required permissions:", permList, false);
                                 }
                             }
                         }
