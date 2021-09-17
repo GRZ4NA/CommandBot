@@ -1,7 +1,7 @@
 export interface BaseCommandObject {
     name: string;
     type: number;
-    default_permissions: true;
+    default_permissions: boolean;
 }
 
 export interface ChatCommandObject extends BaseCommandObject {
@@ -49,4 +49,12 @@ export interface RegisteredCommandObject {
     options?: ChatCommandOptionObject[];
     default_permissions?: boolean;
     version: string;
+}
+
+export type CommandPermissionType = "ROLE" | "USER";
+
+export interface CommandPermission {
+    id: string;
+    type: CommandPermissionType;
+    permission: boolean;
 }
