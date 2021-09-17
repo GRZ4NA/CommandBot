@@ -164,6 +164,7 @@ export class Bot extends EventEmitter {
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {
+                        this.emit("ERROR", e);
                         await this.messages.system.send(
                             "PERMISSION",
                             {
@@ -172,12 +173,12 @@ export class Bot extends EventEmitter {
                             },
                             m
                         );
-                        this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.system.send("SUCCESS", undefined, m);
                     } else if (e instanceof CommandNotFound) {
                         await this.messages.system.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
                     } else {
+                        this.emit("ERROR", e);
                         await this.messages.system.send(
                             "ERROR",
                             {
@@ -187,7 +188,6 @@ export class Bot extends EventEmitter {
                             },
                             m
                         );
-                        this.emit("ERROR", e);
                     }
                     return;
                 }
