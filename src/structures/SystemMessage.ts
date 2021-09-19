@@ -135,21 +135,29 @@ export class SystemMessageManager {
                 }
             }
             if (interaction && !(interaction instanceof Interaction)) {
-                const message = await interaction.reply({ embeds: [embed] }).catch();
-                if (message.deletable) {
+                const message = await interaction.reply({ embeds: [embed] }).catch(async () => {
+                    await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
+                });
+                if (message && message.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
                         setTimeout(async () => {
-                            await message.delete().catch();
+                            await message.delete().catch((e) => console.error(e));
                         }, this[type].deleteTimeout);
                     } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
                         setTimeout(async () => {
-                            await message.delete().catch();
+                            await message.delete().catch((e) => console.error(e));
                         }, this.deleteTimeout);
                     }
                 }
                 return message;
             } else if (interaction && interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
-                interaction.replied || interaction.deferred ? await interaction.editReply({ embeds: [embed] }) : await interaction.reply({ embeds: [embed] }).catch();
+                interaction.replied || interaction.deferred
+                    ? await interaction.editReply({ embeds: [embed] }).catch(async () => {
+                          await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
+                      })
+                    : await interaction.reply({ embeds: [embed] }).catch(async () => {
+                          await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
+                      });
                 if (Number.isFinite(this[type].deleteTimeout)) {
                     setTimeout(async () => {
                         await interaction.deleteReply().catch();
