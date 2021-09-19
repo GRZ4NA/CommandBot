@@ -1,7 +1,10 @@
+import { Interaction, Message } from "discord.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { GuildCommandInit } from "../types/InitOptions.js";
 import { APICommandType } from "../../structures/types/api.js";
+import { TargetID } from "../../structures/parameter.js";
+import { ParameterResolvable } from "../../structures/types/Parameter.js";
 
 export class GuildCommand extends FunctionCommand {
     /**
@@ -25,5 +28,11 @@ export class GuildCommand extends FunctionCommand {
         });
         this.guilds = options.guilds;
         this.dm = options.dm ?? true;
+    }
+
+    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
+        if (!interaction.guild && !this.dm) throw new Error(`Command "${this.name}" is only available inside a guild.`);
+        if (this.guilds && this.guilds.length > 0 && !this.guilds.find((id) => id === interaction.guild?.id)) throw new Error(`Command "${this.name}" is not available.`);
+        await super.start(args, interaction, target);
     }
 }
