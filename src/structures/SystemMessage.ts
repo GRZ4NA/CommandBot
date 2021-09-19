@@ -117,7 +117,7 @@ export class SystemMessageManager {
                         }
                         if (data.command) {
                             embed.addField("Command name:", data.command.name, false);
-                            if (data.command.isPermissionCommand()) {
+                            if (data.command.isBaseCommandType("PERMISSION")) {
                                 if (data.command.permissions.isCustom) {
                                     embed.addField("Required permissions:", "CUSTOM", false);
                                 } else {

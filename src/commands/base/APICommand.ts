@@ -1,18 +1,14 @@
-import { CommandRegExps } from "../types/commands.js";
+import { BaseCommand, BaseCommandType, ChildCommand, ChildCommandType, Command, CommandRegExps, CommandType } from "../types/commands.js";
 import { APICommandType } from "../../structures/types/api.js";
-import { CommandManager } from "../../structures/CommandManager";
-import { APICommandObject } from "../../structures/types/api";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { APICommandObject } from "../../structures/types/api.js";
 import { APICommandInit } from "../types/InitOptions.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { GuildCommand } from "./GuildCommand.js";
 import { PermissionCommand } from "./PermissionCommand.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
-import { PermissionGuildCommand } from "./PermissionGuildCommand.js";
 import { ChatCommand } from "../ChatCommand.js";
-import { ContextMenuCommand } from "../ContextMenuCommand.js";
 import { SubCommand } from "../SubCommand.js";
-import { SubCommandGroup } from "../SubCommandGroup.js";
-import { NestedCommand } from "../NestedCommand.js";
 
 export class APICommand {
     protected readonly _manager: CommandManager;
@@ -47,71 +43,86 @@ export class APICommand {
         };
     }
 
-    public isFunctionCommand(): this is FunctionCommand {
-        return (
-            "announceSuccess" in this && "start" in this && typeof (this as FunctionCommand).announceSuccess === "boolean" && (this as FunctionCommand).start instanceof Function
-        );
+    public isBaseCommandType<T extends BaseCommandType>(type: T): this is BaseCommand<T> {
+        switch (type) {
+            case "API":
+                return (
+                    "name" in this &&
+                    "type" in this &&
+                    "default_permission" in this &&
+                    typeof (this as APICommand).name === "string" &&
+                    ((this as APICommand).type === "CHAT_INPUT" || (this as APICommand).type === "MESSAGE" || (this as APICommand).type === "USER")
+                );
+            case "FUNCTION":
+                return (
+                    "announceSuccess" in this &&
+                    "start" in this &&
+                    typeof (this as FunctionCommand).announceSuccess === "boolean" &&
+                    (this as FunctionCommand).start instanceof Function
+                );
+            case "GUILD":
+                return this.isBaseCommandType("FUNCTION") && "dm" in this && typeof (this as GuildCommand).dm === "boolean";
+            case "PERMISSION":
+                return this.isBaseCommandType("FUNCTION") && "permissions" in this && (this as PermissionCommand).permissions instanceof CommandPermissions;
+            case "PERMISSIONGUILD":
+                return (
+                    this.isBaseCommandType("FUNCTION") &&
+                    "dm" in this &&
+                    typeof (this as GuildCommand).dm === "boolean" &&
+                    "permissions" in this &&
+                    (this as PermissionCommand).permissions instanceof CommandPermissions
+                );
+            default:
+                return false;
+        }
     }
 
-    public isGuildCommand(): this is GuildCommand {
-        return this.isFunctionCommand() && "dm" in this && typeof (this as GuildCommand).dm === "boolean";
+    public isCommandType<T extends CommandType>(type: T): this is Command<T> {
+        switch (type) {
+            case "CHAT_INPUT":
+                return (
+                    this.type === "CHAT_INPUT" &&
+                    "parameters" in this &&
+                    Array.isArray((this as ChatCommand).parameters) &&
+                    "description" in this &&
+                    typeof (this as ChatCommand).description === "string" &&
+                    "visible" in this &&
+                    typeof (this as ChatCommand).visible === "boolean" &&
+                    "slash" in this &&
+                    typeof (this as ChatCommand).slash === "boolean"
+                );
+            case "MESSAGE":
+            case "USER":
+                return (this.type === "MESSAGE" || this.type === "USER") && this.isBaseCommandType("PERMISSIONGUILD");
+            case "NESTED":
+                return (
+                    this.type === "CHAT_INPUT" &&
+                    "description" in this &&
+                    !("parameters" in this) &&
+                    !("visible" in this) &&
+                    !("slash" in this) &&
+                    "getSubcommand" in this &&
+                    "fetchSubcommand" in this
+                );
+            default:
+                return false;
+        }
     }
 
-    public isPermissionCommand(): this is PermissionCommand {
-        return this.isFunctionCommand() && "permissions" in this && (this as PermissionCommand).permissions instanceof CommandPermissions;
-    }
-
-    public isPermissionGuildCommand(): this is PermissionGuildCommand {
-        return (
-            this.isFunctionCommand() &&
-            "dm" in this &&
-            typeof (this as GuildCommand).dm === "boolean" &&
-            "permissions" in this &&
-            (this as PermissionCommand).permissions instanceof CommandPermissions
-        );
-    }
-
-    public isChatCommand(): this is ChatCommand {
-        return (
-            this.type === "CHAT_INPUT" &&
-            "parameters" in this &&
-            Array.isArray((this as ChatCommand).parameters) &&
-            "description" in this &&
-            typeof (this as ChatCommand).description === "string" &&
-            "visible" in this &&
-            typeof (this as ChatCommand).visible === "boolean" &&
-            "slash" in this &&
-            typeof (this as ChatCommand).slash === "boolean"
-        );
-    }
-
-    public isContextMenuCommand(): this is ContextMenuCommand {
-        return (this.type === "MESSAGE" || this.type === "USER") && this.isPermissionGuildCommand();
-    }
-
-    public isNestedCommand(): this is NestedCommand {
-        return (
-            this.type === "CHAT_INPUT" &&
-            "description" in this &&
-            !("parameters" in this) &&
-            !("visible" in this) &&
-            !("slash" in this) &&
-            "getSubcommand" in this &&
-            "fetchSubcommand" in this
-        );
-    }
-
-    public isSubCommand(): this is SubCommand {
-        return (
-            this.type === "CHAT_INPUT" &&
-            "description" in this &&
-            typeof (this as SubCommand).description === "string" &&
-            "parameters" in this &&
-            Array.isArray((this as SubCommand).parameters)
-        );
-    }
-
-    public isSubCommandGroup(): this is SubCommandGroup {
-        return this.type === "CHAT_INPUT" && "description" in this && !("parameters" in this) && !("visible" in this) && !("slash" in this);
+    public isChildCommandType<T extends ChildCommandType>(type: T): this is ChildCommand<T> {
+        switch (type) {
+            case "COMMAND":
+                return (
+                    this.type === "CHAT_INPUT" &&
+                    "description" in this &&
+                    typeof (this as SubCommand).description === "string" &&
+                    "parameters" in this &&
+                    Array.isArray((this as SubCommand).parameters)
+                );
+            case "GROUP":
+                return this.type === "CHAT_INPUT" && "description" in this && !("parameters" in this) && !("visible" in this) && !("slash" in this);
+            default:
+                return false;
+        }
     }
 }

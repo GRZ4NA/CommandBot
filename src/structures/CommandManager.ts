@@ -115,7 +115,7 @@ export class CommandManager {
                 "Registering subcommands and subcommand groups through the 'add' method is not allowed. Use NestedCommand.append or SubCommandGroup.append to register."
             );
         }
-        if (command.isChatCommand()) {
+        if (command.isCommandType("CHAT_INPUT")) {
             if (this.list("CHAT_INPUT").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ChatCommand in this manager.`);
                 return command;
@@ -133,14 +133,14 @@ export class CommandManager {
                 });
             this._commands.push(command);
             return command;
-        } else if (command.isContextMenuCommand()) {
+        } else if (command.isCommandType("USER")) {
             if (this.list("USER").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
                 return command;
             }
             this._commands.push(command);
             return command;
-        } else if (command.isNestedCommand()) {
+        } else if (command.isCommandType("NESTED")) {
             if (this.list("CHAT_INPUT").find((c) => c.name === command.name)) {
                 console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
                 return command;
@@ -286,7 +286,7 @@ export class CommandManager {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT_INPUT");
-                if (cmd?.isChatCommand()) {
+                if (cmd?.isCommandType("CHAT_INPUT")) {
                     const args = processArguments(
                         cmd,
                         i.options.data.map((d) => d.value || null)
@@ -295,7 +295,7 @@ export class CommandManager {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd?.isNestedCommand()) {
+                } else if (cmd?.isCommandType("NESTED")) {
                     const subCmd = cmd.fetchSubcommand([...i.options.data]);
                     if (subCmd) {
                         return subCmd;
@@ -324,7 +324,7 @@ export class CommandManager {
             if (i.content.startsWith(prefix)) {
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT_INPUT");
-                if (cmd?.isChatCommand()) {
+                if (cmd?.isCommandType("CHAT_INPUT")) {
                     const argsRaw = i.content
                         .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -340,7 +340,7 @@ export class CommandManager {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd?.isNestedCommand()) {
+                } else if (cmd?.isCommandType("NESTED")) {
                     const nesting = i.content.split(" ")[0].replace(`${prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
                     const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
                     if (subCmd) {
@@ -381,8 +381,8 @@ export class CommandManager {
         return;
         const globalCommands = this._commands
             .filter((c) => {
-                if (c.isGuildCommand() && (!Array.isArray(c.guilds) || c.guilds.length === 0)) {
-                    if (c.isChatCommand() && c.slash === false) {
+                if (c.isBaseCommandType("GUILD") && (!Array.isArray(c.guilds) || c.guilds.length === 0)) {
+                    if (c.isCommandType("CHAT_INPUT") && c.slash === false) {
                         return false;
                     } else {
                         return true;
@@ -392,9 +392,9 @@ export class CommandManager {
             .map((c) => c.toObject());
         const guildCommands: Map<string, APICommandObject[]> = new Map();
         this._commands
-            .filter((c) => c.isGuildCommand() && Array.isArray(c.guilds) && c.guilds.length > 0)
+            .filter((c) => c.isBaseCommandType("GUILD") && Array.isArray(c.guilds) && c.guilds.length > 0)
             .map((c) => {
-                c.isGuildCommand() &&
+                c.isBaseCommandType("GUILD") &&
                     c.guilds?.map((gId) => {
                         if (!this._client.client.guilds.cache.get(gId)) {
                             throw new Error(`"${gId}" is not a valid ID for this client.`);
