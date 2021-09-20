@@ -17,6 +17,7 @@ export class FunctionCommand extends APICommand {
             name: options.name,
             default_permission: options.default_permission,
         });
+
         this._function = options.function;
         this.announceSuccess = options.announceSuccess ?? true;
     }

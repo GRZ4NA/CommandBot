@@ -28,6 +28,7 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
             permissions: options.permissions,
             function: options.function,
         });
+
         this.guilds = options.guilds;
         this.dm = options.dm ?? true;
     }

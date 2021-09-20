@@ -14,14 +14,16 @@ export class SubCommandGroup extends APICommand {
             name: options.name,
             default_permission: options.default_permission,
         });
-        if (!CommandRegExps.chatName.test(options.name)) {
-            throw new Error(`"${options.name}" is not a valid group name (regexp: ${CommandRegExps.chatName})`);
-        }
-        if (options.description && !CommandRegExps.chatDescription.test(options.description)) {
-            throw new Error(`The description of "${options.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
-        }
+
         this._parent = parent;
         this.description = options.description || "No description";
+
+        if (!CommandRegExps.chatName.test(this.name)) {
+            throw new Error(`"${this.name}" is not a valid group name (regexp: ${CommandRegExps.chatName})`);
+        }
+        if (this.description && !CommandRegExps.chatDescription.test(this.description)) {
+            throw new Error(`The description of "${this.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        }
     }
 
     get children() {

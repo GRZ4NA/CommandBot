@@ -25,18 +25,13 @@ export class SubCommand extends PermissionCommand {
     public readonly usage?: string;
 
     constructor(parent: SubCommandGroup | NestedCommand, options: SubCommandInit) {
-        if (!CommandRegExps.chatName.test(options.name)) {
-            throw new Error(`"${options.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
-        }
-        if (options.description && !CommandRegExps.chatDescription.test(options.description)) {
-            throw new Error(`The description of "${options.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
-        }
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT_INPUT", {
             name: options.name,
             announceSuccess: options.announceSuccess,
             permissions: options.permissions,
             function: options.function,
         });
+
         this._parent = parent;
         this.description = options.description || "No description";
         if (options.parameters == "no_input" || !options.parameters) {
@@ -47,5 +42,12 @@ export class SubCommand extends PermissionCommand {
             this.parameters = options.parameters.map((ps) => new Parameter(ps));
         }
         this.usage = options.usage || generateUsageFromArguments(this);
+
+        if (!CommandRegExps.chatName.test(this.name)) {
+            throw new Error(`"${this.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
+        }
+        if (this.description && !CommandRegExps.chatDescription.test(this.description)) {
+            throw new Error(`The description of "${this.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        }
     }
 }

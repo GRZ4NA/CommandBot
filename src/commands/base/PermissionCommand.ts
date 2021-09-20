@@ -22,6 +22,7 @@ export class PermissionCommand extends FunctionCommand {
             default_permission: options.default_permission,
             function: options.function,
         });
+
         this.permissions = new CommandPermissions(this, options.permissions);
     }
 

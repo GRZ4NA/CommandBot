@@ -25,6 +25,9 @@ export class APICommand {
         if (!CommandRegExps.baseName.test(this.name)) {
             throw new Error(`"${this.name}" is not a valid command name`);
         }
+        if (this.manager.get(this.name)) {
+            throw new Error(`A command with name "${this.name}" is already registered in the manager.`);
+        }
     }
 
     /**

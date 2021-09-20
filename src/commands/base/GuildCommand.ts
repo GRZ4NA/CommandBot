@@ -26,6 +26,7 @@ export class GuildCommand extends FunctionCommand {
             function: options.function,
             default_permission: options.default_permission,
         });
+
         this.guilds = options.guilds;
         this.dm = options.dm ?? true;
     }

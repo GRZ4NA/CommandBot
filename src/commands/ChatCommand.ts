@@ -55,25 +55,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
     constructor(manager: CommandManager, options: ChatCommandInit) {
-        if (!CommandRegExps.chatName.test(options.name)) {
-            throw new Error(`"${options.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
-        }
-        if (options.description && !CommandRegExps.chatDescription.test(options.description)) {
-            throw new Error(`The description of "${options.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
-        }
-        if (options.aliases) {
-            if (Array.isArray(options.aliases)) {
-                options.aliases.map((a) => {
-                    if (!CommandRegExps.chatName.test(a)) {
-                        throw new Error(`"${a}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
-                    }
-                });
-            } else {
-                if (!CommandRegExps.chatName.test(options.aliases)) {
-                    throw new Error(`"${options.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
-                }
-            }
-        }
         super(manager, "CHAT_INPUT", {
             name: options.name,
             function: options.function,
@@ -82,6 +63,7 @@ export class ChatCommand extends PermissionGuildCommand {
             permissions: options.permissions,
             dm: options.dm,
         });
+
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
         } else if (options.parameters == "simple") {
@@ -94,6 +76,29 @@ export class ChatCommand extends PermissionGuildCommand {
         this.usage = options.usage || generateUsageFromArguments(this);
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
+
+        if (!CommandRegExps.chatName.test(this.name)) {
+            throw new Error(`"${this.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
+        }
+        if (this.description && !CommandRegExps.chatDescription.test(this.description)) {
+            throw new Error(`The description of "${this.name}" doesn't match the regular expression ${CommandRegExps.chatDescription}`);
+        }
+        if (this.aliases) {
+            if (Array.isArray(this.aliases)) {
+                this.aliases.map((a) => {
+                    if (!CommandRegExps.chatName.test(a)) {
+                        throw new Error(`"${a}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
+                    }
+                });
+            } else {
+                if (!CommandRegExps.chatName.test(this.aliases)) {
+                    throw new Error(`"${this.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
+                }
+            }
+        }
+        if (this.aliases && this.aliases.length > 0 && this.aliases.find((a) => this.manager.get(a, this.type))) {
+            throw new Error(`One of aliases from "${this.name}" command is already a registered name in the manager and cannot be reused.`);
+        }
     }
 
     /**
