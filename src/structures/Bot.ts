@@ -153,6 +153,7 @@ export class Bot extends EventEmitter {
                 this.emit("READY");
             });
             this.client.on("messageCreate", async (m) => {
+                if (m.author.bot) return;
                 let cmdMsg: CommandInteractionData | null = null;
                 try {
                     cmdMsg = this.commands.fetch(m);
