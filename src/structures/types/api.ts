@@ -34,9 +34,8 @@ export interface NestedCommandObject extends APICommandObject {
     options: (ChatCommandObject | SubCommandGroupObject)[];
 }
 
-export interface SubCommandGroupObject {
+export interface SubCommandGroupObject extends APICommandObject {
     type: 2;
-    name: string;
     description: string;
     options: ChatCommandObject[];
 }
