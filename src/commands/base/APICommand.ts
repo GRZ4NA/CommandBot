@@ -11,13 +11,13 @@ import { ChatCommand } from "../ChatCommand.js";
 import { SubCommand } from "../SubCommand.js";
 
 export class APICommand {
-    protected readonly _manager: CommandManager;
+    public readonly manager: CommandManager;
     public readonly name: string;
     public readonly type: APICommandType;
     public readonly default_permission: boolean;
 
     constructor(manager: CommandManager, type: APICommandType, options: APICommandInit) {
-        this._manager = manager;
+        this.manager = manager;
         this.name = options.name;
         this.type = type;
         this.default_permission = options.default_permission ?? true;
@@ -25,10 +25,6 @@ export class APICommand {
         if (!CommandRegExps.baseName.test(this.name)) {
             throw new Error(`"${this.name}" is not a valid command name`);
         }
-    }
-
-    get manager(): CommandManager {
-        return this._manager;
     }
 
     /**

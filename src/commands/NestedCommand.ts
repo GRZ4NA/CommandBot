@@ -25,15 +25,15 @@ export class NestedCommand extends GuildCommand {
                         if (c instanceof SubCommandGroup) {
                             c.children.map((ch) => {
                                 msg.addField(
-                                    `${this._manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this._manager.commandSeparator}${c.name}${
-                                        this._manager.commandSeparator
-                                    }${ch.name}`,
+                                    `${this.manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this.manager.commandSeparator}${c.name}${this.manager.commandSeparator}${
+                                        ch.name
+                                    }`,
                                     ch.description,
                                     false
                                 );
                             });
                         } else {
-                            msg.addField(`${this._manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this._manager.commandSeparator}${c.name}`, c.description, false);
+                            msg.addField(`${this.manager.prefix.get(i.guild || undefined) || "/"}${this.name}${this.manager.commandSeparator}${c.name}`, c.description, false);
                         }
                     });
                     return msg;
