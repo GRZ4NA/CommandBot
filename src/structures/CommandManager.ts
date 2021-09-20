@@ -115,38 +115,7 @@ export class CommandManager {
                 "Registering subcommands and subcommand groups through the 'add' method is not allowed. Use NestedCommand.append or SubCommandGroup.append to register."
             );
         }
-        if (command.isCommandType("CHAT_INPUT")) {
-            if (this.list("CHAT_INPUT").find((c) => c.name === command.name)) {
-                console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ChatCommand in this manager.`);
-                return command;
-            }
-            command.aliases &&
-                command.aliases.length > 0 &&
-                command.aliases.map((a, i, ar) => {
-                    const r = this.get(a, "CHAT_INPUT");
-                    if (r) {
-                        console.warn(
-                            `[⚠️ WARNING] Cannot register alias "${a}" because its name is already being used in other command. Command "${command.name}" will be registered without this alias.`
-                        );
-                        ar.splice(i, 1);
-                    }
-                });
-            this._commands.push(command);
-            return command;
-        } else if (command.isCommandType("USER")) {
-            if (this.list("USER").find((c) => c.name === command.name)) {
-                console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
-                return command;
-            }
-            this._commands.push(command);
-            return command;
-        } else if (command.isCommandType("NESTED")) {
-            if (this.list("CHAT_INPUT").find((c) => c.name === command.name)) {
-                console.error(`[❌ ERROR] Cannot add command "${command.name}" because this name has already been registered as a ContextMenuCommand in this manager.`);
-                return command;
-            }
-            this._commands.push(command);
-        }
+        this._commands.push(command);
         return command;
     }
 
@@ -322,6 +291,7 @@ export class CommandManager {
             }
         } else if (prefix && i instanceof Message) {
             if (i.content.startsWith(prefix)) {
+                if (i.content === prefix) return null;
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT_INPUT");
                 if (cmd?.isCommandType("CHAT_INPUT")) {
@@ -377,8 +347,6 @@ export class CommandManager {
     }
 
     public async register(): Promise<void> {
-        console.warn("[⚠️ WARNING] Command registering is not functional in this build because of the huge structure rework. It will be available again soon.");
-        return;
         const globalCommands = this._commands
             .filter((c) => {
                 if (c.isBaseCommandType("GUILD") && (!Array.isArray(c.guilds) || c.guilds.length === 0)) {
@@ -407,7 +375,6 @@ export class CommandManager {
                         }
                     });
             });
-
         await axios.put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, globalCommands, {
             headers: { Authorization: `Bot ${this._client.token}` },
         });
