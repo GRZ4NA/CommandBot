@@ -1,3 +1,4 @@
+import { SubCommandGroupObject } from "../structures/types/api.js";
 import { APICommand } from "./base/APICommand.js";
 import { NestedCommand } from "./NestedCommand.js";
 import { SubCommand } from "./SubCommand.js";
@@ -42,5 +43,14 @@ export class SubCommandGroup extends APICommand {
             this._children.push(sc);
             return sc;
         }
+    }
+
+    public toObject(): SubCommandGroupObject {
+        return {
+            ...super.toObject(),
+            type: 2 as 2,
+            description: this.description,
+            options: this._children.map((ch) => ch.toObject()),
+        };
     }
 }

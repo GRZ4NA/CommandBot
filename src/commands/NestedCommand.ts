@@ -6,6 +6,7 @@ import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { ChildCommand, ChildCommandInit, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
 import { NestedCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
+import { NestedCommandObject } from "../structures/types/api.js";
 
 export class NestedCommand extends GuildCommand {
     private readonly _children: (SubCommand | SubCommandGroup)[] = [];
@@ -133,5 +134,14 @@ export class NestedCommand extends GuildCommand {
         } else {
             return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
         }
+    }
+
+    public toObject(): NestedCommandObject {
+        return {
+            ...super.toObject(),
+            type: 1 as 1,
+            description: this.description,
+            options: this._children.map((ch) => ch.toObject()),
+        };
     }
 }
