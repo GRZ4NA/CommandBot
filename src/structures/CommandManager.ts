@@ -372,13 +372,27 @@ export class CommandManager {
                         }
                     });
             });
-        await axios.put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, globalCommands, {
-            headers: { Authorization: `Bot ${this._client.token}` },
-        });
-        await guildCommands.forEach(async (g, k) => {
-            await axios.put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${k}/commands`, g, {
+        await axios
+            .put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, globalCommands, {
                 headers: { Authorization: `Bot ${this._client.token}` },
-            });
+            })
+            .then((r) => {
+                if (r.status === 429) {
+                    console.error("[❌ ERROR] Failed to register application commands. You are being rate limited.");
+                }
+            })
+            .catch((e) => console.error(e));
+        await guildCommands.forEach(async (g, k) => {
+            await axios
+                .put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${k}/commands`, g, {
+                    headers: { Authorization: `Bot ${this._client.token}` },
+                })
+                .then((r) => {
+                    if (r.status === 429) {
+                        console.error(`[❌ ERROR] Failed to register application commands for guild ${k}. You are being rate limited.`);
+                    }
+                })
+                .catch((e) => console.error(e));
         });
     }
 
