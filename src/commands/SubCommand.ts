@@ -28,7 +28,7 @@ export class SubCommand extends PermissionCommand {
     public readonly usage?: string;
 
     constructor(parent: SubCommandGroup | NestedCommand, options: SubCommandInit) {
-        super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT_INPUT", {
+        super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
             name: options.name,
             announceSuccess: options.announceSuccess,
             permissions: options.permissions,

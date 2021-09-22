@@ -2,9 +2,9 @@ import { Interaction, Message } from "discord.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { GuildCommandInit } from "../types/InitOptions.js";
-import { APICommandType } from "../../structures/types/api.js";
 import { TargetID } from "../../structures/parameter.js";
 import { ParameterResolvable } from "../../structures/types/Parameter.js";
+import { CommandType } from "../types/commands.js";
 
 export class GuildCommand extends FunctionCommand {
     /**
@@ -19,7 +19,7 @@ export class GuildCommand extends FunctionCommand {
      */
     public readonly dm: boolean;
 
-    constructor(manager: CommandManager, type: APICommandType, options: GuildCommandInit) {
+    constructor(manager: CommandManager, type: CommandType, options: GuildCommandInit) {
         super(manager, type, {
             name: options.name,
             announceSuccess: options.announceSuccess,

@@ -2,7 +2,6 @@ export type APICommandType = "CHAT_INPUT" | "USER" | "MESSAGE";
 
 export interface APICommandObject {
     name: string;
-    type: number;
     default_permission: boolean;
 }
 
@@ -26,6 +25,10 @@ export type ChatCommandOptionType = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export interface TextCommandOptionChoiceObject {
     name: string;
     value: string;
+}
+
+export interface ContextMenuCommandObject extends APICommandObject {
+    type: 2 | 3;
 }
 
 export interface NestedCommandObject extends APICommandObject {

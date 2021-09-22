@@ -5,7 +5,7 @@ import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
 import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
-import { Command, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
+import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
 import { CommandInteractionData } from "../commands/types/commands.js";
 import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
 import { Bot } from "./Bot.js";
@@ -16,12 +16,12 @@ import { ChatCommandInit, NestedCommandInit, ContextMenuCommandInit } from "../c
 import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
-import { APICommand } from "../commands/base/APICommand.js";
+import { Command } from "../commands/base/Command.js";
 import { processArguments } from "../utils/processArguments.js";
 
 export class CommandManager {
     private readonly _client: Bot;
-    private readonly _commands: APICommand[] = [];
+    private readonly _commands: Command[] = [];
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
 
@@ -92,16 +92,16 @@ export class CommandManager {
      *
      * @param {APICommandType} type - a type of command that will be created and added to this manager
      * @param {CommandInit} options - an object containing all properties required to create this type of command
-     * @returns {Command} A computed command object that inherits from {@link BaseCommand}
+     * @returns {Commands} A computed command object that inherits from {@link BaseCommand}
      */
-    public add<T extends CommandType>(type: T, options: CommandInit<T>): Command<T> {
-        const command: Command<T> | null =
-            type === "CHAT_INPUT"
-                ? (new ChatCommand(this, options as ChatCommandInit) as Command<T>)
+    public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
+        const command: Commands<T> | null =
+            type === "CHAT"
+                ? (new ChatCommand(this, options as ChatCommandInit) as Commands<T>)
                 : type === "NESTED"
-                ? (new NestedCommand(this, options as NestedCommandInit) as Command<T>)
-                : type === "USER" || type === "MESSAGE"
-                ? (new ContextMenuCommand(this, options as ContextMenuCommandInit) as Command<T>)
+                ? (new NestedCommand(this, options as NestedCommandInit) as Commands<T>)
+                : type === "CONTEXT"
+                ? (new ContextMenuCommand(this, options as ContextMenuCommandInit) as Commands<T>)
                 : null;
         if (!command) {
             throw new TypeError("Incorrect command type");
@@ -124,9 +124,9 @@ export class CommandManager {
      * @param {string} q - command name or alias
      * @param {APICommandType} t - type of command you want to get from this manager
      */
-    public get<T extends CommandType>(q: string, t?: T): Command<T> | null {
+    public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
         switch (t) {
-            case "CHAT_INPUT":
+            case "CHAT":
                 return (
                     (this.list(t).find((c) => {
                         if (c.name === q) {
@@ -137,7 +137,7 @@ export class CommandManager {
                         } else {
                             return false;
                         }
-                    }) as Command<T>) || null
+                    }) as Commands<T>) || null
                 );
             case "NESTED":
                 return (this.list(t).find((c) => {
@@ -146,12 +146,11 @@ export class CommandManager {
                     } else {
                         return false;
                     }
-                }) || null) as Command<T>;
-            case "USER":
-            case "MESSAGE":
-                return (this.list(t).find((c) => c.name === q) as Command<T>) || null;
+                }) || null) as Commands<T>;
+            case "CONTEXT":
+                return (this.list(t).find((c) => c.name === q) as Commands<T>) || null;
             default:
-                return (this.list().find((c) => c.name === q) as Command<T>) || null;
+                return (this.list().find((c) => c.name === q) as Commands<T>) || null;
         }
     }
 
@@ -211,20 +210,18 @@ export class CommandManager {
      * @param {APICommandType} [f] - type of commands to return
      * @returns {BaseCommand[]} An array of commands registered in this manager
      */
-    public list(): readonly APICommand[];
-    public list(f: "CHAT_INPUT"): readonly ChatCommand[];
-    public list(f: "USER" | "MESSAGE"): readonly ContextMenuCommand[];
+    public list(): readonly Command[];
+    public list(f: "CHAT"): readonly ChatCommand[];
+    public list(f: "CONTEXT"): readonly ContextMenuCommand[];
     public list(f: "NESTED"): readonly NestedCommand[];
-    public list(f?: CommandType): readonly APICommand[] {
+    public list(f?: CommandType): readonly Command[] {
         switch (f) {
-            case "CHAT_INPUT":
-                return Object.freeze([...this._commands.filter((c) => c.type === "CHAT_INPUT")]);
-            case "USER":
-                return Object.freeze([...this._commands.filter((c) => c.type === "USER")]);
-            case "MESSAGE":
-                return Object.freeze([...this._commands.filter((c) => c.type === "MESSAGE")]);
+            case "CHAT":
+                return Object.freeze([...this._commands.filter((c) => c.type === "CHAT")]);
+            case "CONTEXT":
+                return Object.freeze([...this._commands.filter((c) => c.type === "CONTEXT")]);
             case "NESTED":
-                return Object.freeze([...this._commands.filter((c) => c.type === "CHAT_INPUT" && (c as NestedCommand).isNested)]);
+                return Object.freeze([...this._commands.filter((c) => c.type === "NESTED" && (c as NestedCommand).isNested)]);
             default:
                 return Object.freeze([...this._commands]);
         }
@@ -254,8 +251,8 @@ export class CommandManager {
         const prefix = this.prefix.get(i.guild || undefined);
         if (i instanceof Interaction) {
             if (i.isCommand()) {
-                const cmd = this.get(i.commandName, "CHAT_INPUT");
-                if (cmd?.isCommandType("CHAT_INPUT")) {
+                const cmd = this.get(i.commandName, "CHAT") ?? this.get(i.commandName, "NESTED");
+                if (cmd?.isCommandType("CHAT")) {
                     const args = processArguments(
                         cmd,
                         i.options.data.map((d) => d.value || null)
@@ -275,7 +272,7 @@ export class CommandManager {
                     throw new CommandNotFound(i.commandName);
                 }
             } else if (i.isContextMenu()) {
-                const cmd = this.get(i.commandName, "USER") ?? this.get(i.commandName, "MESSAGE");
+                const cmd = this.get(i.commandName, "CONTEXT");
                 if (cmd) {
                     const target = new TargetID(i.targetId, i.targetType);
                     return {
@@ -293,8 +290,8 @@ export class CommandManager {
             if (i.content.startsWith(prefix)) {
                 if (i.content === prefix) return null;
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
-                const cmd = this.get(cmdName, "CHAT_INPUT");
-                if (cmd?.isCommandType("CHAT_INPUT")) {
+                const cmd = this.get(cmdName, "CHAT") ?? this.get(cmdName, "NESTED");
+                if (cmd?.isCommandType("CHAT")) {
                     const argsRaw = i.content
                         .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -350,7 +347,7 @@ export class CommandManager {
         const globalCommands = this._commands
             .filter((c) => {
                 if (c.isBaseCommandType("GUILD") && (!Array.isArray(c.guilds) || c.guilds.length === 0)) {
-                    if (c.isCommandType("CHAT_INPUT") && c.slash === false) {
+                    if (c.isCommandType("CHAT") && c.slash === false) {
                         return false;
                     } else {
                         return true;
@@ -439,12 +436,7 @@ export class CommandManager {
         return map;
     }
 
-    public static isCommand(c: any): c is APICommand {
-        return (
-            "name" in c &&
-            "type" in c &&
-            "default_permission" in c &&
-            ((c as APICommand).type === "CHAT_INPUT" || (c as APICommand).type === "USER" || (c as APICommand).type === "MESSAGE")
-        );
+    public static isCommand(c: any): c is Command {
+        return "name" in c && "type" in c && "default_permission" in c && ((c as Command).type === "CHAT" || (c as Command).type === "CONTEXT" || (c as Command).type === "NESTED");
     }
 }

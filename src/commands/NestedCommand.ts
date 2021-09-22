@@ -4,7 +4,7 @@ import { CommandManager } from "../structures/CommandManager.js";
 import { GuildCommand } from "./base/GuildCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
-import { ChildCommand, ChildCommandInit, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
+import { ChildCommands, ChildCommandInit, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
 import { NestedCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
 import { NestedCommandObject } from "../structures/types/api.js";
 
@@ -14,7 +14,7 @@ export class NestedCommand extends GuildCommand {
     public readonly isNested: boolean = true;
 
     constructor(manager: CommandManager, options: NestedCommandInit) {
-        super(manager, "CHAT_INPUT", {
+        super(manager, "NESTED", {
             name: options.name,
             guilds: options.guilds,
             announceSuccess: false,
@@ -58,12 +58,12 @@ export class NestedCommand extends GuildCommand {
         return Object.freeze([...this._children]);
     }
 
-    public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommand<T> {
-        const sc: ChildCommand<T> | null =
+    public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
+        const sc: ChildCommands<T> | null =
             type === "COMMAND"
-                ? (new SubCommand(this, options as SubCommandInit) as ChildCommand<T>)
+                ? (new SubCommand(this, options as SubCommandInit) as ChildCommands<T>)
                 : type === "GROUP"
-                ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommand<T>)
+                ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommands<T>)
                 : null;
         if (!sc) {
             throw new TypeError("Incorrect command type");

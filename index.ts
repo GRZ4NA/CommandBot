@@ -6,7 +6,7 @@ import { ParameterResolvable, ParameterType, ParameterSchema } from "./src/struc
 import { SystemMessageAppearance, SystemMessageData } from "./src/structures/types/SystemMessage.js";
 import { ObjectID, TargetID, Parameter } from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
-import { CommandInteractionData, ChildCommandType, Command, ChildCommand, CommandInit, ChildCommandInit, CommandType } from "./src/commands/types/commands.js";
+import { CommandInteractionData, ChildCommandType, Commands, ChildCommands, CommandInit, ChildCommandInit, CommandType } from "./src/commands/types/commands.js";
 import { CommandPermissionsInit } from "./src/commands/types/permissions.js";
 import { APICommandType } from "./src/structures/types/api.js";
 
@@ -37,8 +37,8 @@ export {
     APICommandType,
     CommandType,
     ChildCommandType,
-    Command,
-    ChildCommand,
+    Commands,
+    ChildCommands,
     CommandInit,
     ChildCommandInit,
 };

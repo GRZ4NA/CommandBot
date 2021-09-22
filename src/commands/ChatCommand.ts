@@ -55,7 +55,7 @@ export class ChatCommand extends PermissionGuildCommand {
      * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
     constructor(manager: CommandManager, options: ChatCommandInit) {
-        super(manager, "CHAT_INPUT", {
+        super(manager, "CHAT", {
             name: options.name,
             function: options.function,
             announceSuccess: options.announceSuccess,

@@ -2,17 +2,16 @@ import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord
 import { TargetID } from "../../structures/parameter.js";
 import { ParameterResolvable } from "../../structures/types/Parameter.js";
 import { OperationSuccess } from "../../errors.js";
-import { APICommand } from "./APICommand.js";
+import { Command } from "./Command.js";
 import { CommandManager } from "../../structures/CommandManager.js";
-import { CommandFunction } from "../types/commands.js";
+import { CommandFunction, CommandType } from "../types/commands.js";
 import { FunctionCommandInit } from "../types/InitOptions.js";
-import { APICommandType } from "../../structures/types/api.js";
 
-export class FunctionCommand extends APICommand {
+export class FunctionCommand extends Command {
     private readonly _function: CommandFunction;
     public readonly announceSuccess: boolean;
 
-    constructor(manager: CommandManager, type: APICommandType, options: FunctionCommandInit) {
+    constructor(manager: CommandManager, type: CommandType, options: FunctionCommandInit) {
         super(manager, type, {
             name: options.name,
             default_permission: options.default_permission,

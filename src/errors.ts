@@ -1,4 +1,4 @@
-import { APICommand } from "./commands/base/APICommand.js";
+import { Command } from "./commands/base/Command.js";
 import { GuildMember } from "discord.js";
 import { Parameter } from "./structures/parameter.js";
 import { ParameterType } from "./structures/types/Parameter.js";
@@ -8,10 +8,10 @@ import { ParameterType } from "./structures/types/Parameter.js";
  * @extends Error
  */
 export class PermissionsError extends Error {
-    private readonly command: APICommand;
+    private readonly command: Command;
     private readonly user: GuildMember | null;
 
-    constructor(command: APICommand, user?: GuildMember | null) {
+    constructor(command: Command, user?: GuildMember | null) {
         super();
         this.command = command;
         this.user = user || null;
@@ -62,9 +62,9 @@ export class MissingParameterError extends ReferenceError {
  * @class Entity indicating command execution success
  */
 export class OperationSuccess {
-    public readonly command: APICommand;
+    public readonly command: Command;
 
-    constructor(c: APICommand) {
+    constructor(c: Command) {
         this.command = c;
     }
 }

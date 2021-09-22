@@ -40,7 +40,7 @@ export interface ChatCommandInit extends PermissionGuildCommandInit {
 }
 
 export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
-    type: "USER" | "MESSAGE";
+    contextType: "USER" | "MESSAGE";
 }
 
 export interface NestedCommandInit extends APICommandInit {
