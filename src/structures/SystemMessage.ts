@@ -1,4 +1,4 @@
-import { Interaction, Message, MessageEmbed, Permissions } from "discord.js";
+import { DMChannel, Interaction, Message, MessageEmbed, Permissions, TextChannel } from "discord.js";
 import { SystemMessageAppearance, SystemMessageData, MessageType } from "./types/SystemMessage.js";
 
 export class SystemMessageManager {
@@ -78,7 +78,7 @@ export class SystemMessageManager {
      * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
      * @returns {Promise<MessageEmbed | Message | void>} A message that got sent or *void*
      */
-    public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | Interaction): Promise<MessageEmbed | Message | void> {
+    public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | Interaction | TextChannel | DMChannel): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
             if (this[type].enabled === false) {
                 return;
@@ -134,9 +134,23 @@ export class SystemMessageManager {
                         break;
                 }
             }
-            if (interaction && !(interaction instanceof Interaction)) {
+            if (interaction instanceof TextChannel || interaction instanceof DMChannel) {
+                const message = await interaction.send({ embeds: [embed] }).catch((e) => console.error(e));
+                if (message && message.deletable) {
+                    if (Number.isFinite(this[type].deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch((e) => console.error(e));
+                        }, this[type].deleteTimeout);
+                    } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch((e) => console.error(e));
+                        }, this.deleteTimeout);
+                    }
+                }
+                return message ?? embed;
+            } else if (interaction instanceof Message) {
                 const message = await interaction.reply({ embeds: [embed] }).catch(async () => {
-                    await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
+                    return await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
                 });
                 if (message && message.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
@@ -149,24 +163,44 @@ export class SystemMessageManager {
                         }, this.deleteTimeout);
                     }
                 }
-                return message;
-            } else if (interaction && interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
-                interaction.replied || interaction.deferred
-                    ? await interaction.editReply({ embeds: [embed] }).catch(async () => {
-                          await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
-                      })
-                    : await interaction.reply({ embeds: [embed] }).catch(async () => {
-                          await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
-                      });
+                return message ?? embed;
+            } else if (interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
+                const message =
+                    interaction.replied || interaction.deferred
+                        ? await interaction.editReply({ embeds: [embed] }).catch(async () => {
+                              return await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
+                          })
+                        : await interaction.reply({ embeds: [embed] }).catch(async () => {
+                              return await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
+                          });
                 if (Number.isFinite(this[type].deleteTimeout)) {
                     setTimeout(async () => {
-                        await interaction.deleteReply().catch();
+                        await interaction.deleteReply().catch(async () => {
+                            message instanceof Message && message?.deletable && (await message.delete().catch((e) => console.error(e)));
+                        });
                     }, this[type].deleteTimeout);
                 } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
                     setTimeout(async () => {
-                        await interaction.deleteReply().catch();
+                        await interaction.deleteReply().catch(async () => {
+                            message instanceof Message && message?.deletable && (await message.delete().catch((e) => console.error(e)));
+                        });
                     }, this.deleteTimeout);
                 }
+                return message instanceof Message ? message : embed;
+            } else if (interaction?.channel) {
+                const message = await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
+                if (message && message.deletable) {
+                    if (Number.isFinite(this[type].deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch((e) => console.error(e));
+                        }, this[type].deleteTimeout);
+                    } else if (this[type].deleteTimeout === undefined && Number.isFinite(this.deleteTimeout)) {
+                        setTimeout(async () => {
+                            await message.delete().catch((e) => console.error(e));
+                        }, this.deleteTimeout);
+                    }
+                }
+                return message ?? embed;
             } else {
                 return embed;
             }
