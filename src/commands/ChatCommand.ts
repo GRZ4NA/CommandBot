@@ -268,19 +268,7 @@ export class ChatCommand extends PermissionGuildCommand {
                     }
                     return 0;
                 });
-            let subCmds: ChatCommandOptionObject[] = [];
-            if (this.hasSubCommands) {
-                subCmds = this._children.map((sc) => {
-                    return {
-                        name: sc.name,
-                        default_permission: true,
-                        description: sc.description,
-                        options: [sc.toObject()],
-                        type: sc instanceof SubCommandGroup ? 2 : 1,
-                    };
-                });
-            }
-            obj.options = [...subCmds, ...options];
+            obj.options = [...this._children.map((sc) => sc.toObject()), ...options];
         }
         return obj;
     }
