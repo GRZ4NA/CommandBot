@@ -164,7 +164,10 @@ export class SystemMessageManager {
                     }
                 }
                 return message ?? embed;
-            } else if (interaction instanceof Interaction && (interaction.isCommand() || interaction.isContextMenu())) {
+            } else if (
+                interaction instanceof Interaction &&
+                (interaction.isCommand() || interaction.isContextMenu() || interaction.isButton() || interaction.isSelectMenu() || interaction.isSelectMenu())
+            ) {
                 const message =
                     interaction.replied || interaction.deferred
                         ? await interaction.editReply({ embeds: [embed] }).catch(async () => {
