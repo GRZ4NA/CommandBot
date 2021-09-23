@@ -1,17 +1,22 @@
-import { Message, Interaction } from "discord.js";
-import { ChatCommandInit } from "./types/InitOptions.js";
+import { Message, Interaction, CommandInteractionOption } from "discord.js";
+import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
 import { DefaultParameter, Parameter, TargetID } from "../structures/parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
-import { CommandRegExps } from "./types/commands.js";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "../structures/CommandManager.js";
 import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
+import { SubCommand } from "./SubCommand.js";
+import { SubCommandGroup } from "./SubCommandGroup.js";
+import { applicationState } from "../state.js";
+import { processArguments } from "../utils/processArguments.js";
 
 /**
  * @class A representation of CHAT_INPUT command (also known as a slash command)
  */
 export class ChatCommand extends PermissionGuildCommand {
+    private readonly _children: ChildCommandResolvable[] = [];
     /**
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
@@ -101,6 +106,10 @@ export class ChatCommand extends PermissionGuildCommand {
         }
     }
 
+    get hasSubCommands() {
+        return this._children.length > 0;
+    }
+
     /**
      * Invoke the command
      * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
@@ -112,6 +121,86 @@ export class ChatCommand extends PermissionGuildCommand {
             throw new Error("This command is not available as a slash command");
         }
         await super.start(args, interaction, target);
+    }
+
+    public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
+        const command =
+            type === "COMMAND"
+                ? (new SubCommand(this, options as SubCommandInit) as ChildCommands<T>)
+                : type === "GROUP"
+                ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommands<T>)
+                : null;
+        if (!command) {
+            throw new Error("Incorrect command type");
+        }
+        if (applicationState.running) {
+            console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
+            return command;
+        }
+        this._children.push(command);
+        return command;
+    }
+
+    public fetchSubcommand(options: CommandInteractionOption[]): CommandInteractionData | null {
+        if (!this.hasSubCommands) return null;
+        if (options[0]) {
+            if (options[0].type === "SUB_COMMAND_GROUP") {
+                const grName = options[0].name;
+                const group = this._children.filter((c) => c instanceof SubCommandGroup).find((c) => c.name === grName) as SubCommandGroup;
+                const scOpt = options[0].options;
+                if (group && scOpt) {
+                    const scName = scOpt[0].name;
+                    const cmd = group.children.filter((c) => c instanceof SubCommand).find((c) => c.name === scName) as SubCommand;
+                    if (cmd && scOpt[0].options) {
+                        return {
+                            command: cmd,
+                            parameters:
+                                processArguments(
+                                    cmd,
+                                    scOpt[0].options.map((o) => o.value || null)
+                                ) || new Map(),
+                        };
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else if (options[0].type === "SUB_COMMAND") {
+                const cmd = this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === options[0].name) as SubCommand;
+                if (cmd) {
+                    return {
+                        command: cmd,
+                        parameters: options[0].options
+                            ? processArguments(
+                                  cmd,
+                                  options[0].options.map((o) => o.value || null)
+                              )
+                            : new Map(),
+                    };
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public getSubcommand(name: string, group?: string): SubCommand | null {
+        if (!this.hasSubCommands) return null;
+        if (group) {
+            const gr = this._children.filter((c) => c instanceof SubCommandGroup).find((g) => g.name === group) as SubCommandGroup;
+            if (gr) {
+                return gr.children.find((c) => c.name === name) || null;
+            } else {
+                return null;
+            }
+        } else {
+            return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
+        }
     }
 
     /**
@@ -179,7 +268,19 @@ export class ChatCommand extends PermissionGuildCommand {
                     }
                     return 0;
                 });
-            obj.options = options;
+            let subCmds: ChatCommandOptionObject[] = [];
+            if (this.hasSubCommands) {
+                subCmds = this._children.map((sc) => {
+                    return {
+                        name: sc.name,
+                        default_permission: true,
+                        description: sc.description,
+                        options: [sc.toObject()],
+                        type: sc instanceof SubCommandGroup ? 2 : 1,
+                    };
+                });
+            }
+            obj.options = [...subCmds, ...options];
         }
         return obj;
     }

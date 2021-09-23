@@ -8,9 +8,10 @@ import { SubCommandInit } from "./types/InitOptions.js";
 import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { Interaction, Message } from "discord.js";
+import { ChatCommand } from "./ChatCommand.js";
 
 export class SubCommand extends PermissionCommand {
-    private readonly _parent: SubCommandGroup | NestedCommand;
+    private readonly _parent: SubCommandGroup | NestedCommand | ChatCommand;
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -27,7 +28,7 @@ export class SubCommand extends PermissionCommand {
      */
     public readonly usage?: string;
 
-    constructor(parent: SubCommandGroup | NestedCommand, options: SubCommandInit) {
+    constructor(parent: SubCommandGroup | NestedCommand | ChatCommand, options: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
             name: options.name,
             announceSuccess: options.announceSuccess,
