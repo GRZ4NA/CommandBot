@@ -1,6 +1,6 @@
 {
     "name": "commandbot",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "description": "A framework that helps you create your own Discord bot easier.",
     "main": "dist/cjs/index.js",
     "module": "dist/mjs/index.js",
@@ -28,8 +28,8 @@
     },
     "homepage": "https://github.com/GRZ4NA/CommandBot#readme",
     "dependencies": {
-        "axios": "^0.21.1",
-        "discord.js": "^13.0.1"
+        "axios": "^0.21.4",
+        "discord.js": "^13.1.0"
     },
     "devDependencies": {
         "@types/node": "^15.12.4",
