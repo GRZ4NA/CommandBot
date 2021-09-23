@@ -48,7 +48,7 @@ export class Command {
                     "type" in this &&
                     "default_permission" in this &&
                     typeof (this as Command).name === "string" &&
-                    ((this as Command).type === "CHAT" || (this as Command).type === "CONTEXT" || (this as Command).type === "NESTED")
+                    ((this as Command).type === "CHAT" || (this as Command).type === "CONTEXT")
                 );
             case "FUNCTION":
                 return (
@@ -90,16 +90,6 @@ export class Command {
                 );
             case "CONTEXT":
                 return this.type === "CONTEXT" && this.isBaseCommandType("PERMISSIONGUILD");
-            case "NESTED":
-                return (
-                    this.type === "NESTED" &&
-                    "description" in this &&
-                    !("parameters" in this) &&
-                    !("visible" in this) &&
-                    !("slash" in this) &&
-                    "getSubcommand" in this &&
-                    "fetchSubcommand" in this
-                );
             default:
                 return false;
         }

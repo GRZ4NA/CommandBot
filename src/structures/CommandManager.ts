@@ -11,8 +11,7 @@ import { APICommandObject, CommandPermission, RegisteredCommandObject, APIComman
 import { Bot } from "./Bot.js";
 import { SubCommand } from "../commands/SubCommand.js";
 import { SubCommandGroup } from "../commands/SubCommandGroup.js";
-import { NestedCommand } from "../commands/NestedCommand.js";
-import { ChatCommandInit, NestedCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
+import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
 import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
@@ -98,8 +97,6 @@ export class CommandManager {
         const command: Commands<T> | null =
             type === "CHAT"
                 ? (new ChatCommand(this, options as ChatCommandInit) as Commands<T>)
-                : type === "NESTED"
-                ? (new NestedCommand(this, options as NestedCommandInit) as Commands<T>)
                 : type === "CONTEXT"
                 ? (new ContextMenuCommand(this, options as ContextMenuCommandInit) as Commands<T>)
                 : null;
@@ -213,15 +210,12 @@ export class CommandManager {
     public list(): readonly Command[];
     public list(f: "CHAT"): readonly ChatCommand[];
     public list(f: "CONTEXT"): readonly ContextMenuCommand[];
-    public list(f: "NESTED"): readonly NestedCommand[];
     public list(f?: CommandType): readonly Command[] {
         switch (f) {
             case "CHAT":
                 return Object.freeze([...this._commands.filter((c) => c.type === "CHAT")]);
             case "CONTEXT":
                 return Object.freeze([...this._commands.filter((c) => c.type === "CONTEXT")]);
-            case "NESTED":
-                return Object.freeze([...this._commands.filter((c) => c.type === "NESTED" && (c as NestedCommand).isNested)]);
             default:
                 return Object.freeze([...this._commands]);
         }
@@ -251,8 +245,12 @@ export class CommandManager {
         const prefix = this.prefix.get(i.guild || undefined);
         if (i instanceof Interaction) {
             if (i.isCommand()) {
-                const cmd = this.get(i.commandName, "CHAT") ?? this.get(i.commandName, "NESTED");
-                if (cmd?.isCommandType("CHAT")) {
+                const cmd = this.get(i.commandName, "CHAT");
+                if (cmd) {
+                    if (cmd.hasSubCommands) {
+                        const subCmd = cmd.fetchSubcommand([...i.options.data]);
+                        if (subCmd) return subCmd;
+                    }
                     const args = processArguments(
                         cmd,
                         i.options.data.map((d) => d.value || null)
@@ -261,13 +259,6 @@ export class CommandManager {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd?.isCommandType("NESTED")) {
-                    const subCmd = cmd.fetchSubcommand([...i.options.data]);
-                    if (subCmd) {
-                        return subCmd;
-                    } else {
-                        throw new CommandNotFound();
-                    }
                 } else {
                     throw new CommandNotFound(i.commandName);
                 }
@@ -290,8 +281,8 @@ export class CommandManager {
             if (i.content.startsWith(prefix)) {
                 if (i.content === prefix) return null;
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
-                const cmd = this.get(cmdName, "CHAT") ?? this.get(cmdName, "NESTED");
-                if (cmd?.isCommandType("CHAT")) {
+                const cmd = this.get(cmdName, "CHAT");
+                if (cmd) {
                     const argsRaw = i.content
                         .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -302,36 +293,32 @@ export class CommandManager {
                                 return a;
                             }
                         });
+                    if (cmd.hasSubCommands) {
+                        const nesting = i.content.split(" ")[0].replace(`${prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
+                        const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
+                        if (subCmd) {
+                            const subArgsRaw = i.content
+                                .replace(`${prefix}${cmdName}${this.commandSeparator}${nesting.join(this.commandSeparator)}`, "")
+                                .split(this.argumentSeparator)
+                                .map((a) => {
+                                    if (a.startsWith(" ")) {
+                                        return a.replace(" ", "");
+                                    } else {
+                                        return a;
+                                    }
+                                });
+                            const subArgs = processArguments(subCmd, subArgsRaw);
+                            return {
+                                command: subCmd,
+                                parameters: subArgs,
+                            };
+                        }
+                    }
                     const args = processArguments(cmd, argsRaw);
                     return {
                         command: cmd,
                         parameters: args,
                     };
-                } else if (cmd?.isCommandType("NESTED")) {
-                    const nesting = i.content.split(" ")[0].replace(`${prefix}${cmdName}${this.commandSeparator}`, "").split(this.commandSeparator);
-                    const subCmd = cmd.getSubcommand(nesting[1] ? nesting[1] : nesting[0], nesting[1] ? nesting[0] : undefined);
-                    if (subCmd) {
-                        const argsRaw = i.content
-                            .replace(`${prefix}${cmdName}${this.commandSeparator}${nesting.join(this.commandSeparator)}`, "")
-                            .split(this.argumentSeparator)
-                            .map((a) => {
-                                if (a.startsWith(" ")) {
-                                    return a.replace(" ", "");
-                                } else {
-                                    return a;
-                                }
-                            });
-                        const args = processArguments(subCmd, argsRaw);
-                        return {
-                            command: subCmd,
-                            parameters: args,
-                        };
-                    } else {
-                        return {
-                            command: cmd,
-                            parameters: new Map(),
-                        };
-                    }
                 } else {
                     throw new CommandNotFound(cmdName);
                 }
@@ -451,6 +438,6 @@ export class CommandManager {
     }
 
     public static isCommand(c: any): c is Command {
-        return "name" in c && "type" in c && "default_permission" in c && ((c as Command).type === "CHAT" || (c as Command).type === "CONTEXT" || (c as Command).type === "NESTED");
+        return "name" in c && "type" in c && "default_permission" in c && ((c as Command).type === "CHAT" || (c as Command).type === "CONTEXT");
     }
 }

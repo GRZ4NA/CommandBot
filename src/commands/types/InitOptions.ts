@@ -43,12 +43,6 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
     contextType: "USER" | "MESSAGE";
 }
 
-export interface NestedCommandInit extends APICommandInit {
-    dm?: boolean;
-    guilds?: string[];
-    description?: string;
-}
-
 export interface SubCommandInit extends PermissionCommandInit {
     description?: string;
     parameters?: ParameterSchema[] | "simple" | "no_input";

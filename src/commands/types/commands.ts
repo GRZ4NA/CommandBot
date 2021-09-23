@@ -3,7 +3,6 @@ import { ChatCommand } from "../ChatCommand.js";
 import { ContextMenuCommand } from "../ContextMenuCommand.js";
 import { ParameterResolvable } from "../../structures/types/parameter.js";
 import { TargetID } from "../../structures/parameter.js";
-import { NestedCommand } from "../NestedCommand.js";
 import { SubCommand } from "../SubCommand.js";
 import { SubCommandGroup } from "..//SubCommandGroup.js";
 import { FunctionCommand } from "../base/FunctionCommand.js";
@@ -14,7 +13,6 @@ import {
     ContextMenuCommandInit,
     FunctionCommandInit,
     GuildCommandInit,
-    NestedCommandInit,
     PermissionCommandInit,
     PermissionGuildCommandInit,
     SubCommandGroupInit,
@@ -26,7 +24,7 @@ import { Command } from "..//base/Command.js";
 
 export type BaseCommandType = "BASE" | "FUNCTION" | "GUILD" | "PERMISSION" | "PERMISSIONGUILD";
 
-export type CommandType = "CHAT" | "CONTEXT" | "NESTED";
+export type CommandType = "CHAT" | "CONTEXT";
 
 export type ChildCommandType = "COMMAND" | "GROUP";
 
@@ -42,7 +40,7 @@ export type BaseCommands<T extends BaseCommandType> = T extends "BASE"
     ? PermissionGuildCommand
     : never;
 
-export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T extends "NESTED" ? NestedCommand : T extends "CONTEXT" ? ContextMenuCommand : never;
+export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T extends "CONTEXT" ? ContextMenuCommand : never;
 
 export type ChildCommands<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
 
@@ -58,13 +56,13 @@ export type BaseCommandInit<T extends BaseCommandType> = T extends "BASE"
     ? PermissionGuildCommandInit
     : never;
 
-export type CommandInit<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "NESTED" ? NestedCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
+export type CommandInit<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
 
 export type ChildCommandInit<T extends ChildCommandType> = T extends "COMMAND" ? SubCommandInit : T extends "GROUP" ? SubCommandGroupInit : never;
 
 export type BaseCommandResolvable = Command | FunctionCommand | GuildCommand | PermissionCommand | PermissionGuildCommand;
 
-export type CommandResolvable = ChatCommand | ContextMenuCommand | NestedCommand;
+export type CommandResolvable = ChatCommand | ContextMenuCommand;
 
 export type ChildCommandResolvable = SubCommandGroup | SubCommand;
 

@@ -1,7 +1,6 @@
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
 import { DefaultParameter, Parameter, TargetID } from "../structures/parameter.js";
 import { PermissionCommand } from "./base/PermissionCommand.js";
-import { NestedCommand } from "./NestedCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit } from "./types/InitOptions.js";
@@ -11,7 +10,7 @@ import { Interaction, Message } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 
 export class SubCommand extends PermissionCommand {
-    private readonly _parent: SubCommandGroup | NestedCommand | ChatCommand;
+    private readonly _parent: SubCommandGroup | ChatCommand;
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -28,7 +27,7 @@ export class SubCommand extends PermissionCommand {
      */
     public readonly usage?: string;
 
-    constructor(parent: SubCommandGroup | NestedCommand | ChatCommand, options: SubCommandInit) {
+    constructor(parent: SubCommandGroup | ChatCommand, options: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
             name: options.name,
             announceSuccess: options.announceSuccess,

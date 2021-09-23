@@ -1,17 +1,16 @@
 import { SubCommandGroupObject } from "../structures/types/api.js";
 import { Command } from "./base/Command.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { NestedCommand } from "./NestedCommand.js";
 import { SubCommand } from "./SubCommand.js";
 import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions.js";
 
 export class SubCommandGroup extends Command {
-    protected readonly _parent: NestedCommand | ChatCommand;
+    protected readonly _parent: ChatCommand;
     private readonly _children: SubCommand[] = [];
     public readonly description: string;
 
-    constructor(parent: NestedCommand | ChatCommand, options: SubCommandGroupInit) {
+    constructor(parent: ChatCommand, options: SubCommandGroupInit) {
         super(parent.manager, "CHAT", {
             name: options.name,
             default_permission: options.default_permission,
