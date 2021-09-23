@@ -10,7 +10,7 @@ import { Interaction, Message } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 
 export class SubCommand extends PermissionCommand {
-    private readonly _parent: SubCommandGroup | ChatCommand;
+    public readonly parent: SubCommandGroup | ChatCommand;
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -35,7 +35,7 @@ export class SubCommand extends PermissionCommand {
             function: options.function,
         });
 
-        this._parent = parent;
+        this.parent = parent;
         this.description = options.description || "No description";
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
@@ -46,6 +46,9 @@ export class SubCommand extends PermissionCommand {
         }
         this.usage = options.usage || generateUsageFromArguments(this);
 
+        if (this.parent.children.find((ch) => ch.name === this.name)) {
+            throw new Error(`Parent "${this.parent.name}" already has a subcommand or group named "${this.name}"`);
+        }
         if (!CommandRegExps.chatName.test(this.name)) {
             throw new Error(`"${this.name}" is not a valid command name (regexp: ${CommandRegExps.chatName})`);
         }
@@ -55,12 +58,12 @@ export class SubCommand extends PermissionCommand {
     }
 
     public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
-        if (this._parent instanceof SubCommandGroup ? !this._parent.parent.dm && !interaction.guild : !this._parent.dm && !interaction.guild)
+        if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !interaction.guild : !this.parent.dm && !interaction.guild)
             throw new Error(`Command "${this.name}" is only available inside a guild.`);
         if (
-            this._parent instanceof SubCommandGroup
-                ? this._parent.parent.guilds && this._parent.parent.guilds.length > 0 && !this._parent.parent.guilds.find((id) => id === interaction.guild?.id)
-                : this._parent.guilds && this._parent.guilds.length > 0 && !this._parent.guilds.find((id) => id === interaction.guild?.id)
+            this.parent instanceof SubCommandGroup
+                ? this.parent.parent.guilds && this.parent.parent.guilds.length > 0 && !this.parent.parent.guilds.find((id) => id === interaction.guild?.id)
+                : this.parent.guilds && this.parent.guilds.length > 0 && !this.parent.guilds.find((id) => id === interaction.guild?.id)
         )
             throw new Error(`Command "${this.name}" is not available.`);
         await super.start(args, interaction, target);

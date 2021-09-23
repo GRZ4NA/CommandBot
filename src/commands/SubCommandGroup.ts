@@ -6,8 +6,8 @@ import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions.js";
 
 export class SubCommandGroup extends Command {
-    protected readonly _parent: ChatCommand;
     private readonly _children: SubCommand[] = [];
+    public readonly parent: ChatCommand;
     public readonly description: string;
 
     constructor(parent: ChatCommand, options: SubCommandGroupInit) {
@@ -16,7 +16,7 @@ export class SubCommandGroup extends Command {
             default_permission: options.default_permission,
         });
 
-        this._parent = parent;
+        this.parent = parent;
         this.description = options.description || "No description";
 
         if (!CommandRegExps.chatName.test(this.name)) {
@@ -29,10 +29,6 @@ export class SubCommandGroup extends Command {
 
     get children() {
         return Object.freeze([...this._children]);
-    }
-
-    get parent() {
-        return this._parent;
     }
 
     public append(options: SubCommandInit): SubCommand {

@@ -19,10 +19,11 @@ import { Command } from "../commands/base/Command.js";
 import { processArguments } from "../utils/processArguments.js";
 
 export class CommandManager {
-    private readonly _client: Bot;
     private readonly _commands: Command[] = [];
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
+    public readonly client: Bot;
+    public readonly helpCmd?: HelpMessage;
 
     /**
      * Prefix used to respond to message interactions
@@ -60,7 +61,7 @@ export class CommandManager {
         if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
             throw new Error("Incorrect separators");
         }
-        this._client = client;
+        this.client = client;
         this.prefix = new PrefixManager(this, prefix);
         this.argumentSeparator = argSep || ",";
         this.commandSeparator = cmdSep || "/";
@@ -68,15 +69,9 @@ export class CommandManager {
             throw new Error("Command separator and argument separator have the same value");
         }
         if (helpMsg.enabled === true) {
-            this._commands.push(new HelpMessage(this, helpMsg));
+            this.helpCmd = new HelpMessage(this, helpMsg);
+            this._commands.push(this.helpCmd);
         }
-    }
-
-    /**
-     * @returns {Bot} A {@link Bot} object that this manager belongs to
-     */
-    get client(): Readonly<Bot> {
-        return this._client;
     }
 
     get cache(): Readonly<Map<string, Map<string, RegisteredCommandObject>>> {
@@ -168,12 +163,12 @@ export class CommandManager {
         }
         let rq: AxiosResponse<RegisteredCommandObject>;
         if (guildId) {
-            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands/${id}`, {
-                headers: { Authorization: `Bot ${this._client.token}` },
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/guilds/${guildId}/commands/${id}`, {
+                headers: { Authorization: `Bot ${this.client.token}` },
             });
         } else {
-            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands/${id}`, {
-                headers: { Authorization: `Bot ${this._client.token}` },
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/commands/${id}`, {
+                headers: { Authorization: `Bot ${this.client.token}` },
             });
         }
         if (rq.status === 200) {
@@ -225,12 +220,12 @@ export class CommandManager {
         const guildId = g instanceof Guild ? g.id : g;
         let rq: AxiosResponse<RegisteredCommandObject[]>;
         if (guildId) {
-            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${guildId}/commands`, {
-                headers: { Authorization: `Bot ${this._client.token}` },
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/guilds/${guildId}/commands`, {
+                headers: { Authorization: `Bot ${this.client.token}` },
             });
         } else {
-            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, {
-                headers: { Authorization: `Bot ${this._client.token}` },
+            rq = await axios.get(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/commands`, {
+                headers: { Authorization: `Bot ${this.client.token}` },
             });
         }
         if (rq.status === 200) {
@@ -348,7 +343,7 @@ export class CommandManager {
             .map((c) => {
                 c.isBaseCommandType("GUILD") &&
                     c.guilds?.map((gId) => {
-                        if (!this._client.client.guilds.cache.get(gId)) {
+                        if (!this.client.client.guilds.cache.get(gId)) {
                             throw new Error(`"${gId}" is not a valid ID for this client.`);
                         }
                         const existingEntry = guildCommands.get(gId);
@@ -360,8 +355,8 @@ export class CommandManager {
                     });
             });
         await axios
-            .put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/commands`, globalCommands, {
-                headers: { Authorization: `Bot ${this._client.token}` },
+            .put(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/commands`, globalCommands, {
+                headers: { Authorization: `Bot ${this.client.token}` },
             })
             .then((r) => {
                 if (r.status === 429) {
@@ -371,8 +366,8 @@ export class CommandManager {
             .catch((e) => console.error(e));
         await guildCommands.forEach(async (g, k) => {
             await axios
-                .put(`${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/guilds/${k}/commands`, g, {
-                    headers: { Authorization: `Bot ${this._client.token}` },
+                .put(`${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/guilds/${k}/commands`, g, {
+                    headers: { Authorization: `Bot ${this.client.token}` },
                 })
                 .then((r) => {
                     if (r.status === 429) {
@@ -384,15 +379,15 @@ export class CommandManager {
     }
 
     public async setPermissionsApi(id: string, permissions: CommandPermission[], g?: Guild | string) {
-        if (typeof g === "string" && !this._client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
+        if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
         const response = await axios.put(
-            `${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
+            `${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
             {
                 permissions: permissions,
             },
             {
                 headers: {
-                    Authorization: `Bot ${this._client.token}`,
+                    Authorization: `Bot ${this.client.token}`,
                 },
             }
         );
@@ -402,12 +397,12 @@ export class CommandManager {
     }
 
     public async getPermissionsApi(id: string, g?: Guild | string) {
-        if (typeof g === "string" && !this._client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
+        if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
         const response = await axios.get(
-            `${CommandManager.baseApiUrl}/applications/${this._client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
+            `${CommandManager.baseApiUrl}/applications/${this.client.applicationId}/${g ? (g instanceof Guild ? `guilds/${g.id}` : g) : ""}commands/${id}/permissions`,
             {
                 headers: {
-                    Authorization: `Bot ${this._client.token}`,
+                    Authorization: `Bot ${this.client.token}`,
                 },
             }
         );

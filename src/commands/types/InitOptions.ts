@@ -8,7 +8,7 @@ export interface APICommandInit {
 }
 
 export interface FunctionCommandInit extends APICommandInit {
-    function: CommandFunction;
+    function?: CommandFunction;
     announceSuccess?: boolean;
 }
 

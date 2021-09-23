@@ -17,7 +17,12 @@ export class FunctionCommand extends Command {
             default_permission: options.default_permission,
         });
 
-        this._function = options.function;
+        this._function =
+            options.function ??
+            ((_, i) => {
+                if (this.manager.helpCmd) return this.manager.helpCmd.generateMessage(i, this.name);
+                else return;
+            });
         this.announceSuccess = options.announceSuccess ?? true;
     }
 

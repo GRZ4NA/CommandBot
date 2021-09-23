@@ -3,12 +3,12 @@ import { PermissionCommand } from "../commands/base/PermissionCommand.js";
 import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions.js";
 
 export class CommandPermissions {
-    private readonly _command: PermissionCommand;
+    public readonly command: PermissionCommand;
     public readonly permissions: Permissions | PermissionFunction;
     public readonly checkType: PermissionCheckTypes;
 
     constructor(command: PermissionCommand, o?: CommandPermissionsInit) {
-        this._command = command;
+        this.command = command;
         this.checkType = o?.checkType ?? "ANY";
         this.permissions = o?.resolvable instanceof Function ? o.resolvable : new Permissions(o?.resolvable ?? BigInt(0));
     }
@@ -19,10 +19,6 @@ export class CommandPermissions {
 
     get bitfield(): BigInt {
         return this.permissions instanceof Function ? BigInt(NaN) : BigInt(this.permissions.bitfield);
-    }
-
-    get command(): Readonly<PermissionCommand> {
-        return this._command;
     }
 
     public check(i: Interaction | Message): boolean {

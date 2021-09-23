@@ -4,22 +4,18 @@ import { CommandRegExps } from "../commands/types/commands.js";
 import { ScopeResolvable } from "./types/PrefixManager.js";
 
 export class PrefixManager {
-    private readonly _manager: CommandManager;
     private readonly _prefixes: Map<string, string> = new Map();
     private readonly _global: string = "GLOBAL";
+    public readonly manager: CommandManager;
 
     constructor(manager: CommandManager, defaultPrefix?: string) {
-        this._manager = manager;
+        this.manager = manager;
         if (defaultPrefix) {
             if (!CommandRegExps.prefix.test(defaultPrefix)) {
                 throw new Error(`Prefix value for ${this._global} is incorrect`);
             }
             this._prefixes.set(this._global, defaultPrefix);
         }
-    }
-
-    get manager() {
-        return this._manager;
     }
 
     get globalPrefix() {
@@ -40,7 +36,7 @@ export class PrefixManager {
             this._prefixes.set(this._global, prefix);
         } else {
             const id = scope instanceof Guild ? scope.id : scope;
-            if (!this._manager.client.client.guilds.cache.get(id)) throw new Error(`${id} is not a valid guild ID`);
+            if (!this.manager.client.client.guilds.cache.get(id)) throw new Error(`${id} is not a valid guild ID`);
             this._prefixes.set(id, prefix);
         }
     }

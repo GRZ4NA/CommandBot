@@ -110,6 +110,10 @@ export class ChatCommand extends PermissionGuildCommand {
         return this._children.length > 0;
     }
 
+    get children() {
+        return Object.freeze([...this._children]);
+    }
+
     /**
      * Invoke the command
      * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
