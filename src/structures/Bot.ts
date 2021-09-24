@@ -72,11 +72,11 @@ export class Bot extends EventEmitter {
      * @constructor
      * @param {InitOptions} options - instance properties ({@link InitOptions})
      */
-    constructor(options: InitOptions) {
+    constructor({ name, token, applicationId, globalPrefix, argumentSeparator, commandSeparator, clientOptions }: InitOptions) {
         super();
-        this.name = options.name;
+        this.name = name;
         this.client = new Client(
-            options.clientOptions || {
+            clientOptions || {
                 intents: [
                     Intents.FLAGS.GUILDS,
                     Intents.FLAGS.GUILD_BANS,
@@ -108,9 +108,9 @@ export class Bot extends EventEmitter {
             },
             system: new SystemMessageManager(this.name),
         };
-        this.commands = new CommandManager(this, this.messages.help, options.globalPrefix, options.argumentSeparator, options.commandSeparator);
-        this.token = options.token;
-        this.applicationId = options.applicationId;
+        this.commands = new CommandManager(this, this.messages.help, globalPrefix, argumentSeparator, commandSeparator);
+        this.token = token;
+        this.applicationId = applicationId;
     }
 
     /**
