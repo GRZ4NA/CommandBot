@@ -1,7 +1,9 @@
 import { DMChannel, Interaction, Message, MessageEmbed, Permissions, TextChannel } from "discord.js";
+import Bot from "./Bot.js";
 import { SystemMessageAppearance, SystemMessageData, MessageType } from "./types/SystemMessage.js";
 
 export class SystemMessageManager {
+    public readonly client: Bot;
     /**
      * "Insufficient permissions" message
      * @type {SystemMessageAppearance}
@@ -32,7 +34,7 @@ export class SystemMessageManager {
      */
     public deleteTimeout: number;
 
-    constructor(botName?: string) {
+    constructor(client: Bot, botName?: string) {
         this.PERMISSION = {
             enabled: true,
             title: "👮‍♂️ Insufficient permissions",
@@ -68,6 +70,7 @@ export class SystemMessageManager {
             footer: botName,
             deleteTimeout: Infinity,
         };
+        this.client = client;
         this.deleteTimeout = Infinity;
     }
 

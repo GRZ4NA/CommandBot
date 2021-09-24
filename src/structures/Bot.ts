@@ -106,7 +106,7 @@ export class Bot extends EventEmitter {
                 bottomText: "List of all available commands",
                 visible: true,
             },
-            system: new SystemMessageManager(this.name),
+            system: new SystemMessageManager(this, this.name),
         };
         this.commands = new CommandManager(this, this.messages.help, globalPrefix, argumentSeparator, commandSeparator);
         this.token = token;
