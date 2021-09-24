@@ -72,9 +72,9 @@ export class ChatCommand extends PermissionGuildCommand {
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
         } else if (options.parameters == "simple") {
-            this.parameters = [new DefaultParameter()];
+            this.parameters = [new DefaultParameter(this)];
         } else {
-            this.parameters = options.parameters.map((ps) => new Parameter(ps));
+            this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
         this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
         this.description = options.description || "No description";

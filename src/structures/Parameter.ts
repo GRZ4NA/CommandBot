@@ -1,10 +1,12 @@
 import { CategoryChannel, DMChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
+import { Command } from "../commands/base/Command.js";
 import { ParameterType, ParameterSchema } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter
  */
 export class Parameter {
+    public readonly command: Command;
     /**
      * Parameter name
      * @type {string}
@@ -37,7 +39,8 @@ export class Parameter {
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
     public static descriptionRegExp: RegExp = /^.{1,100}$/;
 
-    constructor(options: ParameterSchema) {
+    constructor(command: Command, options: ParameterSchema) {
+        this.command = command;
         this.name = options.name;
         this.description = options.description || "No description";
         this.optional = options.optional;
@@ -54,8 +57,8 @@ export class Parameter {
 }
 
 export class DefaultParameter extends Parameter {
-    constructor() {
-        super({
+    constructor(command: Command) {
+        super(command, {
             name: "input",
             description: "No description",
             type: "string",
