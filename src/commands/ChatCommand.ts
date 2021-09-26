@@ -272,7 +272,7 @@ export class ChatCommand extends PermissionGuildCommand {
                     }
                     return 0;
                 });
-            obj.options = [...this._children.map((sc) => sc.toObject()), ...options];
+            obj.options = this.hasSubCommands ? this._children.map((sc) => sc.toObject()) : options;
         }
         return obj;
     }
