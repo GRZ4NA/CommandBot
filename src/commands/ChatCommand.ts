@@ -21,7 +21,7 @@ export class ChatCommand extends PermissionGuildCommand {
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
      */
-    public readonly parameters: Parameter[];
+    public readonly parameters: Parameter<any>[];
 
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)

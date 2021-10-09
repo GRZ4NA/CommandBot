@@ -1,11 +1,11 @@
 import { DMChannel, Guild, GuildMember, Message, TextChannel } from "discord.js";
 import { Command } from "../commands/base/Command.js";
-import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType } from "./types/Parameter.js";
+import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter
  */
-export class Parameter {
+export class Parameter<T extends ParameterType> {
     public readonly command: Command;
     /**
      * Parameter name
@@ -29,7 +29,7 @@ export class Parameter {
      * Parameter input type
      * @type {ParameterType}
      */
-    public readonly type: ParameterType;
+    public readonly type: T;
 
     /**
      * List of value choices (available only when type is set to "STRING")
@@ -44,7 +44,7 @@ export class Parameter {
         this.name = options.name;
         this.description = options.description || "No description";
         this.optional = options.optional;
-        this.type = options.type;
+        this.type = options.type as T;
         this.choices = options.choices;
         if (!Parameter.nameRegExp.test(this.name)) {
             throw new Error(`Parameter name ${this.name} doesn't match the pattern`);
@@ -56,7 +56,7 @@ export class Parameter {
     }
 }
 
-export class DefaultParameter extends Parameter {
+export class DefaultParameter<T extends ParameterType> extends Parameter<T> {
     constructor(command: Command) {
         super(command, {
             name: "input",
@@ -64,6 +64,17 @@ export class DefaultParameter extends Parameter {
             type: "string",
             optional: true,
         });
+    }
+}
+
+export class InputParameter<T extends ParameterType> extends Parameter<T> {
+    value: InputParameterValue<T>;
+
+    constructor(param: Parameter<any>, value: InputParameterValue<T>) {
+        super(param.command, {
+            ...param,
+        });
+        this.value = value;
     }
 }
 

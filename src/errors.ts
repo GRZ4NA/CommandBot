@@ -46,9 +46,9 @@ export class ParameterTypeError extends TypeError {
  * @extends ReferenceError
  */
 export class MissingParameterError extends ReferenceError {
-    private readonly argument: Parameter;
+    private readonly argument: Parameter<any>;
 
-    constructor(a: Parameter) {
+    constructor(a: Parameter<any>) {
         super();
         this.argument = a;
     }

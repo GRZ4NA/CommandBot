@@ -20,7 +20,7 @@ export class SubCommand extends PermissionCommand {
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
      */
-    public readonly parameters: Parameter[];
+    public readonly parameters: Parameter<any>[];
     /**
      * Command usage displayed in the help message
      * @type {string}

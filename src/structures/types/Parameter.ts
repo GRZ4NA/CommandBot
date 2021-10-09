@@ -1,7 +1,17 @@
 import { CategoryChannel, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ObjectID, TargetID } from "../parameter.js";
 
-export type ParameterType = "string" | "boolean" | "number" | ObjectIdType | "target";
+export type ParameterType = "string" | "boolean" | "number" | ObjectIdType;
+
+export type InputParameterValue<T extends ParameterType> = T extends "string"
+    ? string
+    : T extends "boolean"
+    ? boolean
+    : T extends "number"
+    ? number
+    : T extends ObjectIdType
+    ? ObjectID<any>
+    : never;
 
 export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID | null;
 
