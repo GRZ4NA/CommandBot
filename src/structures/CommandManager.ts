@@ -248,7 +248,8 @@ export class CommandManager {
                     }
                     const args = processArguments(
                         cmd,
-                        i.options.data.map((d) => d.value || null)
+                        i.options.data.map((d) => d.value || null),
+                        i.guild ?? undefined
                     );
                     return {
                         command: cmd,
@@ -302,14 +303,14 @@ export class CommandManager {
                                         return a;
                                     }
                                 });
-                            const subArgs = processArguments(subCmd, subArgsRaw);
+                            const subArgs = processArguments(subCmd, subArgsRaw, i.guild ?? undefined);
                             return {
                                 command: subCmd,
                                 parameters: subArgs,
                             };
                         }
                     }
-                    const args = processArguments(cmd, argsRaw);
+                    const args = processArguments(cmd, argsRaw, i.guild ?? undefined);
                     return {
                         command: cmd,
                         parameters: args,

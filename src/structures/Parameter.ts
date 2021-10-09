@@ -1,6 +1,6 @@
-import { CategoryChannel, DMChannel, Guild, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
+import { DMChannel, Guild, GuildMember, Message, TextChannel } from "discord.js";
 import { Command } from "../commands/base/Command.js";
-import { ParameterType, ParameterSchema } from "./types/Parameter.js";
+import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter
@@ -67,27 +67,27 @@ export class DefaultParameter extends Parameter {
     }
 }
 
-export class ObjectID {
+export class ObjectID<T extends ObjectIdType> {
     public readonly id: string;
+    public readonly guild?: Guild;
+    public readonly type: T;
 
-    constructor(id: string) {
+    constructor(id: string, type: T, guild?: Guild) {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
+        this.type = type;
+        this.guild = guild;
     }
 
-    public async toObject(guild: Guild, type: "channel"): Promise<TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | null>;
-    public async toObject(guild: Guild, type: "user"): Promise<GuildMember | null>;
-    public async toObject(guild: Guild, type: "role"): Promise<Role | null>;
-    public async toObject(
-        guild: Guild,
-        type: "channel" | "user" | "role"
-    ): Promise<Role | TextChannel | VoiceChannel | CategoryChannel | GuildMember | NewsChannel | StoreChannel | StageChannel | null> {
-        switch (type) {
+    public async toObject(): Promise<ObjectIdReturnType<T> | null> {
+        switch (this.type) {
             case "channel":
-                return (await guild.channels.fetch(this.id.toString() || "")) || null;
+                return ((await this.guild?.channels.fetch(this.id.toString() || "")) as ObjectIdReturnType<T>) ?? null;
             case "role":
-                return (await guild.roles.fetch(this.id.toString() || "")) || null;
+                return ((await this.guild?.roles.fetch(this.id.toString() || "")) as ObjectIdReturnType<T>) ?? null;
             case "user":
-                return (await guild.members.fetch(this.id.toString() || "")) || null;
+                return ((await this.guild?.members.fetch(this.id.toString() || "")) as ObjectIdReturnType<T>) ?? null;
+            default:
+                return null;
         }
     }
 }

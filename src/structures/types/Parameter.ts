@@ -1,8 +1,9 @@
+import { CategoryChannel, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ObjectID, TargetID } from "../parameter.js";
 
-export type ParameterType = "string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable" | "target";
+export type ParameterType = "string" | "boolean" | "number" | ObjectIdType | "target";
 
-export type ParameterResolvable = string | boolean | number | ObjectID | TargetID | null;
+export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID | null;
 
 /**
  * @interface
@@ -34,3 +35,15 @@ export interface ParameterSchema {
      */
     choices?: string[];
 }
+
+export type ObjectIdType = "user" | "role" | "channel" | "mentionable";
+
+export type ObjectIdReturnType<T extends ObjectIdType> = T extends "channel"
+    ? TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | null
+    : T extends "user"
+    ? GuildMember | null
+    : T extends "role"
+    ? Role | null
+    : T extends "mentionable"
+    ? TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | GuildMember | Role | null
+    : never;

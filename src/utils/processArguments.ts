@@ -1,3 +1,4 @@
+import { Guild } from "discord.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
 import { SubCommand } from "../commands/SubCommand.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
@@ -9,7 +10,7 @@ import { ParameterResolvable } from "../structures/types/Parameter.js";
  * @param {ParameterResolvable[]} args - array of input data from Discord
  * @returns {ReadonlyMap<string, ParameterResolvable>} A map containing all input data bound to parameter names
  */
-export function processArguments(cmd: ChatCommand | SubCommand, args: ParameterResolvable[]): ReadonlyMap<string, ParameterResolvable> {
+export function processArguments(cmd: ChatCommand | SubCommand, args: ParameterResolvable[], guild?: Guild): ReadonlyMap<string, ParameterResolvable> {
     if (cmd.parameters) {
         const mapEntries: [string, ParameterResolvable][] = cmd.parameters.map((p, i) => {
             if (!p.optional && !args[i]) {
@@ -17,7 +18,7 @@ export function processArguments(cmd: ChatCommand | SubCommand, args: ParameterR
             } else if (p.optional && !args[i]) {
                 return [p.name, null];
             } else if (p.type === "channel" || p.type === "mentionable" || p.type === "role" || p.type === "user") {
-                return [p.name, new ObjectID(args[i]?.toString() || "")];
+                return [p.name, new ObjectID(args[i]?.toString() || "", p.type)];
             } else {
                 switch (p.type) {
                     case "boolean":
