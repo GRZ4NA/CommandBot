@@ -1,7 +1,7 @@
 import { Command } from "./commands/base/Command.js";
 import { GuildMember } from "discord.js";
 import { Parameter } from "./structures/parameter.js";
-import { ParameterType } from "./structures/types/Parameter.js";
+import { ParameterResolvable, ParameterType } from "./structures/types/Parameter.js";
 
 /**
  * @class Error indicating that a caller doesn't have enough permissions to execute a command
@@ -30,9 +30,9 @@ export class ParameterTypeError extends TypeError {
     private readonly stringContent: string;
     private readonly type: ParameterType;
 
-    constructor(s: string, type: ParameterType) {
+    constructor(s: ParameterResolvable, type: ParameterType) {
         super();
-        this.stringContent = s;
+        this.stringContent = s?.toString() ?? "";
         this.type = type;
     }
 
