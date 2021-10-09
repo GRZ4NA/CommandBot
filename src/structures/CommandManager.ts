@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
-import { TargetID } from "./parameter.js";
+import { InputParameter, ObjectID, TargetID } from "./parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
@@ -16,7 +16,7 @@ import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
 import { Command } from "../commands/base/Command.js";
-import { processArguments } from "../utils/processArguments.js";
+import { InputManager } from "./InputManager.js";
 
 export class CommandManager {
     private readonly _commands: Command[] = [];
@@ -236,25 +236,27 @@ export class CommandManager {
         }
     }
 
-    public fetch(i: Interaction | Message): CommandInteractionData | null {
+    public fetch(i: Interaction | Message): InputManager | null {
         const prefix = this.prefix.get(i.guild || undefined);
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT");
                 if (cmd) {
                     if (cmd.hasSubCommands) {
-                        const subCmd = cmd.fetchSubcommand([...i.options.data]);
+                        const subCmd = cmd.fetchSubcommand([...i.options.data], i);
                         if (subCmd) return subCmd;
                     }
-                    const args = processArguments(
+                    return new InputManager(
                         cmd,
-                        i.options.data.map((d) => d.value || null),
-                        i.guild ?? undefined
+                        i,
+                        cmd.parameters.map((p, index) => {
+                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                return new InputParameter(p, new ObjectID(i.options.data[index].value?.toString() ?? "", p.type, i.guild ?? undefined));
+                            } else {
+                                return new InputParameter(p, i.options.data[index].value ?? null);
+                            }
+                        })
                     );
-                    return {
-                        command: cmd,
-                        parameters: args,
-                    };
                 } else {
                     throw new CommandNotFound(i.commandName);
                 }
@@ -262,11 +264,7 @@ export class CommandManager {
                 const cmd = this.get(i.commandName, "CONTEXT");
                 if (cmd) {
                     const target = new TargetID(i.targetId, i.targetType);
-                    return {
-                        command: cmd,
-                        parameters: new Map(),
-                        target: target,
-                    };
+                    return new InputManager(cmd, i, [], target);
                 } else {
                     throw new CommandNotFound(i.commandName);
                 }
@@ -303,18 +301,30 @@ export class CommandManager {
                                         return a;
                                     }
                                 });
-                            const subArgs = processArguments(subCmd, subArgsRaw, i.guild ?? undefined);
-                            return {
-                                command: subCmd,
-                                parameters: subArgs,
-                            };
+                            return new InputManager(
+                                subCmd,
+                                i,
+                                cmd.parameters.map((p, index) => {
+                                    if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                        return new InputParameter(p, new ObjectID(subArgsRaw[index] ?? "", p.type, i.guild ?? undefined));
+                                    } else {
+                                        return new InputParameter(p, subArgsRaw[index] ?? null);
+                                    }
+                                })
+                            );
                         }
                     }
-                    const args = processArguments(cmd, argsRaw, i.guild ?? undefined);
-                    return {
-                        command: cmd,
-                        parameters: args,
-                    };
+                    return new InputManager(
+                        cmd,
+                        i,
+                        cmd.parameters.map((p, index) => {
+                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                return new InputParameter(p, new ObjectID(argsRaw[index], p.type, i.guild ?? undefined));
+                            } else {
+                                return new InputParameter(p, argsRaw[index]);
+                            }
+                        })
+                    );
                 } else {
                     throw new CommandNotFound(cmdName);
                 }

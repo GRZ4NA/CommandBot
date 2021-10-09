@@ -1,6 +1,6 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
 import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, Parameter, TargetID } from "../structures/parameter.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ParameterResolvable } from "../structures/types/Parameter.js";
 import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
@@ -10,7 +10,7 @@ import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { applicationState } from "../state.js";
-import { processArguments } from "../utils/processArguments.js";
+import { InputManager } from "structures/InputManager.js";
 
 /**
  * @class A representation of CHAT_INPUT command (also known as a slash command)
@@ -145,7 +145,7 @@ export class ChatCommand extends PermissionGuildCommand {
         return command;
     }
 
-    public fetchSubcommand(options: CommandInteractionOption[]): CommandInteractionData | null {
+    public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
         if (!this.hasSubCommands) return null;
         if (options[0]) {
             if (options[0].type === "SUB_COMMAND_GROUP") {
@@ -156,14 +156,17 @@ export class ChatCommand extends PermissionGuildCommand {
                     const scName = scOpt[0].name;
                     const cmd = group.children.filter((c) => c instanceof SubCommand).find((c) => c.name === scName) as SubCommand;
                     if (cmd && scOpt[0].options) {
-                        return {
-                            command: cmd,
-                            parameters:
-                                processArguments(
-                                    cmd,
-                                    scOpt[0].options.map((o) => o.value || null)
-                                ) || new Map(),
-                        };
+                        return new InputManager(
+                            cmd,
+                            interaction,
+                            cmd.parameters.map((p, index) => {
+                                if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                    return new InputParameter(p, new ObjectID(scOpt[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
+                                } else {
+                                    return new InputParameter(p, scOpt[0].options?.[index].value ?? null);
+                                }
+                            })
+                        );
                     } else {
                         return null;
                     }
@@ -173,15 +176,17 @@ export class ChatCommand extends PermissionGuildCommand {
             } else if (options[0].type === "SUB_COMMAND") {
                 const cmd = this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === options[0].name) as SubCommand;
                 if (cmd) {
-                    return {
-                        command: cmd,
-                        parameters: options[0].options
-                            ? processArguments(
-                                  cmd,
-                                  options[0].options.map((o) => o.value || null)
-                              )
-                            : new Map(),
-                    };
+                    return new InputManager(
+                        cmd,
+                        interaction,
+                        cmd.parameters.map((p, index) => {
+                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                return new InputParameter(p, new ObjectID(options[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
+                            } else {
+                                return new InputParameter(p, options[0].options?.[index].value ?? null);
+                            }
+                        })
+                    );
                 } else {
                     return null;
                 }
