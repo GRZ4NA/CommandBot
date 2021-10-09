@@ -1,4 +1,6 @@
 import { DMChannel, Guild, GuildMember, Message, TextChannel } from "discord.js";
+import { ParameterTypeError } from "errors.js";
+import { MissingParameterError } from "../errors.js";
 import { Command } from "../commands/base/Command.js";
 import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue } from "./types/Parameter.js";
 
@@ -56,7 +58,7 @@ export class Parameter<T extends ParameterType> {
     }
 }
 
-export class DefaultParameter<T extends ParameterType> extends Parameter<T> {
+export class DefaultParameter<T extends "string"> extends Parameter<T> {
     constructor(command: Command) {
         super(command, {
             name: "input",
@@ -70,11 +72,52 @@ export class DefaultParameter<T extends ParameterType> extends Parameter<T> {
 export class InputParameter<T extends ParameterType> extends Parameter<T> {
     value: InputParameterValue<T>;
 
-    constructor(param: Parameter<any>, value: InputParameterValue<T>) {
+    constructor(param: Parameter<T>, value: InputParameterValue<T> | null) {
         super(param.command, {
             ...param,
         });
-        this.value = value;
+        let val = null;
+        if ((value === null || value === undefined) && !this.optional) {
+            throw new MissingParameterError(this);
+        } else if (value !== null && value !== undefined) {
+            switch (this.type) {
+                case "mentionable":
+                case "channel":
+                case "role":
+                case "user":
+                    if (!(value instanceof ObjectID)) {
+                        throw new ParameterTypeError(value, this.type);
+                    }
+                    val = value;
+                    break;
+                case "boolean":
+                    if (typeof value === "string") {
+                        if (value.toLowerCase() === "true") {
+                            val = true as InputParameterValue<T>;
+                        } else if (value.toLowerCase() === "false") {
+                            val = false as InputParameterValue<T>;
+                        } else if ((value as InputParameterValue<T>) === true || (value as InputParameterValue<T>) === false) {
+                            val = value as InputParameterValue<T>;
+                        } else {
+                            throw new ParameterTypeError(value, this.type);
+                        }
+                    }
+                    break;
+                case "number":
+                    const num = parseInt(value.toString());
+                    if (isNaN(num)) {
+                        throw new ParameterTypeError(value, this.type);
+                    }
+                    val = num as InputParameterValue<T>;
+                    break;
+                case "string":
+                    if (typeof value === "string" || value.toString()) {
+                        val = value.toString() as InputParameterValue<T>;
+                    }
+                    break;
+            }
+        }
+        this.value = val as InputParameterValue<T>;
     }
 }
 
