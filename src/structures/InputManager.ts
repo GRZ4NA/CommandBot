@@ -7,10 +7,10 @@ import { InputParameterValue } from "./types/Parameter";
 export class InputManager {
     public readonly command: FunctionCommand;
     public readonly interaction: Interaction | Message;
-    public readonly target?: TargetID;
+    public readonly target?: TargetID<any>;
     private readonly arguments: InputParameter<any>[];
 
-    constructor(command: FunctionCommand, interaction: Interaction | Message, args: InputParameter<any>[], target?: TargetID) {
+    constructor(command: FunctionCommand, interaction: Interaction | Message, args: InputParameter<any>[], target?: TargetID<any>) {
         this.command = command;
         this.interaction = interaction;
         this.arguments = args;

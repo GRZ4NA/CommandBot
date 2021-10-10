@@ -262,7 +262,7 @@ export class CommandManager {
             } else if (i.isContextMenu()) {
                 const cmd = this.get(i.commandName, "CONTEXT");
                 if (cmd) {
-                    const target = new TargetID(i.targetId, i.targetType);
+                    const target = new TargetID(i.targetId, i.targetType, i);
                     return new InputManager(cmd, i, [], target);
                 } else {
                     throw new CommandNotFound(i.commandName);

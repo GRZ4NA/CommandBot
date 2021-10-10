@@ -1,7 +1,7 @@
-import { DMChannel, Guild, GuildMember, Message, TextChannel } from "discord.js";
+import { Guild, Interaction, Message } from "discord.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { Command } from "../commands/base/Command.js";
-import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue } from "./types/Parameter.js";
+import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue, TargetType, TargetIdReturnType } from "./types/Parameter.js";
 
 /**
  * @class Representation of command parameter
@@ -152,31 +152,32 @@ export class ObjectID<T extends ObjectIdType> {
     }
 }
 
-export class TargetID {
+export class TargetID<T extends TargetType> {
     public readonly id: string;
-    private readonly type: "MESSAGE" | "USER";
+    public readonly interaction: Interaction | Message;
+    private readonly type: T;
 
-    constructor(id: string, type: "MESSAGE" | "USER") {
+    constructor(id: string, type: T, interaction: Interaction | Message) {
         this.id = id;
         this.type = type;
+        this.interaction = interaction;
     }
 
-    toObject(r: Guild): GuildMember | null;
-    toObject(r: TextChannel | DMChannel): Message | null;
-    toObject(r: Guild | TextChannel | DMChannel): GuildMember | Message | null {
+    toObject(): TargetIdReturnType<T> | null {
         switch (this.type) {
             case "MESSAGE":
-                if (r instanceof TextChannel || r instanceof DMChannel) {
-                    return r.messages.cache.get(this.id) || null;
-                } else {
-                    return null;
+                if (!this.interaction.channel) {
+                    throw new Error("Channel not found");
                 }
+                return (this.interaction.channel.messages.cache.get(this.id) as TargetIdReturnType<T>) ?? null;
             case "USER":
-                if (r instanceof Guild) {
-                    return r.members.cache.get(this.id) || null;
-                } else {
-                    return null;
+                const guild = this.interaction.guild;
+                if (!guild) {
+                    throw new Error("Guild not found");
                 }
+                return (guild.members.cache.get(this.id) as TargetIdReturnType<T>) ?? null;
+            default:
+                return null;
         }
     }
 }

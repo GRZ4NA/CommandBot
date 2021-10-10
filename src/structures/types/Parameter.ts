@@ -1,4 +1,4 @@
-import { CategoryChannel, GuildMember, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
+import { CategoryChannel, GuildMember, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { ObjectID, TargetID } from "../parameter.js";
 
 export type ParameterType = "string" | "boolean" | "number" | ObjectIdType;
@@ -13,7 +13,7 @@ export type InputParameterValue<T extends ParameterType> = T extends "string"
     ? ObjectID<any>
     : never;
 
-export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID | null;
+export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID<any> | null;
 
 /**
  * @interface
@@ -57,3 +57,7 @@ export type ObjectIdReturnType<T extends ObjectIdType> = T extends "channel"
     : T extends "mentionable"
     ? TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | GuildMember | Role | null
     : never;
+
+export type TargetType = "MESSAGE" | "USER";
+
+export type TargetIdReturnType<T extends TargetType> = T extends "USER" ? GuildMember : T extends "MESSAGE" ? Message : never;
