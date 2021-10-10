@@ -9,7 +9,7 @@ import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { applicationState } from "../state.js";
-import { InputManager } from "structures/InputManager.js";
+import { InputManager } from "../structures/InputManager.js";
 
 /**
  * @class A representation of CHAT_INPUT command (also known as a slash command)
