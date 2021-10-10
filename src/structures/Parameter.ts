@@ -133,7 +133,7 @@ export class ObjectID<T extends ObjectIdType> {
     public readonly type: T;
 
     constructor(id: string, type: T, guild?: Guild) {
-        this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "");
+        this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "").split(" ").join("");
         this.type = type;
         this.guild = guild;
     }
