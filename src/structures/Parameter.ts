@@ -95,6 +95,8 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
                             val = true as InputParameterValue<T>;
                         } else if (value.toLowerCase() === "false") {
                             val = false as InputParameterValue<T>;
+                        } else {
+                            throw new ParameterTypeError(value, this.type);
                         }
                     } else if ((value as InputParameterValue<T>) === true || (value as InputParameterValue<T>) === false) {
                         val = value as InputParameterValue<T>;
@@ -112,6 +114,11 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
                 case "string":
                     if (typeof value === "string" || value.toString()) {
                         val = value.toString() as InputParameterValue<T>;
+                    } else {
+                        throw new ParameterTypeError(value, this.type);
+                    }
+                    if (this.choices && this.choices.findIndex((ch) => ch === value) === -1) {
+                        throw new TypeError(`Invalid choice. Please enter of the following options: ${this.choices.join(", ")}`);
                     }
                     break;
             }
