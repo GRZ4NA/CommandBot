@@ -6,9 +6,10 @@ import { ParameterResolvable, ParameterType, ParameterSchema } from "./src/struc
 import { SystemMessageAppearance, SystemMessageData } from "./src/structures/types/SystemMessage.js";
 import { ObjectID, TargetID, Parameter } from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
-import { CommandInteractionData, ChildCommandType, Commands, ChildCommands, CommandInit, ChildCommandInit, CommandType } from "./src/commands/types/commands.js";
+import { ChildCommandType, Commands, ChildCommands, CommandInit, ChildCommandInit, CommandType } from "./src/commands/types/commands.js";
 import { CommandPermissionsInit } from "./src/commands/types/permissions.js";
 import { APICommandType } from "./src/structures/types/api.js";
+import { InputManager } from "./src/structures/InputManager.js";
 
 export default Bot;
 export {
@@ -19,7 +20,7 @@ export {
     SubCommandGroupInit,
     SubCommandInit,
     CommandPermissionsInit,
-    CommandInteractionData,
+    InputManager,
     HelpMessageParams,
     ParameterResolvable,
     ParameterType,

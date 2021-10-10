@@ -4,15 +4,15 @@ import * as http from "http";
 import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import { CommandInteractionData } from "../commands/types/commands.js";
 import { InitOptions } from "./types/Bot.js";
 import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { applicationState } from "../state.js";
+import { InputManager } from "./InputManager.js";
 
 export declare interface Bot {
     on(event: "READY", listener: Function): this;
     on(event: "MESSAGE", listener: (m: Message) => void): this;
-    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: CommandInteractionData) => void): this;
+    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: InputManager) => void): this;
     on(event: "ERROR", listener: (e: any) => void): this;
 }
 
@@ -154,12 +154,12 @@ export class Bot extends EventEmitter {
             });
             this.client.on("messageCreate", async (m) => {
                 if (m.author.bot) return;
-                let cmdMsg: CommandInteractionData | null = null;
+                let inputData: InputManager | null = null;
                 try {
-                    cmdMsg = this.commands.fetch(m);
-                    if (cmdMsg) {
-                        this.emit("COMMAND", m, cmdMsg);
-                        await cmdMsg.command.start(cmdMsg.parameters, m);
+                    inputData = this.commands.fetch(m);
+                    if (inputData) {
+                        this.emit("COMMAND", m, inputData);
+                        await inputData.command.start(inputData);
                     } else {
                         this.emit("MESSAGE", m);
                     }
@@ -170,7 +170,7 @@ export class Bot extends EventEmitter {
                             "PERMISSION",
                             {
                                 user: m.member || undefined,
-                                command: cmdMsg?.command,
+                                command: inputData?.command,
                             },
                             m
                         );
@@ -183,7 +183,7 @@ export class Bot extends EventEmitter {
                         await this.messages.system.send(
                             "ERROR",
                             {
-                                command: cmdMsg?.command,
+                                command: inputData?.command,
                                 user: m.member || undefined,
                                 error: e as Error,
                             },
@@ -194,12 +194,12 @@ export class Bot extends EventEmitter {
                 }
             });
             this.client.on("interactionCreate", async (i) => {
-                let cmd: CommandInteractionData | null = null;
+                let inputData: InputManager | null = null;
                 try {
-                    cmd = this.commands.fetch(i);
-                    if (cmd) {
-                        this.emit("COMMAND", i, cmd);
-                        await cmd.command.start(cmd.parameters, i, cmd.target);
+                    inputData = this.commands.fetch(i);
+                    if (inputData) {
+                        this.emit("COMMAND", i, inputData);
+                        await inputData.command.start(inputData);
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {
@@ -207,7 +207,7 @@ export class Bot extends EventEmitter {
                             "PERMISSION",
                             {
                                 user: (i.member as GuildMember) || undefined,
-                                command: cmd?.command,
+                                command: inputData?.command,
                             },
                             i as CommandInteraction
                         );
@@ -220,7 +220,7 @@ export class Bot extends EventEmitter {
                         await this.messages.system.send(
                             "ERROR",
                             {
-                                command: cmd?.command,
+                                command: inputData?.command,
                                 user: (i.member as GuildMember) || undefined,
                                 error: e as Error,
                             },

@@ -1,11 +1,10 @@
 import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { TargetID } from "../../structures/parameter.js";
-import { ParameterResolvable } from "../../structures/types/Parameter.js";
 import { OperationSuccess } from "../../errors.js";
 import { Command } from "./Command.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandFunction, CommandType } from "../types/commands.js";
 import { FunctionCommandInit } from "../types/InitOptions.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 export class FunctionCommand extends Command {
     private readonly _function: CommandFunction;
@@ -19,8 +18,8 @@ export class FunctionCommand extends Command {
 
         this._function =
             options.function ??
-            ((_, i) => {
-                if (this.manager.helpCmd) return this.manager.helpCmd.generateMessage(i, this.name);
+            ((input) => {
+                if (this.manager.helpCmd) return this.manager.helpCmd.generateMessage(input.interaction, this.name);
                 else return;
             });
         this.announceSuccess = options.announceSuccess ?? true;
@@ -32,10 +31,10 @@ export class FunctionCommand extends Command {
      * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
      * @returns {Promise<void>}
      */
-    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
-        if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
-        if (interaction instanceof Interaction) await interaction.deferReply();
-        await this.handleReply(interaction, await this._function(args, interaction, target));
+    public async start(input: InputManager): Promise<void> {
+        if (input.interaction instanceof Interaction && !input.interaction.isCommand() && !input.interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
+        if (input.interaction instanceof Interaction) await input.interaction.deferReply();
+        await this.handleReply(input.interaction, await this._function(input));
     }
 
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {

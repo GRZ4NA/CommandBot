@@ -23,7 +23,7 @@ export class HelpMessage extends ChatCommand {
                     type: "string",
                 },
             ],
-            function: (args, i) => this.generateMessage(i, args.get("command_name") as string),
+            function: (input) => this.generateMessage(input.interaction, input.get("command_name", "string") ?? undefined),
         });
         this._appearance = appearance;
     }

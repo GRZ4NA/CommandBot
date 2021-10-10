@@ -1,8 +1,6 @@
-import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
+import { MessageEmbed, ReplyMessageOptions } from "discord.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { ContextMenuCommand } from "../ContextMenuCommand.js";
-import { ParameterResolvable } from "../../structures/types/parameter.js";
-import { TargetID } from "../../structures/parameter.js";
 import { SubCommand } from "../SubCommand.js";
 import { SubCommandGroup } from "..//SubCommandGroup.js";
 import { FunctionCommand } from "../base/FunctionCommand.js";
@@ -21,6 +19,7 @@ import {
 import { GuildCommand } from "../base/GuildCommand.js";
 import { PermissionGuildCommand } from "../base/PermissionGuildCommand.js";
 import { Command } from "..//base/Command.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 export type BaseCommandType = "BASE" | "FUNCTION" | "GUILD" | "PERMISSION" | "PERMISSIONGUILD";
 
@@ -70,13 +69,7 @@ export type ContextType = "USER" | "MESSAGE";
 
 export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
 
-export type CommandFunction = (args: ReadonlyMap<string, ParameterResolvable>, interaction: Interaction | Message, target?: TargetID) => CommandFunctionReturnTypes;
-
-export interface CommandInteractionData {
-    command: FunctionCommand;
-    parameters: ReadonlyMap<string, ParameterResolvable>;
-    target?: TargetID;
-}
+export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;
 
 export const CommandRegExps = {
     baseName: /^.{1,32}$/,

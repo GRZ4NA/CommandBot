@@ -1,13 +1,12 @@
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { DefaultParameter, Parameter, TargetID } from "../structures/parameter.js";
+import { DefaultParameter, Parameter } from "../structures/parameter.js";
 import { PermissionCommand } from "./base/PermissionCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit } from "./types/InitOptions.js";
 import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/types/api.js";
-import { ParameterResolvable } from "../structures/types/Parameter.js";
-import { Interaction, Message } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
+import { InputManager } from "../structures/InputManager.js";
 
 export class SubCommand extends PermissionCommand {
     public readonly parent: SubCommandGroup | ChatCommand;
@@ -57,16 +56,16 @@ export class SubCommand extends PermissionCommand {
         }
     }
 
-    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
-        if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !interaction.guild : !this.parent.dm && !interaction.guild)
+    public async start(input: InputManager): Promise<void> {
+        if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !input.interaction.guild : !this.parent.dm && !input.interaction.guild)
             throw new Error(`Command "${this.name}" is only available inside a guild.`);
         if (
             this.parent instanceof SubCommandGroup
-                ? this.parent.parent.guilds && this.parent.parent.guilds.length > 0 && !this.parent.parent.guilds.find((id) => id === interaction.guild?.id)
-                : this.parent.guilds && this.parent.guilds.length > 0 && !this.parent.guilds.find((id) => id === interaction.guild?.id)
+                ? this.parent.parent.guilds && this.parent.parent.guilds.length > 0 && !this.parent.parent.guilds.find((id) => id === input.interaction.guild?.id)
+                : this.parent.guilds && this.parent.guilds.length > 0 && !this.parent.guilds.find((id) => id === input.interaction.guild?.id)
         )
             throw new Error(`Command "${this.name}" is not available.`);
-        await super.start(args, interaction, target);
+        await super.start(input);
     }
 
     public toObject(): ChatCommandObject {

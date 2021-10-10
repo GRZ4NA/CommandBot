@@ -1,9 +1,8 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
 import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter, TargetID } from "../structures/parameter.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
-import { ParameterResolvable } from "../structures/types/Parameter.js";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandInteractionData, CommandRegExps } from "./types/commands.js";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "../structures/CommandManager.js";
 import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
@@ -120,11 +119,11 @@ export class ChatCommand extends PermissionGuildCommand {
      * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
      * @returns {Promise<void>}
      */
-    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
-        if (!this.slash && interaction instanceof Interaction) {
+    public async start(input: InputManager): Promise<void> {
+        if (!this.slash && input.interaction instanceof Interaction) {
             throw new Error("This command is not available as a slash command");
         }
-        await super.start(args, interaction, target);
+        await super.start(input);
     }
 
     public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {

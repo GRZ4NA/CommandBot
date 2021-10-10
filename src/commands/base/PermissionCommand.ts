@@ -1,12 +1,10 @@
-import { Interaction, Message } from "discord.js";
 import { PermissionsError } from "../../errors.js";
-import { TargetID } from "../../structures/parameter.js";
-import { ParameterResolvable } from "../../structures/types/Parameter.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { PermissionCommandInit } from "../types/InitOptions.js";
 import { CommandType } from "../types/commands.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 export class PermissionCommand extends FunctionCommand {
     /**
@@ -26,9 +24,9 @@ export class PermissionCommand extends FunctionCommand {
         this.permissions = new CommandPermissions(this, options.permissions);
     }
 
-    public async start(args: ReadonlyMap<string, ParameterResolvable>, interaction: Message | Interaction, target?: TargetID): Promise<void> {
-        if (this.permissions.check(interaction)) {
-            await super.start(args, interaction, target);
+    public async start(input: InputManager): Promise<void> {
+        if (this.permissions.check(input.interaction)) {
+            await super.start(input);
         } else {
             throw new PermissionsError(this);
         }

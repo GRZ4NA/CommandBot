@@ -6,7 +6,6 @@ import { applicationState } from "../state.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
 import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
 import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
-import { CommandInteractionData } from "../commands/types/commands.js";
 import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
 import { Bot } from "./Bot.js";
 import { SubCommand } from "../commands/SubCommand.js";
