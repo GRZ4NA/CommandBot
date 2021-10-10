@@ -1,6 +1,5 @@
 import { DMChannel, Guild, GuildMember, Message, TextChannel } from "discord.js";
-import { ParameterTypeError } from "errors.js";
-import { MissingParameterError } from "../errors.js";
+import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { Command } from "../commands/base/Command.js";
 import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue } from "./types/Parameter.js";
 
@@ -96,11 +95,11 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
                             val = true as InputParameterValue<T>;
                         } else if (value.toLowerCase() === "false") {
                             val = false as InputParameterValue<T>;
-                        } else if ((value as InputParameterValue<T>) === true || (value as InputParameterValue<T>) === false) {
-                            val = value as InputParameterValue<T>;
-                        } else {
-                            throw new ParameterTypeError(value, this.type);
                         }
+                    } else if ((value as InputParameterValue<T>) === true || (value as InputParameterValue<T>) === false) {
+                        val = value as InputParameterValue<T>;
+                    } else {
+                        throw new ParameterTypeError(value, this.type);
                     }
                     break;
                 case "number":
