@@ -17,7 +17,7 @@ export declare interface Bot {
 }
 
 /**
- * @class  Class that represents your bot instance
+ * @class  Application instance
  * @extends {EventEmitter}
  */
 export class Bot extends EventEmitter {
@@ -35,12 +35,12 @@ export class Bot extends EventEmitter {
 
     /**
      * Instance command manager
-     * @type {ChatCommandManager}
+     * @type {CommandManager}
      */
     public readonly commands: CommandManager;
 
     /**
-     * Discord bot token
+     * Discord Bot token
      * @type {string}
      */
     public readonly token: string;
@@ -52,7 +52,7 @@ export class Bot extends EventEmitter {
     public readonly applicationId: string;
 
     /**
-     * Built-in messages configuration
+     * Messages and embeds configuration
      * @type {Object}
      */
     public readonly messages: {
@@ -116,7 +116,7 @@ export class Bot extends EventEmitter {
     /**
      * @method
      * Starts your Discord bot
-     * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port
+     * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port (useful when hosting your bot on platforms like Heroku)
      * @param {boolean} [register=true] - if *true* or *undefined*, the bot will register all slash commands in Discord API
      * @returns {Promise<boolean>} whether this operation has been completed successfully
      */

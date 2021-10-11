@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Guild, Interaction, Message } from "discord.js";
+import { Client, Guild, Interaction, Message } from "discord.js";
 import { InputParameter, ObjectID, TargetID } from "./parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
@@ -21,11 +21,21 @@ export class CommandManager {
     private readonly _commands: Command[] = [];
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
+
+    /**
+     * Client connected to this manager
+     * @type {Client}
+     */
     public readonly client: Bot;
+
+    /**
+     * Help command associated with this manager
+     * @type {HelpMessage}
+     */
     public readonly helpCmd?: HelpMessage;
 
     /**
-     * Prefix used to respond to message interactions
+     * A manager holding all guild-specific prefixes and a global prefix
      * @type {string}
      */
     public readonly prefix: PrefixManager;
@@ -50,6 +60,7 @@ export class CommandManager {
 
     /**
      *
+     * @constructor
      * @param {Bot} client - client that this manager belongs to
      * @param {HelpMessageParams} helpMsg - parameters defining appearance of the help message
      * @param {string} prefix - prefix used to respond to message interactions
@@ -73,19 +84,27 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Discord API commands cache
+     * @type {Map<string, Map<string, RegisteredCommandObject>>}
+     */
     get cache(): Readonly<Map<string, Map<string, RegisteredCommandObject>>> {
         return this._registerCache;
     }
 
+    /**
+     * Number of commands registered in this manager
+     * @type {number}
+     */
     get commandsCount(): Readonly<number> {
         return this._commands.length;
     }
 
     /**
      *
-     * @param {APICommandType} type - a type of command that will be created and added to this manager
+     * @param {CommandType} type - a type of command that will be created and added to this manager
      * @param {CommandInit} options - an object containing all properties required to create this type of command
-     * @returns {Commands} A computed command object that inherits from {@link BaseCommand}
+     * @returns {Commands} A computed command object that inherits from {@link Command}
      */
     public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
         const command: Commands<T> | null =
@@ -111,9 +130,10 @@ export class CommandManager {
     }
 
     /**
-     *
+     * Get command registered in this manager
      * @param {string} q - command name or alias
      * @param {APICommandType} t - type of command you want to get from this manager
+     * @returns {Command || null} A command object
      */
     public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
         switch (t) {
@@ -148,8 +168,8 @@ export class CommandManager {
     /**
      *
      * @param {string} id - Discord command ID
-     * @param {Guild | string} guild - ID of guild that this command belongs to
-     * @param {boolean} noCache - whether to use cached data
+     * @param {Guild | string} [guild] - ID of guild that this command belongs to
+     * @param {boolean} [noCache] - whether not to use cached data
      * @returns {RegisteredCommandObject} Discord command object
      */
     public async getApi(id: string, guild?: Guild | string, noCache?: boolean): Promise<RegisteredCommandObject> {
@@ -182,7 +202,7 @@ export class CommandManager {
      *
      * @param {string} name - name of the command
      * @param {string} type - command type you want to get ID for
-     * @param {string} guild - ID of guild that this command belongs to
+     * @param {string} [guild] - ID of guild that this command belongs to
      * @returns {string} Command ID from Discord API
      */
     public async getIdApi(name: string, type: APICommandType, guild?: Guild | string): Promise<string | null> {
@@ -215,6 +235,11 @@ export class CommandManager {
         }
     }
 
+    /**
+     *
+     * @param {Guild | string} [g] - Guild object or ID
+     * @returns {Promise<Map<string, RegisteredCommandObject>>} List of commands from Discord API
+     */
     public async listApi(g?: Guild | string): Promise<Map<string, RegisteredCommandObject>> {
         const guildId = g instanceof Guild ? g.id : g;
         let rq: AxiosResponse<RegisteredCommandObject[]>;
@@ -235,6 +260,11 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Process an interaction
+     * @param {Interaction | Message} i - interaction object to fetch a command from
+     * @returns {InputManager || null} An InputManager containing all input data (command, arguments, target etc.)
+     */
     public fetch(i: Interaction | Message): InputManager | null {
         const prefix = this.prefix.get(i.guild || undefined);
         if (i instanceof Interaction) {
@@ -335,6 +365,10 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Register all commands in this manager in the Discord API
+     * @returns {void}
+     */
     public async register(): Promise<void> {
         const globalCommands = this._commands
             .filter((c) => {
@@ -388,6 +422,12 @@ export class CommandManager {
         });
     }
 
+    /**
+     * Set permissions using Discord Permissions API
+     * @param {string} id - command ID
+     * @param {CommandPermission[]} permissions - permissions to set
+     * @param {Guild | string} [g] - Guild ID or object (if command is in a guild)
+     */
     public async setPermissionsApi(id: string, permissions: CommandPermission[], g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
         const response = await axios.put(
@@ -406,6 +446,11 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Get permissions from Discord Permissions API for a specified command
+     * @param id - command ID
+     * @param {Guild | string} [g] - Guild ID or object (if command is in a guild)
+     */
     public async getPermissionsApi(id: string, g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
         const response = await axios.get(
