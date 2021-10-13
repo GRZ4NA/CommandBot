@@ -9,8 +9,14 @@ export type InputParameterValue<T extends ParameterType> = T extends "string"
     ? boolean
     : T extends "number"
     ? number
-    : T extends ObjectIdType
-    ? ObjectID<any>
+    : T extends "user"
+    ? ObjectID<"user">
+    : T extends "role"
+    ? ObjectID<"role">
+    : T extends "channel"
+    ? ObjectID<"channel">
+    : T extends "mentionable"
+    ? ObjectID<"mentionable">
     : never;
 
 export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID<any> | null;
