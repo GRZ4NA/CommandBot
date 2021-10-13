@@ -13,7 +13,7 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
     public readonly guilds?: string[];
 
     /**
-     * If set to *false*, all interactions from direct messages will result a PermissionError
+     * If set to *false*, all interactions that get invoked from private/direct conversations (outside a guild) will result a PermissionError
      * @type {boolean}
      */
     public readonly dm: boolean;

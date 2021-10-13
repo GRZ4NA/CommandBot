@@ -5,11 +5,29 @@ import { SubCommand } from "./SubCommand.js";
 import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions.js";
 
+/**
+ * @class Group of subcommands
+ */
 export class SubCommandGroup extends Command {
     private readonly _children: SubCommand[] = [];
+
+    /**
+     * Group parent command
+     * @type {ChatCommand}
+     */
     public readonly parent: ChatCommand;
+
+    /**
+     * Group description (default: "No description")
+     * @type {string}
+     */
     public readonly description: string;
 
+    /**
+     * @constructor Group constructor
+     * @param {ChatCommand} parent - group parent command
+     * @param {SubCommandGroupInit} options - initialization options
+     */
     constructor(parent: ChatCommand, options: SubCommandGroupInit) {
         super(parent.manager, "CHAT", {
             name: options.name,
@@ -31,6 +49,11 @@ export class SubCommandGroup extends Command {
         return Object.freeze([...this._children]);
     }
 
+    /**
+     * Attach a subcommand to this group
+     * @param {SubCommandInit} options - subcommand initialization options
+     * @returns A computed {@link SubCommand} object
+     */
     public append(options: SubCommandInit): SubCommand {
         const sc = new SubCommand(this, options);
         if (this._children.find((c) => c.name === sc.name)) {

@@ -8,24 +8,39 @@ import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, Text
 import { ChatCommand } from "./ChatCommand.js";
 import { InputManager } from "../structures/InputManager.js";
 
+/**
+ * @class Representation of SUB_COMMAND Discord interaction
+ */
 export class SubCommand extends PermissionCommand {
+    /**
+     * Command parent
+     * @type {SubCommand | ChatCommand}
+     */
     public readonly parent: SubCommandGroup | ChatCommand;
+
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
      */
     public readonly description: string;
+
     /**
      * List of parameters that can passed to this command
      * @type {Array} {@link Parameter}
      */
     public readonly parameters: Parameter<any>[];
+
     /**
      * Command usage displayed in the help message
      * @type {string}
      */
     public readonly usage?: string;
 
+    /**
+     * @constructor Subcommand constructor (SUB_COMMAND parameter in Discord API)
+     * @param {SubCommandGroup | ChatCommand} parent - command parent
+     * @param {SubCommandInit} options - initialization options
+     */
     constructor(parent: SubCommandGroup | ChatCommand, options: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
             name: options.name,

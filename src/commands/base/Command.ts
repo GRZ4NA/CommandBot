@@ -9,12 +9,40 @@ import { CommandPermissions } from "../../structures/CommandPermissions.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { SubCommand } from "../SubCommand.js";
 
+/**
+ * @class Bot core command represenatation
+ */
 export class Command {
+    /**
+     * Manager in which this command is registered
+     * @type {CommandManager}
+     */
     public readonly manager: CommandManager;
+
+    /**
+     * Command name
+     * @type {string}
+     */
     public readonly name: string;
+
+    /**
+     * CommandBot's internal command type
+     * @type {CommandType}
+     */
     public readonly type: CommandType;
+
+    /**
+     * Discord API default_permission
+     * @type {boolean}
+     */
     public readonly default_permission: boolean;
 
+    /**
+     * @constructor Command core constructor
+     * @param {CommandManager} manager - manager bound to this command
+     * @param {CommandType} type - command internal type
+     * @param {APICommandInit} options - initialization options
+     */
     constructor(manager: CommandManager, type: CommandType, options: APICommandInit) {
         this.manager = manager;
         this.name = options.name;
@@ -31,7 +59,7 @@ export class Command {
 
     /**
      * Converts a command instance to an {@link APICommandObject}
-     * @return {APICommandObject} An object that is accepted by the Discord API
+     * @returns {APICommandObject} An object that is accepted by the Discord API
      */
     public toObject(): APICommandObject {
         return {

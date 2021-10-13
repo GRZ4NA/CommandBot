@@ -18,7 +18,7 @@ export class ChatCommand extends PermissionGuildCommand {
     private readonly _children: ChildCommandResolvable[] = [];
     /**
      * List of parameters that can passed to this command
-     * @type {Array} {@link Parameter}
+     * @type {Parameter<any>[]}
      */
     public readonly parameters: Parameter<any>[];
 
@@ -53,8 +53,7 @@ export class ChatCommand extends PermissionGuildCommand {
     public readonly slash: boolean;
 
     /**
-     * Command constructor
-     * @constructor
+     * @constructor ChatCommand constructor
      * @param {CommandManager} manager - a manager that this command belongs to
      * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
@@ -115,8 +114,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Invoke the command
-     * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
-     * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
+     * @param {InputManager} input - input data manager
      * @returns {Promise<void>}
      */
     public async start(input: InputManager): Promise<void> {
@@ -126,6 +124,12 @@ export class ChatCommand extends PermissionGuildCommand {
         await super.start(input);
     }
 
+    /**
+     * Attaches subcommand or subcommand group to this ChatCommand (this makes the base command usable only via prefix interactions)
+     * @param {ChildCommandType} type - subcommand type
+     * @param {ChildCommandInit} options  - initialization options
+     * @returns {SubCommand | SubCommandGroup} A computed subcommand object
+     */
     public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
         const command =
             type === "COMMAND"

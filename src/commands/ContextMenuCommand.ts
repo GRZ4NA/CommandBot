@@ -4,9 +4,21 @@ import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 import { ContextType } from "./types/commands.js";
 import { ContextMenuCommandObject } from "../structures/types/api.js";
 
+/**
+ * @class Representation of all context menu Discord interactions
+ */
 export class ContextMenuCommand extends PermissionGuildCommand {
+    /**
+     * Type of context menu interaction
+     * @type {ContextType}
+     */
     public readonly contextType: ContextType;
 
+    /**
+     * @constructor Context menu command constructor
+     * @param {CommandManager} manager - manager that this command belongs to
+     * @param {ContextMenuCommandInit} options - initialization options
+     */
     constructor(manager: CommandManager, options: ContextMenuCommandInit) {
         super(manager, "CONTEXT", {
             name: options.name,

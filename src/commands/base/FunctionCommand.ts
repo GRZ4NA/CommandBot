@@ -27,8 +27,7 @@ export class FunctionCommand extends Command {
 
     /**
      * Invoke the command
-     * @param {ReadonlyMap<string, ParameterResolvable>} args - map of arguments from Discord message or interaction
-     * @param {Message | Interaction} interaction - Discord message or an interaction object that is related to this command
+     * @param {InputManager} input - input data manager
      * @returns {Promise<void>}
      */
     public async start(input: InputManager): Promise<void> {
