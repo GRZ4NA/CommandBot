@@ -1,6 +1,6 @@
 export class StateManager {
     private _isRunning: boolean = false;
-    private readonly _unstable: boolean = true;
+    private readonly _unstable: boolean = false;
 
     get running() {
         return this._isRunning;
