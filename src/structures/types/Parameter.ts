@@ -44,10 +44,14 @@ export interface ParameterSchema {
      */
     optional: boolean;
 
+    /**
+     * Type of parameter data
+     * @type {ParameterType}
+     */
     type: ParameterType;
 
     /**
-     * List of value choices (available only when type is set to "STRING")
+     * List of value choices (available only when type is set to "string")
      */
     choices?: string[];
 }

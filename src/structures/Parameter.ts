@@ -7,6 +7,10 @@ import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, Input
  * @class Representation of command parameter
  */
 export class Parameter<T extends ParameterType> {
+    /**
+     * Command associated with this parameter
+     * @type {Command}
+     */
     public readonly command: Command;
     /**
      * Parameter name
@@ -138,6 +142,10 @@ export class ObjectID<T extends ObjectIdType> {
         this.guild = guild;
     }
 
+    /**
+     * Uses informations associated with the object to generate a Discord.js entity
+     * @returns A fetched object (or null)
+     */
     public async toObject(): Promise<ObjectIdReturnType<T> | null> {
         switch (this.type) {
             case "channel":

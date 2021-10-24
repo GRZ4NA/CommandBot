@@ -6,6 +6,10 @@ import { ScopeResolvable } from "./types/PrefixManager.js";
 export class PrefixManager {
     private readonly _prefixes: Map<string, string> = new Map();
     private readonly _global: string = "GLOBAL";
+    /**
+     * Command manager associated with the object
+     * @type {CommandManager}
+     */
     public readonly manager: CommandManager;
 
     constructor(manager: CommandManager, defaultPrefix?: string) {
@@ -22,6 +26,11 @@ export class PrefixManager {
         return this._prefixes.get(this._global) || null;
     }
 
+    /**
+     *
+     * @param {ScopeResolvable} scope - guild object or ID
+     * @returns a prefix used in given scope
+     */
     public get(scope?: ScopeResolvable): string | null {
         if (!scope) return this.globalPrefix;
         else {
@@ -30,6 +39,11 @@ export class PrefixManager {
         }
     }
 
+    /**
+     *
+     * @param {string} prefix - new prefix
+     * @param {ScopeResolvable} [scope]  - guild string or ID
+     */
     public set(prefix: string, scope?: ScopeResolvable): void {
         if (!CommandRegExps.prefix.test(prefix)) throw new Error(`"${prefix}" is not a valid prefix`);
         if (!scope) {
@@ -41,6 +55,10 @@ export class PrefixManager {
         }
     }
 
+    /**
+     *
+     * @param {ScopeResolvable} [scope] - guild string or ID
+     */
     public remove(scope?: ScopeResolvable): boolean {
         if (!scope) return this._prefixes.delete(this._global);
         const id = scope instanceof Guild ? scope.id : scope;

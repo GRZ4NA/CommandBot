@@ -12,7 +12,7 @@ export interface InitOptions {
     name: string;
 
     /**
-     * Prefix used as a way to trigger the bot using messages
+     * Prefix used as a way to trigger the bot using messages in all guilds by default
      * @type {string}
      */
     globalPrefix?: string;
@@ -23,6 +23,10 @@ export interface InitOptions {
      */
     argumentSeparator?: string;
 
+    /**
+     * Separator used to split subcommands when using prefix interactions
+     * @type {string}
+     */
     commandSeparator?: string;
 
     /**

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Client, Guild, Interaction, Message } from "discord.js";
+import { Guild, Interaction, Message } from "discord.js";
 import { InputParameter, ObjectID, TargetID } from "./parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
@@ -263,7 +263,7 @@ export class CommandManager {
     /**
      * Process an interaction
      * @param {Interaction | Message} i - interaction object to fetch a command from
-     * @returns {InputManager || null} An InputManager containing all input data (command, arguments, target etc.)
+     * @returns {InputManager | null} An InputManager containing all input data (command, arguments, target etc.)
      */
     public fetch(i: Interaction | Message): InputManager | null {
         const prefix = this.prefix.get(i.guild || undefined);
