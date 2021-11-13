@@ -1,6 +1,6 @@
 import { FunctionCommand } from "../commands/base/FunctionCommand";
 import { Interaction, Message } from "discord.js";
-import { ParameterType } from "../..";
+import { ParameterType } from "./types/Parameter";
 import { InputParameter, TargetID } from "./parameter.js";
 import { InputParameterValue } from "./types/Parameter";
 
