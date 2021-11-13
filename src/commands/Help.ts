@@ -5,9 +5,21 @@ import { HelpMessageParams } from "./types/HelpMessage.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 
+/**
+ * @class Chat command containing a list of all command in the given manager (help message)
+ */
 export class HelpMessage extends ChatCommand {
+    /**
+     * Help message appearance options
+     * @type {HelpMessageParams}
+     */
     private readonly _appearance: HelpMessageParams;
 
+    /**
+     * @constructor Help message constructor
+     * @param cmdManager - command manager related to this command
+     * @param appearance - appearance properties
+     */
     constructor(cmdManager: CommandManager, appearance: HelpMessageParams) {
         super(cmdManager, {
             name: "help",
@@ -28,6 +40,12 @@ export class HelpMessage extends ChatCommand {
         this._appearance = appearance;
     }
 
+    /**
+     *
+     * @param i - Discord interaction
+     * @param cmdName - command name (if any)
+     * @returns A computed help message in form of {@link MessageEmbed}
+     */
     public generateMessage(i: Interaction | Message, cmdName?: string) {
         const helpMsg = new MessageEmbed();
         helpMsg.setColor(this._appearance.color);

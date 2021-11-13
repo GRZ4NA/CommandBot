@@ -1,9 +1,18 @@
 import { PermissionResolvable, Message, Interaction } from "discord.js";
 
+/**
+ * Permission checking methods
+ */
 export type PermissionCheckTypes = "ALL" | "ANY";
 
+/**
+ * Definition of permission function
+ */
 export type PermissionFunction = (i: Interaction | Message) => boolean;
 
+/**
+ * @interface CommandPermissionsInit - command permissions initialization object
+ */
 export interface CommandPermissionsInit {
     /**
      * Resolvable (Discord.js permission resolvables) or custom function that returns *boolean* value

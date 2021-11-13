@@ -18,13 +18,13 @@ export class ChatCommand extends PermissionGuildCommand {
     private readonly _children: ChildCommandResolvable[] = [];
     /**
      * List of parameters that can passed to this command
-     * @type {Parameter<any>[]}
+     * @type {Array<Parameter<any>>}
      */
     public readonly parameters: Parameter<any>[];
 
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
-     * @type {Array} *string*
+     * @type {Array<string>}
      */
     public readonly aliases?: string[];
 
@@ -54,8 +54,8 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * @constructor ChatCommand constructor
-     * @param {CommandManager} manager - a manager that this command belongs to
-     * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
+     * @param manager - a manager that this command belongs to
+     * @param options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
     constructor(manager: CommandManager, options: ChatCommandInit) {
         super(manager, "CHAT", {
@@ -114,8 +114,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Invoke the command
-     * @param {InputManager} input - input data manager
-     * @returns {Promise<void>}
+     * @param input - input data manager
      */
     public async start(input: InputManager): Promise<void> {
         if (!this.slash && input.interaction instanceof Interaction) {
@@ -126,9 +125,9 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Attaches subcommand or subcommand group to this ChatCommand (this makes the base command usable only via prefix interactions)
-     * @param {ChildCommandType} type - subcommand type
-     * @param {ChildCommandInit} options  - initialization options
-     * @returns {SubCommand | SubCommandGroup} A computed subcommand object
+     * @param type - subcommand type
+     * @param options  - initialization options
+     * @returns A computed subcommand object
      */
     public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
         const command =
@@ -148,6 +147,12 @@ export class ChatCommand extends PermissionGuildCommand {
         return command;
     }
 
+    /**
+     *
+     * @param options - parameter options
+     * @param interaction - Discord interaction
+     * @returns an {@link InputManager} containing all interaction-related data or *null*
+     */
     public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
         if (!this.hasSubCommands) return null;
         if (options[0]) {
@@ -201,6 +206,12 @@ export class ChatCommand extends PermissionGuildCommand {
         }
     }
 
+    /**
+     *
+     * @param name - subcommand name
+     * @param group - name of the group (if any)
+     * @returns a {@link SubCommand} object or *null*
+     */
     public getSubcommand(name: string, group?: string): SubCommand | null {
         if (!this.hasSubCommands) return null;
         if (group) {
@@ -217,7 +228,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
-     * @returns {ChatCommandObject} object
+     * @returns Discord API object
      */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {

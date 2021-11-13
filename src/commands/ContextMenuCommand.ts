@@ -16,8 +16,8 @@ export class ContextMenuCommand extends PermissionGuildCommand {
 
     /**
      * @constructor Context menu command constructor
-     * @param {CommandManager} manager - manager that this command belongs to
-     * @param {ContextMenuCommandInit} options - initialization options
+     * @param manager - manager that this command belongs to
+     * @param options - initialization options
      */
     constructor(manager: CommandManager, options: ContextMenuCommandInit) {
         super(manager, "CONTEXT", {
@@ -32,6 +32,9 @@ export class ContextMenuCommand extends PermissionGuildCommand {
         this.contextType = options.contextType;
     }
 
+    /**
+     * @returns Discord API object
+     */
     public toObject(): ContextMenuCommandObject {
         return {
             ...super.toObject(),

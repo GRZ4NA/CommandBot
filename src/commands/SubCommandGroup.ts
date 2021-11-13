@@ -25,8 +25,8 @@ export class SubCommandGroup extends Command {
 
     /**
      * @constructor Group constructor
-     * @param {ChatCommand} parent - group parent command
-     * @param {SubCommandGroupInit} options - initialization options
+     * @param parent - group parent command
+     * @param options - initialization options
      */
     constructor(parent: ChatCommand, options: SubCommandGroupInit) {
         super(parent.manager, "CHAT", {
@@ -51,7 +51,7 @@ export class SubCommandGroup extends Command {
 
     /**
      * Attach a subcommand to this group
-     * @param {SubCommandInit} options - subcommand initialization options
+     * @param options - subcommand initialization options
      * @returns A computed {@link SubCommand} object
      */
     public append(options: SubCommandInit): SubCommand {
@@ -64,6 +64,9 @@ export class SubCommandGroup extends Command {
         }
     }
 
+    /**
+     * @returns Discord API object
+     */
     public toObject(): SubCommandGroupObject {
         return {
             ...super.toObject(),

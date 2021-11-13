@@ -6,10 +6,27 @@ import { CommandFunction, CommandType } from "../types/commands.js";
 import { FunctionCommandInit } from "../types/InitOptions.js";
 import { InputManager } from "../../structures/InputManager.js";
 
+/**
+ * @class Function (executable) command
+ */
 export class FunctionCommand extends Command {
+    /**
+     * Command function (called on command execution)
+     * @type {CommandFunction}
+     */
     private readonly _function: CommandFunction;
+    /**
+     * Whether a SUCCESS message should be sent after executing the command function (when there is no other reply)
+     * @type {boolean}
+     */
     public readonly announceSuccess: boolean;
 
+    /**
+     * @constructor Executable command constructor
+     * @param manager - command manager attached to this command
+     * @param type - command type
+     * @param options - command initailization options
+     */
     constructor(manager: CommandManager, type: CommandType, options: FunctionCommandInit) {
         super(manager, type, {
             name: options.name,
@@ -27,7 +44,7 @@ export class FunctionCommand extends Command {
 
     /**
      * Invoke the command
-     * @param {InputManager} input - input data manager
+     * @param input - input data manager
      * @returns {Promise<void>}
      */
     public async start(input: InputManager): Promise<void> {
@@ -36,6 +53,11 @@ export class FunctionCommand extends Command {
         await this.handleReply(input.interaction, await this._function(input));
     }
 
+    /**
+     * Reply handler
+     * @param interaction - Discord interaction object
+     * @param result - result of command function execution
+     */
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
         if (

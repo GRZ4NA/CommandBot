@@ -10,7 +10,7 @@ import { ChatCommand } from "../ChatCommand.js";
 import { SubCommand } from "../SubCommand.js";
 
 /**
- * @class Bot core command represenatation
+ * @class Bot core command object
  */
 export class Command {
     /**
@@ -39,9 +39,9 @@ export class Command {
 
     /**
      * @constructor Command core constructor
-     * @param {CommandManager} manager - manager bound to this command
-     * @param {CommandType} type - command internal type
-     * @param {APICommandInit} options - initialization options
+     * @param manager - manager bound to this command
+     * @param type - command internal type
+     * @param options - initialization options
      */
     constructor(manager: CommandManager, type: CommandType, options: APICommandInit) {
         this.manager = manager;
@@ -59,7 +59,7 @@ export class Command {
 
     /**
      * Converts a command instance to an {@link APICommandObject}
-     * @returns {APICommandObject} An object that is accepted by the Discord API
+     * @returns An object that is accepted by the Discord API
      */
     public toObject(): APICommandObject {
         return {
@@ -68,6 +68,11 @@ export class Command {
         };
     }
 
+    /**
+     * Check base command type
+     * @param type - base command type
+     * @returns Whether this command can be used as the given type
+     */
     public isBaseCommandType<T extends BaseCommandType>(type: T): this is BaseCommands<T> {
         switch (type) {
             case "BASE":
@@ -102,6 +107,11 @@ export class Command {
         }
     }
 
+    /**
+     * Checks command type
+     * @param type - command type
+     * @returns Whether this command can be used as the given type
+     */
     public isCommandType<T extends CommandType>(type: T): this is Commands<T> {
         switch (type) {
             case "CHAT":
@@ -123,6 +133,11 @@ export class Command {
         }
     }
 
+    /**
+     * Check child command type
+     * @param type - child command type
+     * @returns Whether this command can be used as a child command of the given type
+     */
     public isChildCommandType<T extends ChildCommandType>(type: T): this is ChildCommands<T> {
         switch (type) {
             case "COMMAND":

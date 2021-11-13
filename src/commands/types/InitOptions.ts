@@ -2,6 +2,9 @@ import { ParameterSchema } from "../../structures/types/Parameter.js";
 import { CommandPermissionsInit } from "./permissions.js";
 import { CommandFunction, ContextType } from "./commands.js";
 
+/**
+ * @interface APICommandInit - initialization options of core {@link Command} object
+ */
 export interface APICommandInit {
     /**
      * Command name
@@ -15,6 +18,9 @@ export interface APICommandInit {
     default_permission?: boolean;
 }
 
+/**
+ * @interface FunctionCommandInit - initialization options of base executable command
+ */
 export interface FunctionCommandInit extends APICommandInit {
     /**
      * Command function (will be executed when calling a command)
@@ -28,6 +34,9 @@ export interface FunctionCommandInit extends APICommandInit {
     announceSuccess?: boolean;
 }
 
+/**
+ * @interface GuildCommandInit - initialization options of base guild-scoped command
+ */
 export interface GuildCommandInit extends FunctionCommandInit {
     /**
      * Whether this command should be callable using private messages with bot
@@ -36,11 +45,14 @@ export interface GuildCommandInit extends FunctionCommandInit {
     dm?: boolean;
     /**
      * List of Guild IDs in which the command can be called
-     * @type {string[]}
+     * @type {Array<string>}
      */
     guilds?: string[];
 }
 
+/**
+ * @interface PermissionCommandInit - initialization options of base command with attached permissions
+ */
 export interface PermissionCommandInit extends FunctionCommandInit {
     /**
      * Object with permissions' options and resolvables
@@ -49,6 +61,9 @@ export interface PermissionCommandInit extends FunctionCommandInit {
     permissions?: CommandPermissionsInit;
 }
 
+/**
+ * @interface PermissionGuildCommandInit - initialization options of base guild-scoped command with attached permisisions
+ */
 export interface PermissionGuildCommandInit extends PermissionCommandInit {
     /**
      * Whether this command should be callable using private messages with bot
@@ -57,14 +72,13 @@ export interface PermissionGuildCommandInit extends PermissionCommandInit {
     dm?: boolean;
     /**
      * List of Guild IDs in which the command can be called
-     * @type {string[]}
+     * @type {Array<string>}
      */
     guilds?: string[];
 }
 
 /**
- * @interface
- * Options for building a {@link Command} object
+ * @interface ChatCommandInit - intialization options of chat command
  */
 export interface ChatCommandInit extends PermissionGuildCommandInit {
     /**
@@ -74,7 +88,7 @@ export interface ChatCommandInit extends PermissionGuildCommandInit {
     parameters?: ParameterSchema[] | "simple" | "no_input";
     /**
      * Different string that can be used with prefix to invoke the command
-     * @type {string[]}
+     * @type {Array<string>}
      */
     aliases?: string[] | string;
     /**
@@ -115,7 +129,7 @@ export interface SubCommandInit extends PermissionCommandInit {
     description?: string;
     /**
      * List of object defining all parameters of the command
-     * @type {ParameterSchema[] | "simple" | "no_input"}
+     * @type {Array<ParameterSchema> | "simple" | "no_input"}
      */
     parameters?: ParameterSchema[] | "simple" | "no_input";
     /**
@@ -125,6 +139,9 @@ export interface SubCommandInit extends PermissionCommandInit {
     usage?: string;
 }
 
+/**
+ * @interface SubCommandGroupInit - intialization options of subcommand group
+ */
 export interface SubCommandGroupInit extends APICommandInit {
     /**
      * Command description

@@ -26,7 +26,7 @@ export class SubCommand extends PermissionCommand {
 
     /**
      * List of parameters that can passed to this command
-     * @type {Array} {@link Parameter}
+     * @type {Array<Parameter>}
      */
     public readonly parameters: Parameter<any>[];
 
@@ -38,8 +38,8 @@ export class SubCommand extends PermissionCommand {
 
     /**
      * @constructor Subcommand constructor (SUB_COMMAND parameter in Discord API)
-     * @param {SubCommandGroup | ChatCommand} parent - command parent
-     * @param {SubCommandInit} options - initialization options
+     * @param parent - command parent
+     * @param options - initialization options
      */
     constructor(parent: SubCommandGroup | ChatCommand, options: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
@@ -71,6 +71,10 @@ export class SubCommand extends PermissionCommand {
         }
     }
 
+    /**
+     * Invoke the command
+     * @param input - input data
+     */
     public async start(input: InputManager): Promise<void> {
         if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !input.interaction.guild : !this.parent.dm && !input.interaction.guild)
             throw new Error(`Command "${this.name}" is only available inside a guild.`);
@@ -83,6 +87,9 @@ export class SubCommand extends PermissionCommand {
         await super.start(input);
     }
 
+    /**
+     * @returns Discord API object
+     */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {
             ...super.toObject(),
