@@ -12,13 +12,16 @@ export class HelpMessage extends ChatCommand {
     /**
      * Help message appearance options
      * @type {HelpMessageParams}
+     * @private
+     * @readonly
      */
     private readonly _appearance: HelpMessageParams;
 
     /**
-     * @constructor Help message constructor
-     * @param cmdManager - command manager related to this command
-     * @param appearance - appearance properties
+     * Help message constructor
+     * @constructor
+     * @param {CommandManager} cmdManager - command manager related to this command
+     * @param {HelpMessageParams} appearance - appearance properties
      */
     constructor(cmdManager: CommandManager, appearance: HelpMessageParams) {
         super(cmdManager, {
@@ -42,9 +45,10 @@ export class HelpMessage extends ChatCommand {
 
     /**
      *
-     * @param i - Discord interaction
-     * @param cmdName - command name (if any)
-     * @returns A computed help message in form of {@link MessageEmbed}
+     * @param {Interaction | Message} i - Discord interaction
+     * @param {string} [cmdName] - command name (if any)
+     * @returns {MessageEmbed} A computed help message in form of {@link MessageEmbed}
+     * @public
      */
     public generateMessage(i: Interaction | Message, cmdName?: string) {
         const helpMsg = new MessageEmbed();

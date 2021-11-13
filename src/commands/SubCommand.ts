@@ -9,37 +9,47 @@ import { ChatCommand } from "./ChatCommand.js";
 import { InputManager } from "../structures/InputManager.js";
 
 /**
- * @class Representation of SUB_COMMAND Discord interaction
+ * Representation of SUB_COMMAND Discord interaction
+ * @class
  */
 export class SubCommand extends PermissionCommand {
     /**
      * Command parent
      * @type {SubCommand | ChatCommand}
+     * @public
+     * @readonly
      */
     public readonly parent: SubCommandGroup | ChatCommand;
 
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly description: string;
 
     /**
      * List of parameters that can passed to this command
      * @type {Array<Parameter>}
+     * @public
+     * @readonly
      */
     public readonly parameters: Parameter<any>[];
 
     /**
      * Command usage displayed in the help message
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly usage?: string;
 
     /**
-     * @constructor Subcommand constructor (SUB_COMMAND parameter in Discord API)
-     * @param parent - command parent
-     * @param options - initialization options
+     * Subcommand constructor (SUB_COMMAND parameter in Discord API)
+     * @constructor
+     * @param {SubCommandGroup | ChatCommand} parent - command parent
+     * @param {SubCommandInit} options - initialization options
      */
     constructor(parent: SubCommandGroup | ChatCommand, options: SubCommandInit) {
         super(parent instanceof SubCommandGroup ? parent.parent.manager : parent.manager, "CHAT", {
@@ -73,7 +83,8 @@ export class SubCommand extends PermissionCommand {
 
     /**
      * Invoke the command
-     * @param input - input data
+     * @param {InputManager} input - input data
+     * @returns {Promise<void>}
      */
     public async start(input: InputManager): Promise<void> {
         if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !input.interaction.guild : !this.parent.dm && !input.interaction.guild)
@@ -88,7 +99,8 @@ export class SubCommand extends PermissionCommand {
     }
 
     /**
-     * @returns Discord API object
+     * @returns {ChatCommandObject} Discord API object
+     * @public
      */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {

@@ -5,19 +5,23 @@ import { ContextType } from "./types/commands.js";
 import { ContextMenuCommandObject } from "../structures/types/api.js";
 
 /**
- * @class Representation of all context menu Discord interactions
+ * Representation of all context menu Discord interactions
+ * @class
  */
 export class ContextMenuCommand extends PermissionGuildCommand {
     /**
      * Type of context menu interaction
      * @type {ContextType}
+     * @public
+     * @readonly
      */
     public readonly contextType: ContextType;
 
     /**
-     * @constructor Context menu command constructor
-     * @param manager - manager that this command belongs to
-     * @param options - initialization options
+     * Context menu command constructor
+     * @constructor
+     * @param {CommandManager} manager - manager that this command belongs to
+     * @param {ContextMenuCommandInit} options - initialization options
      */
     constructor(manager: CommandManager, options: ContextMenuCommandInit) {
         super(manager, "CONTEXT", {
@@ -33,7 +37,8 @@ export class ContextMenuCommand extends PermissionGuildCommand {
     }
 
     /**
-     * @returns Discord API object
+     * @returns {ContextMenuCommandObject} Discord API object
+     * @public
      */
     public toObject(): ContextMenuCommandObject {
         return {

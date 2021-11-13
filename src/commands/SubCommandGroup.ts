@@ -6,27 +6,38 @@ import { CommandRegExps } from "./types/commands.js";
 import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions.js";
 
 /**
- * @class Group of subcommands
+ * Group of subcommands
+ * @class
  */
 export class SubCommandGroup extends Command {
+    /**
+     * Group members (children)
+     * @type {Array<SubCommand>}
+     * @private
+     * @readonly
+     */
     private readonly _children: SubCommand[] = [];
 
     /**
      * Group parent command
      * @type {ChatCommand}
+     * @public
+     * @readonly
      */
     public readonly parent: ChatCommand;
 
     /**
      * Group description (default: "No description")
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly description: string;
 
     /**
      * @constructor Group constructor
-     * @param parent - group parent command
-     * @param options - initialization options
+     * @param {ChatCommand} parent - group parent command
+     * @param {SubCommandGroupInit} options - initialization options
      */
     constructor(parent: ChatCommand, options: SubCommandGroupInit) {
         super(parent.manager, "CHAT", {
@@ -45,14 +56,19 @@ export class SubCommandGroup extends Command {
         }
     }
 
+    /**
+     * List of children attached to this group
+     * @access
+     * @type {Readonly<Array<SubCommand>>}
+     */
     get children() {
         return Object.freeze([...this._children]);
     }
 
     /**
      * Attach a subcommand to this group
-     * @param options - subcommand initialization options
-     * @returns A computed {@link SubCommand} object
+     * @param {SubCommandInit} options - subcommand initialization options
+     * @returns {SubCommand} A computed {@link SubCommand} object
      */
     public append(options: SubCommandInit): SubCommand {
         const sc = new SubCommand(this, options);
@@ -65,7 +81,7 @@ export class SubCommandGroup extends Command {
     }
 
     /**
-     * @returns Discord API object
+     * @returns {SubCommandGroupObject} Discord API object
      */
     public toObject(): SubCommandGroupObject {
         return {
