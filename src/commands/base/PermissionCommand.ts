@@ -7,7 +7,8 @@ import { CommandType } from "../types/commands.js";
 import { InputManager } from "../../structures/InputManager.js";
 
 /**
- * @class Executable command with attached permission system
+ * Executable command with attached permission system
+ * @class
  */
 export class PermissionCommand extends FunctionCommand {
     /**
@@ -17,10 +18,11 @@ export class PermissionCommand extends FunctionCommand {
     public readonly permissions: CommandPermissions;
 
     /**
-     * @constructor Constructor of command with attached permissions
-     * @param manager - command manager attached to this command
-     * @param type - command type
-     * @param options - command initalization options
+     * Constructor of command with attached permissions
+     * @constructor
+     * @param {CommandManager} manager - command manager attached to this command
+     * @param {CommandType} type - command type
+     * @param {PermissionCommandInit} options - command initalization options
      */
     constructor(manager: CommandManager, type: CommandType, options: PermissionCommandInit) {
         super(manager, type, {
@@ -35,7 +37,7 @@ export class PermissionCommand extends FunctionCommand {
 
     /**
      * Invoke the command
-     * @param input - input data
+     * @param {InputManager} input - input data
      */
     public async start(input: InputManager): Promise<void> {
         if (this.permissions.check(input.interaction)) {

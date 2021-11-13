@@ -7,7 +7,8 @@ import { FunctionCommandInit } from "../types/InitOptions.js";
 import { InputManager } from "../../structures/InputManager.js";
 
 /**
- * @class Function (executable) command
+ * Function (executable) command
+ * @class
  */
 export class FunctionCommand extends Command {
     /**
@@ -22,10 +23,11 @@ export class FunctionCommand extends Command {
     public readonly announceSuccess: boolean;
 
     /**
-     * @constructor Executable command constructor
-     * @param manager - command manager attached to this command
-     * @param type - command type
-     * @param options - command initailization options
+     * Executable command constructor
+     * @constructor
+     * @param {CommandManager} manager - command manager attached to this command
+     * @param {CommandType} type - command type
+     * @param {FunctionCommandInit} options - command initailization options
      */
     constructor(manager: CommandManager, type: CommandType, options: FunctionCommandInit) {
         super(manager, type, {
@@ -44,8 +46,8 @@ export class FunctionCommand extends Command {
 
     /**
      * Invoke the command
-     * @param input - input data manager
-     * @returns {Promise<void>}
+     * @param {InputManager} input - input data manager
+     * @returns {Promise<void>} A *Promise* that resolves after the function command is completed
      */
     public async start(input: InputManager): Promise<void> {
         if (input.interaction instanceof Interaction && !input.interaction.isCommand() && !input.interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
@@ -55,8 +57,8 @@ export class FunctionCommand extends Command {
 
     /**
      * Reply handler
-     * @param interaction - Discord interaction object
-     * @param result - result of command function execution
+     * @param {Message | Interaction} interaction - Discord interaction object
+     * @param {void | string | MessageEmbed | ReplyMessageOptions}  result - result of command function execution
      */
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);

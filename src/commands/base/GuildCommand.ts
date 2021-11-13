@@ -5,7 +5,8 @@ import { CommandType } from "../types/commands.js";
 import { InputManager } from "../../structures/InputManager.js";
 
 /**
- * @class Guild-scoped executable command
+ * Guild-scoped executable command
+ * @class
  */
 export class GuildCommand extends FunctionCommand {
     /**
@@ -21,10 +22,11 @@ export class GuildCommand extends FunctionCommand {
     public readonly dm: boolean;
 
     /**
-     * @constructor Guild-scoped command constructor
-     * @param manager - command manager attached to this command
-     * @param type - command type
-     * @param options - command initialization options
+     * Guild-scoped command constructor
+     * @constructor
+     * @param {CommandManager} manager - command manager attached to this command
+     * @param {CommandType} type - command type
+     * @param {GuildCommandInit} options - command initialization options
      */
     constructor(manager: CommandManager, type: CommandType, options: GuildCommandInit) {
         super(manager, type, {
@@ -40,7 +42,7 @@ export class GuildCommand extends FunctionCommand {
 
     /**
      * Invoke the command
-     * @param input - input data
+     * @param {InputManager} input - input data
      */
     public async start(input: InputManager): Promise<void> {
         if (!input.interaction.guild && !this.dm) throw new Error(`Command "${this.name}" is only available inside a guild.`);
