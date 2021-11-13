@@ -1,8 +1,7 @@
 import { ClientOptions } from "discord.js";
 
 /**
- * @interface
- * Main object initialization options
+ * @interface InitOptions - Main object initialization options
  */
 export interface InitOptions {
     /**

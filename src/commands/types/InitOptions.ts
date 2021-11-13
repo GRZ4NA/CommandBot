@@ -3,7 +3,8 @@ import { CommandPermissionsInit } from "./permissions.js";
 import { CommandFunction, ContextType } from "./commands.js";
 
 /**
- * @interface APICommandInit - initialization options of core {@link Command} object
+ * @interface
+ * Initialization options of core {@link Command} object
  */
 export interface APICommandInit {
     /**
@@ -19,7 +20,9 @@ export interface APICommandInit {
 }
 
 /**
- * @interface FunctionCommandInit - initialization options of base executable command
+ * @interface
+ * Initialization options of base executable command
+ * @extends {APICommandInit}
  */
 export interface FunctionCommandInit extends APICommandInit {
     /**
@@ -35,7 +38,9 @@ export interface FunctionCommandInit extends APICommandInit {
 }
 
 /**
- * @interface GuildCommandInit - initialization options of base guild-scoped command
+ * @interface
+ * Initialization options of base guild-scoped command
+ * @extends {FunctionCommandInit}
  */
 export interface GuildCommandInit extends FunctionCommandInit {
     /**
@@ -51,7 +56,9 @@ export interface GuildCommandInit extends FunctionCommandInit {
 }
 
 /**
- * @interface PermissionCommandInit - initialization options of base command with attached permissions
+ * @interface
+ * Initialization options of base command with attached permissions
+ * @extends {FunctionCommandInit}
  */
 export interface PermissionCommandInit extends FunctionCommandInit {
     /**
@@ -62,7 +69,9 @@ export interface PermissionCommandInit extends FunctionCommandInit {
 }
 
 /**
- * @interface PermissionGuildCommandInit - initialization options of base guild-scoped command with attached permisisions
+ * @interface
+ * Initialization options of base guild-scoped command with attached permisisions
+ * @extends {PermissionCommandInit}
  */
 export interface PermissionGuildCommandInit extends PermissionCommandInit {
     /**
@@ -78,7 +87,9 @@ export interface PermissionGuildCommandInit extends PermissionCommandInit {
 }
 
 /**
- * @interface ChatCommandInit - intialization options of chat command
+ * @interface
+ * Intialization options of chat command
+ * @extends {PermissionGuildCommandInit}
  */
 export interface ChatCommandInit extends PermissionGuildCommandInit {
     /**
@@ -113,6 +124,11 @@ export interface ChatCommandInit extends PermissionGuildCommandInit {
     slash?: boolean;
 }
 
+/**
+ * @interface
+ * Initialization options of context menu interactions
+ * @extends {PermissionGuildCommandInit}
+ */
 export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
     /**
      * Context menu target type
@@ -121,6 +137,11 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
     contextType: ContextType;
 }
 
+/**
+ * @interface
+ * Subcommand initialization options
+ * @extends {PermissionCommandInit}
+ */
 export interface SubCommandInit extends PermissionCommandInit {
     /**
      * Command description
@@ -140,7 +161,9 @@ export interface SubCommandInit extends PermissionCommandInit {
 }
 
 /**
- * @interface SubCommandGroupInit - intialization options of subcommand group
+ * @interface
+ * Intialization options of subcommand group
+ * @extends {APICommandInit}
  */
 export interface SubCommandGroupInit extends APICommandInit {
     /**

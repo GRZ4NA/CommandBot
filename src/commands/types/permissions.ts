@@ -11,7 +11,8 @@ export type PermissionCheckTypes = "ALL" | "ANY";
 export type PermissionFunction = (i: Interaction | Message) => boolean;
 
 /**
- * @interface CommandPermissionsInit - command permissions initialization object
+ * @interface
+ * Command permissions initialization object
  */
 export interface CommandPermissionsInit {
     /**
