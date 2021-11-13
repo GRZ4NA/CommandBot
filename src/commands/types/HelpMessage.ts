@@ -1,8 +1,8 @@
 import { ColorResolvable } from "discord.js";
 
 /**
- * @interface
  * All properties used to customize the appearance of a help message
+ * @interface
  */
 export interface HelpMessageParams {
     /**

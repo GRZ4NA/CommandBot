@@ -8,17 +8,23 @@ import { InputManager } from "../../structures/InputManager.js";
 /**
  * Guild-scoped executable command with permissions attached
  * @class
+ * @extends {PermissionCommand}
+ * @implements {GuildCommand}
  */
 export class PermissionGuildCommand extends PermissionCommand implements GuildCommand {
     /**
      * List of Discord guild (server) IDs in which this command can be used
      * @type {Array<string>}
+     * @public
+     * @readonly
      */
     public readonly guilds?: string[];
 
     /**
      * If set to *false*, all interactions that get invoked from private/direct conversations (outside a guild) will result a PermissionError
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly dm: boolean;
 
@@ -45,6 +51,9 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
     /**
      * Invoke the command
      * @param {InputManager} input - input data
+     * @returns {Promise<void>}
+     * @public
+     * @async
      */
     public async start(input: InputManager): Promise<void> {
         if (!input.interaction.guild && !this.dm) throw new Error(`Command "${this.name}" is only available inside a guild.`);

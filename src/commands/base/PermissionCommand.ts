@@ -9,11 +9,14 @@ import { InputManager } from "../../structures/InputManager.js";
 /**
  * Executable command with attached permission system
  * @class
+ * @extends {FunctionCommand}
  */
 export class PermissionCommand extends FunctionCommand {
     /**
      * Object containing check functions and permission bitfields
      * @type {CommandPermissions}
+     * @public
+     * @readonly
      */
     public readonly permissions: CommandPermissions;
 
@@ -38,6 +41,9 @@ export class PermissionCommand extends FunctionCommand {
     /**
      * Invoke the command
      * @param {InputManager} input - input data
+     * @returns {Promise<void>}
+     * @public
+     * @async
      */
     public async start(input: InputManager): Promise<void> {
         if (this.permissions.check(input.interaction)) {

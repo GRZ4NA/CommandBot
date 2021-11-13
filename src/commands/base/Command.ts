@@ -17,24 +17,32 @@ export class Command {
     /**
      * Manager in which this command is registered
      * @type {CommandManager}
+     * @public
+     * @readonly
      */
     public readonly manager: CommandManager;
 
     /**
      * Command name
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly name: string;
 
     /**
      * CommandBot's internal command type
      * @type {CommandType}
+     * @public
+     * @readonly
      */
     public readonly type: CommandType;
 
     /**
      * Discord API default_permission
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly default_permission: boolean;
 
@@ -62,6 +70,7 @@ export class Command {
     /**
      * Converts a command instance to an {@link APICommandObject}
      * @returns {APICommandObject} An object that is accepted by the Discord API
+     * @public
      */
     public toObject(): APICommandObject {
         return {
@@ -74,6 +83,7 @@ export class Command {
      * Check base command type
      * @param {BaseCommandType} type - base command type
      * @returns {boolean} Whether this command can be used as the given type
+     * @public
      */
     public isBaseCommandType<T extends BaseCommandType>(type: T): this is BaseCommands<T> {
         switch (type) {
@@ -113,6 +123,7 @@ export class Command {
      * Checks command type
      * @param {CommandType} type - command type
      * @returns {boolean} Whether this command can be used as the given type
+     * @public
      */
     public isCommandType<T extends CommandType>(type: T): this is Commands<T> {
         switch (type) {
@@ -139,6 +150,7 @@ export class Command {
      * Check child command type
      * @param {ChildCommandType} type - child command type
      * @returns {boolean} Whether this command can be used as a child command of the given type
+     * @public
      */
     public isChildCommandType<T extends ChildCommandType>(type: T): this is ChildCommands<T> {
         switch (type) {

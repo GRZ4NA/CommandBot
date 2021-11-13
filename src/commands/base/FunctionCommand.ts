@@ -9,16 +9,21 @@ import { InputManager } from "../../structures/InputManager.js";
 /**
  * Function (executable) command
  * @class
+ * @extends {Command}
  */
 export class FunctionCommand extends Command {
     /**
      * Command function (called on command execution)
      * @type {CommandFunction}
+     * @private
+     * @readonly
      */
     private readonly _function: CommandFunction;
     /**
      * Whether a SUCCESS message should be sent after executing the command function (when there is no other reply)
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly announceSuccess: boolean;
 
@@ -48,6 +53,8 @@ export class FunctionCommand extends Command {
      * Invoke the command
      * @param {InputManager} input - input data manager
      * @returns {Promise<void>} A *Promise* that resolves after the function command is completed
+     * @public
+     * @async
      */
     public async start(input: InputManager): Promise<void> {
         if (input.interaction instanceof Interaction && !input.interaction.isCommand() && !input.interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
@@ -59,6 +66,9 @@ export class FunctionCommand extends Command {
      * Reply handler
      * @param {Message | Interaction} interaction - Discord interaction object
      * @param {void | string | MessageEmbed | ReplyMessageOptions}  result - result of command function execution
+     * @return {Promise<void>}
+     * @private
+     * @async
      */
     private async handleReply(interaction: Message | Interaction, result: void | string | MessageEmbed | ReplyMessageOptions) {
         if (interaction instanceof Interaction && !interaction.isCommand() && !interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);

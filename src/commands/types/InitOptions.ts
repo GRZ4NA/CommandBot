@@ -3,8 +3,8 @@ import { CommandPermissionsInit } from "./permissions.js";
 import { CommandFunction, ContextType } from "./commands.js";
 
 /**
- * @interface
  * Initialization options of core {@link Command} object
+ * @interface
  */
 export interface APICommandInit {
     /**
@@ -20,8 +20,8 @@ export interface APICommandInit {
 }
 
 /**
- * @interface
  * Initialization options of base executable command
+ * @interface
  * @extends {APICommandInit}
  */
 export interface FunctionCommandInit extends APICommandInit {
@@ -38,8 +38,8 @@ export interface FunctionCommandInit extends APICommandInit {
 }
 
 /**
- * @interface
  * Initialization options of base guild-scoped command
+ * @interface
  * @extends {FunctionCommandInit}
  */
 export interface GuildCommandInit extends FunctionCommandInit {
@@ -56,8 +56,8 @@ export interface GuildCommandInit extends FunctionCommandInit {
 }
 
 /**
- * @interface
  * Initialization options of base command with attached permissions
+ * @interface
  * @extends {FunctionCommandInit}
  */
 export interface PermissionCommandInit extends FunctionCommandInit {
@@ -69,8 +69,8 @@ export interface PermissionCommandInit extends FunctionCommandInit {
 }
 
 /**
- * @interface
  * Initialization options of base guild-scoped command with attached permisisions
+ * @interface
  * @extends {PermissionCommandInit}
  */
 export interface PermissionGuildCommandInit extends PermissionCommandInit {
@@ -87,8 +87,8 @@ export interface PermissionGuildCommandInit extends PermissionCommandInit {
 }
 
 /**
- * @interface
  * Intialization options of chat command
+ * @interface
  * @extends {PermissionGuildCommandInit}
  */
 export interface ChatCommandInit extends PermissionGuildCommandInit {
@@ -125,8 +125,8 @@ export interface ChatCommandInit extends PermissionGuildCommandInit {
 }
 
 /**
- * @interface
  * Initialization options of context menu interactions
+ * @interface
  * @extends {PermissionGuildCommandInit}
  */
 export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
@@ -138,8 +138,8 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
 }
 
 /**
- * @interface
  * Subcommand initialization options
+ * @interface
  * @extends {PermissionCommandInit}
  */
 export interface SubCommandInit extends PermissionCommandInit {
@@ -161,8 +161,8 @@ export interface SubCommandInit extends PermissionCommandInit {
 }
 
 /**
- * @interface
  * Intialization options of subcommand group
+ * @interface
  * @extends {APICommandInit}
  */
 export interface SubCommandGroupInit extends APICommandInit {

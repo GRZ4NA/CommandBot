@@ -12,50 +12,71 @@ import { applicationState } from "../state.js";
 import { InputManager } from "../structures/InputManager.js";
 
 /**
- * @class A representation of CHAT_INPUT command (also known as a slash command)
+ * A representation of CHAT_INPUT command (also known as a slash command)
+ * @class
+ * @extends {PermissionGuildCommand}
  */
 export class ChatCommand extends PermissionGuildCommand {
+    /**
+     * Subcommands and groups of this command
+     * @type {Array<ChildCommandResolvable>}
+     * @private
+     * @readonly
+     */
     private readonly _children: ChildCommandResolvable[] = [];
     /**
      * List of parameters that can passed to this command
      * @type {Array<Parameter<any>>}
+     * @public
+     * @readonly
      */
     public readonly parameters: Parameter<any>[];
 
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
      * @type {Array<string>}
+     * @public
+     * @readonly
      */
     public readonly aliases?: string[];
 
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly description: string;
 
     /**
      * Command usage displayed in the help message
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly usage?: string;
 
     /**
      * Whether this command is visible in the help message (default: true)
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly visible: boolean;
 
     /**
      * Whether this command should be registered as a slash command (default: true)
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly slash: boolean;
 
     /**
-     * @constructor ChatCommand constructor
-     * @param manager - a manager that this command belongs to
-     * @param options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
+     * ChatCommand constructor
+     * @constructor
+     * @param {CommandManager} manager - a manager that this command belongs to
+     * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
     constructor(manager: CommandManager, options: ChatCommandInit) {
         super(manager, "CHAT", {
@@ -114,7 +135,10 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Invoke the command
-     * @param input - input data manager
+     * @param {InputManager} input - input data manager
+     * @returns {Promise<void>}
+     * @public
+     * @async
      */
     public async start(input: InputManager): Promise<void> {
         if (!this.slash && input.interaction instanceof Interaction) {
@@ -125,9 +149,10 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Attaches subcommand or subcommand group to this ChatCommand (this makes the base command usable only via prefix interactions)
-     * @param type - subcommand type
-     * @param options  - initialization options
-     * @returns A computed subcommand object
+     * @param {T} type - subcommand type
+     * @param {ChildCommandInit<T>} options  - initialization options
+     * @returns {ChildCommands<T>} A computed subcommand object
+     * @public
      */
     public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
         const command =
@@ -149,9 +174,10 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      *
-     * @param options - parameter options
-     * @param interaction - Discord interaction
-     * @returns an {@link InputManager} containing all interaction-related data or *null*
+     * @param {Array<CommandInteractionOption>} options - parameter options
+     * @param {Interaction | Message} interaction - Discord interaction
+     * @returns {InputManager} an {@link InputManager} containing all interaction-related data or *null*
+     * @public
      */
     public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
         if (!this.hasSubCommands) return null;
@@ -208,9 +234,9 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      *
-     * @param name - subcommand name
-     * @param group - name of the group (if any)
-     * @returns a {@link SubCommand} object or *null*
+     * @param {string} name - subcommand name
+     * @param {string} [group] - name of the group (if any)
+     * @returns {SubCommand} a {@link SubCommand} object or *null*
      */
     public getSubcommand(name: string, group?: string): SubCommand | null {
         if (!this.hasSubCommands) return null;
@@ -228,7 +254,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
-     * @returns Discord API object
+     * @returns {ChatCommandObject} Discord API object
      */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {
