@@ -511,6 +511,7 @@ export class CommandManager {
         if (response.status !== 200) {
             throw new Error(`HTTP request failed with code ${response.status}: ${response.statusText}`);
         }
+        return response.data as CommandPermission[];
     }
 
     /**
