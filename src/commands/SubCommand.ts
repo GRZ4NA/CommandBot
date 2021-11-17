@@ -39,7 +39,7 @@ export class SubCommand extends PermissionCommand {
 
     /**
      * Command usage displayed in the help message
-     * @type {string}
+     * @type {?string}
      * @public
      * @readonly
      */
@@ -85,6 +85,7 @@ export class SubCommand extends PermissionCommand {
      * Invoke the command
      * @param {InputManager} input - input data
      * @returns {Promise<void>}
+     * @async
      */
     public async start(input: InputManager): Promise<void> {
         if (this.parent instanceof SubCommandGroup ? !this.parent.parent.dm && !input.interaction.guild : !this.parent.dm && !input.interaction.guild)

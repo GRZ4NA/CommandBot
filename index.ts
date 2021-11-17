@@ -70,7 +70,6 @@ import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
 import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
 import { ScopeResolvable } from "./src/structures/types/PrefixManager.js";
 
-export default Bot;
 export {
     Bot,
     InitOptions,

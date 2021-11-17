@@ -2,25 +2,40 @@ import { Interaction, Permissions, Message } from "discord.js";
 import { PermissionCommand } from "../commands/base/PermissionCommand.js";
 import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions.js";
 
+/**
+ * Object that stores permission resolvables and properties (bouund to a {@link PermissionCommand})
+ * @class
+ */
 export class CommandPermissions {
     /**
      * Command bound to this object
      * @type {PermissionCommand}
+     * @public
+     * @readonly
      */
     public readonly command: PermissionCommand;
 
     /**
      * If set to "ALL", the command can only be used when all specified conditions are met. (works only for Discord.js permissions object)
      * @type {PermissionCheckTypes}
+     * @public
+     * @readonly
      */
     public readonly permissions: Permissions | PermissionFunction;
 
     /**
      * Command permissions
      * @type {Permissions | PermissionFunction}
+     * @public
+     * @readonly
      */
     public readonly checkType: PermissionCheckTypes;
 
+    /**
+     * @constructor
+     * @param {PermissionCommand} command - command attached to this permissions object
+     * @param {?CommandPermissionsInit} [o] - initialization options
+     */
     constructor(command: PermissionCommand, o?: CommandPermissionsInit) {
         this.command = command;
         this.checkType = o?.checkType ?? "ANY";
@@ -44,9 +59,10 @@ export class CommandPermissions {
     }
 
     /**
-     *
+     * Checks if the interaction sender is permitted to use the command attached to this object
      * @param {Interaction | Message} i - command interaction or Discord message
      * @returns {boolean} Whether a sender can use the command bound to this object
+     * @public
      */
     public check(i: Interaction | Message): boolean {
         if (this.permissions instanceof Function) {

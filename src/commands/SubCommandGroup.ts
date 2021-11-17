@@ -57,9 +57,9 @@ export class SubCommandGroup extends Command {
     }
 
     /**
-     * List of children attached to this group
-     * @access
-     * @type {Readonly<Array<SubCommand>>}
+     * List of subcommands attached to this group
+     * @type {Array<SubCommand>}
+     * @readonly
      */
     get children() {
         return Object.freeze([...this._children]);
@@ -69,6 +69,7 @@ export class SubCommandGroup extends Command {
      * Attach a subcommand to this group
      * @param {SubCommandInit} options - subcommand initialization options
      * @returns {SubCommand} A computed {@link SubCommand} object
+     * @public
      */
     public append(options: SubCommandInit): SubCommand {
         const sc = new SubCommand(this, options);
@@ -82,6 +83,7 @@ export class SubCommandGroup extends Command {
 
     /**
      * @returns {SubCommandGroupObject} Discord API object
+     * @public
      */
     public toObject(): SubCommandGroupObject {
         return {

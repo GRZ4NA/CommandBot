@@ -2,35 +2,53 @@ import { DMChannel, Interaction, Message, MessageEmbed, Permissions, TextChannel
 import Bot from "./Bot.js";
 import { SystemMessageAppearance, SystemMessageData, MessageType } from "./types/SystemMessage.js";
 
+/**
+ * Stores configuration and generates system messages
+ *
+ * System messages - predefined messages sent by the bot in special cases (for example after an error, or when a command doesn't exist)
+ *
+ * @class
+ */
 export class SystemMessageManager {
+    /**
+     * Client parent attached to this manager
+     * @type {Bot}
+     * @public
+     * @readonly
+     */
     public readonly client: Bot;
     /**
      * "Insufficient permissions" message
      * @type {SystemMessageAppearance}
+     * @public
      */
     public PERMISSION: SystemMessageAppearance;
 
     /**
      * Error message
      * @type {SystemMessageAppearance}
+     * @public
      */
     public ERROR: SystemMessageAppearance;
 
     /**
      * "Command not found" message
      * @type {SystemMessageAppearance}
+     * @public
      */
     public NOT_FOUND: SystemMessageAppearance;
 
     /**
      * "Task completed successfully" message
      * @type {SystemMessageAppearance}
+     * @public
      */
     public SUCCESS: SystemMessageAppearance;
 
     /**
      * Global time (in ms) after a message gets deleted
      * @type {number}
+     * @public
      */
     public deleteTimeout: number;
 
@@ -77,9 +95,11 @@ export class SystemMessageManager {
     /**
      * Generates and sends a system message
      * @param {MessageType} type - "ERROR" | "PERMISSION" | "NOT_FOUND" | "SUCCESS"
-     * @param {SystemMessageData} [data] - additional data to include in the message
-     * @param {Message | CommandInteraction} [interaction] - if specified, the generated message will be sent in this channel
+     * @param {?SystemMessageData} [data] - additional data to include in the message
+     * @param {?Message | Interaction | TextChannel | DMChannel} [interaction] - if specified, the generated message will be sent in this channel
      * @returns {Promise<MessageEmbed | Message | void>} A message that got sent or *void*
+     * @public
+     * @async
      */
     public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | Interaction | TextChannel | DMChannel): Promise<MessageEmbed | Message | void> {
         if (this[type]) {

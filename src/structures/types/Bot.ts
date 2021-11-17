@@ -1,7 +1,8 @@
 import { ClientOptions } from "discord.js";
 
 /**
- * @interface InitOptions - Main object initialization options
+ * Main object initialization options
+ * @interface
  */
 export interface InitOptions {
     /**
@@ -12,25 +13,27 @@ export interface InitOptions {
 
     /**
      * Prefix used as a way to trigger the bot using messages in all guilds by default
-     * @type {string}
+     * @remarks
+     * If *undefined*, you can only interact with bot using slash commands or context menus
+     * @type {?string}
      */
     globalPrefix?: string;
 
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
-     * @type {string}
+     * @type {?string}
      */
     argumentSeparator?: string;
 
     /**
      * Separator used to split subcommands when using prefix interactions
-     * @type {string}
+     * @type {?string}
      */
     commandSeparator?: string;
 
     /**
      * Additional {@link ClientOptions} for Discord.js {@link Client} object
-     * @type {ClientOptions}
+     * @type {?ClientOptions}
      */
     clientOptions?: ClientOptions;
 

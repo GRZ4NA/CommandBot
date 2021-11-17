@@ -4,46 +4,78 @@ import { Command } from "../commands/base/Command.js";
 import { ParameterType, ParameterSchema, ObjectIdType, ObjectIdReturnType, InputParameterValue, TargetType, TargetIdReturnType } from "./types/Parameter.js";
 
 /**
- * @class Representation of command parameter
+ * Representation of command parameter
+ * @class
  */
 export class Parameter<T extends ParameterType> {
     /**
      * Command associated with this parameter
      * @type {Command}
+     * @public
+     * @readonly
      */
     public readonly command: Command;
     /**
      * Parameter name
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly name: string;
 
     /**
      * Parameter description
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly description: string;
 
     /**
      * Whether this parameter is optional
      * @type {boolean}
+     * @public
+     * @readonly
      */
     public readonly optional: boolean;
 
     /**
      * Parameter input type
      * @type {ParameterType}
+     * @public
+     * @readonly
      */
     public readonly type: T;
 
     /**
      * List of value choices (available only when type is set to "STRING")
+     * @type {?Array<string>}
+     * @public
+     * @readonly
      */
     public readonly choices?: string[];
 
+    /**
+     * Parameter name check regular expression
+     * @type {RegExp}
+     * @public
+     * @static
+     */
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
+
+    /**
+     * Parameter description check regular expression
+     * @type {RegExp}
+     * @public
+     * @static
+     */
     public static descriptionRegExp: RegExp = /^.{1,100}$/;
 
+    /**
+     * @constructor
+     * @param {Command} command - parameter parent command
+     * @param {ParameterSchema} options - options used to compute a Parameter object
+     */
     constructor(command: Command, options: ParameterSchema) {
         this.command = command;
         this.name = options.name;
@@ -72,9 +104,24 @@ export class DefaultParameter<T extends "string"> extends Parameter<T> {
     }
 }
 
+/**
+ * Parameter with input value from interaction (reffered to as argument)
+ * @class
+ */
 export class InputParameter<T extends ParameterType> extends Parameter<T> {
-    value: InputParameterValue<T>;
+    /**
+     * Value of an argument
+     * @type {InputParameterValue<T>}
+     * @public
+     * @readonly
+     */
+    public readonly value: InputParameterValue<T>;
 
+    /**
+     * @constructor
+     * @param {Parameter<T>} param - parent parameter
+     * @param {?InputParameterValue<T>} value - input value
+     */
     constructor(param: Parameter<T>, value: InputParameterValue<T> | null) {
         super(param.command, {
             ...param,
@@ -131,11 +178,39 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
     }
 }
 
+/**
+ * Wrapped representation of Discord user, role, channel or other mentionable Discord arugment object
+ * @class
+ */
 export class ObjectID<T extends ObjectIdType> {
+    /**
+     * Object ID
+     * @type {string}
+     * @public
+     * @readonly
+     */
     public readonly id: string;
+    /**
+     * Guild needed to convert the object
+     * @type {?Guild}
+     * @public
+     * @readonly
+     */
     public readonly guild?: Guild;
+    /**
+     * Object type
+     * @type {T}
+     * @public
+     * @readonly
+     */
     public readonly type: T;
 
+    /**
+     * @constructor
+     * @param {string} id - object Discord ID
+     * @param {ObjectIdType} type - object type
+     * @param {?Guild} [guild] - guild needed to convert the object
+     */
     constructor(id: string, type: T, guild?: Guild) {
         this.id = id.replace(">", "").replace("<@!", "").replace("<#!", "").split(" ").join("");
         this.type = type;
@@ -143,8 +218,10 @@ export class ObjectID<T extends ObjectIdType> {
     }
 
     /**
-     * Uses informations associated with the object to generate a Discord.js entity
-     * @returns A fetched object (or null)
+     * Uses informations associated with the object to generate a Discord.js representation
+     * @returns {?Promise<ObjectIdReturnType<T>>} A fetched object (or null)
+     * @public
+     * @async
      */
     public async toObject(): Promise<ObjectIdReturnType<T> | null> {
         switch (this.type) {
@@ -160,17 +237,50 @@ export class ObjectID<T extends ObjectIdType> {
     }
 }
 
-export class TargetID<T extends TargetType> {
+/**
+ * Wrapped representation of Discord target object (target of context menu interactions)
+ * @class
+ */ export class TargetID<T extends TargetType> {
+    /**
+     * Object ID
+     * @type {string}
+     * @public
+     * @readonly
+     */
     public readonly id: string;
+    /**
+     * Interaction associated with the target
+     * @type {Interaction | Message}
+     * @public
+     * @readonly
+     */
     public readonly interaction: Interaction | Message;
+    /**
+     * Target type
+     * @type {T}
+     * @private
+     * @readonly
+     */
     private readonly type: T;
 
+    /**
+     * @constructor
+     * @param {string} id - object Discord ID
+     * @param {TargetType} - target type
+     * @param {Interaction | Message} [interaction] - interaction associated with the target
+     */
     constructor(id: string, type: T, interaction: Interaction | Message) {
         this.id = id;
         this.type = type;
         this.interaction = interaction;
     }
 
+    /**
+     * Uses informations associated with the object to generate a Discord.js representation
+     * @returns {?Promise<TargetIdReturnType<T>>} A fetched object (or null)
+     * @public
+     * @async
+     */
     toObject(): TargetIdReturnType<T> | null {
         switch (this.type) {
             case "MESSAGE":

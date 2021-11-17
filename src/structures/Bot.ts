@@ -10,50 +10,79 @@ import { applicationState } from "../state.js";
 import { InputManager } from "./InputManager.js";
 
 export declare interface Bot {
+    /**
+     * Emitted after connecting to Discord API
+     * @event
+     */
     on(event: "READY", listener: Function): this;
+    /**
+     * Emitted whenever bot receives a Discord message
+     * @event
+     */
     on(event: "MESSAGE", listener: (m: Message) => void): this;
+    /**
+     * Emitted whenever bots receives a Discord message or interaction that gets recognized as a CommandBot command
+     * @event
+     */
     on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: InputManager) => void): this;
+    /**
+     * Emitted on every bot error
+     * @event
+     */
     on(event: "ERROR", listener: (e: any) => void): this;
 }
 
 /**
- * @class  Application instance
+ * Application instance
+ * @class
  * @extends {EventEmitter}
  */
 export class Bot extends EventEmitter {
     /**
      * Bot name
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly name: string;
 
     /**
      * Discord.js {@link Client} instance
      * @type {Client}
+     * @public
+     * @readonly
      */
     public readonly client: Client;
 
     /**
      * Instance command manager
      * @type {CommandManager}
+     * @public
+     * @readonly
      */
     public readonly commands: CommandManager;
 
     /**
      * Discord Bot token
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly token: string;
 
     /**
      * Discord API application ID
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly applicationId: string;
 
     /**
      * Messages and embeds configuration
      * @type {Object}
+     * @public
+     * @readonly
      */
     public readonly messages: {
         /**
@@ -69,6 +98,7 @@ export class Bot extends EventEmitter {
     };
 
     /**
+     * Main bot constructor
      * @constructor
      * @param {InitOptions} options - instance properties ({@link InitOptions})
      */
@@ -114,11 +144,12 @@ export class Bot extends EventEmitter {
     }
 
     /**
-     * @method
      * Starts your Discord bot
-     * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port (useful when hosting your bot on platforms like Heroku)
-     * @param {boolean} [register=true] - if *true* or *undefined*, the bot will register all slash commands in Discord API
+     * @param {?number} [port] - if specified, the app will create a http server that will be listening on the specified port (useful when hosting your bot on platforms like Heroku)
+     * @param {?boolean} [register=true] - if *true* or *undefined*, the bot will register all interactions in the Discord API
      * @returns {Promise<boolean>} whether this operation has been completed successfully
+     * @public
+     * @async
      */
     public async start(port?: number, register?: boolean): Promise<boolean> {
         try {

@@ -17,44 +17,73 @@ import { PrefixManager } from "./PrefixManager.js";
 import { Command } from "../commands/base/Command.js";
 import { InputManager } from "./InputManager.js";
 
+/**
+ * Object that stores the registered commands and is responsible for data exchanging with the Discord API
+ * @class
+ */
 export class CommandManager {
+    /**
+     * List of commands registered in the manager
+     * @type {Array<Command>}
+     * @private
+     * @readonly
+     */
     private readonly _commands: Command[] = [];
+    /**
+     * Cache of Discord API commands data
+     * @type {Map<string, Map<string, RegisteredCommandObject>>}
+     * @private
+     * @readonly
+     */
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
 
     /**
      * Client connected to this manager
      * @type {Client}
+     * @public
+     * @readonly
      */
     public readonly client: Bot;
 
     /**
      * Help command associated with this manager
-     * @type {HelpMessage}
+     * @type {?HelpMessage}
+     * @public
+     * @readonly
      */
     public readonly helpCmd?: HelpMessage;
 
     /**
      * A manager holding all guild-specific prefixes and a global prefix
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly prefix: PrefixManager;
 
     /**
      * A string used to split all incoming input data from Discord messages
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly argumentSeparator: string;
 
     /**
      * A string used to separate subcommand groups and subcommands
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly commandSeparator: string;
 
     /**
      * Discord API URL
      * @type {string}
+     * @public
+     * @static
+     * @readonly
      */
     public static readonly baseApiUrl: string = "https://discord.com/api/v8";
 
@@ -63,9 +92,9 @@ export class CommandManager {
      * @constructor
      * @param {Bot} client - client that this manager belongs to
      * @param {HelpMessageParams} helpMsg - parameters defining appearance of the help message
-     * @param {string} prefix - prefix used to respond to message interactions
-     * @param {string} argSep - a string used to split all incoming input data from Discord messages
-     * @param {string} cmdSep - a string used to separate subcommand groups and subcommands
+     * @param {?string} [prefix] - prefix used to respond to message interactions
+     * @param {?string} [argSep=','] - a string used to split all incoming input data from Discord messages
+     * @param {?string} [cmdSep='/'] - a string used to separate subcommand groups and subcommands
      */
     constructor(client: Bot, helpMsg: HelpMessageParams, prefix?: string, argSep?: string, cmdSep?: string) {
         if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
@@ -101,10 +130,11 @@ export class CommandManager {
     }
 
     /**
-     *
-     * @param {CommandType} type - a type of command that will be created and added to this manager
-     * @param {CommandInit} options - an object containing all properties required to create this type of command
-     * @returns {Commands} A computed command object that inherits from {@link Command}
+     * Creates and registers command in the manager based on the given options
+     * @param {T} type - a type of command that will be created and added to this manager
+     * @param {CommandInit<T>} options - an object containing all properties required to create this type of command
+     * @returns {Commands<T>} A computed command object that inherits from {@link Command}
+     * @public
      */
     public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
         const command: Commands<T> | null =
@@ -132,8 +162,9 @@ export class CommandManager {
     /**
      * Get command registered in this manager
      * @param {string} q - command name or alias
-     * @param {APICommandType} t - type of command you want to get from this manager
-     * @returns {Command || null} A command object
+     * @param {?APICommandType} [t] - type of command you want to get from this manager (if *undefined* searches in all registered commands)
+     * @returns {?Command} A command object
+     * @public
      */
     public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
         switch (t) {
@@ -166,11 +197,13 @@ export class CommandManager {
     }
 
     /**
-     *
+     * Fetches command object from the Discord API
      * @param {string} id - Discord command ID
-     * @param {Guild | string} [guild] - ID of guild that this command belongs to
-     * @param {boolean} [noCache] - whether not to use cached data
-     * @returns {RegisteredCommandObject} Discord command object
+     * @param {?Guild | string} [guild] - ID of guild that this command belongs to
+     * @param {?boolean} [noCache=false] - whether not to use cached data
+     * @returns {Promise<RegisteredCommandObject>} Discord command object
+     * @public
+     * @async
      */
     public async getApi(id: string, guild?: Guild | string, noCache?: boolean): Promise<RegisteredCommandObject> {
         const guildId = guild instanceof Guild ? guild.id : guild;
@@ -199,11 +232,13 @@ export class CommandManager {
     }
 
     /**
-     *
+     * Fetches command ID by name from the Discord APi
      * @param {string} name - name of the command
      * @param {string} type - command type you want to get ID for
-     * @param {string} [guild] - ID of guild that this command belongs to
-     * @returns {string} Command ID from Discord API
+     * @param {?string} [guild] - ID of guild that this command belongs to
+     * @returns {string} Command ID from the Discord API
+     * @public
+     * @async
      */
     public async getIdApi(name: string, type: APICommandType, guild?: Guild | string): Promise<string | null> {
         let map: Map<string, RegisteredCommandObject> = await this.listApi(guild);
@@ -218,8 +253,10 @@ export class CommandManager {
     }
 
     /**
-     * @param {APICommandType} [f] - type of commands to return
-     * @returns {BaseCommand[]} An array of commands registered in this manager
+     * Lists all commands in the manager
+     * @param {APICommandType} [f] - filter, type of commands to return in the list
+     * @returns {Array<Command>} An array of commands registered in this manager
+     * @public
      */
     public list(): readonly Command[];
     public list(f: "CHAT"): readonly ChatCommand[];
@@ -236,9 +273,11 @@ export class CommandManager {
     }
 
     /**
-     *
+     * Lists commands registered in the Discord API
      * @param {Guild | string} [g] - Guild object or ID
      * @returns {Promise<Map<string, RegisteredCommandObject>>} List of commands from Discord API
+     * @public
+     * @async
      */
     public async listApi(g?: Guild | string): Promise<Map<string, RegisteredCommandObject>> {
         const guildId = g instanceof Guild ? g.id : g;
@@ -263,7 +302,8 @@ export class CommandManager {
     /**
      * Process an interaction
      * @param {Interaction | Message} i - interaction object to fetch a command from
-     * @returns {InputManager | null} An InputManager containing all input data (command, arguments, target etc.)
+     * @returns {?InputManager} An InputManager containing all input data (command, arguments, target etc.)
+     * @public
      */
     public fetch(i: Interaction | Message): InputManager | null {
         const prefix = this.prefix.get(i.guild || undefined);
@@ -367,7 +407,9 @@ export class CommandManager {
 
     /**
      * Register all commands in this manager in the Discord API
-     * @returns {void}
+     * @returns {Promise<void>}
+     * @public
+     * @async
      */
     public async register(): Promise<void> {
         const globalCommands = this._commands
@@ -427,6 +469,9 @@ export class CommandManager {
      * @param {string} id - command ID
      * @param {CommandPermission[]} permissions - permissions to set
      * @param {Guild | string} [g] - Guild ID or object (if command is in a guild)
+     * @returns {Promise<void>}
+     * @public
+     * @async
      */
     public async setPermissionsApi(id: string, permissions: CommandPermission[], g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
@@ -448,8 +493,10 @@ export class CommandManager {
 
     /**
      * Get permissions from Discord Permissions API for a specified command
-     * @param id - command ID
+     * @param {string} id - command ID
      * @param {Guild | string} [g] - Guild ID or object (if command is in a guild)
+     * @public
+     * @async
      */
     public async getPermissionsApi(id: string, g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
@@ -466,6 +513,13 @@ export class CommandManager {
         }
     }
 
+    /**
+     *
+     * @param {Array<RegisteredCommandObject>} commands - list of commands to cache
+     * @param {?string} guildId - guild ID
+     * @returns {void}
+     * @private
+     */
     private updateCache(commands: RegisteredCommandObject[] | RegisteredCommandObject, guildId?: string): void {
         if (Array.isArray(commands)) {
             this._registerCache.set(guildId || this._globalEntryName, this.arrayToMap(commands));
@@ -475,10 +529,21 @@ export class CommandManager {
         }
     }
 
+    /**
+     * Retrieves cache from the manager
+     * @param {string} q
+     * @param {?string} guildId
+     * @returns {?RegisteredCommandObject}
+     */
     private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
         return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
     }
 
+    /**
+     * Performs internal data type conversions
+     * @param {Array<RegisteredCommandObject>} a
+     * @returns {Map<string, RegisteredCommandObject>}
+     */
     private arrayToMap(a: RegisteredCommandObject[]): Map<string, RegisteredCommandObject> {
         const map: Map<string, RegisteredCommandObject> = new Map();
         a.map((rc) => {
@@ -487,6 +552,12 @@ export class CommandManager {
         return map;
     }
 
+    /**
+     * @param {any} c - object to check
+     * @returns {boolean} Whether this object is a {@link Command} object
+     * @public
+     * @static
+     */
     public static isCommand(c: any): c is Command {
         return "name" in c && "type" in c && "default_permission" in c && ((c as Command).type === "CHAT" || (c as Command).type === "CONTEXT");
     }

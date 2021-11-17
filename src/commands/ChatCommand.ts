@@ -34,7 +34,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
-     * @type {Array<string>}
+     * @type {?Array<string>}
      * @public
      * @readonly
      */
@@ -50,7 +50,7 @@ export class ChatCommand extends PermissionGuildCommand {
 
     /**
      * Command usage displayed in the help message
-     * @type {string}
+     * @type {?string}
      * @public
      * @readonly
      */
@@ -125,10 +125,19 @@ export class ChatCommand extends PermissionGuildCommand {
         }
     }
 
+    /**
+     * Returns *true* if the command has subcommands attached
+     * @type {boolean}
+     */
     get hasSubCommands() {
         return this._children.length > 0;
     }
 
+    /**
+     * Returns list of attached subcommands
+     * @type {Array<ChildCommandResolvable>}
+     * @readonly
+     */
     get children() {
         return Object.freeze([...this._children]);
     }
@@ -176,7 +185,7 @@ export class ChatCommand extends PermissionGuildCommand {
      *
      * @param {Array<CommandInteractionOption>} options - parameter options
      * @param {Interaction | Message} interaction - Discord interaction
-     * @returns {InputManager} an {@link InputManager} containing all interaction-related data or *null*
+     * @returns {?InputManager} an {@link InputManager} containing all interaction-related data or *null*
      * @public
      */
     public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
@@ -235,8 +244,8 @@ export class ChatCommand extends PermissionGuildCommand {
     /**
      *
      * @param {string} name - subcommand name
-     * @param {string} [group] - name of the group (if any)
-     * @returns {SubCommand} a {@link SubCommand} object or *null*
+     * @param {?string} [group] - name of the group (if any)
+     * @returns {?SubCommand} a {@link SubCommand} object or *null*
      */
     public getSubcommand(name: string, group?: string): SubCommand | null {
         if (!this.hasSubCommands) return null;
@@ -255,6 +264,7 @@ export class ChatCommand extends PermissionGuildCommand {
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {ChatCommandObject} Discord API object
+     * @public
      */
     public toObject(): ChatCommandObject {
         const obj: ChatCommandObject = {

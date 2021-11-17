@@ -4,14 +4,33 @@ import { CommandRegExps } from "../commands/types/commands.js";
 import { ScopeResolvable } from "./types/PrefixManager.js";
 
 export class PrefixManager {
+    /**
+     * Prefixes data
+     * @type {Map<string, string>}
+     * @private
+     * @readonly
+     */
     private readonly _prefixes: Map<string, string> = new Map();
+    /**
+     * Global scope identifier
+     * @type {string}
+     * @private
+     * @readonly
+     */
     private readonly _global: string = "GLOBAL";
     /**
      * Command manager associated with the object
      * @type {CommandManager}
+     * @public
+     * @readonly
      */
     public readonly manager: CommandManager;
 
+    /**
+     * @constructor
+     * @param manager - manager attached to this object
+     * @param {?string} [defaultPrefix] - default global prefix
+     */
     constructor(manager: CommandManager, defaultPrefix?: string) {
         this.manager = manager;
         if (defaultPrefix) {
@@ -22,14 +41,19 @@ export class PrefixManager {
         }
     }
 
+    /**
+     * Manager global prefix
+     * @type {?string}
+     */
     get globalPrefix() {
         return this._prefixes.get(this._global) || null;
     }
 
     /**
-     *
+     * Get prefix for a specified scope
      * @param {ScopeResolvable} scope - guild object or ID
-     * @returns a prefix used in given scope
+     * @returns {?string} a prefix used in given scope
+     * @public
      */
     public get(scope?: ScopeResolvable): string | null {
         if (!scope) return this.globalPrefix;
@@ -40,9 +64,11 @@ export class PrefixManager {
     }
 
     /**
-     *
+     * Set prefix for a specific scope
      * @param {string} prefix - new prefix
-     * @param {ScopeResolvable} [scope]  - guild string or ID
+     * @param {?ScopeResolvable} [scope]  - guild string or ID
+     * @return {void}
+     * @public
      */
     public set(prefix: string, scope?: ScopeResolvable): void {
         if (!CommandRegExps.prefix.test(prefix)) throw new Error(`"${prefix}" is not a valid prefix`);
@@ -56,8 +82,10 @@ export class PrefixManager {
     }
 
     /**
-     *
-     * @param {ScopeResolvable} [scope] - guild string or ID
+     * Remove prefix for the specified scope
+     * @param {?ScopeResolvable} [scope] - guild string or ID
+     * @return {boolean}
+     * @public
      */
     public remove(scope?: ScopeResolvable): boolean {
         if (!scope) return this._prefixes.delete(this._global);

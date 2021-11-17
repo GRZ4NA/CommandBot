@@ -12,7 +12,7 @@ import { InputManager } from "../../structures/InputManager.js";
 export class GuildCommand extends FunctionCommand {
     /**
      * List of Discord guild (server) IDs in which this command can be used
-     * @type {Array<string>}
+     * @type {?Array<string>}
      * @public
      * @readonly
      */

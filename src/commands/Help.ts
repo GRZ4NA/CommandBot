@@ -46,7 +46,7 @@ export class HelpMessage extends ChatCommand {
     /**
      *
      * @param {Interaction | Message} i - Discord interaction
-     * @param {string} [cmdName] - command name (if any)
+     * @param {?string} [cmdName] - command name (if any)
      * @returns {MessageEmbed} A computed help message in form of {@link MessageEmbed}
      * @public
      */
