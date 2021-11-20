@@ -32,7 +32,7 @@ export interface InitOptions {
     commandSeparator?: string;
 
     /**
-     * Additional {@link ClientOptions} for Discord.js {@link Client} object
+     * Additional [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for Discord.js [Client](https://discord.js.org/#/docs/main/stable/class/Client) object
      * @type {?ClientOptions}
      */
     clientOptions?: ClientOptions;
