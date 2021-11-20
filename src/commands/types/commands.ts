@@ -128,6 +128,12 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
 /**
  * Command function definition
  * @type
+ *
+ * @remarks If function returns (also after resolving a _Promise_):
+ *  -   **void** - If _announceSuccess_ property is set to _true_, bot will automatically send a SUCCESS message ([details](https://grz4na.github.io/commandbot-docs/classes/SystemMessageManager.html#SUCCESS)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
+ *  -   **string** - this string will be sent in a reply
+ *  -   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
+ *  -   **[ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)** - these options will get used to send a reply
  */
 export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;
 

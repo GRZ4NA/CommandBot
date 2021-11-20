@@ -135,6 +135,7 @@ export class CommandManager {
      * @param {CommandInit<T>} options - an object containing all properties required to create this type of command
      * @returns {Commands<T>} A computed command object that inherits from {@link Command}
      * @public
+     * @remarks All commands have to be added to the instance **before starting the bot**. Adding commands while the bot is running is not possible and can cause issues.
      */
     public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
         const command: Commands<T> | null =

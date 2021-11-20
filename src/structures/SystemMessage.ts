@@ -7,6 +7,8 @@ import { SystemMessageAppearance, SystemMessageData, MessageType } from "./types
  *
  * System messages - predefined messages sent by the bot in special cases (for example after an error, or when a command doesn't exist)
  *
+ * @remarks You can't customize messages after starting the bot. Changing these properties while the bot is running will have no effect.
+ *
  * @class
  */
 export class SystemMessageManager {
