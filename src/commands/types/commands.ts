@@ -127,13 +127,18 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
 
 /**
  * Command function definition
- * @type
- *
  * @remarks If function returns (also after resolving a _Promise_):
  *  -   **void** - If _announceSuccess_ property is set to _true_, bot will automatically send a SUCCESS message ([details](https://grz4na.github.io/commandbot-docs/classes/SystemMessageManager.html#SUCCESS)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
  *  -   **string** - this string will be sent in a reply
  *  -   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
  *  -   **[ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)** - these options will get used to send a reply
+ *
+ * It is possible to manually send replies directly from the command function using the interaction property from {@link InputManager} argument. If you are using slash commands don't forget to use the _[CommandInteraction.prototype.editReply](https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=editReply)_ method instead of the _reply_ method since a **reply is already deferred** when a command function gets called (read more [here](https://discord.com/developers/docs/interactions/receiving-and-responding)) If you try to create a new reply, you app will throw an error that will result a crash.
+ *
+ * If you manually reply to a slash command interaction and return _void_ from the command function, a SUCCESS message will not be sent or reply will not get deleted (if you want to disable SUCCESS messages on prefix interactions set _announceSuccess_ property to _false_).
+ *
+ * If a command function will throw an error, it will automatically get caught and your bot will send an ERROR message. The app **will not** crash.
+ * @type
  */
 export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;
 
