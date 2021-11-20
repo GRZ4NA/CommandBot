@@ -20,35 +20,35 @@ export class SystemMessageManager {
      */
     public readonly client: Bot;
     /**
-     * "Insufficient permissions" message
+     * Sent whenever caller's permissions are not sufficient to run a command
      * @type {SystemMessageAppearance}
      * @public
      */
     public PERMISSION: SystemMessageAppearance;
 
     /**
-     * Error message
+     * Sent when an error occurs during the execution of a command
      * @type {SystemMessageAppearance}
      * @public
      */
     public ERROR: SystemMessageAppearance;
 
     /**
-     * "Command not found" message
+     * Sent when someone tries to run a command that does not exist (mainly by using prefix interactions)
      * @type {SystemMessageAppearance}
      * @public
      */
     public NOT_FOUND: SystemMessageAppearance;
 
     /**
-     * "Task completed successfully" message
+     * Sent when a command function returns _void_ without throwing an error (if enabled)
      * @type {SystemMessageAppearance}
      * @public
      */
     public SUCCESS: SystemMessageAppearance;
 
     /**
-     * Global time (in ms) after a message gets deleted
+     * Global time (in ms) after a message gets deleted (applies to all message types and can be overwritten)
      * @type {number}
      * @public
      */
