@@ -17,7 +17,7 @@ A Discord.js based framework that makes creating Discord bots with support for s
 
 ## Documentation
 
-Reference for available objects and structures is available [**here**](https://grz4na.github.io/commandbot/). All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.
+Reference for available objects and structures is available [**here**](https://grz4na.github.io/commandbot/index.html). All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.
 
 ## Table of contents
 
