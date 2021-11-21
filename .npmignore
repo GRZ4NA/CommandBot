@@ -9,4 +9,4 @@ tsconfig-cjs.json
 tsconfig-mjs.json
 package-create.bat
 docs
-*/src
+/src
