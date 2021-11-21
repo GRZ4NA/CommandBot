@@ -17,7 +17,7 @@ A Discord.js based framework that makes creating Discord bots with support for s
 
 ## Documentation
 
-Reference for available objects and structures is available [**here**](https://grz4na.github.io/commandbot-docs/). All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.
+Reference for available objects and structures is available [**here**](https://grz4na.github.io/commandbot/). All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.
 
 ## Table of contents
 
@@ -83,7 +83,7 @@ const { Bot } = require("commandbot");
 import { Bot } from "commandbot";
 ```
 
-6. Initialize the bot instance ([InitOptions](https://grz4na.github.io/commandbot-docs/interfaces/InitOptions.html)) (list of available intents [here](https://discord.js.org/#/docs/main/stable/class/Intents?scrollTo=s-FLAGS))
+6. Initialize the bot instance ([InitOptions](https://grz4na.github.io/commandbot/interfaces/InitOptions.html)) (list of available intents [here](https://discord.js.org/#/docs/main/stable/class/Intents?scrollTo=s-FLAGS))
 
 ```javascript
 const bot = new Bot({
@@ -115,13 +115,13 @@ bot.start(
 
 ## Creating a command
 
-To create a command, use _[CommandManager.prototype.add](https://grz4na.github.io/commandbot-docs/classes/CommandManager.html#add)_ method
+To create a command, use _[CommandManager.prototype.add](https://grz4na.github.io/commandbot/classes/CommandManager.html#add)_ method
 
 Command types
 
--   [CHAT](https://grz4na.github.io/commandbot-docs/interfaces/ChatCommandInit.html) - message interactions using command prefixes or slash commands
--   [USER](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on users
--   [MESSAGE](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on messages
+-   [CHAT](https://grz4na.github.io/commandbot/interfaces/ChatCommandInit.html) - message interactions using command prefixes or slash commands
+-   [USER](https://grz4na.github.io/commandbot/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on users
+-   [MESSAGE](https://grz4na.github.io/commandbot/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on messages
 
 Chat command example:
 
@@ -154,20 +154,20 @@ bot.commands.add("CHAT", {
 });
 ```
 
-Command function schema is defined **[here](https://grz4na.github.io/commandbot-docs/modules.html#CommandFunction)**
+Command function schema is defined **[here](https://grz4na.github.io/commandbot/modules.html#CommandFunction)**
 
 ## Parameters
 
 ### Types
 
--   [primitive](https://grz4na.github.io/commandbot-docs/modules.html#ParameterType)
--   [objects](https://grz4na.github.io/commandbot-docs/modules.html#ObjectIdType)
+-   [primitive](https://grz4na.github.io/commandbot/modules.html#ParameterType)
+-   [objects](https://grz4na.github.io/commandbot/modules.html#ObjectIdType)
 
-To get an entity ID from _ObjectID_ use the _[id](https://grz4na.github.io/commandbot-docs/classes/ObjectID.html#id)_ property. You can also call _[toObject](https://grz4na.github.io/commandbot-docs/classes/ObjectID.html#toObject)_ method to retrieve full entity object from Discord API
+To get an entity ID from _ObjectID_ use the _[id](https://grz4na.github.io/commandbot/classes/ObjectID.html#id)_ property. You can also call _[toObject](https://grz4na.github.io/commandbot/classes/ObjectID.html#toObject)_ method to retrieve full entity object from Discord API
 
 ### Defining
 
-Pass a list of _[ParameterSchema](https://grz4na.github.io/commandbot-docs/interfaces/ParameterSchema.html)_ objects to _[parameters](https://grz4na.github.io/commandbot-docs/interfaces/ChatCommandInit.html#parameters)_ property
+Pass a list of _[ParameterSchema](https://grz4na.github.io/commandbot/interfaces/ParameterSchema.html)_ objects to _[parameters](https://grz4na.github.io/commandbot/interfaces/ChatCommandInit.html#parameters)_ property
 
 Example parameter object:
 
@@ -182,7 +182,7 @@ Example parameter object:
 
 ### Reading input value
 
-To read parameter values use _[InputManager.prototype.get()](https://grz4na.github.io/commandbot-docs/classes/InputManager.html#get)_ (passed in the first argument of a command function)
+To read parameter values use _[InputManager.prototype.get()](https://grz4na.github.io/commandbot/classes/InputManager.html#get)_ (passed in the first argument of a command function)
 
 Example:
 
@@ -203,17 +203,17 @@ function: (i) => {
 
 # Events
 
-CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _[on](https://grz4na.github.io/commandbot-docs/classes/Bot.html#on-1)_ method. Event types are available **[here](https://grz4na.github.io/commandbot-docs/classes/Bot.html#on-1)**.
+CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _[on](https://grz4na.github.io/commandbot/classes/Bot.html#on-1)_ method. Event types are available **[here](https://grz4na.github.io/commandbot/classes/Bot.html#on-1)**.
 
 # Messages
 
 ## System messages
 
-System messages can be composed and sent automatically when a certain action happens. All message types are available **[here]()**. Their configuration is stored in _[Bot.prototype.messages.system](https://grz4na.github.io/commandbot-docs/classes/Bot.html#messages)_ property. Each of these messages can be customized with _[SystemMessageAppearance](https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html)_ objects. There is also a global _[deleteTimeout](https://grz4na.github.io/commandbot-docs/classes/SystemMessageManager.html#deleteTimeout)_ property so messages can automatically be deleted after a given time.
+System messages can be composed and sent automatically when a certain action happens. All message types are available **[here]()**. Their configuration is stored in _[Bot.prototype.messages.system](https://grz4na.github.io/commandbot/classes/Bot.html#messages)_ property. Each of these messages can be customized with _[SystemMessageAppearance](https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html)_ objects. There is also a global _[deleteTimeout](https://grz4na.github.io/commandbot/classes/SystemMessageManager.html#deleteTimeout)_ property so messages can automatically be deleted after a given time.
 
 ## Help message
 
-Its configuration is stored in _[Bot.prototype.messages.help](https://grz4na.github.io/commandbot-docs/classes/Bot.html#messages)_ property and can be customized with _[HelpMessageParams](https://grz4na.github.io/commandbot-docs/interfaces/HelpMessageParams.html)_ object.
+Its configuration is stored in _[Bot.prototype.messages.help](https://grz4na.github.io/commandbot/classes/Bot.html#messages)_ property and can be customized with _[HelpMessageParams](https://grz4na.github.io/commandbot/interfaces/HelpMessageParams.html)_ object.
 
 > **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
 
