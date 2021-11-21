@@ -41,16 +41,18 @@ export class SystemMessageManager {
     public NOT_FOUND: SystemMessageAppearance;
 
     /**
-     * Sent when a command function returns _void_ without throwing an error (if enabled)
+     * Sent when a command function returns _void_ without throwing an error
      * @type {SystemMessageAppearance}
      * @public
+     * @remarks An _announceSuccess_ property must be set to _true_ (default) in order to send this message
      */
     public SUCCESS: SystemMessageAppearance;
 
     /**
-     * Global time (in ms) after a message gets deleted (applies to all message types and can be overwritten)
+     * Global time (in ms) after a message gets deleted
      * @type {number}
      * @public
+     * @remarks This time applies to all message types but it can be overwritten using local properties with the same name (for example ERROR.deleteTimeout)
      */
     public deleteTimeout: number;
 

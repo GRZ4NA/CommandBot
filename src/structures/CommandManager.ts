@@ -136,6 +136,11 @@ export class CommandManager {
      * @returns {Commands<T>} A computed command object that inherits from {@link Command}
      * @public
      * @remarks All commands have to be added to the instance **before starting the bot**. Adding commands while the bot is running is not possible and can cause issues.
+     *
+     * Command types
+     * - [CHAT](https://grz4na.github.io/commandbot-docs/interfaces/ChatCommandInit.html) - message interactions using command prefixes or slash commands
+     * - [USER](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on users
+     * - [MESSAGE](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on messages
      */
     public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
         const command: Commands<T> | null =

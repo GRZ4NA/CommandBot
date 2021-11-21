@@ -3,6 +3,9 @@ import { ObjectID, TargetID } from "../parameter.js";
 
 /**
  * Parameter type values
+ * - **string** - text value
+ * - **boolean** - True or False
+ * - **number** - number (double) value
  * @type
  */
 export type ParameterType = "string" | "boolean" | "number" | ObjectIdType;
@@ -63,14 +66,19 @@ export interface ParameterSchema {
     type: ParameterType;
 
     /**
-     * List of value choices (available only when type is set to "string")
+     * List of value choices
      * @type {?Array<string>}
+     * @remarks Available only when type is set to "string"
      */
     choices?: string[];
 }
 
 /**
  * Types of Discord objects (IDs contained in an {@link ObjectID} wrapper)
+ * - **user** - server users list shown as selection menu in Discord
+ * - **role** - server roles list shown as selection menu in Discord
+ * - **channel** - server text, voice, stage, and category channels list shown as selection menu in Discord
+ * - **mentionable** - all objects that can be mentioned list shown as selection menu in Discord
  * @type
  */
 export type ObjectIdType = "user" | "role" | "channel" | "mentionable";

@@ -115,6 +115,10 @@ export type ChildCommandResolvable = SubCommandGroup | SubCommand;
 
 /**
  * Context menu command types
+ *
+ * - USER - right-click context menu interactions on users
+ * - MESSAGE - right-click context menu interactions on messages
+ *
  * @type
  */
 export type ContextType = "USER" | "MESSAGE";
@@ -127,7 +131,8 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
 
 /**
  * Command function definition
- * @remarks If function returns (also after resolving a _Promise_):
+ *
+ * If function returns (also after resolving a _Promise_):
  *  -   **void** - If _announceSuccess_ property is set to _true_, bot will automatically send a SUCCESS message ([details](https://grz4na.github.io/commandbot-docs/classes/SystemMessageManager.html#SUCCESS)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
  *  -   **string** - this string will be sent in a reply
  *  -   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
@@ -137,7 +142,7 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
  *
  * If you manually reply to a slash command interaction and return _void_ from the command function, a SUCCESS message will not be sent or reply will not get deleted (if you want to disable SUCCESS messages on prefix interactions set _announceSuccess_ property to _false_).
  *
- * If a command function will throw an error, it will automatically get caught and your bot will send an ERROR message. The app **will not** crash.
+ * If command function throws an error, it will automatically get caught and your bot will send an ERROR message. The app **will not** crash.
  * @type
  */
 export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;

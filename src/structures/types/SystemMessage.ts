@@ -56,8 +56,9 @@ export interface SystemMessageAppearance {
     footer?: string;
 
     /**
-     * Time (in ms) after a message of this type gets deleted (set to *Infinity* to not delete the message)
+     * Time (in ms) after a message of this type gets deleted
      * @type {?number}
+     * @remarks Set to *Infinity* to not delete the message
      */
     deleteTimeout?: number;
 }
