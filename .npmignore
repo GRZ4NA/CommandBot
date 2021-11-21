@@ -8,3 +8,4 @@ tsconfig.json
 tsconfig-cjs.json
 tsconfig-mjs.json
 package-create.bat
+docs
