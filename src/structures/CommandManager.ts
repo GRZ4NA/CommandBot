@@ -52,7 +52,7 @@ export class CommandManager {
      * @public
      * @readonly
      */
-    public readonly helpCmd?: HelpMessage;
+    public readonly help?: HelpMessage;
 
     /**
      * A manager holding all guild-specific prefixes and a global prefix
@@ -108,8 +108,8 @@ export class CommandManager {
             throw new Error("Command separator and argument separator have the same value");
         }
         if (helpMsg.enabled === true) {
-            this.helpCmd = new HelpMessage(this, helpMsg);
-            this._commands.push(this.helpCmd);
+            this.help = new HelpMessage(this, helpMsg);
+            this._commands.push(this.help);
         }
     }
 
@@ -326,9 +326,9 @@ export class CommandManager {
                         i,
                         cmd.parameters.map((p, index) => {
                             if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
-                                return new InputParameter(p, new ObjectID(i.options.data[index].value?.toString() ?? "", p.type, i.guild ?? undefined));
+                                return new InputParameter(p, new ObjectID(i.options.data[index]?.value?.toString() ?? "", p.type, i.guild ?? undefined));
                             } else {
-                                return new InputParameter(p, i.options.data[index].value ?? null);
+                                return new InputParameter(p, i.options.data[index]?.value ?? null);
                             }
                         })
                     );

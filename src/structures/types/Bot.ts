@@ -1,3 +1,4 @@
+import { HelpMessageParams } from "../../commands/types/HelpMessage.js";
 import { ClientOptions } from "discord.js";
 
 /**
@@ -36,6 +37,12 @@ export interface InitOptions {
      * @type {?ClientOptions}
      */
     clientOptions?: ClientOptions;
+
+    /**
+     * Help message appearance configuration
+     * @type {?HelpMessageParams}
+     */
+    help?: HelpMessageParams;
 
     /**
      * Discord bot token

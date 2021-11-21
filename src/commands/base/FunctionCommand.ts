@@ -43,7 +43,7 @@ export class FunctionCommand extends Command {
         this._function =
             options.function ??
             ((input) => {
-                if (this.manager.helpCmd) return this.manager.helpCmd.generateMessage(input.interaction, this.name);
+                if (this.manager.help) return this.manager.help.generateMessage(input.interaction, this.name);
                 else return;
             });
         this.announceSuccess = options.announceSuccess ?? true;

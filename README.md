@@ -96,6 +96,15 @@ const bot = new Bot({
     },
     token: "DISCORD_BOT_TOKEN",
     applicationId: "APPLICATION_ID",
+    help: {
+        enabled: true,
+        title: "List of commands",
+        usage: "[command name]",
+        description: "Show all commands available to use in my fantastic Discord bot.",
+        bottomText: "Hello World",
+        color: "#0055ff",
+        visible: false,
+    },
 });
 ```
 
@@ -209,11 +218,11 @@ CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is
 
 ## System messages
 
-System messages can be composed and sent automatically when a certain action happens. All message types are available **[here]()**. Their configuration is stored in _[Bot.prototype.messages.system](https://grz4na.github.io/CommandBot/classes/Bot.html#messages)_ property. Each of these messages can be customized with _[SystemMessageAppearance](https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html)_ objects. There is also a global _[deleteTimeout](https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#deleteTimeout)_ property so messages can automatically be deleted after a given time.
+System messages can be composed and sent automatically when a certain action happens. All message types are available **[here](https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#ERROR)**. Their configuration is stored in _[Bot.prototype.messages](https://grz4na.github.io/CommandBot/classes/Bot.html#messages)_ property. Each of these messages can be customized with _[SystemMessageAppearance](https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html)_ objects. There is also a global _[deleteTimeout](https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#deleteTimeout)_ property so messages can automatically be deleted after a given time.
 
 ## Help message
 
-Its configuration is stored in _[Bot.prototype.messages.help](https://grz4na.github.io/CommandBot/classes/Bot.html#messages)_ property and can be customized with _[HelpMessageParams](https://grz4na.github.io/CommandBot/interfaces/HelpMessageParams.html)_ object.
+To configure it use the _[help](https://grz4na.github.io/CommandBot/interfaces/InitOptions.html#help)_ property in the bot's constructor and pass there a _[HelpMessageParams](https://grz4na.github.io/CommandBot/interfaces/HelpMessageParams.html)_ object.
 
 > **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
 

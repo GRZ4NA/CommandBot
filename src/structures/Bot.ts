@@ -5,7 +5,6 @@ import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { SystemMessageManager } from "./SystemMessage.js";
 import { InitOptions } from "./types/Bot.js";
-import { HelpMessageParams } from "../commands/types/HelpMessage.js";
 import { applicationState } from "../state.js";
 import { InputManager } from "./InputManager.js";
 
@@ -79,30 +78,19 @@ export class Bot extends EventEmitter {
     public readonly applicationId: string;
 
     /**
-     * Messages and embeds configuration
-     * @type {Object}
+     * {@link SystemMessageManager} storing messages' configuration
+     * @type {SystemMessageManager}
      * @public
      * @readonly
      */
-    public readonly messages: {
-        /**
-         * Help message configuration
-         * @type {HelpMessageParams}
-         */
-        help: HelpMessageParams;
-        /**
-         * {@link SystemMessageManager} storing messages' configuration
-         * @type {SystemMessageManager}
-         */
-        system: SystemMessageManager;
-    };
+    public readonly messages: SystemMessageManager;
 
     /**
      * Main bot constructor
      * @constructor
      * @param {InitOptions} options - instance properties ({@link InitOptions})
      */
-    constructor({ name, token, applicationId, globalPrefix, argumentSeparator, commandSeparator, clientOptions }: InitOptions) {
+    constructor({ name, token, applicationId, globalPrefix, argumentSeparator, commandSeparator, clientOptions, help }: InitOptions) {
         super();
         this.name = name;
         this.client = new Client(
@@ -126,8 +114,10 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.messages = {
-            help: {
+        this.messages = new SystemMessageManager(this, this.name);
+        this.commands = new CommandManager(
+            this,
+            help ?? {
                 enabled: true,
                 title: "Help",
                 description: "List of all available commands",
@@ -136,9 +126,10 @@ export class Bot extends EventEmitter {
                 bottomText: "List of all available commands",
                 visible: true,
             },
-            system: new SystemMessageManager(this, this.name),
-        };
-        this.commands = new CommandManager(this, this.messages.help, globalPrefix, argumentSeparator, commandSeparator);
+            globalPrefix,
+            argumentSeparator,
+            commandSeparator
+        );
         this.token = token;
         this.applicationId = applicationId;
     }
@@ -197,7 +188,7 @@ export class Bot extends EventEmitter {
                 } catch (e) {
                     if (e instanceof PermissionsError) {
                         this.emit("ERROR", e);
-                        await this.messages.system.send(
+                        await this.messages.send(
                             "PERMISSION",
                             {
                                 user: m.member || undefined,
@@ -206,12 +197,12 @@ export class Bot extends EventEmitter {
                             m
                         );
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send("SUCCESS", undefined, m);
+                        await this.messages.send("SUCCESS", undefined, m);
                     } else if (e instanceof CommandNotFound) {
-                        await this.messages.system.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
+                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
                     } else {
                         this.emit("ERROR", e);
-                        await this.messages.system.send(
+                        await this.messages.send(
                             "ERROR",
                             {
                                 command: inputData?.command,
@@ -234,7 +225,7 @@ export class Bot extends EventEmitter {
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {
-                        await this.messages.system.send(
+                        await this.messages.send(
                             "PERMISSION",
                             {
                                 user: (i.member as GuildMember) || undefined,
@@ -244,11 +235,11 @@ export class Bot extends EventEmitter {
                         );
                         this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
+                        await this.messages.send("SUCCESS", undefined, i as CommandInteraction);
                     } else if (e instanceof CommandNotFound) {
-                        await this.messages.system.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
+                        await this.messages.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
                     } else {
-                        await this.messages.system.send(
+                        await this.messages.send(
                             "ERROR",
                             {
                                 command: inputData?.command,
