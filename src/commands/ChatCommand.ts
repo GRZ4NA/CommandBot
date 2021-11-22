@@ -162,6 +162,7 @@ export class ChatCommand extends PermissionGuildCommand {
      * @param {ChildCommandInit<T>} options  - initialization options
      * @returns {ChildCommands<T>} A computed subcommand object
      * @public
+     * @remarks After appending a subcommand or a subcommand group the main command can only be invoked using prefix interactions
      */
     public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
         const command =

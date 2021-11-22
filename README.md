@@ -36,6 +36,7 @@ Reference for available objects and structures is available [**here**](https://g
         -   [Types](#types)
         -   [Defining](#defining)
         -   [Reading input value](#reading-input-value)
+    -   [Subcommands](#subcommands)
 -   [Events](#events)
 -   [Messages](#messages)
     -   [System messages](#system-messages)
@@ -64,7 +65,7 @@ Reference for available objects and structures is available [**here**](https://g
 2. Run `npm init -y` or `yarn init -y`
 3. Add the CommandBot package
 
-```javascript
+```typescript
 // npm
 npm install commandbot@latest
 
@@ -75,7 +76,7 @@ yarn add commandbot@latest
 4. Create _index.js/index.ts_ file (TypeScript is a recommended language)
 5. Import the CommandBot package
 
-```javascript
+```typescript
 // CommonJS
 const { Bot } = require("commandbot");
 
@@ -85,7 +86,7 @@ import { Bot } from "commandbot";
 
 6. Initialize the bot instance ([InitOptions](https://grz4na.github.io/CommandBot/interfaces/InitOptions.html)) (list of available intents [here](https://discord.js.org/#/docs/main/stable/class/Intents?scrollTo=s-FLAGS))
 
-```javascript
+```typescript
 const bot = new Bot({
     name: "YOUR_BOT_NAME",
     globalPrefix: "!",
@@ -111,7 +112,7 @@ const bot = new Bot({
 7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
 8. Start your bot
 
-```javascript
+```typescript
 bot.start(
     port, // If passed, the application will create a HTTP server [type: number (integer)]
     true // If true or undefined, the app will register all slash commands in the Discord API [type: boolean]
@@ -134,7 +135,7 @@ Command types
 
 Chat command example:
 
-```javascript
+```typescript
 bot.commands.add("CHAT", {
     name: "greet",
     parameters: [
@@ -180,7 +181,7 @@ Pass a list of _[ParameterSchema](https://grz4na.github.io/CommandBot/interfaces
 
 Example parameter object:
 
-```javascript
+```typescript
 {
     name: "user",
     description: "User to mention",
@@ -195,7 +196,7 @@ To read parameter values use _[InputManager.prototype.get()](https://grz4na.gith
 
 Example:
 
-```javascript
+```typescript
 function: (i) => {
     const userObj = i.get('member', 'user')
     if(userObj) {
@@ -208,6 +209,37 @@ function: (i) => {
         }
     }
 }
+```
+
+## Subcommands
+
+To create a subcommand create a standard chat command and use _[ChatCommand.prototype.append](https://grz4na.github.io/CommandBot/classes/ChatCommand.html#append)_ method to create and attach subcommands or subcommand groups. To add subcommands to groups use _[SubCommandGroup.prototype.append](https://grz4na.github.io/CommandBot/classes/SubCommandGroup.html#append)_.
+
+```typescript
+// Create a chat command
+const cmd = bot.commands.add("CHAT", {
+    name: "parent",
+    slash: true,
+    description: "This is a parent",
+});
+
+// Create and append a subcommand
+cmd.append("COMMAND", {
+    name: "child",
+    description: "This is a subcommand",
+});
+
+// Create and append a subcommand group
+const group = cmd.append("GROUP", {
+    name: "command_group",
+    description: "This is a subcommand group",
+});
+
+// Add a subcommand to the group
+group.append({
+    name: "group_command",
+    description: "This is a subcommand that is a child of the command_group",
+});
 ```
 
 # Events
