@@ -119,27 +119,22 @@ export class HelpMessage extends ChatCommand {
                         ((Array.isArray(c.guilds) && c.guilds.length > 0 && c.guilds.find((g) => i?.guild?.id === g)) || !Array.isArray(c.guilds) || c.guilds.length === 0)
                     ) {
                         if (c.hasSubCommands) {
+                            const prefix = this.manager.prefix.get(i.guild || undefined);
+                            let contents = `${c.description}`;
                             c.children.map((sc) => {
                                 if (sc instanceof SubCommand) {
-                                    helpMsg.addField(
-                                        `${this.manager.prefix.get(i.guild || undefined) ?? "/"}${c.name}${this.manager.commandSeparator}${
-                                            sc.parent instanceof SubCommandGroup ? `${sc.parent.name}${this.manager.commandSeparator}${sc.name}` : `${sc.name}`
-                                        } ${sc.usage}`,
-                                        sc.description,
-                                        false
-                                    );
+                                    contents += `\n**${this.manager.prefix.get(i.guild || undefined) ?? "/"}${c.name}${this.manager.commandSeparator}${
+                                        sc.parent instanceof SubCommandGroup ? `${sc.parent.name}${this.manager.commandSeparator}${sc.name}` : `${sc.name}`
+                                    } ${sc.usage}**\n${sc.description}`;
                                 } else {
                                     sc.children.map((scgch) => {
-                                        helpMsg.addField(
-                                            `${this.manager.prefix.get(i.guild || undefined) ?? "/"}${c.name}${this.manager.commandSeparator}${sc.name}${
-                                                this.manager.commandSeparator
-                                            }${scgch.name} ${scgch.usage}`,
-                                            scgch.description,
-                                            false
-                                        );
+                                        contents += `\n**${this.manager.prefix.get(i.guild || undefined) ?? "/"}${c.name}${this.manager.commandSeparator}${sc.name}${
+                                            this.manager.commandSeparator
+                                        }${scgch.name} ${scgch.usage}**\n${scgch.description}`;
                                     });
                                 }
                             });
+                            helpMsg.addField(`${prefix ?? ""}${c.name} ${prefix ? c.usage : ""}`, contents, false);
                         } else {
                             helpMsg.addField(`${this.manager.prefix.get(i.guild || undefined) ?? "/"}${c.name} ${c.usage}`, c.description, false);
                         }
