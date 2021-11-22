@@ -379,7 +379,7 @@ export class CommandManager {
                             return new InputManager(
                                 subCmd,
                                 i,
-                                cmd.parameters.map((p, index) => {
+                                subCmd.parameters.map((p, index) => {
                                     if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
                                         return new InputParameter(p, new ObjectID(subArgsRaw[index] ?? "", p.type, i.guild ?? undefined));
                                     } else {
