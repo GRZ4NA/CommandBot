@@ -478,6 +478,7 @@ export class CommandManager {
      * @returns {Promise<void>}
      * @public
      * @async
+     * @experimental This functionality hasn't been polished and fully tested yet. Using it might lead to errors and application crashes.
      */
     public async setPermissionsApi(id: string, permissions: CommandPermission[], g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);
@@ -503,6 +504,7 @@ export class CommandManager {
      * @param {Guild | string} [g] - Guild ID or object (if command is in a guild)
      * @public
      * @async
+     * @experimental This functionality hasn't been polished and fully tested yet. Using it might lead to errors and application crashes.
      */
     public async getPermissionsApi(id: string, g?: Guild | string) {
         if (typeof g === "string" && !this.client.client.guilds.cache.get(g)) throw new Error(`${g} is not a valid guild id`);

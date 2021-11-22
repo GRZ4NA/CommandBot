@@ -3,6 +3,11 @@ import { CommandManager } from "./CommandManager.js";
 import { CommandRegExps } from "../commands/types/commands.js";
 import { ScopeResolvable } from "./types/PrefixManager.js";
 
+/**
+ * Maps server IDs with command prefixes and allows to manage them
+ * @class
+ * @experimental This feature should be fully functional but it doesn't store its data in any kind of local storage or cache. All informations get lost after restarting the application. It is possible to create a store for that data (exporting to a file or in some kind of database) and then load it every time the application starts.
+ */
 export class PrefixManager {
     /**
      * Prefixes data

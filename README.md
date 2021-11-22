@@ -41,6 +41,7 @@ Reference for available objects and structures is available [**here**](https://g
 -   [Messages](#messages)
     -   [System messages](#system-messages)
     -   [Help message](#help-message)
+-   [Experimental features](#experimental-features)
 -   [Issues](#issues)
 
 # Installation
@@ -257,6 +258,11 @@ System messages can be composed and sent automatically when a certain action hap
 To configure it use the _[help](https://grz4na.github.io/CommandBot/interfaces/InitOptions.html#help)_ property in the bot's constructor and pass there a _[HelpMessageParams](https://grz4na.github.io/CommandBot/interfaces/HelpMessageParams.html)_ object.
 
 > **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
+
+# Experimental features
+
+-   The package has a _[PrefixManager](https://grz4na.github.io/CommandBot/classes/PrefixManager.html)_ class which is taking care of setting different prefixes for every server that the bot is on but there is no module to store that date in a file or database so the it's lost every time the application restarts. If you want to use it in your project, you should create a data store and write a function that dumps the data there.
+-   _[CommandManager](https://grz4na.github.io/CommandBot/classes/CommandManager.html)_ has 2 methods to interact with the Discord Permissions API (_getPermissionsApi_ and _setPermissionsApi_) and set interaction permissions that are independent from the CommandBot permission system. This functionality has not been polished and fully tested yet.
 
 # Issues
 

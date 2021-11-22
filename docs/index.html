@@ -61,6 +61,7 @@
 <li><a href="#help-message">Help message</a></li>
 </ul>
 </li>
+<li><a href="#experimental-features">Experimental features</a></li>
 <li><a href="#issues">Issues</a></li>
 </ul>
 
@@ -197,6 +198,14 @@
 <blockquote>
 <p><strong>WARNING!</strong> You can&#39;t customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.</p>
 </blockquote>
+
+<a href="#experimental-features" id="experimental-features" style="color: inherit; text-decoration: none;">
+  <h1>Experimental features</h1>
+</a>
+<ul>
+<li>The package has a <em><a href="https://grz4na.github.io/CommandBot/classes/PrefixManager.html">PrefixManager</a></em> class which is taking care of setting different prefixes for every server that the bot is on but there is no module to store that date in a file or database so the it&#39;s lost every time the application restarts. If you want to use it in your project, you should create a data store and write a function that dumps the data there.</li>
+<li><em><a href="https://grz4na.github.io/CommandBot/classes/CommandManager.html">CommandManager</a></em> has 2 methods to interact with the Discord Permissions API (<em>getPermissionsApi</em> and <em>setPermissionsApi</em>) and set interaction permissions that are independent from the CommandBot permission system. This functionality has not been polished and fully tested yet.</li>
+</ul>
 
 <a href="#issues" id="issues" style="color: inherit; text-decoration: none;">
   <h1>Issues</h1>

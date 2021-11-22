@@ -157,7 +157,7 @@ export class ChatCommand extends PermissionGuildCommand {
     }
 
     /**
-     * Attaches subcommand or subcommand group to this ChatCommand (this makes the base command usable only via prefix interactions)
+     * Attaches subcommand or subcommand group to this ChatCommand
      * @param {T} type - subcommand type
      * @param {ChildCommandInit<T>} options  - initialization options
      * @returns {ChildCommands<T>} A computed subcommand object
