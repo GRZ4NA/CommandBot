@@ -55,6 +55,14 @@ export class PrefixManager {
     }
 
     /**
+     * Manager data
+     * @type {Readonly<Map<string, string>>}
+     */
+    get prefixes() {
+        return Object.freeze(Object.create(this._prefixes));
+    }
+
+    /**
      * Get prefix for a specified scope
      * @param {ScopeResolvable} scope - guild object or ID
      * @returns {?string} a prefix used in given scope
