@@ -243,6 +243,15 @@ group.append({
 });
 ```
 
+To invoke subcommands using Discord messages use an _[argumentSeparator](https://grz4na.github.io/CommandBot/classes/CommandManager.html#argumentSeparator)_ (default: "/").
+
+```
+!parent - "parent" command
+!parent/child - "child" command
+!parent/command_group - this will invoke the "parent" command
+!parent/command_group/group_command - "group_command" command which is a parent of "command_group" group
+```
+
 # Events
 
 CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _[on](https://grz4na.github.io/CommandBot/classes/Bot.html#on-1)_ method. Event types are available **[here](https://grz4na.github.io/CommandBot/classes/Bot.html#on-1)**.
