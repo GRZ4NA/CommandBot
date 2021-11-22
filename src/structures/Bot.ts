@@ -1,78 +1,100 @@
-import axios from "axios";
 import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { Command } from "./Command.js";
 import { CommandManager } from "./CommandManager.js";
-import { OperationSuccess, PermissionsError } from "./errors.js";
-import { HelpMessage } from "./Help.js";
+import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import { CommandMessageStructure, InitOptions, HelpMessageParams } from "./types.js";
+import { InitOptions } from "./types/Bot.js";
+import { applicationState } from "../state.js";
+import { InputManager } from "./InputManager.js";
 
 export declare interface Bot {
+    /**
+     * Emitted after connecting to Discord API
+     * @event
+     */
     on(event: "READY", listener: Function): this;
+    /**
+     * Emitted whenever bot receives a Discord message
+     * @event
+     */
     on(event: "MESSAGE", listener: (m: Message) => void): this;
-    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: CommandMessageStructure) => void): this;
+    /**
+     * Emitted whenever bots receives a Discord message or interaction that gets recognized as a CommandBot command
+     * @event
+     */
+    on(event: "COMMAND", listener: (m: Message | CommandInteraction, cmdMsg: InputManager) => void): this;
+    /**
+     * Emitted on every bot error
+     * @event
+     */
     on(event: "ERROR", listener: (e: any) => void): this;
 }
 
 /**
- * @class  Class that represents your bot instance
+ * Application instance
+ * @class
  * @extends {EventEmitter}
- * @exports
  */
 export class Bot extends EventEmitter {
     /**
      * Bot name
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly name: string;
+
     /**
      * Discord.js {@link Client} instance
      * @type {Client}
+     * @public
+     * @readonly
      */
     public readonly client: Client;
+
     /**
      * Instance command manager
      * @type {CommandManager}
+     * @public
+     * @readonly
      */
     public readonly commands: CommandManager;
+
     /**
-     * Discord bot token
+     * Discord Bot token
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly token: string;
+
     /**
      * Discord API application ID
      * @type {string}
+     * @public
+     * @readonly
      */
     public readonly applicationId: string;
-    /**
-     * Built-in messages configuration
-     * @type {Object}
-     */
-    public readonly messages: {
-        /**
-         * Help message configuration
-         * @type {HelpMessageParams}
-         */
-        help: HelpMessageParams;
-        /**
-         * {@link SystemMessageManager} storing messages' configuration
-         * @type {SystemMessageManager}
-         */
-        system: SystemMessageManager;
-    };
 
     /**
+     * {@link SystemMessageManager} storing messages' configuration
+     * @type {SystemMessageManager}
+     * @public
+     * @readonly
+     */
+    public readonly messages: SystemMessageManager;
+
+    /**
+     * Main bot constructor
      * @constructor
      * @param {InitOptions} options - instance properties ({@link InitOptions})
      */
-    constructor(options: InitOptions) {
+    constructor({ name, token, applicationId, globalPrefix, argumentSeparator, commandSeparator, clientOptions, help }: InitOptions) {
         super();
-        this.name = options.name;
+        this.name = name;
         this.client = new Client(
-            options.clientOptions || {
+            clientOptions || {
                 intents: [
                     Intents.FLAGS.GUILDS,
                     Intents.FLAGS.GUILD_BANS,
@@ -92,11 +114,10 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.commands = new CommandManager(options.prefix, options.parameterSeparator);
-        this.token = options.token;
-        this.applicationId = options.applicationId;
-        this.messages = {
-            help: {
+        this.messages = new SystemMessageManager(this, this.name);
+        this.commands = new CommandManager(
+            this,
+            help ?? {
                 enabled: true,
                 title: "Help",
                 description: "List of all available commands",
@@ -105,21 +126,32 @@ export class Bot extends EventEmitter {
                 bottomText: "List of all available commands",
                 visible: true,
             },
-            system: new SystemMessageManager(this.name),
-        };
+            globalPrefix,
+            argumentSeparator,
+            commandSeparator
+        );
+        this.token = token;
+        this.applicationId = applicationId;
     }
 
     /**
-     * @method
      * Starts your Discord bot
-     * @param {number} [port] - if specified, the app will create a http server that will be listening on the specified port
-     * @param {boolean} [register=true] - if *true* or *undefined*, the bot will register all slash commands in Discord API
+     * @param {?number} [port] - if specified, the app will create a http server that will be listening on the specified port (useful when hosting your bot on platforms like Heroku)
+     * @param {?boolean} [register=true] - if *true* or *undefined*, the bot will register all interactions in the Discord API
      * @returns {Promise<boolean>} whether this operation has been completed successfully
+     * @public
+     * @async
      */
-    async start(port?: number, register?: boolean): Promise<boolean> {
+    public async start(port?: number, register?: boolean): Promise<boolean> {
         try {
+            if (applicationState.running) {
+                throw new Error("This bot is already running");
+            }
+            if (applicationState.dev) {
+                console.warn(`[⚠️ WARNING] You are using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
+            }
             console.log(`\nBot name: ${this.name}`);
-            console.log(`Prefix: ${this.commands.prefix || "/ (only slash commands)"} \n`);
+            console.log(`Global prefix: ${this.commands.prefix.globalPrefix || "/ (only slash commands)"} \n`);
             if (this.token === "") {
                 throw new ReferenceError('No token specified. Please pass your Discord application token as an argument to the "start" method or in the constructor');
             }
@@ -128,108 +160,101 @@ export class Bot extends EventEmitter {
                 http.createServer().listen(port);
                 console.log("✔");
             }
-            if (this.messages.help.enabled === true) {
-                const helpMsg: Command = new HelpMessage(this.commands, this.messages.help, this.name);
-                this.commands.add(helpMsg);
-            }
-            this.commands.freezeList();
+            applicationState.running = true;
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {
                 if (register === undefined || register === true) {
                     console.log("✔");
-                    this.register();
+                    process.stdout.write(`Registering commands... `);
+                    await this.commands.register();
+                    console.log("✔");
                 } else {
                     console.log("✔\n");
                 }
                 this.emit("READY");
             });
             this.client.on("messageCreate", async (m) => {
-                let cmdMsg: CommandMessageStructure | null = null;
+                if (m.author.bot) return;
+                let inputData: InputManager | null = null;
                 try {
-                    cmdMsg = this.commands.fetchFromMessage(m);
-                    if (cmdMsg) {
-                        this.emit("COMMAND", m, cmdMsg);
-                        await cmdMsg.command.start(m, cmdMsg.parameters);
-                    } else if (this.commands.prefix && m.content.startsWith(this.commands.prefix)) {
-                        this.emit("MESSAGE", m);
-                        await this.messages.system.send("NOT_FOUND", { phrase: m.content, user: m.member || undefined }, m);
+                    inputData = this.commands.fetch(m);
+                    if (inputData) {
+                        this.emit("COMMAND", m, inputData);
+                        await inputData.command.start(inputData);
                     } else {
                         this.emit("MESSAGE", m);
                     }
                 } catch (e) {
                     if (e instanceof PermissionsError) {
-                        await this.messages.system.send(
+                        this.emit("ERROR", e);
+                        await this.messages.send(
                             "PERMISSION",
                             {
                                 user: m.member || undefined,
-                                command: cmdMsg?.command,
+                                command: inputData?.command,
                             },
                             m
                         );
-                        this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send("SUCCESS", undefined, m);
+                        await this.messages.send("SUCCESS", undefined, m);
+                    } else if (e instanceof CommandNotFound) {
+                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
                     } else {
-                        await this.messages.system.send(
+                        this.emit("ERROR", e);
+                        await this.messages.send(
                             "ERROR",
                             {
-                                command: cmdMsg?.command,
+                                command: inputData?.command,
                                 user: m.member || undefined,
                                 error: e as Error,
                             },
                             m
+                        );
+                    }
+                    return;
+                }
+            });
+            this.client.on("interactionCreate", async (i) => {
+                let inputData: InputManager | null = null;
+                try {
+                    inputData = this.commands.fetch(i);
+                    if (inputData) {
+                        this.emit("COMMAND", i, inputData);
+                        await inputData.command.start(inputData);
+                    }
+                } catch (e) {
+                    if (e instanceof PermissionsError) {
+                        await this.messages.send(
+                            "PERMISSION",
+                            {
+                                user: (i.member as GuildMember) || undefined,
+                                command: inputData?.command,
+                            },
+                            i as CommandInteraction
+                        );
+                        this.emit("ERROR", e);
+                    } else if (e instanceof OperationSuccess) {
+                        await this.messages.send("SUCCESS", undefined, i as CommandInteraction);
+                    } else if (e instanceof CommandNotFound) {
+                        await this.messages.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
+                    } else {
+                        await this.messages.send(
+                            "ERROR",
+                            {
+                                command: inputData?.command,
+                                user: (i.member as GuildMember) || undefined,
+                                error: e as Error,
+                            },
+                            i as CommandInteraction
                         );
                         this.emit("ERROR", e);
                     }
                     return;
                 }
             });
-            this.client.on("interactionCreate", async (i) => {
-                let cmd: CommandMessageStructure | null = null;
-                try {
-                    if (!i.isCommand()) return;
-                    cmd = this.commands.fetchFromInteraction(i);
-                    if (cmd) {
-                        this.emit("COMMAND", i, cmd);
-                        await cmd.command.start(i, cmd.parameters);
-                    } else {
-                        await this.messages.system.send(
-                            "NOT_FOUND",
-                            {
-                                phrase: i.commandName,
-                                user: i.member as GuildMember,
-                            },
-                            i as CommandInteraction
-                        );
-                    }
-                } catch (e) {
-                    if (e instanceof PermissionsError) {
-                        await this.messages.system.send(
-                            "PERMISSION",
-                            {
-                                user: (i.member as GuildMember) || undefined,
-                                command: cmd?.command,
-                            },
-                            i as CommandInteraction
-                        );
-                        this.emit("ERROR", e);
-                    } else if (e instanceof OperationSuccess) {
-                        await this.messages.system.send("SUCCESS", undefined, i as CommandInteraction);
-                    } else {
-                        await this.messages.system.send(
-                            "ERROR",
-                            {
-                                command: cmd?.command,
-                                user: (i.member as GuildMember) || undefined,
-                                error: e as Error,
-                            },
-                            i as CommandInteraction
-                        );
-                        this.emit("ERROR", e);
-                    }
-                    return;
-                }
+            this.client.on("error", (e) => {
+                this.emit("ERROR", e);
             });
             return true;
         } catch (e) {
@@ -237,46 +262,6 @@ export class Bot extends EventEmitter {
             console.error(`[❌ ERROR] ${e}`);
             return false;
         }
-    }
-
-    /**
-     * @method
-     * Registers commands from {@link CommandManager} in Discord API
-     * @returns {Promise<void>}
-     */
-    async register(): Promise<void> {
-        process.stdout.write("Registering commands... ");
-        await axios.put(
-            `https://discord.com/api/v8/applications/${this.applicationId}/commands`,
-            this.commands
-                .getList()
-                .filter((c) => !Array.isArray(c.guilds) && c.slash)
-                .map((c) => c.toCommandObject()),
-            { headers: { Authorization: `Bot ${this.token}` } }
-        );
-        const guilds: any = {};
-        await this.commands
-            .getList()
-            .filter((c) => Array.isArray(c.guilds) && c.guilds.length > 0)
-            .map((c) => {
-                c.guilds?.map(async (g) => {
-                    if (!(await this.client.guilds.fetch(g))) {
-                        throw new Error(`"${g}" for "${c.name}" command is not a valid guild ID`);
-                    }
-                    if (guilds[g]) {
-                        guilds[g].push(c.toCommandObject());
-                    } else {
-                        guilds[g] = [];
-                        guilds[g].push(c.toCommandObject());
-                    }
-                });
-            });
-        for (let i in guilds) {
-            await axios.put(`https://discord.com/api/v8/applications/${this.applicationId}/guilds/${i}/commands`, guilds[i], {
-                headers: { Authorization: `Bot ${this.token}` },
-            });
-        }
-        console.log("✔\n");
     }
 }
 

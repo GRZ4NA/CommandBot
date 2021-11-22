@@ -1,0 +1,219 @@
+<!DOCTYPE html><html class="default no-js"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>commandbot</title><meta name="description" content="Documentation for commandbot"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">commandbot</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>commandbot</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#commandbot" id="commandbot" style="color: inherit; text-decoration: none;">
+  <h1>CommandBot</h1>
+</a>
+<p>A Discord.js based framework that makes creating Discord bots with support for slash commands easy and fast.</p>
+
+<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+  <h2>Features</h2>
+</a>
+<ul>
+<li>Support for slash commands, context menu interactions</li>
+<li>Intuitive usage</li>
+<li>Flexible</li>
+<li>Good customization</li>
+<li>Permission system</li>
+<li>Built-in help command</li>
+<li>Built-in information messages</li>
+<li>Automatic error catching</li>
+<li>Large documentation in README and using JSDoc</li>
+<li>Written in TypeScript</li>
+</ul>
+
+<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+  <h2>Documentation</h2>
+</a>
+<p>Reference for available objects and structures is available <a href="https://grz4na.github.io/CommandBot/index.html"><strong>here</strong></a>. All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.</p>
+
+<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+  <h2>Table of contents</h2>
+</a>
+<ul>
+<li><a href="#commandbot">CommandBot</a><ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#table-of-contents">Table of contents</a></li>
+</ul>
+</li>
+<li><a href="#installation">Instalation</a><ul>
+<li><a href="#system-requirements">System requirements</a></li>
+<li><a href="#creating-a-project">Creating a project</a><ul>
+<li><a href="#registering-discord-app">Registering Discord app</a></li>
+<li><a href="#creating-application">Creating application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#commands">Commands</a><ul>
+<li><a href="#creating-a-command">Creating a command</a></li>
+<li><a href="#parameters">Parameters</a><ul>
+<li><a href="#types">Types</a></li>
+<li><a href="#defining">Defining</a></li>
+<li><a href="#reading-input-value">Reading input value</a></li>
+</ul>
+</li>
+<li><a href="#subcommands">Subcommands</a></li>
+</ul>
+</li>
+<li><a href="#events">Events</a></li>
+<li><a href="#messages">Messages</a><ul>
+<li><a href="#system-messages">System messages</a></li>
+<li><a href="#help-message">Help message</a></li>
+</ul>
+</li>
+<li><a href="#experimental-features">Experimental features</a></li>
+<li><a href="#issues">Issues</a></li>
+</ul>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h1>Installation</h1>
+</a>
+
+<a href="#system-requirements" id="system-requirements" style="color: inherit; text-decoration: none;">
+  <h2>System requirements</h2>
+</a>
+<ul>
+<li><em>Node.js</em> 16.6.0 or newer</li>
+<li><em>npm</em> or <em>yarn</em> package manager</li>
+</ul>
+
+<a href="#creating-a-project" id="creating-a-project" style="color: inherit; text-decoration: none;">
+  <h2>Creating a project</h2>
+</a>
+
+<a href="#registering-discord-app" id="registering-discord-app" style="color: inherit; text-decoration: none;">
+  <h3>Registering Discord app</h3>
+</a>
+<ol>
+<li>Visit <a href="https://discord.com/developers/">Discord Developer Portal</a> and create an app</li>
+<li>Navigate to the <em>Bot</em> section and register a bot</li>
+<li>Navigate to <em>OAuth 2</em> section, select <em>bot</em> and <em>application.commands</em> scopes and check bot permissions</li>
+<li>Copy the link, paste it in your web browser and add the bot to a server</li>
+</ol>
+
+<a href="#creating-application" id="creating-application" style="color: inherit; text-decoration: none;">
+  <h3>Creating application</h3>
+</a>
+<ol>
+<li>Create empty directory</li>
+<li>Run <code>npm init -y</code> or <code>yarn init -y</code></li>
+<li>Add the CommandBot package</li>
+</ol>
+<pre><code class="language-typescript"><span class="hl-0">// npm</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-1">install</span><span class="hl-2"> </span><span class="hl-1">commandbot</span><span class="hl-2">@</span><span class="hl-1">latest</span><br/><br/><span class="hl-0">// yarn</span><br/><span class="hl-1">yarn</span><span class="hl-2"> </span><span class="hl-1">add</span><span class="hl-2"> </span><span class="hl-1">commandbot</span><span class="hl-2">@</span><span class="hl-1">latest</span>
+</code></pre>
+<ol start="4">
+<li>Create <em>index.js/index.ts</em> file (TypeScript is a recommended language)</li>
+<li>Import the CommandBot package</li>
+</ol>
+<pre><code class="language-typescript"><span class="hl-0">// CommonJS</span><br/><span class="hl-3">const</span><span class="hl-2"> { </span><span class="hl-4">Bot</span><span class="hl-2"> } = </span><span class="hl-5">require</span><span class="hl-2">(</span><span class="hl-6">&quot;commandbot&quot;</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// ES Modules (to use ESM add &quot;type&quot;: &quot;module&quot; to package.json file)</span><br/><span class="hl-7">import</span><span class="hl-2"> { </span><span class="hl-1">Bot</span><span class="hl-2"> } </span><span class="hl-7">from</span><span class="hl-2"> </span><span class="hl-6">&quot;commandbot&quot;</span><span class="hl-2">;</span>
+</code></pre>
+<ol start="6">
+<li>Initialize the bot instance (<a href="https://grz4na.github.io/CommandBot/interfaces/InitOptions.html">InitOptions</a>) (list of available intents <a href="https://discord.js.org/#/docs/main/stable/class/Intents?scrollTo=s-FLAGS">here</a>)</li>
+</ol>
+<pre><code class="language-typescript"><span class="hl-3">const</span><span class="hl-2"> </span><span class="hl-4">bot</span><span class="hl-2"> = </span><span class="hl-3">new</span><span class="hl-2"> </span><span class="hl-5">Bot</span><span class="hl-2">({</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;YOUR_BOT_NAME&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">globalPrefix:</span><span class="hl-2"> </span><span class="hl-6">&quot;!&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">argumentSeparator:</span><span class="hl-2"> </span><span class="hl-6">&quot;,&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">commandSeparator:</span><span class="hl-2"> </span><span class="hl-6">&quot;/&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">clientOptions:</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-1">intents:</span><span class="hl-2"> [...</span><span class="hl-6">&quot;DISCORD_API_INTENTS&quot;</span><span class="hl-2">],</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">    </span><span class="hl-1">token:</span><span class="hl-2"> </span><span class="hl-6">&quot;DISCORD_BOT_TOKEN&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">applicationId:</span><span class="hl-2"> </span><span class="hl-6">&quot;APPLICATION_ID&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">help:</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-1">enabled:</span><span class="hl-2"> </span><span class="hl-3">true</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">title:</span><span class="hl-2"> </span><span class="hl-6">&quot;List of commands&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">usage:</span><span class="hl-2"> </span><span class="hl-6">&quot;[command name]&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;Show all commands available to use in my fantastic Discord bot.&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">bottomText:</span><span class="hl-2"> </span><span class="hl-6">&quot;Hello World&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-6">&quot;#0055ff&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">visible:</span><span class="hl-2"> </span><span class="hl-3">false</span><span class="hl-2">,</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">});</span>
+</code></pre>
+<ol start="7">
+<li>Create and add commands to the <em>Bot</em> instance (see <a href="#commands">Commands</a>)</li>
+<li>Start your bot</li>
+</ol>
+<pre><code class="language-typescript"><span class="hl-1">bot</span><span class="hl-2">.</span><span class="hl-5">start</span><span class="hl-2">(</span><br/><span class="hl-2">    </span><span class="hl-1">port</span><span class="hl-2">, </span><span class="hl-0">// If passed, the application will create a HTTP server [type: number (integer)]</span><br/><span class="hl-2">    </span><span class="hl-3">true</span><span class="hl-2"> </span><span class="hl-0">// If true or undefined, the app will register all slash commands in the Discord API [type: boolean]</span><br/><span class="hl-2">);</span>
+</code></pre>
+<blockquote>
+<p><strong>WARNING!</strong> All commands have to be added to the instance <strong>before starting the bot</strong>. Adding commands while the bot is running is not possible and can cause issues.</p>
+</blockquote>
+
+<a href="#commands" id="commands" style="color: inherit; text-decoration: none;">
+  <h1>Commands</h1>
+</a>
+
+<a href="#creating-a-command" id="creating-a-command" style="color: inherit; text-decoration: none;">
+  <h2>Creating a command</h2>
+</a>
+<p>To create a command, use <em><a href="https://grz4na.github.io/CommandBot/classes/CommandManager.html#add">CommandManager.prototype.add</a></em> method</p>
+<p>Command types</p>
+<ul>
+<li><a href="https://grz4na.github.io/CommandBot/interfaces/ChatCommandInit.html">CHAT</a> - message interactions using command prefixes or slash commands</li>
+<li><a href="https://grz4na.github.io/CommandBot/interfaces/ContextMenuCommandInit.html">USER</a> - right-click context menu interactions on users</li>
+<li><a href="https://grz4na.github.io/CommandBot/interfaces/ContextMenuCommandInit.html">MESSAGE</a> - right-click context menu interactions on messages</li>
+</ul>
+<p>Chat command example:</p>
+<pre><code class="language-typescript"><span class="hl-1">bot</span><span class="hl-2">.</span><span class="hl-1">commands</span><span class="hl-2">.</span><span class="hl-5">add</span><span class="hl-2">(</span><span class="hl-6">&quot;CHAT&quot;</span><span class="hl-2">, {</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;greet&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">parameters:</span><span class="hl-2"> [</span><br/><span class="hl-2">        {</span><br/><span class="hl-2">            </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;user&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">            </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;User to greet&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">            </span><span class="hl-1">optional:</span><span class="hl-2"> </span><span class="hl-3">false</span><span class="hl-2">,</span><br/><span class="hl-2">            </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-6">&quot;user&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">        },</span><br/><span class="hl-2">    ],</span><br/><span class="hl-2">    </span><span class="hl-1">aliases:</span><span class="hl-2"> [</span><span class="hl-6">&quot;hello&quot;</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;Welcome someone to your server&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">usage:</span><span class="hl-2"> </span><span class="hl-6">&quot;[user]&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">dm:</span><span class="hl-2"> </span><span class="hl-3">false</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">guilds:</span><span class="hl-2"> [</span><span class="hl-6">&quot;123456789874561230&quot;</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">slash:</span><span class="hl-2"> </span><span class="hl-3">true</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">visible:</span><span class="hl-2"> </span><span class="hl-3">true</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">permissions:</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-1">resolvable:</span><span class="hl-2"> [</span><span class="hl-6">&quot;ADMINISTRATOR&quot;</span><span class="hl-2">],</span><br/><span class="hl-2">        </span><span class="hl-1">checkType:</span><span class="hl-2"> </span><span class="hl-6">&quot;ANY&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">    </span><span class="hl-5">function</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-3">async</span><span class="hl-2"> (</span><span class="hl-1">i</span><span class="hl-2">) </span><span class="hl-3">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-3">const</span><span class="hl-2"> </span><span class="hl-4">user</span><span class="hl-2"> = </span><span class="hl-7">await</span><span class="hl-2"> </span><span class="hl-1">i</span><span class="hl-2">.</span><span class="hl-5">get</span><span class="hl-2">(</span><span class="hl-6">&quot;user&quot;</span><span class="hl-2">).</span><span class="hl-5">toObject</span><span class="hl-2">();</span><br/><span class="hl-2">        </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-6">`Hello </span><span class="hl-3">${</span><span class="hl-1">user</span><span class="hl-8">.</span><span class="hl-5">toString</span><span class="hl-8">()</span><span class="hl-3">}</span><span class="hl-6">`</span><span class="hl-2">;</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">});</span>
+</code></pre>
+<p>Command function schema is defined <strong><a href="https://grz4na.github.io/CommandBot/modules.html#CommandFunction">here</a></strong></p>
+
+<a href="#parameters" id="parameters" style="color: inherit; text-decoration: none;">
+  <h2>Parameters</h2>
+</a>
+
+<a href="#types" id="types" style="color: inherit; text-decoration: none;">
+  <h3>Types</h3>
+</a>
+<ul>
+<li><a href="https://grz4na.github.io/CommandBot/modules.html#ParameterType">primitive</a></li>
+<li><a href="https://grz4na.github.io/CommandBot/modules.html#ObjectIdType">objects</a></li>
+</ul>
+<p>To get an entity ID from <em>ObjectID</em> use the <em><a href="https://grz4na.github.io/CommandBot/classes/ObjectID.html#id">id</a></em> property. You can also call <em><a href="https://grz4na.github.io/CommandBot/classes/ObjectID.html#toObject">toObject</a></em> method to retrieve full entity object from Discord API</p>
+
+<a href="#defining" id="defining" style="color: inherit; text-decoration: none;">
+  <h3>Defining</h3>
+</a>
+<p>Pass a list of <em><a href="https://grz4na.github.io/CommandBot/interfaces/ParameterSchema.html">ParameterSchema</a></em> objects to <em><a href="https://grz4na.github.io/CommandBot/interfaces/ChatCommandInit.html#parameters">parameters</a></em> property</p>
+<p>Example parameter object:</p>
+<pre><code class="language-typescript"><span class="hl-2">{</span><br/><span class="hl-2">    </span><span class="hl-9">name</span><span class="hl-2">: </span><span class="hl-6">&quot;user&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-9">description</span><span class="hl-2">: </span><span class="hl-6">&quot;User to mention&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-9">optional</span><span class="hl-2">: </span><span class="hl-3">false</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-9">type</span><span class="hl-2">: </span><span class="hl-6">&quot;user&quot;</span><br/><span class="hl-2">}</span>
+</code></pre>
+
+<a href="#reading-input-value" id="reading-input-value" style="color: inherit; text-decoration: none;">
+  <h3>Reading input value</h3>
+</a>
+<p>To read parameter values use <em><a href="https://grz4na.github.io/CommandBot/classes/InputManager.html#get">InputManager.prototype.get()</a></em> (passed in the first argument of a command function)</p>
+<p>Example:</p>
+<pre><code class="language-typescript"><span class="hl-3">function</span><span class="hl-2">: (</span><span class="hl-1">i</span><span class="hl-2">) </span><span class="hl-3">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-10">const</span><span class="hl-2"> </span><span class="hl-1">userObj</span><span class="hl-2"> = </span><span class="hl-1">i</span><span class="hl-2">.</span><span class="hl-5">get</span><span class="hl-2">(</span><span class="hl-6">&#39;member&#39;</span><span class="hl-2">, </span><span class="hl-6">&#39;user&#39;</span><span class="hl-2">)</span><br/><span class="hl-2">    </span><span class="hl-5">if</span><span class="hl-2">(</span><span class="hl-1">userObj</span><span class="hl-2">) {</span><br/><span class="hl-2">        </span><span class="hl-3">const</span><span class="hl-2"> </span><span class="hl-4">user</span><span class="hl-2"> = </span><span class="hl-1">userObj</span><span class="hl-2">.</span><span class="hl-5">toObject</span><span class="hl-2">();</span><br/><span class="hl-2">        </span><span class="hl-7">if</span><span class="hl-2">(</span><span class="hl-1">user</span><span class="hl-2">) {</span><br/><span class="hl-2">            </span><span class="hl-7">return</span><span class="hl-2"> </span><span class="hl-6">`Hello, </span><span class="hl-3">${</span><span class="hl-1">user</span><span class="hl-8">.</span><span class="hl-5">toString</span><span class="hl-8">()</span><span class="hl-3">}</span><span class="hl-6">`</span><br/><span class="hl-2">        }</span><br/><span class="hl-2">        </span><span class="hl-7">else</span><span class="hl-2"> {</span><br/><span class="hl-2">            </span><span class="hl-7">throw</span><span class="hl-2"> </span><span class="hl-3">new</span><span class="hl-2"> </span><span class="hl-10">Error</span><span class="hl-2">(</span><span class="hl-6">&#39;User not found&#39;</span><span class="hl-2">)</span><br/><span class="hl-2">        }</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">}</span>
+</code></pre>
+
+<a href="#subcommands" id="subcommands" style="color: inherit; text-decoration: none;">
+  <h2>Subcommands</h2>
+</a>
+<p>To create a subcommand create a standard chat command and use <em><a href="https://grz4na.github.io/CommandBot/classes/ChatCommand.html#append">ChatCommand.prototype.append</a></em> method to create and attach subcommands or subcommand groups. To add subcommands to groups use <em><a href="https://grz4na.github.io/CommandBot/classes/SubCommandGroup.html#append">SubCommandGroup.prototype.append</a></em>.</p>
+<pre><code class="language-typescript"><span class="hl-0">// Create a chat command</span><br/><span class="hl-3">const</span><span class="hl-2"> </span><span class="hl-4">cmd</span><span class="hl-2"> = </span><span class="hl-1">bot</span><span class="hl-2">.</span><span class="hl-1">commands</span><span class="hl-2">.</span><span class="hl-5">add</span><span class="hl-2">(</span><span class="hl-6">&quot;CHAT&quot;</span><span class="hl-2">, {</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;parent&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">slash:</span><span class="hl-2"> </span><span class="hl-3">true</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;This is a parent&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Create and append a subcommand</span><br/><span class="hl-1">cmd</span><span class="hl-2">.</span><span class="hl-5">append</span><span class="hl-2">(</span><span class="hl-6">&quot;COMMAND&quot;</span><span class="hl-2">, {</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;child&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;This is a subcommand&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Create and append a subcommand group</span><br/><span class="hl-3">const</span><span class="hl-2"> </span><span class="hl-4">group</span><span class="hl-2"> = </span><span class="hl-1">cmd</span><span class="hl-2">.</span><span class="hl-5">append</span><span class="hl-2">(</span><span class="hl-6">&quot;GROUP&quot;</span><span class="hl-2">, {</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;command_group&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;This is a subcommand group&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Add a subcommand to the group</span><br/><span class="hl-1">group</span><span class="hl-2">.</span><span class="hl-5">append</span><span class="hl-2">({</span><br/><span class="hl-2">    </span><span class="hl-1">name:</span><span class="hl-2"> </span><span class="hl-6">&quot;group_command&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">description:</span><span class="hl-2"> </span><span class="hl-6">&quot;This is a subcommand that is a child of the command_group&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">});</span>
+</code></pre>
+<p>To invoke subcommands using Discord messages use an <em><a href="https://grz4na.github.io/CommandBot/classes/CommandManager.html#argumentSeparator">argumentSeparator</a></em> (default: &quot;/&quot;).</p>
+<pre><code><span class="hl-2">!</span><span class="hl-1">parent</span><span class="hl-2"> - </span><span class="hl-6">&quot;parent&quot;</span><span class="hl-2"> </span><span class="hl-1">command</span><br/><span class="hl-2">!</span><span class="hl-1">parent</span><span class="hl-2">/</span><span class="hl-1">child</span><span class="hl-2"> - </span><span class="hl-6">&quot;child&quot;</span><span class="hl-2"> </span><span class="hl-1">command</span><br/><span class="hl-2">!</span><span class="hl-1">parent</span><span class="hl-2">/</span><span class="hl-1">command_group</span><span class="hl-2"> - </span><span class="hl-3">this</span><span class="hl-2"> </span><span class="hl-1">will</span><span class="hl-2"> </span><span class="hl-1">invoke</span><span class="hl-2"> </span><span class="hl-1">the</span><span class="hl-2"> </span><span class="hl-6">&quot;parent&quot;</span><span class="hl-2"> </span><span class="hl-1">command</span><br/><span class="hl-2">!</span><span class="hl-1">parent</span><span class="hl-2">/</span><span class="hl-1">command_group</span><span class="hl-2">/</span><span class="hl-1">group_command</span><span class="hl-2"> - </span><span class="hl-6">&quot;group_command&quot;</span><span class="hl-2"> </span><span class="hl-1">command</span><span class="hl-2"> </span><span class="hl-1">which</span><span class="hl-2"> </span><span class="hl-1">is</span><span class="hl-2"> </span><span class="hl-1">a</span><span class="hl-2"> </span><span class="hl-1">parent</span><span class="hl-2"> </span><span class="hl-3">of</span><span class="hl-2"> </span><span class="hl-6">&quot;command_group&quot;</span><span class="hl-2"> </span><span class="hl-1">group</span>
+</code></pre>
+
+<a href="#events" id="events" style="color: inherit; text-decoration: none;">
+  <h1>Events</h1>
+</a>
+<p>CommandBot is using <em><a href="https://nodejs.org/api/events.html">EventEmitter</a></em> that is built into Node.js. You can listen to events using the <em><a href="https://grz4na.github.io/CommandBot/classes/Bot.html#on-1">on</a></em> method. Event types are available <strong><a href="https://grz4na.github.io/CommandBot/classes/Bot.html#on-1">here</a></strong>.</p>
+
+<a href="#messages" id="messages" style="color: inherit; text-decoration: none;">
+  <h1>Messages</h1>
+</a>
+
+<a href="#system-messages" id="system-messages" style="color: inherit; text-decoration: none;">
+  <h2>System messages</h2>
+</a>
+<p>System messages can be composed and sent automatically when a certain action happens. All message types are available <strong><a href="https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#ERROR">here</a></strong>. Their configuration is stored in <em><a href="https://grz4na.github.io/CommandBot/classes/Bot.html#messages">Bot.prototype.messages</a></em> property. Each of these messages can be customized with <em><a href="https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html">SystemMessageAppearance</a></em> objects. There is also a global <em><a href="https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#deleteTimeout">deleteTimeout</a></em> property so messages can automatically be deleted after a given time.</p>
+
+<a href="#help-message" id="help-message" style="color: inherit; text-decoration: none;">
+  <h2>Help message</h2>
+</a>
+<p>To configure it use the <em><a href="https://grz4na.github.io/CommandBot/interfaces/InitOptions.html#help">help</a></em> property in the bot&#39;s constructor and pass there a <em><a href="https://grz4na.github.io/CommandBot/interfaces/HelpMessageParams.html">HelpMessageParams</a></em> object.</p>
+<blockquote>
+<p><strong>WARNING!</strong> You can&#39;t customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.</p>
+</blockquote>
+
+<a href="#experimental-features" id="experimental-features" style="color: inherit; text-decoration: none;">
+  <h1>Experimental features</h1>
+</a>
+<ul>
+<li>The package has a <em><a href="https://grz4na.github.io/CommandBot/classes/PrefixManager.html">PrefixManager</a></em> class which is taking care of setting different prefixes for every server that the bot is on but there is no module to store that date in a file or database so the it&#39;s lost every time the application restarts. If you want to use it in your project, you should create a data store and write a function that dumps the data there.</li>
+<li><em><a href="https://grz4na.github.io/CommandBot/classes/CommandManager.html">CommandManager</a></em> has 2 methods to interact with the Discord Permissions API (<em>getPermissionsApi</em> and <em>setPermissionsApi</em>) and set interaction permissions that are independent from the CommandBot permission system. This functionality has not been polished and fully tested yet.</li>
+</ul>
+
+<a href="#issues" id="issues" style="color: inherit; text-decoration: none;">
+  <h1>Issues</h1>
+</a>
+<p>Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the <em><a href="https://github.com/GRZ4NA/CommandBot/issues">Issues</a></em> tab on GitHub.</p>
+<p>Thank you.</p>
+<p>Created with ❤️ by <a href="https://github.com/GRZ4NA">GRZANA</a></p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/Bot.html" class="tsd-kind-icon">Bot</a></li><li class="tsd-kind-class"><a href="classes/ChatCommand.html" class="tsd-kind-icon">Chat<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/Command.html" class="tsd-kind-icon">Command</a></li><li class="tsd-kind-class"><a href="classes/CommandManager.html" class="tsd-kind-icon">Command<wbr/>Manager</a></li><li class="tsd-kind-class"><a href="classes/CommandPermissions.html" class="tsd-kind-icon">Command<wbr/>Permissions</a></li><li class="tsd-kind-class"><a href="classes/ContextMenuCommand.html" class="tsd-kind-icon">Context<wbr/>Menu<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/FunctionCommand.html" class="tsd-kind-icon">Function<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/GuildCommand.html" class="tsd-kind-icon">Guild<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/HelpMessage.html" class="tsd-kind-icon">Help<wbr/>Message</a></li><li class="tsd-kind-class"><a href="classes/InputManager.html" class="tsd-kind-icon">Input<wbr/>Manager</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/InputParameter.html" class="tsd-kind-icon">Input<wbr/>Parameter</a></li><li class="tsd-kind-class"><a href="classes/MissingParameterError.html" class="tsd-kind-icon">Missing<wbr/>Parameter<wbr/>Error</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/ObjectID.html" class="tsd-kind-icon">ObjectID</a></li><li class="tsd-kind-class"><a href="classes/OperationSuccess.html" class="tsd-kind-icon">Operation<wbr/>Success</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/Parameter.html" class="tsd-kind-icon">Parameter</a></li><li class="tsd-kind-class"><a href="classes/ParameterTypeError.html" class="tsd-kind-icon">Parameter<wbr/>Type<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/PermissionCommand.html" class="tsd-kind-icon">Permission<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/PermissionGuildCommand.html" class="tsd-kind-icon">Permission<wbr/>Guild<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/PermissionsError.html" class="tsd-kind-icon">Permissions<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/PrefixManager.html" class="tsd-kind-icon">Prefix<wbr/>Manager</a></li><li class="tsd-kind-class"><a href="classes/SubCommand.html" class="tsd-kind-icon">Sub<wbr/>Command</a></li><li class="tsd-kind-class"><a href="classes/SubCommandGroup.html" class="tsd-kind-icon">Sub<wbr/>Command<wbr/>Group</a></li><li class="tsd-kind-class"><a href="classes/SystemMessageManager.html" class="tsd-kind-icon">System<wbr/>Message<wbr/>Manager</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/TargetID.html" class="tsd-kind-icon">TargetID</a></li><li class="tsd-kind-interface"><a href="interfaces/APICommandInit.html" class="tsd-kind-icon">APICommand<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/APICommandObject.html" class="tsd-kind-icon">APICommand<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/ChatCommandInit.html" class="tsd-kind-icon">Chat<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/ChatCommandObject.html" class="tsd-kind-icon">Chat<wbr/>Command<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/ChatCommandOptionObject.html" class="tsd-kind-icon">Chat<wbr/>Command<wbr/>Option<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/CommandPermission.html" class="tsd-kind-icon">Command<wbr/>Permission</a></li><li class="tsd-kind-interface"><a href="interfaces/CommandPermissionsInit.html" class="tsd-kind-icon">Command<wbr/>Permissions<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/ContextMenuCommandInit.html" class="tsd-kind-icon">Context<wbr/>Menu<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/ContextMenuCommandObject.html" class="tsd-kind-icon">Context<wbr/>Menu<wbr/>Command<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/FunctionCommandInit.html" class="tsd-kind-icon">Function<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/GuildCommandInit.html" class="tsd-kind-icon">Guild<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/HelpMessageParams.html" class="tsd-kind-icon">Help<wbr/>Message<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/InitOptions.html" class="tsd-kind-icon">Init<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/ParameterSchema.html" class="tsd-kind-icon">Parameter<wbr/>Schema</a></li><li class="tsd-kind-interface"><a href="interfaces/PermissionCommandInit.html" class="tsd-kind-icon">Permission<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/PermissionGuildCommandInit.html" class="tsd-kind-icon">Permission<wbr/>Guild<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/RegisteredCommandObject.html" class="tsd-kind-icon">Registered<wbr/>Command<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/SubCommandGroupInit.html" class="tsd-kind-icon">Sub<wbr/>Command<wbr/>Group<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/SubCommandGroupObject.html" class="tsd-kind-icon">Sub<wbr/>Command<wbr/>Group<wbr/>Object</a></li><li class="tsd-kind-interface"><a href="interfaces/SubCommandInit.html" class="tsd-kind-icon">Sub<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-interface"><a href="interfaces/SystemMessageAppearance.html" class="tsd-kind-icon">System<wbr/>Message<wbr/>Appearance</a></li><li class="tsd-kind-interface"><a href="interfaces/SystemMessageData.html" class="tsd-kind-icon">System<wbr/>Message<wbr/>Data</a></li><li class="tsd-kind-interface"><a href="interfaces/TextCommandOptionChoiceObject.html" class="tsd-kind-icon">Text<wbr/>Command<wbr/>Option<wbr/>Choice<wbr/>Object</a></li><li class="tsd-kind-type-alias"><a href="modules.html#APICommandType" class="tsd-kind-icon">APICommand<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#BaseCommandType" class="tsd-kind-icon">Base<wbr/>Command<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#BaseCommands" class="tsd-kind-icon">Base<wbr/>Commands</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ChatCommandOptionType" class="tsd-kind-icon">Chat<wbr/>Command<wbr/>Option<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#ChildCommandInit" class="tsd-kind-icon">Child<wbr/>Command<wbr/>Init</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ChildCommandResolvable" class="tsd-kind-icon">Child<wbr/>Command<wbr/>Resolvable</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ChildCommandType" class="tsd-kind-icon">Child<wbr/>Command<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#ChildCommands" class="tsd-kind-icon">Child<wbr/>Commands</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CommandFunction" class="tsd-kind-icon">Command<wbr/>Function</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CommandFunctionReturnTypes" class="tsd-kind-icon">Command<wbr/>Function<wbr/>Return<wbr/>Types</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#CommandInit" class="tsd-kind-icon">Command<wbr/>Init</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CommandPermissionType" class="tsd-kind-icon">Command<wbr/>Permission<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CommandType" class="tsd-kind-icon">Command<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#Commands" class="tsd-kind-icon">Commands</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ContextType" class="tsd-kind-icon">Context<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#InputParameterValue" class="tsd-kind-icon">Input<wbr/>Parameter<wbr/>Value</a></li><li class="tsd-kind-type-alias"><a href="modules.html#MessageType" class="tsd-kind-icon">Message<wbr/>Type</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#ObjectIdReturnType" class="tsd-kind-icon">Object<wbr/>Id<wbr/>Return<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ObjectIdType" class="tsd-kind-icon">Object<wbr/>Id<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ParameterResolvable" class="tsd-kind-icon">Parameter<wbr/>Resolvable</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ParameterType" class="tsd-kind-icon">Parameter<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PermissionCheckTypes" class="tsd-kind-icon">Permission<wbr/>Check<wbr/>Types</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PermissionFunction" class="tsd-kind-icon">Permission<wbr/>Function</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ScopeResolvable" class="tsd-kind-icon">Scope<wbr/>Resolvable</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#TargetIdReturnType" class="tsd-kind-icon">Target<wbr/>Id<wbr/>Return<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#TargetType" class="tsd-kind-icon">Target<wbr/>Type</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>

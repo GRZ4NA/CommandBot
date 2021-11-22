@@ -4,8 +4,9 @@ A Discord.js based framework that makes creating Discord bots with support for s
 
 ## Features
 
--   Support for slash commands
+-   Support for slash commands, context menu interactions
 -   Intuitive usage
+-   Flexible
 -   Good customization
 -   Permission system
 -   Built-in help command
@@ -14,10 +15,15 @@ A Discord.js based framework that makes creating Discord bots with support for s
 -   Large documentation in README and using JSDoc
 -   Written in TypeScript
 
+## Documentation
+
+Reference for available objects and structures is available [**here**](https://grz4na.github.io/CommandBot/index.html). All descriptions can also be accessed from your code editor/IDE. TypeScript declaration files are also included (.d.ts) for some programs (like Visual Studio Code) to give autocompletion suggestions.
+
 ## Table of contents
 
 -   [CommandBot](#commandbot)
     -   [Features](#features)
+    -   [Documentation](#documentation)
     -   [Table of contents](#table-of-contents)
 -   [Instalation](#installation)
     -   [System requirements](#system-requirements)
@@ -25,21 +31,17 @@ A Discord.js based framework that makes creating Discord bots with support for s
         -   [Registering Discord app](#registering-discord-app)
         -   [Creating application](#creating-application)
 -   [Commands](#commands)
-    -   [Creating and registering a command](#creating-and-registering-a-command)
-    -   [Command function](#command-function)
-        -   [Arguments](#arguments)
-        -   [Return value](#return-value)
-        -   [Errors](#errors)
+    -   [Creating a command](#creating-a-command)
     -   [Parameters](#parameters)
         -   [Types](#types)
         -   [Defining](#defining)
         -   [Reading input value](#reading-input-value)
+    -   [Subcommands](#subcommands)
 -   [Events](#events)
-    -   [Handling events](#handling-events)
-    -   [Event types](#event-types)
 -   [Messages](#messages)
-    -   [Information messages](#information-messages)
+    -   [System messages](#system-messages)
     -   [Help message](#help-message)
+-   [Experimental features](#experimental-features)
 -   [Issues](#issues)
 
 # Installation
@@ -56,7 +58,7 @@ A Discord.js based framework that makes creating Discord bots with support for s
 1. Visit [Discord Developer Portal](https://discord.com/developers/) and create an app
 2. Navigate to the _Bot_ section and register a bot
 3. Navigate to _OAuth 2_ section, select _bot_ and _application.commands_ scopes and check bot permissions
-4. Copy the link and add your bot to the servers
+4. Copy the link, paste it in your web browser and add the bot to a server
 
 ### Creating application
 
@@ -64,7 +66,7 @@ A Discord.js based framework that makes creating Discord bots with support for s
 2. Run `npm init -y` or `yarn init -y`
 3. Add the CommandBot package
 
-```javascript
+```typescript
 // npm
 npm install commandbot@latest
 
@@ -72,48 +74,49 @@ npm install commandbot@latest
 yarn add commandbot@latest
 ```
 
-4. Create _index.js_ file
+4. Create _index.js/index.ts_ file (TypeScript is a recommended language)
 5. Import the CommandBot package
 
-```javascript
+```typescript
 // CommonJS
-const { Bot, Command } = require("commandbot");
+const { Bot } = require("commandbot");
 
-// ES Modules (to use ESM add "type": "module" to your package.json file)
-import { Bot, Command } from "commandbot";
+// ES Modules (to use ESM add "type": "module" to package.json file)
+import { Bot } from "commandbot";
 ```
 
-6. Initialize the bot instance
+6. Initialize the bot instance ([InitOptions](https://grz4na.github.io/CommandBot/interfaces/InitOptions.html)) (list of available intents [here](https://discord.js.org/#/docs/main/stable/class/Intents?scrollTo=s-FLAGS))
 
-```javascript
+```typescript
 const bot = new Bot({
     name: "YOUR_BOT_NAME",
-    prefix: "BOT_PREFIX",
-    parameterSeparator: ",",
+    globalPrefix: "!",
+    argumentSeparator: ",",
+    commandSeparator: "/",
     clientOptions: {
         intents: [..."DISCORD_API_INTENTS"],
     },
     token: "DISCORD_BOT_TOKEN",
     applicationId: "APPLICATION_ID",
+    help: {
+        enabled: true,
+        title: "List of commands",
+        usage: "[command name]",
+        description: "Show all commands available to use in my fantastic Discord bot.",
+        bottomText: "Hello World",
+        color: "#0055ff",
+        visible: false,
+    },
 });
 ```
-
-Properties (\* - required):
-
--   **name\*** - _string_ - bot name
--   **prefix** - _string_ - bot prefix to use with text commands (if undefined, only slash commands will be available)
--   **parameterSeparator** - _string_ - used to separate parameters from messages (default: ',')
--   **clientOptions** - _[ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)_ - Discord.js client options
--   **token\*** - _string_ - Discord bot token
--   **applicationId\*** - _string_ - Discord application ID
 
 7. Create and add commands to the _Bot_ instance (see [Commands](#commands))
 8. Start your bot
 
-```javascript
+```typescript
 bot.start(
-    port, // If passed, the application will create a HTTP server
-    true // If true or undefined, the app will register all slash commands in the Discord API
+    port, // If passed, the application will create a HTTP server [type: number (integer)]
+    true // If true or undefined, the app will register all slash commands in the Discord API [type: boolean]
 );
 ```
 
@@ -121,121 +124,65 @@ bot.start(
 
 # Commands
 
-## Creating and registering a command
+## Creating a command
 
-To create a command, initialize a _Command_ object
+To create a command, use _[CommandManager.prototype.add](https://grz4na.github.io/CommandBot/classes/CommandManager.html#add)_ method
 
-Example:
+Command types
 
-```javascript
-const cmdGreet = new Command({
+-   [CHAT](https://grz4na.github.io/CommandBot/interfaces/ChatCommandInit.html) - message interactions using command prefixes or slash commands
+-   [USER](https://grz4na.github.io/CommandBot/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on users
+-   [MESSAGE](https://grz4na.github.io/CommandBot/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on messages
+
+Chat command example:
+
+```typescript
+bot.commands.add("CHAT", {
     name: "greet",
     parameters: [
         {
-            name: "name",
-            description: "Name that will be greeted",
-            optional: true,
-            type: "string",
+            name: "user",
+            description: "User to greet",
+            optional: false,
+            type: "user",
         },
     ],
     aliases: ["hello"],
-    description: "Welcomes someone",
-    usage: "[name]",
-    permissionCheck: "ALL",
-    permissions: ["SEND_MESSAGES"],
-    guilds: undefined,
-    visible: true,
+    description: "Welcome someone to your server",
+    usage: "[user]",
+    dm: false,
+    guilds: ["123456789874561230"],
     slash: true,
-    announceSuccess: true,
-    function: function(p. m) {
-        if(p('name')) {
-            return `Hello, ${p('name')}!`
-        }
-        else {
-            return 'Hello!'
-        }
-    }
+    visible: true,
+    permissions: {
+        resolvable: ["ADMINISTRATOR"],
+        checkType: "ANY",
+    },
+    function: async (i) => {
+        const user = await i.get("user").toObject();
+        return `Hello ${user.toString()}`;
+    },
 });
-
-// Register
-bot.commands.add(cmdGreet)
 ```
 
-Properties (\* - required):
-
--   **name\*** - _string_ - command name
--   **parameters** - _ParameterSchema[]_ - array of parameters (see [Parameters](#parameters))
--   **aliases** - _string | string[]_ - array of alternative strings that can call this command (not available for slash commands)
--   **description** - _string_ - command description
--   **usage** - _string_ - command usage visible in the help message (if not defined, usage string will be automatically generated based on defined parameters)
--   **permissionCheck** - _"ALL" | "ANY"_ - whether to check if caller has all defined permission or at least one of them
--   **permissions** - _[PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable) | (m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => boolean_ - permissions required to run this command
--   **guilds** - _string[]_ - array of servers IDs in which this command will be available (if slash command)
--   **visible** - _boolean_ - whether this command is visible in the help message
--   **slash** - _boolean_ - whether this command should be registered as a slash command
--   **announceSuccess** - _boolean_ - whether a command reply should be sent automatically if no other response is defined or the reply should be deleted
--   **function\*** - _(p: function, m?: [Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)) => void | [MessageEmbed]() | string | [ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)_ - function that will be executed on call
-
-Register your command in bot client using:
-
-```javascript
-bot.commands.add(cmd);
-```
-
-where (\* - required):
-
--   **cmd** - _Command_
-
-## Command function
-
-### Arguments
-
--   **p** - _function_ - call this function with parameter name to fetch parameter value
--   **m?** - _[Message](https://discord.js.org/#/docs/main/stable/class/Message) | [CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ - interaction object
-
-### Return value
-
-If function returns (also after resolving a _Promise_):
-
--   **void** - If _announceSuccess_ property is _true_, bot will automatically send a SUCCESS message (see [Messages](#messages)). If command has been called using slash commands and _announceSuccess_ property is set to _false_, reply will be automatically deleted
--   **string** - this string will be sent in a reply
--   **[MessageEmbed](https://discord.js.org/#/docs/main/stable/class/MessageEmbed)** - embedded content will be sent in a reply
--   **[ReplyMessageOptions](https://discord.js.org/#/docs/main/stable/typedef/ReplyMessageOptions)** - these options will get used to send a reply
-
-It is possible to manually send replies directly from the command function using the **m** argument. If you are using slash commands don't forget to use the _[editReply](https://discord.js.org/#/docs/main/stable/class/CommandInteraction?scrollTo=editReply)_ method instead of the _reply_ method since a **reply is already deferred** when a command function is being called (read more [here](https://discord.com/developers/docs/interactions/receiving-and-responding)) If you try to create a new reply, you app will throw an error that will result a crash. If you manually reply to a slash command interaction and return _void_ from the command function, a SUCCESS message will not be sent or reply will not get deleted (if you want to disable SUCCESS messages on prefix interactions set _announceSuccess_ property to _false_).
-
-### Errors
-
-If a command function will throw an error, it will automatically get caught and your bot will send an ERROR message (see [Messages](#messages)). The app **will not** crash.
+Command function schema is defined **[here](https://grz4na.github.io/CommandBot/modules.html#CommandFunction)**
 
 ## Parameters
 
 ### Types
 
--   **string** - text value
--   **boolean** - True or False
--   **number** - number (double) value
--   **user** - _ObjectID_ object with ID value (shown as selection menu in Discord)
--   **role** - _ObjectID_ object with ID value (shown as selection menu in Discord)
--   **channel** - _ObjectID_ object with ID value (shown as selection menu in Discord)
--   **mentionable** - _ObjectID_ object with ID value (shown as selection menu in Discord)
+-   [primitive](https://grz4na.github.io/CommandBot/modules.html#ParameterType)
+-   [objects](https://grz4na.github.io/CommandBot/modules.html#ObjectIdType)
 
-To get an entity ID from _ObjectID_ use the _value_ property. You can also call _toObject_ method to retrieve full entity object from Discord API
-
-```javascript
-ObjectID.toObject(g, "TYPE");
-```
-
-where (\* - required):
-
--   **g\*** - _Guild_ - Guild object to fetch from
--   **"TYPE"\*** - _"user' | "role" | "channel"_ - defines the entity type
+To get an entity ID from _ObjectID_ use the _[id](https://grz4na.github.io/CommandBot/classes/ObjectID.html#id)_ property. You can also call _[toObject](https://grz4na.github.io/CommandBot/classes/ObjectID.html#toObject)_ method to retrieve full entity object from Discord API
 
 ### Defining
 
-Example:
+Pass a list of _[ParameterSchema](https://grz4na.github.io/CommandBot/interfaces/ParameterSchema.html)_ objects to _[parameters](https://grz4na.github.io/CommandBot/interfaces/ChatCommandInit.html#parameters)_ property
 
-```javascript
+Example parameter object:
+
+```typescript
 {
     name: "user",
     description: "User to mention",
@@ -244,32 +191,17 @@ Example:
 }
 ```
 
-Properties (\* - required):
-
--   **name\*** - _string_ - parameter name
--   **description** - _string_ - parameter description
--   **optional\*** - _boolean_ - whether this parameter is optional
--   **type\*** - _"string" | "boolean" | "number" | "user" | "role" | "channel" | "mentionable"_ - parameter type
--   **choices** - _string[]_ - parameter value choices (to use this, set type to "string")
-
 ### Reading input value
 
-To read parameter values use a function that is passed in the first argument of a call function (defined in _function_ parameter in _Command_ object)
+To read parameter values use _[InputManager.prototype.get()](https://grz4na.github.io/CommandBot/classes/InputManager.html#get)_ (passed in the first argument of a command function)
 
-```javascript
-p(query, returnType);
-```
+Example:
 
-where (\* - required):
-
--   **query\*** - _string_ - parameter name
--   **returnType** - _"value" | "object"_ - whether to return only parameter value or a full object
-
-```javascript
-function: (p, m) => {
-    const userObj = p('user')
+```typescript
+function: (i) => {
+    const userObj = i.get('member', 'user')
     if(userObj) {
-        const user = user.toObject(m.guild, "user");
+        const user = userObj.toObject();
         if(user) {
             return `Hello, ${user.toString()}`
         }
@@ -280,73 +212,70 @@ function: (p, m) => {
 }
 ```
 
-# Events
+## Subcommands
 
-## Handling events
+To create a subcommand create a standard chat command and use _[ChatCommand.prototype.append](https://grz4na.github.io/CommandBot/classes/ChatCommand.html#append)_ method to create and attach subcommands or subcommand groups. To add subcommands to groups use _[SubCommandGroup.prototype.append](https://grz4na.github.io/CommandBot/classes/SubCommandGroup.html#append)_.
 
-CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _on_ method.
+```typescript
+// Create a chat command
+const cmd = bot.commands.add("CHAT", {
+    name: "parent",
+    slash: true,
+    description: "This is a parent",
+});
 
-```javascript
-bot.on(eventType, callbackFn);
+// Create and append a subcommand
+cmd.append("COMMAND", {
+    name: "child",
+    description: "This is a subcommand",
+});
+
+// Create and append a subcommand group
+const group = cmd.append("GROUP", {
+    name: "command_group",
+    description: "This is a subcommand group",
+});
+
+// Add a subcommand to the group
+group.append({
+    name: "group_command",
+    description: "This is a subcommand that is a child of the command_group",
+});
 ```
 
-where (\* - required):
+To invoke subcommands using Discord messages use an _[argumentSeparator](https://grz4na.github.io/CommandBot/classes/CommandManager.html#argumentSeparator)_ (default: "/").
 
--   **eventType\*** - _"READY" | "COMMAND" | "MESSAGE" | "ERROR"_ - type of event that you want to listen to
--   **callbackFn\*** - _Function_ - a function that will get executed when the event is emitted
+```
+!parent - "parent" command
+!parent/child - "child" command
+!parent/command_group - this will invoke the "parent" command
+!parent/command_group/group_command - "group_command" command which is a parent of "command_group" group
+```
 
-## Event types
+# Events
 
--   **READY** - emitted when the app has finished its initialization process
--   **MESSAGE** - emitted when message is created (similar to _messageCreate_ event from Discord.js) (not emitted when command gets triggered) - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ object is being passed to the first argument
--   **COMMAND** - emitted when command gets triggered - a _[Message](https://discord.js.org/#/docs/main/stable/class/Message)_ or _[CommandInteraction](https://discord.js.org/#/docs/main/stable/class/CommandInteraction)_ object is being passed to the first argument; an object containing fetched _Command_ object and input parameters is being passed to the second
--   **ERROR** - emitted when a command function throws an error - an _Error_ object is being passed to the first argument
+CommandBot is using _[EventEmitter](https://nodejs.org/api/events.html)_ that is built into Node.js. You can listen to events using the _[on](https://grz4na.github.io/CommandBot/classes/Bot.html#on-1)_ method. Event types are available **[here](https://grz4na.github.io/CommandBot/classes/Bot.html#on-1)**.
 
 # Messages
 
-## Information messages
+## System messages
 
-There are 4 information messages:
-
--   **ERROR** - "An error occurred" message (sent when error occurs)
--   **SUCCESS** - "Task completed successfully" message (sent after successfully executing a command function)
--   **PERMISSION** - "Insufficient permissions" message (sent when the caller doesn't have enough permissions)
--   **NOT_FOUND** - "Command not found" message (sent when someone tries to call a command that does not exist)
-
-Their configuration is stored in _messages.system_ property.
-
-Each of these messages can be customized with these properties (\* - required):
-
--   **enabled\*** - _boolean_ - enables or disables the message
--   **title\*** - _string_ - title of the message
--   **bottomText** - _string_ - text below the title (also known as description)
--   **accentColor** - _ColorResolvable_ - embed color
--   **displayDetails** - _boolean_ - whether to display additional informations
--   **showTimestamp** - _boolean_ - whether to show date and time in the footer
--   **footer** - _string_ - message footer
--   **deleteTimeout** - _number_ - time (ms) after the message gets deleted
-
-There is also a global _deleteTimeout_ property (_messages.system.deleteTimeout_)
+System messages can be composed and sent automatically when a certain action happens. All message types are available **[here](https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#ERROR)**. Their configuration is stored in _[Bot.prototype.messages](https://grz4na.github.io/CommandBot/classes/Bot.html#messages)_ property. Each of these messages can be customized with _[SystemMessageAppearance](https://github.com/GRZ4NA/CommandBot/issues/interfaces/SystemMessageAppearance.html)_ objects. There is also a global _[deleteTimeout](https://grz4na.github.io/CommandBot/classes/SystemMessageManager.html#deleteTimeout)_ property so messages can automatically be deleted after a given time.
 
 ## Help message
 
-Its configuration is stored in _messages.help_ property.
-
-You can customize the help message with these properties (\* - required):
-
--   **enabled\*** - _boolean_ - enables or disables the message
--   **title\*** - _string_ - title of the message
--   **bottomText\*** - _string_ - text below the title (also known as description)
--   **accentColor\*** - _ColorResolvable_ - embed color
--   **description\*** - _string_ - description shown in the message itself
--   **usage\*** - _string_ - usage displayed in the message itself
--   **visible\*** - _boolean_ - whether to show the help command in the list
+To configure it use the _[help](https://grz4na.github.io/CommandBot/interfaces/InitOptions.html#help)_ property in the bot's constructor and pass there a _[HelpMessageParams](https://grz4na.github.io/CommandBot/interfaces/HelpMessageParams.html)_ object.
 
 > **WARNING!** You can't customize these messages after starting the bot. Changing these properties while the bot is running will have no effect.
 
+# Experimental features
+
+-   The package has a _[PrefixManager](https://grz4na.github.io/CommandBot/classes/PrefixManager.html)_ class which is taking care of setting different prefixes for every server that the bot is on but there is no module to store that date in a file or database so the it's lost every time the application restarts. If you want to use it in your project, you should create a data store and write a function that dumps the data there.
+-   _[CommandManager](https://grz4na.github.io/CommandBot/classes/CommandManager.html)_ has 2 methods to interact with the Discord Permissions API (_getPermissionsApi_ and _setPermissionsApi_) and set interaction permissions that are independent from the CommandBot permission system. This functionality has not been polished and fully tested yet.
+
 # Issues
 
-Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the _Issues_ tab on GitHub.
+Since this package is created by only 1 person it may contain some bugs or behave weirdly. If you notice any problem, typo etc, please create an issue in the _[Issues](https://github.com/GRZ4NA/CommandBot/issues)_ tab on GitHub.
 
 Thank you.
 
