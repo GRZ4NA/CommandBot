@@ -169,7 +169,7 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
                         throw new ParameterTypeError(value, this.type);
                     }
                     if (this.choices && this.choices.findIndex((ch) => ch === value) === -1) {
-                        if (!this.optional) {
+                        if (val !== "") {
                             throw new TypeError(`Invalid choice. Please enter of the following options: ${this.choices.join(", ")}`);
                         } else {
                             val = null;
