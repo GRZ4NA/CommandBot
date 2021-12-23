@@ -56,43 +56,43 @@ export class SystemMessageManager {
      */
     public deleteTimeout: number;
 
-    constructor(client: Bot, botName?: string) {
+    constructor(client: Bot) {
+        this.client = client;
         this.PERMISSION = {
             enabled: true,
             title: "👮‍♂️ Insufficient permissions",
             bottomText: "You don't have enough permissions to run this command",
             accentColor: "#1d1dc4",
-            displayDetails: true,
+            displayDetails: false,
             showTimestamp: true,
-            footer: botName,
+            footer: this.client.name,
         };
         this.ERROR = {
             enabled: true,
             title: "❌ An error occurred",
             bottomText: "Something went wrong while processing your request.",
             accentColor: "#ff0000",
-            displayDetails: true,
+            displayDetails: false,
             showTimestamp: true,
-            footer: botName,
+            footer: this.client.name,
         };
         this.NOT_FOUND = {
             enabled: true,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
-            displayDetails: true,
+            displayDetails: false,
             showTimestamp: true,
-            footer: botName,
+            footer: this.client.name,
         };
         this.SUCCESS = {
             enabled: true,
             title: "✅ Task completed successfully",
             accentColor: "#00ff00",
-            displayDetails: true,
+            displayDetails: false,
             showTimestamp: true,
-            footer: botName,
+            footer: this.client.name,
             deleteTimeout: Infinity,
         };
-        this.client = client;
         this.deleteTimeout = Infinity;
     }
 
@@ -107,52 +107,53 @@ export class SystemMessageManager {
      */
     public async send(type: MessageType, data?: SystemMessageData, interaction?: Message | Interaction | TextChannel | DMChannel): Promise<MessageEmbed | Message | void> {
         if (this[type]) {
-            if (this[type].enabled === false) {
-                return;
-            }
+            if (this[type].enabled === false) return;
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
-            if (this[type].bottomText) embed.setDescription(this[type].bottomText || "");
-            embed.setColor(this[type].accentColor || "#000");
+            if (this[type].description || this[type].bottomText) embed.setDescription(this[type].description ?? this[type].bottomText ?? "");
+            embed.setColor(this[type].accentColor || "#000000");
             if (this[type].showTimestamp) embed.setTimestamp();
-            if (this[type].footer) embed.setFooter(this[type].footer || "");
-            if (data && this[type].displayDetails) {
+            if (data) {
                 switch (type) {
                     case "ERROR":
-                        if (data.command) {
-                            embed.addField("Command name:", data.command.name, false);
+                        if (this[type].displayDetails) {
+                            if (data.command) {
+                                embed.addField("Command name:", data.command.name, false);
+                            }
+                            if (data.user) {
+                                embed.addField("User:", data.user.toString(), false);
+                            }
                         }
                         if (data.error) {
                             if (data.error instanceof Error) {
-                                embed.addField("Error details:", data.error.toString(), false);
+                                embed.setFooter(data.error.message);
                             } else if (typeof data.error == "string") {
-                                embed.addField("Error details:", data.error, false);
+                                embed.setFooter(data.error);
                             }
-                        }
-                        if (data.user) {
-                            embed.addField("User:", data.user.toString(), false);
                         }
                         break;
                     case "NOT_FOUND":
                         if (data.phrase) {
-                            embed.addField("Phrase:", data.phrase, false);
+                            embed.setFooter(data.phrase);
                         }
                         break;
                     case "PERMISSION":
-                        if (data.user) {
-                            embed.addField("User:", data.user.toString(), false);
-                        }
-                        if (data.command) {
-                            embed.addField("Command name:", data.command.name, false);
-                            if (data.command.isBaseCommandType("PERMISSION")) {
-                                if (data.command.permissions.isCustom) {
-                                    embed.addField("Required permissions:", "CUSTOM", false);
-                                } else {
-                                    let permList = "";
-                                    (data.command.permissions.permissions as Permissions).toArray(false).map((p) => {
-                                        permList += `${p}\n`;
-                                    });
-                                    permList && embed.addField("Required permissions:", permList, false);
+                        if (this[type].displayDetails) {
+                            if (data.user) {
+                                embed.addField("User:", data.user.toString(), false);
+                            }
+                            if (data.command) {
+                                embed.addField("Command name:", data.command.name, false);
+                                if (data.command.isBaseCommandType("PERMISSION")) {
+                                    if (data.command.permissions.isCustom) {
+                                        embed.addField("Required permissions:", "CUSTOM", false);
+                                    } else {
+                                        let permList = "";
+                                        (data.command.permissions.permissions as Permissions).toArray(false).map((p) => {
+                                            permList += `${p}\n`;
+                                        });
+                                        permList && embed.addField("Required permissions:", permList, false);
+                                    }
                                 }
                             }
                         }

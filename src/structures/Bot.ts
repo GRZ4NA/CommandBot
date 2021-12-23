@@ -114,7 +114,7 @@ export class Bot extends EventEmitter {
                 ],
             }
         );
-        this.messages = new SystemMessageManager(this, this.name);
+        this.messages = new SystemMessageManager(this);
         this.commands = new CommandManager(
             this,
             help ?? {

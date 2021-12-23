@@ -28,8 +28,15 @@ export interface SystemMessageAppearance {
     /**
      * Text below the title
      * @type {?string}
+     * @deprecated
      */
     bottomText?: string;
+
+    /**
+     * Text below the title
+     * @type {?string}
+     */
+    description?: string;
 
     /**
      * Color of a message
@@ -52,6 +59,7 @@ export interface SystemMessageAppearance {
     /**
      * Footer text
      * @type {?string}
+     * @deprecated
      */
     footer?: string;
 
