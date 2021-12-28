@@ -41,6 +41,7 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
             announceSuccess: options.announceSuccess,
             default_permission: options.default_permission,
             permissions: options.permissions,
+            ephemeral: options.ephemeral,
             function: options.function,
         });
 

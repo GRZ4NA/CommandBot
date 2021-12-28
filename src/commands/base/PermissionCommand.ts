@@ -32,6 +32,7 @@ export class PermissionCommand extends FunctionCommand {
             name: options.name,
             announceSuccess: options.announceSuccess,
             default_permission: options.default_permission,
+            ephemeral: options.ephemeral,
             function: options.function,
         });
 

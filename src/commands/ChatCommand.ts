@@ -86,6 +86,7 @@ export class ChatCommand extends PermissionGuildCommand {
             guilds: options.guilds,
             permissions: options.permissions,
             dm: options.dm,
+            ephemeral: options.ephemeral,
         });
 
         if (options.parameters == "no_input" || !options.parameters) {

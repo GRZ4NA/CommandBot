@@ -1,6 +1,6 @@
-import { Command } from "../../commands/base/Command.js";
 import { ColorResolvable, GuildMember, User } from "discord.js";
 import { PermissionsError } from "../../errors.js";
+import { FunctionCommand } from "../../../index.js";
 
 /**
  * Types of system messages
@@ -78,9 +78,9 @@ export interface SystemMessageAppearance {
 export interface SystemMessageData {
     /**
      * A {@link Command} instance
-     * @type {?Command}
+     * @type {?FunctionCommand}
      */
-    command?: Command;
+    command?: FunctionCommand;
 
     /**
      * Phrase received from a Discord channel

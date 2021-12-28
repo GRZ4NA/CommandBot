@@ -26,6 +26,13 @@ export class FunctionCommand extends Command {
      * @readonly
      */
     public readonly announceSuccess: boolean;
+    /**
+     * Whether a reply should be visible only to the caller
+     * @type {boolean}
+     * @public
+     * @readonly
+     */
+    public readonly ephemeral: boolean;
 
     /**
      * Executable command constructor
@@ -47,6 +54,7 @@ export class FunctionCommand extends Command {
                 else return;
             });
         this.announceSuccess = options.announceSuccess ?? true;
+        this.ephemeral = options.ephemeral ?? false;
     }
 
     /**
@@ -58,7 +66,7 @@ export class FunctionCommand extends Command {
      */
     public async start(input: InputManager): Promise<void> {
         if (input.interaction instanceof Interaction && !input.interaction.isCommand() && !input.interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
-        if (input.interaction instanceof Interaction) await input.interaction.deferReply();
+        if (input.interaction instanceof Interaction) await input.interaction.deferReply({ ephemeral: this.ephemeral });
         await this.handleReply(input.interaction, await this._function(input));
     }
 
@@ -76,16 +84,17 @@ export class FunctionCommand extends Command {
             result instanceof Object &&
             ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))
         ) {
-            if (interaction instanceof Message) await interaction.reply(result as ReplyMessageOptions);
+            if (interaction instanceof Message)
+                this.ephemeral ? await interaction.member?.send(result as ReplyMessageOptions) : await interaction.reply(result as ReplyMessageOptions);
             else if (interaction instanceof Interaction) await interaction.editReply(result as ReplyMessageOptions);
         } else if (typeof result == "string") {
-            if (interaction instanceof Message) await interaction?.reply({ content: result });
+            if (interaction instanceof Message) this.ephemeral ? await interaction?.member?.send({ content: result }) : await interaction?.reply({ content: result });
             else if (interaction instanceof Interaction)
                 await interaction.editReply({
                     content: result,
                 });
         } else if (result instanceof MessageEmbed) {
-            if (interaction instanceof Message) await interaction?.reply({ embeds: [result] });
+            if (interaction instanceof Message) this.ephemeral ? await interaction.member?.send({ embeds: [result] }) : await interaction?.reply({ embeds: [result] });
             else if (interaction instanceof Interaction) await interaction.editReply({ embeds: [result] });
         } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
             throw new OperationSuccess(this);

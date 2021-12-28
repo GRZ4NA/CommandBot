@@ -35,6 +35,11 @@ export interface FunctionCommandInit extends APICommandInit {
      * @type {?boolean}
      */
     announceSuccess?: boolean;
+    /**
+     * Whether a reply should be visible only to the caller
+     * @type {?boolean}
+     */
+    ephemeral?: boolean;
 }
 
 /**

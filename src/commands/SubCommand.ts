@@ -57,6 +57,7 @@ export class SubCommand extends PermissionCommand {
             announceSuccess: options.announceSuccess,
             permissions: options.permissions,
             function: options.function,
+            ephemeral: options.ephemeral,
         });
 
         this.parent = parent;
