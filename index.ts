@@ -38,6 +38,7 @@ import {
     BaseCommands,
     CommandFunctionReturnTypes,
     BaseCommandType,
+    EphemeralType,
 } from "./src/commands/types/commands.js";
 import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/commands/types/permissions.js";
 import {
@@ -143,4 +144,5 @@ export {
     GuildCommandInit,
     PermissionCommandInit,
     PermissionGuildCommandInit,
+    EphemeralType,
 };
