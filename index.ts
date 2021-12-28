@@ -1,5 +1,4 @@
-import { Bot } from "./src/structures/Bot.js";
-import { InitOptions } from "./src/structures/types/Bot.js";
+import { Bot, InitOptions } from "./src/structures/Bot.js";
 import {
     ChatCommandInit,
     ContextMenuCommandInit,
@@ -11,8 +10,11 @@ import {
     PermissionCommandInit,
     PermissionGuildCommandInit,
 } from "./src/commands/types/InitOptions.js";
-import { HelpMessageParams } from "./src/commands/types/HelpMessage.js";
 import {
+    ObjectID,
+    TargetID,
+    Parameter,
+    InputParameter,
     ParameterResolvable,
     ParameterType,
     ParameterSchema,
@@ -21,9 +23,7 @@ import {
     InputParameterValue,
     ObjectIdReturnType,
     TargetIdReturnType,
-} from "./src/structures/types/Parameter.js";
-import { MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/types/SystemMessage.js";
-import { ObjectID, TargetID, Parameter, InputParameter } from "./src/structures/parameter.js";
+} from "./src/structures/parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
 import {
     ChildCommandType,
@@ -61,14 +61,13 @@ import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
 import { FunctionCommand } from "./src/commands/base/FunctionCommand.js";
 import { Command } from "./src/commands/base/Command.js";
 import { CommandManager } from "./src/structures/CommandManager.js";
-import { SystemMessageManager } from "./src/structures/SystemMessage.js";
+import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/SystemMessage.js";
 import { CommandPermissions } from "./src/structures/CommandPermissions.js";
-import { HelpMessage } from "./src/commands/Help.js";
-import { PrefixManager } from "./src/structures/PrefixManager.js";
+import { HelpMessage, HelpMessageParams } from "./src/commands/Help.js";
+import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager.js";
 import { GuildCommand } from "./src/commands/base/GuildCommand.js";
 import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
 import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
-import { ScopeResolvable } from "./src/structures/types/PrefixManager.js";
 
 export {
     Bot,

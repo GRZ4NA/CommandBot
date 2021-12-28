@@ -1,9 +1,56 @@
-import { Interaction, Message, MessageEmbed, Permissions } from "discord.js";
+import { Interaction, Message, MessageEmbed, Permissions, ColorResolvable } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { HelpMessageParams } from "./types/HelpMessage.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
+
+/**
+ * All properties used to customize the appearance of a help message
+ * @interface
+ */
+export interface HelpMessageParams {
+    /**
+     * Whether help message is enabled
+     * @type {boolean}
+     */
+    enabled: boolean;
+
+    /**
+     * Title field
+     * @type {string}
+     */
+    title: string;
+
+    /**
+     * Text below the title
+     * @type {string}
+     */
+    bottomText: string;
+
+    /**
+     * Color of a message
+     * @type {ColorResolvable}
+     */
+    color: ColorResolvable;
+
+    /**
+     * Description of the "help" command
+     * @type {string}
+     */
+    description: string;
+
+    /**
+     * Usage of the "help" command
+     * @type {string}
+     */
+    usage: string;
+
+    /**
+     * Whether the "help" command should be visible in the help message
+     * @type {boolean}
+     */
+    visible: boolean;
+}
 
 /**
  * @class Chat command containing a list of all command in the given manager (help message)

@@ -11,7 +11,7 @@ import { Bot } from "./Bot.js";
 import { SubCommand } from "../commands/SubCommand.js";
 import { SubCommandGroup } from "../commands/SubCommandGroup.js";
 import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
-import { HelpMessageParams } from "../commands/types/HelpMessage.js";
+import { HelpMessageParams } from "../commands/Help.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
 import { Command } from "../commands/base/Command.js";
