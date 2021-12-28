@@ -7,6 +7,7 @@ import { SystemMessageManager } from "./SystemMessage.js";
 import { InitOptions } from "./types/Bot.js";
 import { applicationState } from "../state.js";
 import { InputManager } from "./InputManager.js";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 
 export declare interface Bot {
     /**
@@ -197,7 +198,7 @@ export class Bot extends EventEmitter {
                             m
                         );
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.send("SUCCESS", undefined, m);
+                        await this.messages.send("SUCCESS", { command: e.command as FunctionCommand }, m);
                     } else if (e instanceof CommandNotFound) {
                         await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
                     } else {
@@ -235,7 +236,7 @@ export class Bot extends EventEmitter {
                         );
                         this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.send("SUCCESS", undefined, i as CommandInteraction);
+                        await this.messages.send("SUCCESS", { command: e.command as FunctionCommand }, i as CommandInteraction);
                     } else if (e instanceof CommandNotFound) {
                         await this.messages.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
                     } else {
