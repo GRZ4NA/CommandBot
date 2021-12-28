@@ -2,7 +2,7 @@ import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord
 import { OperationSuccess } from "../../errors.js";
 import { Command } from "./Command.js";
 import { CommandManager } from "../../structures/CommandManager.js";
-import { CommandFunction, CommandType } from "../types/commands.js";
+import { CommandFunction, CommandType, EphemeralType } from "../types/commands.js";
 import { FunctionCommandInit } from "../types/InitOptions.js";
 import { InputManager } from "../../structures/InputManager.js";
 
@@ -28,11 +28,17 @@ export class FunctionCommand extends Command {
     public readonly announceSuccess: boolean;
     /**
      * Whether a reply should be visible only to the caller
-     * @type {boolean}
+     *
+     * - NONE - bot replies are public and visible to everyone in a text channel
+     * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+     * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+     *
+     * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+     * @type {EphemeralType}
      * @public
      * @readonly
      */
-    public readonly ephemeral: boolean;
+    public readonly ephemeral: EphemeralType;
 
     /**
      * Executable command constructor
@@ -54,7 +60,7 @@ export class FunctionCommand extends Command {
                 else return;
             });
         this.announceSuccess = options.announceSuccess ?? true;
-        this.ephemeral = options.ephemeral ?? false;
+        this.ephemeral = options.ephemeral ?? "NONE";
     }
 
     /**
@@ -66,7 +72,7 @@ export class FunctionCommand extends Command {
      */
     public async start(input: InputManager): Promise<void> {
         if (input.interaction instanceof Interaction && !input.interaction.isCommand() && !input.interaction.isContextMenu()) throw new TypeError(`Interaction not recognized`);
-        if (input.interaction instanceof Interaction) await input.interaction.deferReply({ ephemeral: this.ephemeral });
+        if (input.interaction instanceof Interaction) await input.interaction.deferReply({ ephemeral: this.ephemeral !== "NONE" });
         await this.handleReply(input.interaction, await this._function(input));
     }
 
@@ -85,16 +91,16 @@ export class FunctionCommand extends Command {
             ("content" in (result as any) || "embeds" in (result as any) || "files" in (result as any) || "components" in (result as any) || "sticker" in (result as any))
         ) {
             if (interaction instanceof Message)
-                this.ephemeral ? await interaction.member?.send(result as ReplyMessageOptions) : await interaction.reply(result as ReplyMessageOptions);
+                this.ephemeral === "FULL" ? await interaction.member?.send(result as ReplyMessageOptions) : await interaction.reply(result as ReplyMessageOptions);
             else if (interaction instanceof Interaction) await interaction.editReply(result as ReplyMessageOptions);
         } else if (typeof result == "string") {
-            if (interaction instanceof Message) this.ephemeral ? await interaction?.member?.send({ content: result }) : await interaction?.reply({ content: result });
+            if (interaction instanceof Message) this.ephemeral === "FULL" ? await interaction?.member?.send({ content: result }) : await interaction?.reply({ content: result });
             else if (interaction instanceof Interaction)
                 await interaction.editReply({
                     content: result,
                 });
         } else if (result instanceof MessageEmbed) {
-            if (interaction instanceof Message) this.ephemeral ? await interaction.member?.send({ embeds: [result] }) : await interaction?.reply({ embeds: [result] });
+            if (interaction instanceof Message) this.ephemeral === "FULL" ? await interaction.member?.send({ embeds: [result] }) : await interaction?.reply({ embeds: [result] });
             else if (interaction instanceof Interaction) await interaction.editReply({ embeds: [result] });
         } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
             throw new OperationSuccess(this);

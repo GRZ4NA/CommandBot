@@ -162,3 +162,15 @@ export const CommandRegExps = {
     separator: /[^ ]{1,}$/,
     prefix: /[^/ ]{1,}$/,
 };
+
+/**
+ * Ephemeral response types
+ *
+ * - NONE - bot replies are public and visible to everyone in a text channel
+ * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+ * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+ *
+ * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+ * @type
+ */
+export type EphemeralType = "NONE" | "INTERACTIONS" | "FULL";

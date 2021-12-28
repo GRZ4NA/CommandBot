@@ -264,8 +264,8 @@ export class SystemMessageManager {
             }
             if (interaction instanceof TextChannel || interaction instanceof DMChannel) {
                 const message =
-                    data?.command?.ephemeral && data.user
-                        ? await data.user.send({ embeds: [embed] }).catch((e) => console.error(e))
+                    data?.command?.ephemeral === "FULL"
+                        ? await data.user?.send({ embeds: [embed] }).catch((e) => console.error(e))
                         : await interaction.send({ embeds: [embed] }).catch((e) => console.error(e));
                 if (message?.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
@@ -280,13 +280,14 @@ export class SystemMessageManager {
                 }
                 return message ?? embed;
             } else if (interaction instanceof Message) {
-                const message = data?.command?.ephemeral
-                    ? await interaction.member?.send({ embeds: [embed] }).catch((e) => console.error(e))
-                    : await interaction.reply({ embeds: [embed] }).catch(async () => {
-                          return data?.command?.ephemeral && interaction.member
-                              ? await interaction.member.send({ embeds: [embed] })
-                              : await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
-                      });
+                const message =
+                    data?.command?.ephemeral === "FULL"
+                        ? await interaction.member?.send({ embeds: [embed] }).catch((e) => console.error(e))
+                        : await interaction.reply({ embeds: [embed] }).catch(async () => {
+                              return data?.command?.ephemeral === "FULL"
+                                  ? await interaction.member?.send({ embeds: [embed] }).catch((e) => console.error(e))
+                                  : await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
+                          });
                 if (message?.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
                         setTimeout(async () => {
@@ -308,9 +309,9 @@ export class SystemMessageManager {
                         ? await interaction.editReply({ embeds: [embed] }).catch(async () => {
                               return await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
                           })
-                        : await interaction.reply({ embeds: [embed], ephemeral: data?.command?.ephemeral ?? false }).catch(async () => {
-                              return data?.command?.ephemeral
-                                  ? await interaction.user.send({ embeds: [embed] })
+                        : await interaction.reply({ embeds: [embed], ephemeral: data?.command?.ephemeral !== "NONE" ?? false }).catch(async () => {
+                              return data?.command?.ephemeral !== "NONE"
+                                  ? await interaction.user.send({ embeds: [embed] }).catch((e) => console.error(e))
                                   : await interaction.channel?.send({ embeds: [embed] }).catch((e) => console.error(e));
                           });
                 if (Number.isFinite(this[type].deleteTimeout)) {
@@ -328,9 +329,10 @@ export class SystemMessageManager {
                 }
                 return message instanceof Message ? message : embed;
             } else if (interaction?.channel) {
-                const message = data?.command?.ephemeral
-                    ? await interaction.user.send({ embeds: [embed] })
-                    : await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
+                const message =
+                    data?.command?.ephemeral === "FULL"
+                        ? await interaction.user.send({ embeds: [embed] }).catch((e) => console.error(e))
+                        : await interaction.channel.send({ embeds: [embed] }).catch((e) => console.error(e));
                 if (message?.deletable) {
                     if (Number.isFinite(this[type].deleteTimeout)) {
                         setTimeout(async () => {

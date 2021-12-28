@@ -248,7 +248,7 @@ export class Bot extends EventEmitter {
                         await this.messages.send(
                             "PERMISSION",
                             {
-                                user: m.member || undefined,
+                                user: m.member ?? undefined,
                                 command: inputData?.command,
                             },
                             m
@@ -256,14 +256,14 @@ export class Bot extends EventEmitter {
                     } else if (e instanceof OperationSuccess) {
                         await this.messages.send("SUCCESS", { command: e.command as FunctionCommand }, m);
                     } else if (e instanceof CommandNotFound) {
-                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
+                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member ?? undefined }, m);
                     } else {
                         this.emit("ERROR", e);
                         await this.messages.send(
                             "ERROR",
                             {
                                 command: inputData?.command,
-                                user: m.member || undefined,
+                                user: m.member ?? undefined,
                                 error: e as Error,
                             },
                             m
@@ -285,7 +285,7 @@ export class Bot extends EventEmitter {
                         await this.messages.send(
                             "PERMISSION",
                             {
-                                user: (i.member as GuildMember) || undefined,
+                                user: (i.member as GuildMember) ?? undefined,
                                 command: inputData?.command,
                             },
                             i as CommandInteraction
@@ -300,7 +300,7 @@ export class Bot extends EventEmitter {
                             "ERROR",
                             {
                                 command: inputData?.command,
-                                user: (i.member as GuildMember) || undefined,
+                                user: (i.member as GuildMember) ?? undefined,
                                 error: e as Error,
                             },
                             i as CommandInteraction
