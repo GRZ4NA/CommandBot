@@ -158,6 +158,7 @@ bot.commands.add("CHAT", {
         resolvable: ["ADMINISTRATOR"],
         checkType: "ANY",
     },
+    ephemeral: false,
     function: async (i) => {
         const user = await i.get("user").toObject();
         return `Hello ${user.toString()}`;
