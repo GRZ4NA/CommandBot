@@ -177,7 +177,7 @@ export class SystemMessageManager {
             footer: this.client.name,
         };
         this.NOT_FOUND = {
-            enabled: true,
+            enabled: false,
             title: "🔍 Command not found",
             accentColor: "#ff5500",
             displayDetails: false,
