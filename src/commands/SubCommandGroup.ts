@@ -46,7 +46,7 @@ export class SubCommandGroup extends Command {
         });
 
         this.parent = parent;
-        this.description = options.description || "No description";
+        this.description = options.description ?? "No description";
 
         if (!CommandRegExps.chatName.test(this.name)) {
             throw new Error(`"${this.name}" is not a valid group name (regexp: ${CommandRegExps.chatName})`);

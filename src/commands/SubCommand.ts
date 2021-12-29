@@ -61,7 +61,7 @@ export class SubCommand extends PermissionCommand {
         });
 
         this.parent = parent;
-        this.description = options.description || "No description";
+        this.description = options.description ?? "No description";
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
         } else if (options.parameters == "simple") {
@@ -69,7 +69,7 @@ export class SubCommand extends PermissionCommand {
         } else {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
-        this.usage = options.usage || generateUsageFromArguments(this);
+        this.usage = options.usage ?? generateUsageFromArguments(this);
 
         if (this.parent.children.find((ch) => ch.name === this.name)) {
             throw new Error(`Parent "${this.parent.name}" already has a subcommand or group named "${this.name}"`);

@@ -97,8 +97,8 @@ export class ChatCommand extends PermissionGuildCommand {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
         this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
-        this.description = options.description || "No description";
-        this.usage = options.usage || generateUsageFromArguments(this);
+        this.description = options.description ?? "No description";
+        this.usage = options.usage ?? generateUsageFromArguments(this);
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
 
