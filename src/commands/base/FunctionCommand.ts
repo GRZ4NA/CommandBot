@@ -105,7 +105,7 @@ export class FunctionCommand extends Command {
         } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
             throw new OperationSuccess(this);
         } else if (interaction instanceof Interaction && !interaction.replied) {
-            await interaction.deleteReply();
+            this.ephemeral !== "NONE" ? await interaction.editReply({ content: "✅" }) : await interaction.deleteReply();
         }
     }
 }
