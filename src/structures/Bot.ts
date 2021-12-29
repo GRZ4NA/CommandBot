@@ -151,7 +151,7 @@ export class Bot extends EventEmitter {
         super();
         this.name = name;
         this.client = new Client(
-            clientOptions || {
+            clientOptions ?? {
                 intents: [
                     Intents.FLAGS.GUILDS,
                     Intents.FLAGS.GUILD_BANS,
@@ -178,10 +178,8 @@ export class Bot extends EventEmitter {
                 enabled: true,
                 title: "Help",
                 description: "List of all available commands",
-                color: "#ff5500",
-                usage: "[command name (optional)]",
                 bottomText: "List of all available commands",
-                visible: true,
+                ephemeral: "INTERACTIONS",
             },
             globalPrefix,
             argumentSeparator,
