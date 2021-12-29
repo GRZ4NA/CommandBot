@@ -1,6 +1,6 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
 import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/parameter.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "../structures/CommandManager.js";

@@ -1,5 +1,5 @@
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { DefaultParameter, Parameter } from "../structures/parameter.js";
+import { DefaultParameter, Parameter } from "../structures/Parameter.js";
 import { PermissionCommand } from "./base/PermissionCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { CommandRegExps } from "./types/commands.js";

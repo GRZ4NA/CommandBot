@@ -1,6 +1,6 @@
 import { Command } from "./commands/base/Command.js";
 import { GuildMember } from "discord.js";
-import { Parameter } from "./structures/parameter.js";
+import { Parameter } from "./structures/Parameter.js";
 import { ParameterResolvable, ParameterType } from "./structures/Parameter.js";
 
 /**

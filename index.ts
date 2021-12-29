@@ -23,7 +23,7 @@ import {
     InputParameterValue,
     ObjectIdReturnType,
     TargetIdReturnType,
-} from "./src/structures/parameter.js";
+} from "./src/structures/Parameter.js";
 import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
 import {
     ChildCommandType,

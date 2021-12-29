@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
-import { InputParameter, ObjectID, TargetID } from "./parameter.js";
+import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
