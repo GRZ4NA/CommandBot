@@ -37,6 +37,7 @@ export class FunctionCommand extends Command {
      * @type {EphemeralType}
      * @public
      * @readonly
+     * @remarks Since ephemeral interactions cannot be deleted, a placeholding embed will be sent when there will be no response from the command function and _announceSuccess_ will be set to false (placeholding message uses _color_ and _title_ parameters from SUCCESS system message configuration)
      */
     public readonly ephemeral: EphemeralType;
 
@@ -105,7 +106,11 @@ export class FunctionCommand extends Command {
         } else if (this.announceSuccess && (interaction instanceof Interaction ? !interaction.replied : true)) {
             throw new OperationSuccess(this);
         } else if (interaction instanceof Interaction && !interaction.replied) {
-            this.ephemeral !== "NONE" ? await interaction.editReply({ content: "✅" }) : await interaction.deleteReply();
+            this.ephemeral !== "NONE"
+                ? await interaction.editReply({
+                      embeds: [new MessageEmbed().setTitle(this.manager.client.messages.SUCCESS.title).setColor(this.manager.client.messages.SUCCESS.accentColor ?? "#00ff00")],
+                  })
+                : await interaction.deleteReply();
         }
     }
 }
