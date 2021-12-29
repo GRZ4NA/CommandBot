@@ -1,9 +1,63 @@
-import { Interaction, Message, MessageEmbed, Permissions } from "discord.js";
+import { Interaction, Message, MessageEmbed, Permissions, ColorResolvable } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { HelpMessageParams } from "./types/HelpMessage.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
+import { EphemeralType } from "./types/commands.js";
+
+/**
+ * All properties used to customize the appearance of a help message
+ * @interface
+ */
+export interface HelpMessageParams {
+    /**
+     * Whether help message is enabled
+     * @type {boolean}
+     */
+    enabled: boolean;
+
+    /**
+     * Title field
+     * @type {string}
+     */
+    title: string;
+
+    /**
+     * Text below the title
+     * @type {?string}
+     */
+    bottomText?: string;
+
+    /**
+     * Color of a message
+     * @type {?ColorResolvable}
+     */
+    color?: ColorResolvable;
+
+    /**
+     * Description of the "help" command
+     * @type {?string}
+     */
+    description?: string;
+
+    /**
+     * Usage of the "help" command
+     * @type {?string}
+     */
+    usage?: string;
+
+    /**
+     * Whether the "help" command should be visible in the help message
+     * @type {?boolean}
+     */
+    visible?: boolean;
+
+    /**
+     * Whether the response message should be ephemeral
+     * @type {?EphemeralType}
+     */
+    ephemeral?: EphemeralType;
+}
 
 /**
  * @class Chat command containing a list of all command in the given manager (help message)
@@ -21,15 +75,16 @@ export class HelpMessage extends ChatCommand {
      * Help message constructor
      * @constructor
      * @param {CommandManager} cmdManager - command manager related to this command
-     * @param {HelpMessageParams} appearance - appearance properties
+     * @param {HelpMessageParams} options - appearance properties
      */
-    constructor(cmdManager: CommandManager, appearance: HelpMessageParams) {
+    constructor(cmdManager: CommandManager, options: HelpMessageParams) {
         super(cmdManager, {
             name: "help",
-            usage: appearance.usage,
+            usage: options.usage,
             permissions: undefined,
-            description: appearance.description,
-            visible: appearance.visible,
+            description: options.description,
+            visible: options.visible,
+            ephemeral: options.ephemeral,
             parameters: [
                 {
                     name: "command_name",
@@ -40,7 +95,7 @@ export class HelpMessage extends ChatCommand {
             ],
             function: (input) => this.generateMessage(input.interaction, input.get("command_name", "string") ?? undefined),
         });
-        this._appearance = appearance;
+        this._appearance = options;
     }
 
     /**
@@ -52,7 +107,7 @@ export class HelpMessage extends ChatCommand {
      */
     public generateMessage(i: Interaction | Message, cmdName?: string) {
         const helpMsg = new MessageEmbed();
-        helpMsg.setColor(this._appearance.color);
+        helpMsg.setColor(this._appearance.color ?? "BLUE");
         helpMsg.setTimestamp();
         helpMsg.setFooter(this.manager.client.name || "");
         if (helpMsg != null) {
@@ -111,7 +166,7 @@ export class HelpMessage extends ChatCommand {
                 }
             } else {
                 helpMsg.setTitle(this._appearance.title);
-                helpMsg.setDescription(this._appearance.bottomText);
+                this._appearance.bottomText && helpMsg.setDescription(this._appearance.bottomText);
 
                 this.manager.list("CHAT").map((c) => {
                     if (

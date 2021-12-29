@@ -31,6 +31,7 @@ export class ContextMenuCommand extends PermissionGuildCommand {
             guilds: options.guilds,
             permissions: options.permissions,
             dm: options.dm,
+            ephemeral: options.ephemeral,
         });
 
         this.contextType = options.contextType;

@@ -1,8 +1,7 @@
-import { FunctionCommand } from "../commands/base/FunctionCommand";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { Interaction, Message } from "discord.js";
-import { ParameterType } from "./types/Parameter";
-import { InputParameter, TargetID } from "./parameter.js";
-import { InputParameterValue } from "./types/Parameter";
+import { ParameterType, InputParameterValue } from "./Parameter.js";
+import { InputParameter, TargetID } from "./Parameter.js";
 
 /**
  * Object that stores all interaction input data (target, arguments, content and the interaction itself)

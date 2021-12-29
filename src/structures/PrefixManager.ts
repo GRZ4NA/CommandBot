@@ -1,7 +1,12 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "./CommandManager.js";
 import { CommandRegExps } from "../commands/types/commands.js";
-import { ScopeResolvable } from "./types/PrefixManager.js";
+
+/**
+ * Prefix scope types
+ * @type
+ */
+export type ScopeResolvable = string | Guild;
 
 /**
  * Maps server IDs with command prefixes and allows to manage them

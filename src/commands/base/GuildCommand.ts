@@ -37,8 +37,9 @@ export class GuildCommand extends FunctionCommand {
         super(manager, type, {
             name: options.name,
             announceSuccess: options.announceSuccess,
-            function: options.function,
             default_permission: options.default_permission,
+            ephemeral: options.ephemeral,
+            function: options.function,
         });
 
         this.guilds = options.guilds;

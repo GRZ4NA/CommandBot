@@ -1,6 +1,6 @@
-import { ParameterSchema } from "../../structures/types/Parameter.js";
+import { ParameterSchema } from "../../structures/Parameter.js";
 import { CommandPermissionsInit } from "./permissions.js";
-import { CommandFunction, ContextType } from "./commands.js";
+import { CommandFunction, ContextType, EphemeralType } from "./commands.js";
 
 /**
  * Initialization options of core {@link Command} object
@@ -35,6 +35,17 @@ export interface FunctionCommandInit extends APICommandInit {
      * @type {?boolean}
      */
     announceSuccess?: boolean;
+    /**
+     * Whether a reply should be visible only to the caller
+     *
+     * - NONE - bot replies are public and visible to everyone in a text channel
+     * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+     * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+     *
+     * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+     * @type {?EphemeralType}
+     */
+    ephemeral?: EphemeralType;
 }
 
 /**

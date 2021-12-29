@@ -1,6 +1,6 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
 import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/parameter.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
 import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
 import { CommandManager } from "../structures/CommandManager.js";
@@ -86,6 +86,7 @@ export class ChatCommand extends PermissionGuildCommand {
             guilds: options.guilds,
             permissions: options.permissions,
             dm: options.dm,
+            ephemeral: options.ephemeral,
         });
 
         if (options.parameters == "no_input" || !options.parameters) {
@@ -96,8 +97,8 @@ export class ChatCommand extends PermissionGuildCommand {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
         this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
-        this.description = options.description || "No description";
-        this.usage = options.usage || generateUsageFromArguments(this);
+        this.description = options.description ?? "No description";
+        this.usage = options.usage ?? generateUsageFromArguments(this);
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
 

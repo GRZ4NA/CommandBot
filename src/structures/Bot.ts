@@ -1,12 +1,69 @@
-import { Client, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
+import { Client, ClientOptions, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
 import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
 import { SystemMessageManager } from "./SystemMessage.js";
-import { InitOptions } from "./types/Bot.js";
 import { applicationState } from "../state.js";
 import { InputManager } from "./InputManager.js";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
+import { HelpMessageParams } from "../commands/Help.js";
+
+/**
+ * Main object initialization options
+ * @interface
+ */
+export interface InitOptions {
+    /**
+     * Bot name
+     * @type {string}
+     */
+    name: string;
+
+    /**
+     * Prefix used as a way to trigger the bot using messages in all guilds by default
+     * @remarks
+     * If *undefined*, you can only interact with bot using slash commands or context menus
+     * @type {?string}
+     */
+    globalPrefix?: string;
+
+    /**
+     * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
+     * @type {?string}
+     */
+    argumentSeparator?: string;
+
+    /**
+     * Separator used to split subcommands when using prefix interactions
+     * @type {?string}
+     */
+    commandSeparator?: string;
+
+    /**
+     * Additional [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for Discord.js [Client](https://discord.js.org/#/docs/main/stable/class/Client) object
+     * @type {?ClientOptions}
+     */
+    clientOptions?: ClientOptions;
+
+    /**
+     * Help message appearance configuration
+     * @type {?HelpMessageParams}
+     */
+    help?: HelpMessageParams;
+
+    /**
+     * Discord bot token
+     * @type {string}
+     */
+    token: string;
+
+    /**
+     * Discord API application ID
+     * @type {string}
+     */
+    applicationId: string;
+}
 
 export declare interface Bot {
     /**
@@ -94,7 +151,7 @@ export class Bot extends EventEmitter {
         super();
         this.name = name;
         this.client = new Client(
-            clientOptions || {
+            clientOptions ?? {
                 intents: [
                     Intents.FLAGS.GUILDS,
                     Intents.FLAGS.GUILD_BANS,
@@ -121,10 +178,8 @@ export class Bot extends EventEmitter {
                 enabled: true,
                 title: "Help",
                 description: "List of all available commands",
-                color: "#ff5500",
-                usage: "[command name (optional)]",
                 bottomText: "List of all available commands",
-                visible: true,
+                ephemeral: "INTERACTIONS",
             },
             globalPrefix,
             argumentSeparator,
@@ -191,22 +246,22 @@ export class Bot extends EventEmitter {
                         await this.messages.send(
                             "PERMISSION",
                             {
-                                user: m.member || undefined,
+                                user: m.member ?? undefined,
                                 command: inputData?.command,
                             },
                             m
                         );
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.send("SUCCESS", undefined, m);
+                        await this.messages.send("SUCCESS", { command: e.command as FunctionCommand }, m);
                     } else if (e instanceof CommandNotFound) {
-                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member || undefined }, m);
+                        await this.messages.send("NOT_FOUND", { phrase: e.query, user: m.member ?? undefined }, m);
                     } else {
                         this.emit("ERROR", e);
                         await this.messages.send(
                             "ERROR",
                             {
                                 command: inputData?.command,
-                                user: m.member || undefined,
+                                user: m.member ?? undefined,
                                 error: e as Error,
                             },
                             m
@@ -228,14 +283,14 @@ export class Bot extends EventEmitter {
                         await this.messages.send(
                             "PERMISSION",
                             {
-                                user: (i.member as GuildMember) || undefined,
+                                user: (i.member as GuildMember) ?? undefined,
                                 command: inputData?.command,
                             },
                             i as CommandInteraction
                         );
                         this.emit("ERROR", e);
                     } else if (e instanceof OperationSuccess) {
-                        await this.messages.send("SUCCESS", undefined, i as CommandInteraction);
+                        await this.messages.send("SUCCESS", { command: e.command as FunctionCommand }, i as CommandInteraction);
                     } else if (e instanceof CommandNotFound) {
                         await this.messages.send("NOT_FOUND", { user: i.user, phrase: e.query }, i);
                     } else {
@@ -243,7 +298,7 @@ export class Bot extends EventEmitter {
                             "ERROR",
                             {
                                 command: inputData?.command,
-                                user: (i.member as GuildMember) || undefined,
+                                user: (i.member as GuildMember) ?? undefined,
                                 error: e as Error,
                             },
                             i as CommandInteraction

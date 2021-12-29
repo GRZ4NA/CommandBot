@@ -1,5 +1,5 @@
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { DefaultParameter, Parameter } from "../structures/parameter.js";
+import { DefaultParameter, Parameter } from "../structures/Parameter.js";
 import { PermissionCommand } from "./base/PermissionCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { CommandRegExps } from "./types/commands.js";
@@ -57,10 +57,11 @@ export class SubCommand extends PermissionCommand {
             announceSuccess: options.announceSuccess,
             permissions: options.permissions,
             function: options.function,
+            ephemeral: options.ephemeral,
         });
 
         this.parent = parent;
-        this.description = options.description || "No description";
+        this.description = options.description ?? "No description";
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
         } else if (options.parameters == "simple") {
@@ -68,7 +69,7 @@ export class SubCommand extends PermissionCommand {
         } else {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
-        this.usage = options.usage || generateUsageFromArguments(this);
+        this.usage = options.usage ?? generateUsageFromArguments(this);
 
         if (this.parent.children.find((ch) => ch.name === this.name)) {
             throw new Error(`Parent "${this.parent.name}" already has a subcommand or group named "${this.name}"`);
