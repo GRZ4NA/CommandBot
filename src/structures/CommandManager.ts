@@ -102,8 +102,8 @@ export class CommandManager {
         }
         this.client = client;
         this.prefix = new PrefixManager(this, prefix);
-        this.argumentSeparator = argSep || ",";
-        this.commandSeparator = cmdSep || "/";
+        this.argumentSeparator = argSep ?? ",";
+        this.commandSeparator = cmdSep ?? "/";
         if (this.commandSeparator === this.argumentSeparator) {
             throw new Error("Command separator and argument separator have the same value");
         }
@@ -175,30 +175,11 @@ export class CommandManager {
     public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
         switch (t) {
             case "CHAT":
-                return (
-                    (this.list(t).find((c) => {
-                        if (c.name === q) {
-                            return true;
-                        }
-                        if (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }) as Commands<T>) || null
-                );
-            case "NESTED":
-                return (this.list(t).find((c) => {
-                    if (c.name === q) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }) || null) as Commands<T>;
+                return (this.list(t).find((c) => c.name === q || (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q))) as Commands<T>) ?? null;
             case "CONTEXT":
-                return (this.list(t).find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list(t).find((c) => c.name === q) as Commands<T>) ?? null;
             default:
-                return (this.list().find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list().find((c) => c.name === q) as Commands<T>) ?? null;
         }
     }
 
@@ -312,7 +293,7 @@ export class CommandManager {
      * @public
      */
     public fetch(i: Interaction | Message): InputManager | null {
-        const prefix = this.prefix.get(i.guild || undefined);
+        const prefix = this.prefix.get(i.guild ?? undefined);
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT");
@@ -531,10 +512,10 @@ export class CommandManager {
      */
     private updateCache(commands: RegisteredCommandObject[] | RegisteredCommandObject, guildId?: string): void {
         if (Array.isArray(commands)) {
-            this._registerCache.set(guildId || this._globalEntryName, this.arrayToMap(commands));
+            this._registerCache.set(guildId ?? this._globalEntryName, this.arrayToMap(commands));
             return;
         } else {
-            this._registerCache.get(guildId || this._globalEntryName)?.set(commands.id, commands);
+            this._registerCache.get(guildId ?? this._globalEntryName)?.set(commands.id, commands);
         }
     }
 
@@ -545,7 +526,7 @@ export class CommandManager {
      * @returns {?RegisteredCommandObject}
      */
     private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
-        return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
+        return this._registerCache.get(guildId ?? this._globalEntryName)?.get(q) ?? null;
     }
 
     /**
