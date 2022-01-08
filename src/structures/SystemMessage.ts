@@ -2,6 +2,7 @@ import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { ColorResolvable, DMChannel, GuildMember, Interaction, Message, MessageEmbed, Permissions, TextChannel, User } from "discord.js";
 import { PermissionsError } from "../errors.js";
 import Bot from "./Bot.js";
+import { BaseObject } from "./BaseObject.js";
 
 /**
  * Types of system messages
@@ -19,51 +20,31 @@ export interface SystemMessageAppearance {
      * @type {boolean}
      */
     enabled: boolean;
-
     /**
      * Title field
      * @type {string}
      */
     title: string;
-
-    /**
-     * Text below the title
-     * @type {?string}
-     * @deprecated
-     */
-    bottomText?: string;
-
     /**
      * Text below the title
      * @type {?string}
      */
     description?: string;
-
     /**
      * Color of a message
      * @type {?ColorResolvable}
      */
     accentColor?: ColorResolvable;
-
     /**
      * Whether to display detailed informations in the message
      * @type {?boolean}
      */
     displayDetails?: boolean;
-
     /**
      * Whether to show current time and date in a footer
      * @type {?boolean}
      */
     showTimestamp?: boolean;
-
-    /**
-     * Footer text
-     * @type {?string}
-     * @deprecated
-     */
-    footer?: string;
-
     /**
      * Time (in ms) after a message of this type gets deleted
      * @type {?number}
@@ -102,6 +83,14 @@ export interface SystemMessageData {
     error?: Error | PermissionsError | string;
 }
 
+export interface SystemMessageConfiguration {
+    ERROR: SystemMessageAppearance;
+    NOT_FOUND: SystemMessageAppearance;
+    PERMISSION: SystemMessageAppearance;
+    SUCCESS: SystemMessageAppearance;
+    deleteTimeout: number;
+}
+
 /**
  * Stores configuration and generates system messages
  *
@@ -110,36 +99,27 @@ export interface SystemMessageData {
  * @remarks You can't customize messages after starting the bot. Changing these properties while the bot is running will have no effect.
  *
  * @class
+ * @extends {BaseObject}
  */
-export class SystemMessageManager {
-    /**
-     * Client parent attached to this manager
-     * @type {Bot}
-     * @public
-     * @readonly
-     */
-    public readonly client: Bot;
+export class SystemMessageManager extends BaseObject {
     /**
      * Sent whenever caller's permissions are not sufficient to run a command
      * @type {SystemMessageAppearance}
      * @public
      */
     public PERMISSION: SystemMessageAppearance;
-
     /**
      * Sent when an error occurs during the execution of a command
      * @type {SystemMessageAppearance}
      * @public
      */
     public ERROR: SystemMessageAppearance;
-
     /**
      * Sent when someone tries to run a command that does not exist (mainly by using prefix interactions)
      * @type {SystemMessageAppearance}
      * @public
      */
     public NOT_FOUND: SystemMessageAppearance;
-
     /**
      * Sent when a command function returns _void_ without throwing an error
      * @type {SystemMessageAppearance}
@@ -147,7 +127,6 @@ export class SystemMessageManager {
      * @remarks An _announceSuccess_ property must be set to _true_ (default) in order to send this message
      */
     public SUCCESS: SystemMessageAppearance;
-
     /**
      * Global time (in ms) after a message gets deleted
      * @type {number}
@@ -156,44 +135,13 @@ export class SystemMessageManager {
      */
     public deleteTimeout: number;
 
-    constructor(client: Bot) {
-        this.client = client;
-        this.PERMISSION = {
-            enabled: true,
-            title: "👮‍♂️ Insufficient permissions",
-            bottomText: "You don't have enough permissions to run this command",
-            accentColor: "#1d1dc4",
-            displayDetails: false,
-            showTimestamp: true,
-            footer: this.client.name,
-        };
-        this.ERROR = {
-            enabled: true,
-            title: "❌ An error occurred",
-            bottomText: "Something went wrong while processing your request.",
-            accentColor: "#ff0000",
-            displayDetails: false,
-            showTimestamp: true,
-            footer: this.client.name,
-        };
-        this.NOT_FOUND = {
-            enabled: false,
-            title: "🔍 Command not found",
-            accentColor: "#ff5500",
-            displayDetails: false,
-            showTimestamp: true,
-            footer: this.client.name,
-        };
-        this.SUCCESS = {
-            enabled: true,
-            title: "✅ Task completed successfully",
-            accentColor: "#00ff00",
-            displayDetails: false,
-            showTimestamp: true,
-            footer: this.client.name,
-            deleteTimeout: Infinity,
-        };
-        this.deleteTimeout = Infinity;
+    constructor(client: Bot, { ERROR, NOT_FOUND, PERMISSION, SUCCESS, deleteTimeout }: SystemMessageConfiguration) {
+        super(client);
+        this.ERROR = ERROR;
+        this.NOT_FOUND = NOT_FOUND;
+        this.PERMISSION = PERMISSION;
+        this.SUCCESS = SUCCESS;
+        this.deleteTimeout = deleteTimeout;
     }
 
     /**
@@ -210,7 +158,7 @@ export class SystemMessageManager {
             if (this[type].enabled === false) return;
             const embed = new MessageEmbed();
             embed.setTitle(this[type].title);
-            if (this[type].description || this[type].bottomText) embed.setDescription(this[type].description ?? this[type].bottomText ?? "");
+            if (this[type].description) embed.setDescription(this[type].description ?? "");
             embed.setColor(this[type].accentColor || "#000000");
             if (this[type].showTimestamp) embed.setTimestamp();
             if (data) {

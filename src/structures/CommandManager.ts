@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
 import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
 import { CommandNotFound } from "../errors.js";
-import { applicationState } from "../state.js";
 import { ChatCommand } from "../commands/ChatCommand.js";
 import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
 import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
@@ -16,12 +15,13 @@ import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
 import { Command } from "../commands/base/Command.js";
 import { InputManager } from "./InputManager.js";
+import { BaseObject } from "./BaseObject.js";
 
 /**
  * Object that stores the registered commands and is responsible for data exchanging with the Discord API
  * @class
  */
-export class CommandManager {
+export class CommandManager extends BaseObject {
     /**
      * List of commands registered in the manager
      * @type {Array<Command>}
@@ -37,15 +37,6 @@ export class CommandManager {
      */
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
-
-    /**
-     * Client connected to this manager
-     * @type {Client}
-     * @public
-     * @readonly
-     */
-    public readonly client: Bot;
-
     /**
      * Help command associated with this manager
      * @type {?HelpMessage}
@@ -53,7 +44,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly help?: HelpMessage;
-
     /**
      * A manager holding all guild-specific prefixes and a global prefix
      * @type {string}
@@ -61,7 +51,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly prefix: PrefixManager;
-
     /**
      * A string used to split all incoming input data from Discord messages
      * @type {string}
@@ -69,7 +58,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly argumentSeparator: string;
-
     /**
      * A string used to separate subcommand groups and subcommands
      * @type {string}
@@ -77,7 +65,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly commandSeparator: string;
-
     /**
      * Discord API URL
      * @type {string}
@@ -97,10 +84,10 @@ export class CommandManager {
      * @param {?string} [cmdSep='/'] - a string used to separate subcommand groups and subcommands
      */
     constructor(client: Bot, helpMsg: HelpMessageParams, prefix?: string, argSep?: string, cmdSep?: string) {
+        super(client);
         if ((argSep && !CommandRegExps.separator.test(argSep)) || (cmdSep && !CommandRegExps.separator.test(cmdSep))) {
             throw new Error("Incorrect separators");
         }
-        this.client = client;
         this.prefix = new PrefixManager(this, prefix);
         this.argumentSeparator = argSep ?? ",";
         this.commandSeparator = cmdSep ?? "/";
@@ -152,7 +139,7 @@ export class CommandManager {
         if (!command) {
             throw new TypeError("Incorrect command type");
         }
-        if (applicationState.running) {
+        if (this.client.isRunning) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
         }

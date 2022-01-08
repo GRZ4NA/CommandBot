@@ -1,63 +1,79 @@
-import { Client, ClientOptions, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
+import { Client, ClientOptions, CommandInteraction, GuildMember, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
 import { CommandManager } from "./CommandManager.js";
 import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
-import { SystemMessageManager } from "./SystemMessage.js";
-import { applicationState } from "../state.js";
+import { SystemMessageConfiguration, SystemMessageManager } from "./SystemMessage.js";
 import { InputManager } from "./InputManager.js";
 import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { HelpMessageParams } from "../commands/Help.js";
+import { CLIENT_DEFAULT_OPTIONS, HELP_DEFAULT_CONFIGURATION, IS_DEVELOPMENT_VERSION, SYSTEM_MESSAGES_DEFAULT_CONFIGURATION } from "constants.js";
+import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
 
 /**
  * Main object initialization options
  * @interface
  */
-export interface InitOptions {
+export interface BotConfiguration {
     /**
      * Bot name
      * @type {string}
      */
     name: string;
-
+    /**
+     * Credentials for the Discord API
+     * @type {BotCredentials}
+     */
+    credentials: BotCredentials;
     /**
      * Prefix used as a way to trigger the bot using messages in all guilds by default
      * @remarks
      * If *undefined*, you can only interact with bot using slash commands or context menus
      * @type {?string}
      */
-    globalPrefix?: string;
-
+    prefix?: string;
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      * @type {?string}
      */
     argumentSeparator?: string;
-
-    /**
-     * Separator used to split subcommands when using prefix interactions
-     * @type {?string}
-     */
-    commandSeparator?: string;
-
     /**
      * Additional [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for Discord.js [Client](https://discord.js.org/#/docs/main/stable/class/Client) object
      * @type {?ClientOptions}
      */
     clientOptions?: ClientOptions;
-
     /**
-     * Help message appearance configuration
+     * Help message configuration
      * @type {?HelpMessageParams}
      */
-    help?: HelpMessageParams;
+    help?: Partial<HelpMessageParams>;
+    /**
+     * System messages configuration
+     * @type {?Partial<SystemMessageConfiguration>}
+     */
+    systemMessages?: Partial<SystemMessageConfiguration>;
+    /**
+     * List of prefix and slash commands
+     * @type {?Array<ChatCommandInit>}
+     */
+    chatCommands?: ChatCommandInit[];
+    /**
+     * List of right-click context menu commands
+     * @type {?Array<ContextMenuCommandInit>}
+     */
+    contextMenuCommands?: ContextMenuCommandInit[];
+}
 
+/**
+ * Discord API application identifier and access token
+ * @interface
+ */
+export interface BotCredentials {
     /**
      * Discord bot token
      * @type {string}
      */
     token: string;
-
     /**
      * Discord API application ID
      * @type {string}
@@ -94,6 +110,12 @@ export declare interface Bot {
  * @extends {EventEmitter}
  */
 export class Bot extends EventEmitter {
+    /**
+     * Bot running state
+     * @type {boolean}
+     * @private
+     */
+    private _isRunning = false;
     /**
      * Bot name
      * @type {string}
@@ -145,48 +167,19 @@ export class Bot extends EventEmitter {
     /**
      * Main bot constructor
      * @constructor
-     * @param {InitOptions} options - instance properties ({@link InitOptions})
+     * @param {BotConfiguration} config - instance properties ({@link BotConfiguration})
      */
-    constructor({ name, token, applicationId, globalPrefix, argumentSeparator, commandSeparator, clientOptions, help }: InitOptions) {
+    constructor({ name, credentials, prefix, argumentSeparator, clientOptions, help, systemMessages }: BotConfiguration) {
         super();
         this.name = name;
-        this.client = new Client(
-            clientOptions ?? {
-                intents: [
-                    Intents.FLAGS.GUILDS,
-                    Intents.FLAGS.GUILD_BANS,
-                    Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-                    Intents.FLAGS.GUILD_INTEGRATIONS,
-                    Intents.FLAGS.GUILD_INVITES,
-                    Intents.FLAGS.GUILD_MEMBERS,
-                    Intents.FLAGS.GUILD_MESSAGES,
-                    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-                    Intents.FLAGS.GUILD_MESSAGE_TYPING,
-                    Intents.FLAGS.GUILD_PRESENCES,
-                    Intents.FLAGS.GUILD_VOICE_STATES,
-                    Intents.FLAGS.GUILD_WEBHOOKS,
-                    Intents.FLAGS.DIRECT_MESSAGES,
-                    Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-                    Intents.FLAGS.DIRECT_MESSAGE_TYPING,
-                ],
-            }
-        );
-        this.messages = new SystemMessageManager(this);
-        this.commands = new CommandManager(
-            this,
-            help ?? {
-                enabled: true,
-                title: "Help",
-                description: "List of all available commands",
-                bottomText: "List of all available commands",
-                ephemeral: "INTERACTIONS",
-            },
-            globalPrefix,
-            argumentSeparator,
-            commandSeparator
-        );
-        this.token = token;
-        this.applicationId = applicationId;
+        this.client = new Client(clientOptions ?? CLIENT_DEFAULT_OPTIONS);
+        this.messages = new SystemMessageManager(this, { ...SYSTEM_MESSAGES_DEFAULT_CONFIGURATION, ...systemMessages });
+        this.commands = new CommandManager(this, { ...HELP_DEFAULT_CONFIGURATION, ...help }, prefix, argumentSeparator);
+        [this.token, this.applicationId] = [credentials.token, credentials.applicationId];
+    }
+
+    get isRunning() {
+        return this._isRunning;
     }
 
     /**
@@ -199,10 +192,10 @@ export class Bot extends EventEmitter {
      */
     public async start(port?: number, register?: boolean): Promise<boolean> {
         try {
-            if (applicationState.running) {
+            if (this._isRunning) {
                 throw new Error("This bot is already running");
             }
-            if (applicationState.dev) {
+            if (IS_DEVELOPMENT_VERSION) {
                 console.warn(`[⚠️ WARNING] You are using an unstable version of the CommandBot package. It is not recommended to use this version in production.`);
             }
             console.log(`\nBot name: ${this.name}`);
@@ -215,7 +208,7 @@ export class Bot extends EventEmitter {
                 http.createServer().listen(port);
                 console.log("✔");
             }
-            applicationState.running = true;
+            this._isRunning = true;
             process.stdout.write("Connecting to Discord... ");
             this.client.login(this.token);
             this.client.on("ready", async () => {

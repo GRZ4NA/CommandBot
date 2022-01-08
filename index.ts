@@ -1,4 +1,4 @@
-import { Bot, InitOptions } from "./src/structures/Bot.js";
+import { Bot, BotConfiguration, BotCredentials } from "./src/structures/Bot.js";
 import {
     ChatCommandInit,
     ContextMenuCommandInit,
@@ -62,17 +62,20 @@ import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
 import { FunctionCommand } from "./src/commands/base/FunctionCommand.js";
 import { Command } from "./src/commands/base/Command.js";
 import { CommandManager } from "./src/structures/CommandManager.js";
-import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/SystemMessage.js";
+import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData, SystemMessageConfiguration } from "./src/structures/SystemMessage.js";
 import { CommandPermissions } from "./src/structures/CommandPermissions.js";
 import { HelpMessage, HelpMessageParams } from "./src/commands/Help.js";
 import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager.js";
 import { GuildCommand } from "./src/commands/base/GuildCommand.js";
 import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
 import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
+import { BaseObject } from "./src/structures/BaseObject.js";
+import { IS_DEVELOPMENT_VERSION, HELP_DEFAULT_CONFIGURATION, SYSTEM_MESSAGES_DEFAULT_CONFIGURATION, API_DEFAULT_INTENTS, CLIENT_DEFAULT_OPTIONS } from "constants.js";
 
 export {
     Bot,
-    InitOptions,
+    BotConfiguration,
+    BotCredentials,
     ChatCommandInit,
     ContextMenuCommandInit,
     SubCommandGroupInit,
@@ -145,4 +148,11 @@ export {
     PermissionCommandInit,
     PermissionGuildCommandInit,
     EphemeralType,
+    BaseObject,
+    SystemMessageConfiguration,
+    IS_DEVELOPMENT_VERSION,
+    HELP_DEFAULT_CONFIGURATION,
+    SYSTEM_MESSAGES_DEFAULT_CONFIGURATION,
+    API_DEFAULT_INTENTS,
+    CLIENT_DEFAULT_OPTIONS,
 };
