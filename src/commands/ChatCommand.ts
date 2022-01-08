@@ -8,7 +8,6 @@ import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
-import { applicationState } from "../state.js";
 import { InputManager } from "../structures/InputManager.js";
 
 /**
@@ -175,7 +174,7 @@ export class ChatCommand extends PermissionGuildCommand {
         if (!command) {
             throw new Error("Incorrect command type");
         }
-        if (applicationState.running) {
+        if (this.manager.client.isRunning) {
             console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
             return command;
         }
