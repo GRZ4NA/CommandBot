@@ -1,7 +1,6 @@
 import { BaseCommands, BaseCommandType, Commands, CommandRegExps, CommandType } from "../types/commands.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { APICommandObject } from "../../structures/types/api.js";
-import { APICommandInit } from "../types/InitOptions.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { GuildCommand } from "./GuildCommand.js";
 import { PermissionCommand } from "./PermissionCommand.js";
@@ -50,9 +49,9 @@ export class Command {
      * @constructor
      * @param {CommandManager} manager - manager bound to this command
      * @param {CommandType} type - command internal type
-     * @param {APICommandInit} options - initialization options
+     * @param {CommandInit} options - initialization options
      */
-    constructor(manager: CommandManager, type: CommandType, options: APICommandInit) {
+    constructor(manager: CommandManager, type: CommandType, options: CommandInit) {
         this.manager = manager;
         this.name = options.name;
         this.type = type;
@@ -167,4 +166,21 @@ export class Command {
     //             return false;
     //     }
     // }
+}
+
+/**
+ * Initialization options of core {@link Command} object
+ * @interface
+ */
+export interface CommandInit {
+    /**
+     * Command name
+     * @type {string}
+     */
+    name: string;
+    /**
+     * Discord API default permission
+     * @type {?boolean}
+     */
+    default_permission?: boolean;
 }

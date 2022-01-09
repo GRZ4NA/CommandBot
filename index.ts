@@ -1,15 +1,4 @@
-import { Bot, BotConfiguration, BotCredentials } from "./src/structures/Bot.js";
-import {
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    SubCommandInit,
-    SubCommandGroupInit,
-    APICommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-} from "./src/commands/types/InitOptions.js";
+import { Bot, BotConfiguration, BotCredentials } from "./src/structures/Bot";
 import {
     ObjectID,
     TargetID,
@@ -23,13 +12,12 @@ import {
     InputParameterValue,
     ObjectIdReturnType,
     TargetIdReturnType,
-} from "./src/structures/Parameter.js";
-import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors.js";
+} from "./src/structures/Parameter";
+import { PermissionsError, ParameterTypeError, MissingParameterError, OperationSuccess } from "./src/errors";
 import {
     ChildCommandType,
     Commands,
-    CommandInit,
-    ChildCommandInit,
+    CommandInitializer,
     CommandType,
     CommandFunction,
     ContextType,
@@ -37,8 +25,8 @@ import {
     CommandFunctionReturnTypes,
     BaseCommandType,
     EphemeralType,
-} from "./src/commands/types/commands.js";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/commands/types/permissions.js";
+} from "./src/commands/types/commands";
+import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/commands/types/permissions";
 import {
     APICommandObject,
     APICommandType,
@@ -51,21 +39,21 @@ import {
     RegisteredCommandObject,
     SubCommandGroupObject,
     TextCommandOptionChoiceObject,
-} from "./src/structures/types/api.js";
-import { InputManager } from "./src/structures/InputManager.js";
-import { ChatCommand } from "./src/commands/ChatCommand.js";
-import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
-import { FunctionCommand } from "./src/commands/base/FunctionCommand.js";
-import { Command } from "./src/commands/base/Command.js";
-import { CommandManager } from "./src/structures/CommandManager.js";
-import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData, SystemMessageConfiguration } from "./src/structures/SystemMessage.js";
-import { CommandPermissions } from "./src/structures/CommandPermissions.js";
-import { HelpMessage, HelpMessageParams } from "./src/commands/Help.js";
-import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager.js";
-import { GuildCommand } from "./src/commands/base/GuildCommand.js";
-import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
-import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
-import { BaseObject } from "./src/structures/BaseObject.js";
+} from "./src/structures/types/api";
+import { InputManager } from "./src/structures/InputManager";
+import { ChatCommand, ChatCommandInit } from "./src/commands/ChatCommand";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./src/commands/ContextMenuCommand";
+import { FunctionCommand, FunctionCommandInit } from "./src/commands/base/FunctionCommand";
+import { Command, CommandInit } from "./src/commands/base/Command";
+import { CommandManager } from "./src/structures/CommandManager";
+import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData, SystemMessageConfiguration } from "./src/structures/SystemMessage";
+import { CommandPermissions } from "./src/structures/CommandPermissions";
+import { HelpMessage, HelpMessageParams } from "./src/commands/Help";
+import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager";
+import { GuildCommand, GuildCommandInit } from "./src/commands/base/GuildCommand";
+import { PermissionCommand, PermissionCommandInit } from "./src/commands/base/PermissionCommand";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./src/commands/base/PermissionGuildCommand";
+import { BaseObject } from "./src/structures/BaseObject";
 import {
     IS_DEVELOPMENT_VERSION,
     HELP_DEFAULT_CONFIGURATION,
@@ -81,8 +69,6 @@ export {
     BotCredentials,
     ChatCommandInit,
     ContextMenuCommandInit,
-    SubCommandGroupInit,
-    SubCommandInit,
     CommandPermissionsInit,
     InputManager,
     HelpMessageParams,
@@ -102,8 +88,7 @@ export {
     CommandType,
     ChildCommandType,
     Commands,
-    CommandInit,
-    ChildCommandInit,
+    CommandInitializer,
     ChatCommand,
     ContextMenuCommand,
     ObjectIdType,
@@ -131,7 +116,7 @@ export {
     SubCommandGroupObject,
     CommandFunctionReturnTypes,
     BaseCommandType,
-    APICommandInit,
+    CommandInit,
     CommandPermission,
     FunctionCommandInit,
     MessageType,

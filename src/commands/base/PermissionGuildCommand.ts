@@ -1,7 +1,6 @@
-import { PermissionGuildCommandInit } from "../types/InitOptions.js";
 import { CommandManager } from "../../structures/CommandManager";
 import { GuildCommand } from "./GuildCommand.js";
-import { PermissionCommand } from "./PermissionCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand.js";
 import { CommandType } from "../types/commands.js";
 import { InputManager } from "../../structures/InputManager.js";
 
@@ -61,4 +60,22 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
         if (this.guilds && this.guilds.length > 0 && !this.guilds.find((id) => id === input.interaction.guild?.id)) throw new Error(`Command "${this.name}" is not available.`);
         await super.start(input);
     }
+}
+
+/**
+ * Initialization options of base guild-scoped command with attached permisisions
+ * @interface
+ * @extends {PermissionCommandInit}
+ */
+export interface PermissionGuildCommandInit extends PermissionCommandInit {
+    /**
+     * Whether this command should be callable using private messages with bot
+     * @type {?boolean}
+     */
+    dm?: boolean;
+    /**
+     * List of Guild IDs in which the command can be called
+     * @type {?Array<string>}
+     */
+    guilds?: string[];
 }

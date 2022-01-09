@@ -1,22 +1,11 @@
 import { MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { ChatCommand } from "../ChatCommand.js";
-import { ContextMenuCommand } from "../ContextMenuCommand.js";
-import { FunctionCommand } from "../base/FunctionCommand.js";
-import { PermissionCommand } from "../base/PermissionCommand.js";
-import {
-    APICommandInit,
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-    SubCommandGroupInit,
-    SubCommandInit,
-} from "./InitOptions.js";
-import { GuildCommand } from "../base/GuildCommand.js";
-import { PermissionGuildCommand } from "../base/PermissionGuildCommand.js";
-import { Command } from "..//base/Command.js";
+import { ChatCommand, ChatCommandInit } from "../ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "../ContextMenuCommand.js";
+import { FunctionCommand, FunctionCommandInit } from "../base/FunctionCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "../base/PermissionCommand.js";
+import { GuildCommand, GuildCommandInit } from "../base/GuildCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "../base/PermissionGuildCommand.js";
+import { Command, CommandInit } from "..//base/Command.js";
 import { InputManager } from "../../structures/InputManager.js";
 
 /**
@@ -70,7 +59,7 @@ export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T
  * @type
  */
 export type BaseCommandInit<T extends BaseCommandType> = T extends "BASE"
-    ? APICommandInit
+    ? CommandInit
     : T extends "FUNCTION"
     ? FunctionCommandInit
     : T extends "GUILD"
@@ -85,13 +74,13 @@ export type BaseCommandInit<T extends BaseCommandType> = T extends "BASE"
  * Command initializer selector
  * @type
  */
-export type CommandInit<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
+export type CommandInitializer<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
 
-/**
- * Child command initializer selector
- * @type
- */
-export type ChildCommandInit<T extends ChildCommandType> = T extends "COMMAND" ? SubCommandInit : T extends "GROUP" ? SubCommandGroupInit : never;
+// /**
+//  * Child command initializer selector
+//  * @type
+//  */
+// export type ChildCommandInit<T extends ChildCommandType> = T extends "COMMAND" ? SubCommandInit : T extends "GROUP" ? SubCommandGroupInit : never;
 
 /**
  * Base command resolvables

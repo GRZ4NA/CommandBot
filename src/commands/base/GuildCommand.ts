@@ -1,6 +1,5 @@
 import { CommandManager } from "../../structures/CommandManager.js";
-import { FunctionCommand } from "./FunctionCommand.js";
-import { GuildCommandInit } from "../types/InitOptions.js";
+import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand.js";
 import { CommandType } from "../types/commands.js";
 import { InputManager } from "../../structures/InputManager.js";
 
@@ -58,4 +57,22 @@ export class GuildCommand extends FunctionCommand {
         if (this.guilds && this.guilds.length > 0 && !this.guilds.find((id) => id === input.interaction.guild?.id)) throw new Error(`Command "${this.name}" is not available.`);
         await super.start(input);
     }
+}
+
+/**
+ * Initialization options of base guild-scoped command
+ * @interface
+ * @extends {FunctionCommandInit}
+ */
+export interface GuildCommandInit extends FunctionCommandInit {
+    /**
+     * Whether this command should be callable using private messages with bot
+     * @type {?boolean}
+     */
+    dm?: boolean;
+    /**
+     * List of Guild IDs in which the command can be called
+     * @type {?Array<string>}
+     */
+    guilds?: string[];
 }

@@ -1,6 +1,5 @@
-import { ContextMenuCommandInit } from "./types/InitOptions.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
 import { ContextType } from "./types/commands.js";
 import { ContextMenuCommandObject } from "../structures/types/api.js";
 
@@ -47,4 +46,17 @@ export class ContextMenuCommand extends PermissionGuildCommand {
             type: this.contextType === "USER" ? 2 : 3,
         };
     }
+}
+
+/**
+ * Initialization options of context menu interactions
+ * @interface
+ * @extends {PermissionGuildCommandInit}
+ */
+export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
+    /**
+     * Context menu target type
+     * @type {ContextType}
+     */
+    contextType: ContextType;
 }

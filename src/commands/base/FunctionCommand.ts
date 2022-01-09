@@ -1,9 +1,8 @@
 import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
 import { OperationSuccess } from "../../errors.js";
-import { Command } from "./Command.js";
+import { Command, CommandInit } from "./Command.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandFunction, CommandType, EphemeralType } from "../types/commands.js";
-import { FunctionCommandInit } from "../types/InitOptions.js";
 import { InputManager } from "../../structures/InputManager.js";
 
 /**
@@ -113,4 +112,33 @@ export class FunctionCommand extends Command {
                 : await interaction.deleteReply();
         }
     }
+}
+
+/**
+ * Initialization options of base executable command
+ * @interface
+ * @extends {CommandInit}
+ */
+export interface FunctionCommandInit extends CommandInit {
+    /**
+     * Command function (will be executed when calling a command)
+     * @type {?CommandFunction}
+     */
+    function?: CommandFunction;
+    /**
+     * Whether to send a built-in success message when the command has completed (if no other response is defined)
+     * @type {?boolean}
+     */
+    announceSuccess?: boolean;
+    /**
+     * Whether a reply should be visible only to the caller
+     *
+     * - NONE - bot replies are public and visible to everyone in a text channel
+     * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+     * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+     *
+     * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+     * @type {?EphemeralType}
+     */
+    ephemeral?: EphemeralType;
 }

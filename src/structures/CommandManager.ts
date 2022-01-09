@@ -2,14 +2,11 @@ import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
 import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
 import { CommandNotFound } from "../errors.js";
-import { ChatCommand } from "../commands/ChatCommand.js";
-import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
-import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
+import { ChatCommand, ChatCommandInit } from "../commands/ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "../commands/ContextMenuCommand.js";
+import { Commands, CommandInitializer, CommandRegExps, CommandType } from "../commands/types/commands.js";
 import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
 import { Bot } from "./Bot.js";
-import { SubCommand } from "../commands/SubCommand.js";
-import { SubCommandGroup } from "../commands/SubCommandGroup.js";
-import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
 import { HelpMessageParams } from "../commands/Help.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
@@ -119,7 +116,7 @@ export class CommandManager extends BaseObject {
     /**
      * Creates and registers command in the manager based on the given options
      * @param {T} type - a type of command that will be created and added to this manager
-     * @param {CommandInit<T>} options - an object containing all properties required to create this type of command
+     * @param {CommandInitializer<T>} options - an object containing all properties required to create this type of command
      * @returns {Commands<T>} A computed command object that inherits from {@link Command}
      * @public
      * @remarks All commands have to be added to the instance **before starting the bot**. Adding commands while the bot is running is not possible and can cause issues.
@@ -129,7 +126,7 @@ export class CommandManager extends BaseObject {
      * - [USER](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on users
      * - [MESSAGE](https://grz4na.github.io/commandbot-docs/interfaces/ContextMenuCommandInit.html) - right-click context menu interactions on messages
      */
-    public add<T extends CommandType>(type: T, options: CommandInit<T>): Commands<T> {
+    public add<T extends CommandType>(type: T, options: CommandInitializer<T>): Commands<T> {
         const command: Commands<T> | null =
             type === "CHAT"
                 ? (new ChatCommand(this, options as ChatCommandInit) as Commands<T>)
