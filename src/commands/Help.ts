@@ -1,8 +1,6 @@
 import { Interaction, Message, MessageEmbed, Permissions, ColorResolvable } from "discord.js";
 import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { SubCommand } from "./SubCommand.js";
-import { SubCommandGroup } from "./SubCommandGroup.js";
 import { EphemeralType } from "./types/commands.js";
 
 /**

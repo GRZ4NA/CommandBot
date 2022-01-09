@@ -1,4 +1,4 @@
-import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands.js";
+import { BaseCommands, BaseCommandType, Commands, CommandRegExps, CommandType } from "../types/commands.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { APICommandObject } from "../../structures/types/api.js";
 import { APICommandInit } from "../types/InitOptions.js";
@@ -7,7 +7,6 @@ import { GuildCommand } from "./GuildCommand.js";
 import { PermissionCommand } from "./PermissionCommand.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
 import { ChatCommand } from "../ChatCommand.js";
-import { SubCommand } from "../SubCommand.js";
 
 /**
  * Bot core command object
@@ -146,26 +145,26 @@ export class Command {
         }
     }
 
-    /**
-     * Check child command type
-     * @param {ChildCommandType} type - child command type
-     * @returns {boolean} Whether this command can be used as a child command of the given type
-     * @public
-     */
-    public isChildCommandType<T extends ChildCommandType>(type: T): this is ChildCommands<T> {
-        switch (type) {
-            case "COMMAND":
-                return (
-                    this.type === "CHAT" &&
-                    "description" in this &&
-                    typeof (this as SubCommand).description === "string" &&
-                    "parameters" in this &&
-                    Array.isArray((this as SubCommand).parameters)
-                );
-            case "GROUP":
-                return this.type === "CHAT" && "description" in this && !("parameters" in this) && !("visible" in this) && !("slash" in this);
-            default:
-                return false;
-        }
-    }
+    // /**
+    //  * Check child command type
+    //  * @param {ChildCommandType} type - child command type
+    //  * @returns {boolean} Whether this command can be used as a child command of the given type
+    //  * @public
+    //  */
+    // public isChildCommandType<T extends ChildCommandType>(type: T): this is ChildCommands<T> {
+    //     switch (type) {
+    //         case "COMMAND":
+    //             return (
+    //                 this.type === "CHAT" &&
+    //                 "description" in this &&
+    //                 typeof (this as SubCommand).description === "string" &&
+    //                 "parameters" in this &&
+    //                 Array.isArray((this as SubCommand).parameters)
+    //             );
+    //         case "GROUP":
+    //             return this.type === "CHAT" && "description" in this && !("parameters" in this) && !("visible" in this) && !("slash" in this);
+    //         default:
+    //             return false;
+    //     }
+    // }
 }

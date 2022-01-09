@@ -1,14 +1,13 @@
-import { Message, Interaction, CommandInteractionOption } from "discord.js";
-import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
-import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
-import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
-import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { SubCommand } from "./SubCommand.js";
-import { SubCommandGroup } from "./SubCommandGroup.js";
-import { InputManager } from "../structures/InputManager.js";
+import { Interaction } from "discord.js";
+import { ChatCommandInit } from "./types/InitOptions";
+import { DefaultParameter, Parameter } from "../structures/Parameter";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api";
+import { CommandRegExps } from "./types/commands";
+import { CommandManager } from "../structures/CommandManager";
+import { PermissionGuildCommand } from "./base/PermissionGuildCommand";
+import { InputManager } from "../structures/InputManager";
+import { DEFAULT_BLANK_DESCRIPTION } from "../constants";
+import { CommandGroup } from "./CommandGroup";
 
 /**
  * A representation of CHAT_INPUT command (also known as a slash command)
@@ -17,12 +16,12 @@ import { InputManager } from "../structures/InputManager.js";
  */
 export class ChatCommand extends PermissionGuildCommand {
     /**
-     * Subcommands and groups of this command
-     * @type {Array<ChildCommandResolvable>}
-     * @private
+     * Command parent group
+     * @type {CommandGroup<any> | null}
+     * @public
      * @readonly
      */
-    private readonly _children: ChildCommandResolvable[] = [];
+    public readonly parent: CommandGroup<any> | null;
     /**
      * List of parameters that can passed to this command
      * @type {Array<Parameter<any>>}
@@ -30,7 +29,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly parameters: Parameter<any>[];
-
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
      * @type {?Array<string>}
@@ -38,7 +36,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly aliases?: string[];
-
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -46,7 +43,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly description: string;
-
     /**
      * Command usage displayed in the help message
      * @type {?string}
@@ -54,7 +50,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly usage?: string;
-
     /**
      * Whether this command is visible in the help message (default: true)
      * @type {boolean}
@@ -62,7 +57,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly visible: boolean;
-
     /**
      * Whether this command should be registered as a slash command (default: true)
      * @type {boolean}
@@ -74,11 +68,11 @@ export class ChatCommand extends PermissionGuildCommand {
     /**
      * ChatCommand constructor
      * @constructor
-     * @param {CommandManager} manager - a manager that this command belongs to
+     * @param {CommandManager} parent - a manager that this command belongs to
      * @param {ChatCommandInit} options - {@link ChatCommandInit} object containing all options needed to create a {@link ChatCommand}
      */
-    constructor(manager: CommandManager, options: ChatCommandInit) {
-        super(manager, "CHAT", {
+    constructor(parent: CommandManager | CommandGroup<any>, options: ChatCommandInit) {
+        super(parent instanceof CommandManager ? parent : parent.manager, "CHAT", {
             name: options.name,
             function: options.function,
             announceSuccess: options.announceSuccess,
@@ -87,7 +81,7 @@ export class ChatCommand extends PermissionGuildCommand {
             dm: options.dm,
             ephemeral: options.ephemeral,
         });
-
+        this.parent = parent instanceof CommandGroup ? parent : null;
         if (options.parameters == "no_input" || !options.parameters) {
             this.parameters = [];
         } else if (options.parameters == "simple") {
@@ -96,8 +90,8 @@ export class ChatCommand extends PermissionGuildCommand {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
         this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
-        this.description = options.description ?? "No description";
-        this.usage = options.usage ?? generateUsageFromArguments(this);
+        this.description = options.description ?? DEFAULT_BLANK_DESCRIPTION;
+        this.usage = options.usage ?? ChatCommand.generateUsageFromArguments(this);
         this.visible = options.visible !== undefined ? options.visible : true;
         this.slash = options.slash !== undefined ? options.slash : true;
 
@@ -125,22 +119,22 @@ export class ChatCommand extends PermissionGuildCommand {
         }
     }
 
-    /**
-     * Returns *true* if the command has subcommands attached
-     * @type {boolean}
-     */
-    get hasSubCommands() {
-        return this._children.length > 0;
-    }
+    // /**
+    //  * Returns *true* if the command has subcommands attached
+    //  * @type {boolean}
+    //  */
+    // get hasSubCommands() {
+    //     return this._children.length > 0;
+    // }
 
-    /**
-     * Returns list of attached subcommands
-     * @type {Array<ChildCommandResolvable>}
-     * @readonly
-     */
-    get children() {
-        return Object.freeze([...this._children]);
-    }
+    // /**
+    //  * Returns list of attached subcommands
+    //  * @type {Array<ChildCommandResolvable>}
+    //  * @readonly
+    //  */
+    // get children() {
+    //     return Object.freeze([...this._children]);
+    // }
 
     /**
      * Invoke the command
@@ -156,111 +150,111 @@ export class ChatCommand extends PermissionGuildCommand {
         await super.start(input);
     }
 
-    /**
-     * Attaches subcommand or subcommand group to this ChatCommand
-     * @param {T} type - subcommand type
-     * @param {ChildCommandInit<T>} options  - initialization options
-     * @returns {ChildCommands<T>} A computed subcommand object
-     * @public
-     * @remarks After appending a subcommand or a subcommand group the main command can only be invoked using prefix interactions
-     */
-    public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
-        const command =
-            type === "COMMAND"
-                ? (new SubCommand(this, options as SubCommandInit) as ChildCommands<T>)
-                : type === "GROUP"
-                ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommands<T>)
-                : null;
-        if (!command) {
-            throw new Error("Incorrect command type");
-        }
-        if (this.manager.client.isRunning) {
-            console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
-            return command;
-        }
-        this._children.push(command);
-        return command;
-    }
+    // /**
+    //  * Attaches subcommand or subcommand group to this ChatCommand
+    //  * @param {T} type - subcommand type
+    //  * @param {ChildCommandInit<T>} options  - initialization options
+    //  * @returns {ChildCommands<T>} A computed subcommand object
+    //  * @public
+    //  * @remarks After appending a subcommand or a subcommand group the main command can only be invoked using prefix interactions
+    //  */
+    // public append<T extends ChildCommandType>(type: T, options: ChildCommandInit<T>): ChildCommands<T> {
+    //     const command =
+    //         type === "COMMAND"
+    //             ? (new SubCommand(this, options as SubCommandInit) as ChildCommands<T>)
+    //             : type === "GROUP"
+    //             ? (new SubCommandGroup(this, options as SubCommandGroupInit) as ChildCommands<T>)
+    //             : null;
+    //     if (!command) {
+    //         throw new Error("Incorrect command type");
+    //     }
+    //     if (this.manager.client.isRunning) {
+    //         console.warn(`[❌ ERROR] Cannot add command "${command.name}" while the application is running.`);
+    //         return command;
+    //     }
+    //     this._children.push(command);
+    //     return command;
+    // }
 
-    /**
-     *
-     * @param {Array<CommandInteractionOption>} options - parameter options
-     * @param {Interaction | Message} interaction - Discord interaction
-     * @returns {?InputManager} an {@link InputManager} containing all interaction-related data or *null*
-     * @public
-     */
-    public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
-        if (!this.hasSubCommands) return null;
-        if (options[0]) {
-            if (options[0].type === "SUB_COMMAND_GROUP") {
-                const grName = options[0].name;
-                const group = this._children.filter((c) => c instanceof SubCommandGroup).find((c) => c.name === grName) as SubCommandGroup;
-                const scOpt = options[0].options;
-                if (group && scOpt) {
-                    const scName = scOpt[0].name;
-                    const cmd = group.children.filter((c) => c instanceof SubCommand).find((c) => c.name === scName) as SubCommand;
-                    if (cmd && scOpt[0].options) {
-                        return new InputManager(
-                            cmd,
-                            interaction,
-                            cmd.parameters.map((p, index) => {
-                                if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
-                                    return new InputParameter(p, new ObjectID(scOpt[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
-                                } else {
-                                    return new InputParameter(p, scOpt[0].options?.[index].value ?? null);
-                                }
-                            })
-                        );
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            } else if (options[0].type === "SUB_COMMAND") {
-                const cmd = this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === options[0].name) as SubCommand;
-                if (cmd) {
-                    return new InputManager(
-                        cmd,
-                        interaction,
-                        cmd.parameters.map((p, index) => {
-                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
-                                return new InputParameter(p, new ObjectID(options[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
-                            } else {
-                                return new InputParameter(p, options[0].options?.[index].value ?? null);
-                            }
-                        })
-                    );
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
+    // /**
+    //  *
+    //  * @param {Array<CommandInteractionOption>} options - parameter options
+    //  * @param {Interaction | Message} interaction - Discord interaction
+    //  * @returns {?InputManager} an {@link InputManager} containing all interaction-related data or *null*
+    //  * @public
+    //  */
+    // public fetchSubcommand(options: CommandInteractionOption[], interaction: Interaction | Message): InputManager | null {
+    //     if (!this.hasSubCommands) return null;
+    //     if (options[0]) {
+    //         if (options[0].type === "SUB_COMMAND_GROUP") {
+    //             const grName = options[0].name;
+    //             const group = this._children.filter((c) => c instanceof SubCommandGroup).find((c) => c.name === grName) as SubCommandGroup;
+    //             const scOpt = options[0].options;
+    //             if (group && scOpt) {
+    //                 const scName = scOpt[0].name;
+    //                 const cmd = group.children.filter((c) => c instanceof SubCommand).find((c) => c.name === scName) as SubCommand;
+    //                 if (cmd && scOpt[0].options) {
+    //                     return new InputManager(
+    //                         cmd,
+    //                         interaction,
+    //                         cmd.parameters.map((p, index) => {
+    //                             if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+    //                                 return new InputParameter(p, new ObjectID(scOpt[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
+    //                             } else {
+    //                                 return new InputParameter(p, scOpt[0].options?.[index].value ?? null);
+    //                             }
+    //                         })
+    //                     );
+    //                 } else {
+    //                     return null;
+    //                 }
+    //             } else {
+    //                 return null;
+    //             }
+    //         } else if (options[0].type === "SUB_COMMAND") {
+    //             const cmd = this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === options[0].name) as SubCommand;
+    //             if (cmd) {
+    //                 return new InputManager(
+    //                     cmd,
+    //                     interaction,
+    //                     cmd.parameters.map((p, index) => {
+    //                         if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+    //                             return new InputParameter(p, new ObjectID(options[0].options?.[index].value?.toString() ?? "", p.type, interaction.guild ?? undefined));
+    //                         } else {
+    //                             return new InputParameter(p, options[0].options?.[index].value ?? null);
+    //                         }
+    //                     })
+    //                 );
+    //             } else {
+    //                 return null;
+    //             }
+    //         } else {
+    //             return null;
+    //         }
+    //     } else {
+    //         return null;
+    //     }
+    // }
 
-    /**
-     *
-     * @param {string} name - subcommand name
-     * @param {?string} [group] - name of the group (if any)
-     * @returns {?SubCommand} a {@link SubCommand} object or *null*
-     */
-    public getSubcommand(name: string, group?: string): SubCommand | null {
-        if (!this.hasSubCommands) return null;
-        if (group) {
-            const gr = this._children.filter((c) => c instanceof SubCommandGroup).find((g) => g.name === group) as SubCommandGroup;
-            if (gr) {
-                return gr.children.find((c) => c.name === name) || null;
-            } else {
-                return null;
-            }
-        } else {
-            return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
-        }
-    }
+    // /**
+    //  *
+    //  * @param {string} name - subcommand name
+    //  * @param {?string} [group] - name of the group (if any)
+    //  * @returns {?SubCommand} a {@link SubCommand} object or *null*
+    //  */
+    // public getSubcommand(name: string, group?: string): SubCommand | null {
+    //     if (!this.hasSubCommands) return null;
+    //     if (group) {
+    //         const gr = this._children.filter((c) => c instanceof SubCommandGroup).find((g) => g.name === group) as SubCommandGroup;
+    //         if (gr) {
+    //             return gr.children.find((c) => c.name === name) || null;
+    //         } else {
+    //             return null;
+    //         }
+    //     } else {
+    //         return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
+    //     }
+    // }
 
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
@@ -328,8 +322,17 @@ export class ChatCommand extends PermissionGuildCommand {
                     }
                     return 0;
                 });
-            obj.options = this.hasSubCommands ? this._children.map((sc) => sc.toObject()) : options;
+            // obj.options = this.hasSubCommands ? this._children.map((sc) => sc.toObject()) : options;
         }
         return obj;
+    }
+
+    public static generateUsageFromArguments(cmd: ChatCommand): string {
+        let usageTemplate: string = "";
+        cmd.parameters &&
+            cmd.parameters.map((e) => {
+                usageTemplate += `[${e.name} (${e.choices ? e.choices.join(" / ") : e.type}${e.optional ? ", optional" : ""})] `;
+            });
+        return usageTemplate;
     }
 }

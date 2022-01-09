@@ -1,8 +1,6 @@
 import { MessageEmbed, ReplyMessageOptions } from "discord.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { ContextMenuCommand } from "../ContextMenuCommand.js";
-import { SubCommand } from "../SubCommand.js";
-import { SubCommandGroup } from "..//SubCommandGroup.js";
 import { FunctionCommand } from "../base/FunctionCommand.js";
 import { PermissionCommand } from "../base/PermissionCommand.js";
 import {
@@ -61,11 +59,11 @@ export type BaseCommands<T extends BaseCommandType> = T extends "BASE"
  */
 export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T extends "CONTEXT" ? ContextMenuCommand : never;
 
-/**
- * Child command type selector
- * @type
- */
-export type ChildCommands<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
+// /**
+//  * Child command type selector
+//  * @type
+//  */
+// export type ChildCommands<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
 
 /**
  * Base command initializer selector
@@ -107,11 +105,11 @@ export type BaseCommandResolvable = Command | FunctionCommand | GuildCommand | P
  */
 export type CommandResolvable = ChatCommand | ContextMenuCommand;
 
-/**
- * Child command resolvables
- * @type
- */
-export type ChildCommandResolvable = SubCommandGroup | SubCommand;
+// /**
+//  * Child command resolvables
+//  * @type
+//  */
+// export type ChildCommandResolvable = SubCommandGroup | SubCommand;
 
 /**
  * Context menu command types

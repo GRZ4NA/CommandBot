@@ -72,3 +72,4 @@ export const API_DEFAULT_INTENTS: number[] = [
 export const CLIENT_DEFAULT_OPTIONS: ClientOptions = {
     intents: API_DEFAULT_INTENTS,
 };
+export const DEFAULT_BLANK_DESCRIPTION = "No description";

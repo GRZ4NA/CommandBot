@@ -1,6 +1,7 @@
 import { CategoryChannel, Guild, GuildMember, Interaction, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
 import { MissingParameterError, ParameterTypeError } from "../errors.js";
 import { Command } from "../commands/base/Command.js";
+import { DEFAULT_BLANK_DESCRIPTION } from "../constants.js";
 
 /**
  * Parameter type values
@@ -186,7 +187,7 @@ export class Parameter<T extends ParameterType> {
     constructor(command: Command, options: ParameterSchema) {
         this.command = command;
         this.name = options.name;
-        this.description = options.description || "No description";
+        this.description = options.description ?? DEFAULT_BLANK_DESCRIPTION;
         this.optional = options.optional;
         this.type = options.type as T;
         this.choices = options.choices;
@@ -204,7 +205,7 @@ export class DefaultParameter<T extends "string"> extends Parameter<T> {
     constructor(command: Command) {
         super(command, {
             name: "input",
-            description: "No description",
+            description: DEFAULT_BLANK_DESCRIPTION,
             type: "string",
             optional: true,
         });

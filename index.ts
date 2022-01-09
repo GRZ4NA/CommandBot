@@ -28,13 +28,11 @@ import { PermissionsError, ParameterTypeError, MissingParameterError, OperationS
 import {
     ChildCommandType,
     Commands,
-    ChildCommands,
     CommandInit,
     ChildCommandInit,
     CommandType,
     CommandFunction,
     ContextType,
-    ChildCommandResolvable,
     BaseCommands,
     CommandFunctionReturnTypes,
     BaseCommandType,
@@ -55,8 +53,6 @@ import {
     TextCommandOptionChoiceObject,
 } from "./src/structures/types/api.js";
 import { InputManager } from "./src/structures/InputManager.js";
-import { SubCommand } from "./src/commands/SubCommand.js";
-import { SubCommandGroup } from "./src/commands/SubCommandGroup.js";
 import { ChatCommand } from "./src/commands/ChatCommand.js";
 import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
 import { FunctionCommand } from "./src/commands/base/FunctionCommand.js";
@@ -70,7 +66,14 @@ import { GuildCommand } from "./src/commands/base/GuildCommand.js";
 import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
 import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
 import { BaseObject } from "./src/structures/BaseObject.js";
-import { IS_DEVELOPMENT_VERSION, HELP_DEFAULT_CONFIGURATION, SYSTEM_MESSAGES_DEFAULT_CONFIGURATION, API_DEFAULT_INTENTS, CLIENT_DEFAULT_OPTIONS } from "constants.js";
+import {
+    IS_DEVELOPMENT_VERSION,
+    HELP_DEFAULT_CONFIGURATION,
+    SYSTEM_MESSAGES_DEFAULT_CONFIGURATION,
+    API_DEFAULT_INTENTS,
+    CLIENT_DEFAULT_OPTIONS,
+    DEFAULT_BLANK_DESCRIPTION,
+} from "./src/constants.js";
 
 export {
     Bot,
@@ -99,11 +102,8 @@ export {
     CommandType,
     ChildCommandType,
     Commands,
-    ChildCommands,
     CommandInit,
     ChildCommandInit,
-    SubCommand,
-    SubCommandGroup,
     ChatCommand,
     ContextMenuCommand,
     ObjectIdType,
@@ -120,7 +120,6 @@ export {
     ObjectIdReturnType,
     TargetIdReturnType,
     SystemMessageManager,
-    ChildCommandResolvable,
     CommandPermissions,
     RegisteredCommandObject,
     HelpMessage,
@@ -155,4 +154,5 @@ export {
     SYSTEM_MESSAGES_DEFAULT_CONFIGURATION,
     API_DEFAULT_INTENTS,
     CLIENT_DEFAULT_OPTIONS,
+    DEFAULT_BLANK_DESCRIPTION,
 };
