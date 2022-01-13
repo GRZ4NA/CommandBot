@@ -64,7 +64,6 @@ export interface BotConfiguration {
      */
     contextMenuCommands?: ContextMenuCommandInit[];
 }
-
 /**
  * Discord API application identifier and access token
  * @interface
@@ -81,7 +80,6 @@ export interface BotCredentials {
      */
     applicationId: string;
 }
-
 export declare interface Bot {
     /**
      * Emitted after connecting to Discord API
@@ -124,7 +122,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly name: string;
-
     /**
      * Discord.js {@link Client} instance
      * @type {Client}
@@ -132,7 +129,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly client: Client;
-
     /**
      * Instance command manager
      * @type {CommandManager}
@@ -140,7 +136,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly commands: CommandManager;
-
     /**
      * Discord Bot token
      * @type {string}
@@ -148,7 +143,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly token: string;
-
     /**
      * Discord API application ID
      * @type {string}
@@ -156,7 +150,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly applicationId: string;
-
     /**
      * {@link SystemMessageManager} storing messages' configuration
      * @type {SystemMessageManager}
@@ -313,5 +306,3 @@ export class Bot extends EventEmitter {
         }
     }
 }
-
-export default Bot;

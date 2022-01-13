@@ -13,19 +13,16 @@ import { InputManager } from "../../structures/InputManager.js";
  * @type
  */
 export type BaseCommandType = "BASE" | "FUNCTION" | "GUILD" | "PERMISSION" | "PERMISSIONGUILD";
-
 /**
  * Command types
  * @type
  */
 export type CommandType = "CHAT" | "CONTEXT";
-
 /**
  * Child command types
  * @type
  */
 export type ChildCommandType = "COMMAND" | "GROUP";
-
 /**
  * Base command type selector
  * @type
@@ -41,19 +38,16 @@ export type BaseCommands<T extends BaseCommandType> = T extends "BASE"
     : T extends "PERMISSIONGUILD"
     ? PermissionGuildCommand
     : never;
-
 /**
  * Command type selector
  * @type
  */
 export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T extends "CONTEXT" ? ContextMenuCommand : never;
-
 // /**
 //  * Child command type selector
 //  * @type
 //  */
 // export type ChildCommands<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
-
 /**
  * Base command initializer selector
  * @type
@@ -69,37 +63,31 @@ export type BaseCommandInit<T extends BaseCommandType> = T extends "BASE"
     : T extends "PERMISSIONGUILD"
     ? PermissionGuildCommandInit
     : never;
-
 /**
  * Command initializer selector
  * @type
  */
 export type CommandInitializer<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
-
 // /**
 //  * Child command initializer selector
 //  * @type
 //  */
 // export type ChildCommandInit<T extends ChildCommandType> = T extends "COMMAND" ? SubCommandInit : T extends "GROUP" ? SubCommandGroupInit : never;
-
 /**
  * Base command resolvables
  * @type
  */
 export type BaseCommandResolvable = Command | FunctionCommand | GuildCommand | PermissionCommand | PermissionGuildCommand;
-
 /**
  * Command resolvables
  * @type
  */
 export type CommandResolvable = ChatCommand | ContextMenuCommand;
-
 // /**
 //  * Child command resolvables
 //  * @type
 //  */
 // export type ChildCommandResolvable = SubCommandGroup | SubCommand;
-
 /**
  * Context menu command types
  *
@@ -109,13 +97,11 @@ export type CommandResolvable = ChatCommand | ContextMenuCommand;
  * @type
  */
 export type ContextType = "USER" | "MESSAGE";
-
 /**
  * All types that can be returned from a command function
  * @type
  */
 export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
-
 /**
  * Command function definition
  *
@@ -133,7 +119,6 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
  * @type
  */
 export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;
-
 /**
  * Regular expressions used globally to perform name checking
  * @property {RegExp} baseName - base command name (used for context menu)
@@ -149,7 +134,6 @@ export const CommandRegExps = {
     separator: /[^ ]{1,}$/,
     prefix: /[^/ ]{1,}$/,
 };
-
 /**
  * Ephemeral response types
  *

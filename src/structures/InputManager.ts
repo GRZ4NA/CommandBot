@@ -15,7 +15,6 @@ export class InputManager {
      * @readonly
      */
     public readonly command: FunctionCommand;
-
     /**
      * Command interaction or message
      * @type {Interaction | Message}
@@ -23,7 +22,6 @@ export class InputManager {
      * @readonly
      */
     public readonly interaction: Interaction | Message;
-
     /**
      * Command target (when using context menu interactions)
      * @type {?TargetID<any>}
@@ -31,7 +29,6 @@ export class InputManager {
      * @readonly
      */
     public readonly target?: TargetID<any>;
-
     /**
      * All input arguments
      * @type {Array<InputParameter<any>>}

@@ -6,7 +6,6 @@
  * @type
  */
 export type APICommandType = "CHAT_INPUT" | "USER" | "MESSAGE";
-
 /**
  * Discord base API command object
  * @interface
@@ -23,7 +22,6 @@ export interface APICommandObject {
      */
     default_permission: boolean;
 }
-
 /**
  * Discord CHAT_INPUT command object
  * @interface
@@ -46,7 +44,6 @@ export interface ChatCommandObject extends APICommandObject {
      */
     options?: ChatCommandOptionObject[];
 }
-
 /**
  * Discord CHAT_INPUT command option object
  * @interface
@@ -85,13 +82,11 @@ export interface ChatCommandOptionObject {
      */
     options?: ChatCommandOptionObject[];
 }
-
 /**
  * Acceptable CHAT_INPUT command option types (read more [here](https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type))
  * @type
  */
 export type ChatCommandOptionType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-
 /**
  * Discord CHAT_INPUT command choice object
  * @interface
@@ -100,7 +95,6 @@ export interface TextCommandOptionChoiceObject {
     name: string;
     value: string;
 }
-
 /**
  * Context menu command object
  * @interface
@@ -109,13 +103,11 @@ export interface TextCommandOptionChoiceObject {
 export interface ContextMenuCommandObject extends APICommandObject {
     type: 2 | 3;
 }
-
 // export interface NestedCommandObject extends APICommandObject {
 //     type: 1;
 //     description: string;
 //     options: (ChatCommandObject | SubCommandGroupObject)[];
 // }
-
 /**
  * API representation of subcommand group
  * @extends APICommandObject
@@ -125,7 +117,6 @@ export interface SubCommandGroupObject extends APICommandObject {
     description: string;
     options: ChatCommandObject[];
 }
-
 /**
  * Discord registered command object
  */
@@ -140,12 +131,10 @@ export interface RegisteredCommandObject {
     default_permissions?: boolean;
     version: string;
 }
-
 /**
  * Discord permission types
  */
 export type CommandPermissionType = "ROLE" | "USER";
-
 /**
  * Discord permissions object
  */

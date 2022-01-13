@@ -7,7 +7,6 @@ import { DEFAULT_BLANK_DESCRIPTION } from "../constants";
 export type CommandGroupChildrenType<T extends CommandManager | CommandGroup<CommandManager>> = T extends CommandManager
     ? (ChatCommand | CommandGroup<CommandGroup<CommandManager>>)[]
     : ChatCommand[];
-
 export type CommandGroupInitChildrenType<T extends CommandManager | CommandGroup<CommandManager>> = T extends CommandManager
     ? (ChatCommandInit | CommandGroupInit<CommandGroup<CommandManager>>)[]
     : ChatCommandInit[];

@@ -9,7 +9,6 @@ import { BaseObject } from "./BaseObject.js";
  * @type
  */
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND" | "SUCCESS";
-
 /**
  * Configuration of a system message
  * @interface
@@ -52,7 +51,6 @@ export interface SystemMessageAppearance {
      */
     deleteTimeout?: number;
 }
-
 /**
  * System message data definition
  * @interface
@@ -63,26 +61,22 @@ export interface SystemMessageData {
      * @type {?FunctionCommand}
      */
     command?: FunctionCommand;
-
     /**
      * Phrase received from a Discord channel
      * @type {?string}
      */
     phrase?: string;
-
     /**
      * User who used the bot
      * @type {?GuildMember | User}
      */
     user?: GuildMember | User;
-
     /**
      * Error object
      * @type {?Error | PermissionsError | string}
      */
     error?: Error | PermissionsError | string;
 }
-
 export interface SystemMessageConfiguration {
     ERROR: SystemMessageAppearance;
     NOT_FOUND: SystemMessageAppearance;

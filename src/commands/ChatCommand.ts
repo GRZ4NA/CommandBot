@@ -125,7 +125,6 @@ export class ChatCommand extends PermissionGuildCommand {
     // get hasSubCommands() {
     //     return this._children.length > 0;
     // }
-
     // /**
     //  * Returns list of attached subcommands
     //  * @type {Array<ChildCommandResolvable>}
@@ -134,7 +133,6 @@ export class ChatCommand extends PermissionGuildCommand {
     // get children() {
     //     return Object.freeze([...this._children]);
     // }
-
     /**
      * Invoke the command
      * @param {InputManager} input - input data manager
@@ -148,7 +146,6 @@ export class ChatCommand extends PermissionGuildCommand {
         }
         await super.start(input);
     }
-
     // /**
     //  * Attaches subcommand or subcommand group to this ChatCommand
     //  * @param {T} type - subcommand type
@@ -174,7 +171,6 @@ export class ChatCommand extends PermissionGuildCommand {
     //     this._children.push(command);
     //     return command;
     // }
-
     // /**
     //  *
     //  * @param {Array<CommandInteractionOption>} options - parameter options
@@ -234,7 +230,6 @@ export class ChatCommand extends PermissionGuildCommand {
     //         return null;
     //     }
     // }
-
     // /**
     //  *
     //  * @param {string} name - subcommand name
@@ -254,7 +249,6 @@ export class ChatCommand extends PermissionGuildCommand {
     //         return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
     //     }
     // }
-
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {ChatCommandObject} Discord API object
@@ -325,7 +319,6 @@ export class ChatCommand extends PermissionGuildCommand {
         }
         return obj;
     }
-
     public static generateUsageFromArguments(cmd: ChatCommand): string {
         let usageTemplate: string = "";
         cmd.parameters &&

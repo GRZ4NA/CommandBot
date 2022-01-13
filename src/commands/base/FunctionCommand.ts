@@ -75,7 +75,6 @@ export class FunctionCommand extends Command {
         if (input.interaction instanceof Interaction) await input.interaction.deferReply({ ephemeral: this.ephemeral !== "NONE" });
         await this.handleReply(input.interaction, await this._function(input));
     }
-
     /**
      * Reply handler
      * @param {Message | Interaction} interaction - Discord interaction object
