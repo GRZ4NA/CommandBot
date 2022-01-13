@@ -1,8 +1,7 @@
 import { FunctionCommand } from "./base/FunctionCommand";
 import { ChatCommandObject } from "../structures/types/api";
-import { ChatCommandInit } from "../commands/types/InitOptions";
 import { CommandManager } from "../structures/CommandManager";
-import { ChatCommand } from "./ChatCommand";
+import { ChatCommand, ChatCommandInit } from "./ChatCommand";
 import { DEFAULT_BLANK_DESCRIPTION } from "../constants";
 
 export type CommandGroupChildrenType<T extends CommandManager | CommandGroup<CommandManager>> = T extends CommandManager

@@ -8,7 +8,8 @@ import { InputManager } from "./InputManager.js";
 import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { HelpMessageParams } from "../commands/Help.js";
 import { CLIENT_DEFAULT_OPTIONS, HELP_DEFAULT_CONFIGURATION, IS_DEVELOPMENT_VERSION, SYSTEM_MESSAGES_DEFAULT_CONFIGURATION } from "../constants.js";
-import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
+import { ChatCommandInit } from "../commands/ChatCommand.js";
+import { ContextMenuCommandInit } from "../commands/ContextMenuCommand.js";
 
 /**
  * Main object initialization options
