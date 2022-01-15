@@ -1,7 +1,7 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
 import { DefaultParameter, InputParameter, ObjectID, Parameter, ParameterSchema } from "../structures/Parameter";
 import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/apiTypes";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./commandsTypes";
 import { CommandManager } from "../structures/CommandManager";
 import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";

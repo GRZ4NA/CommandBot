@@ -2,9 +2,9 @@ import { PermissionsError } from "../../errors";
 import { CommandManager } from "../../structures/CommandManager";
 import { CommandPermissions } from "../../structures/CommandPermissions";
 import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand";
-import { CommandType } from "../types/commands";
+import { CommandType } from "../commandsTypes";
 import { InputManager } from "../../structures/InputManager";
-import { CommandPermissionsInit } from "../types/permissions";
+import { CommandPermissionsInit } from "../../structures/CommandPermissions";
 
 /**
  * Initialization options of base command with attached permissions

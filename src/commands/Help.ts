@@ -3,7 +3,7 @@ import { ChatCommand } from "./ChatCommand";
 import { CommandManager } from "../structures/CommandManager";
 import { SubCommand } from "./SubCommand";
 import { SubCommandGroup } from "./SubCommandGroup";
-import { EphemeralType } from "./types/commands";
+import { EphemeralType } from "./commandsTypes";
 
 /**
  * All properties used to customize the appearance of a help message

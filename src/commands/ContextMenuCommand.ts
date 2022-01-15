@@ -1,6 +1,6 @@
 import { CommandManager } from "../structures/CommandManager";
 import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
-import { ContextType } from "./types/commands";
+import { ContextType } from "./commandsTypes";
 import { ContextMenuCommandObject } from "../structures/apiTypes";
 
 /**

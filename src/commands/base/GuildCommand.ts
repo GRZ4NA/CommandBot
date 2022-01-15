@@ -1,6 +1,6 @@
 import { CommandManager } from "../../structures/CommandManager";
 import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand";
-import { CommandType } from "../types/commands";
+import { CommandType } from "../commandsTypes";
 import { InputManager } from "../../structures/InputManager";
 
 /**

@@ -1,4 +1,4 @@
-import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands";
+import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../commandsTypes";
 import { CommandManager } from "../../structures/CommandManager";
 import { APICommandObject } from "../../structures/apiTypes";
 import { FunctionCommand } from "./FunctionCommand";

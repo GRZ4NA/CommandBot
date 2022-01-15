@@ -1,25 +1,14 @@
 import { MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { ChatCommand } from "../ChatCommand";
-import { ContextMenuCommand } from "../ContextMenuCommand";
-import { SubCommand } from "../SubCommand";
-import { SubCommandGroup } from "..//SubCommandGroup";
-import { FunctionCommand } from "../base/FunctionCommand";
-import { PermissionCommand } from "../base/PermissionCommand";
-import {
-    APICommandInit,
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-    SubCommandGroupInit,
-    SubCommandInit,
-} from "./InitOptions.js";
-import { GuildCommand } from "../base/GuildCommand.js";
-import { PermissionGuildCommand } from "../base/PermissionGuildCommand.js";
-import { Command } from "..//base/Command.js";
-import { InputManager } from "../../structures/InputManager.js";
+import { ChatCommand, ChatCommandInit } from "./ChatCommand";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./ContextMenuCommand";
+import { SubCommand, SubCommandInit } from "./SubCommand";
+import { SubCommandGroup, SubCommandGroupInit } from "./SubCommandGroup";
+import { FunctionCommand, FunctionCommandInit } from "./base/FunctionCommand";
+import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand";
+import { GuildCommand, GuildCommandInit } from "./base/GuildCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
+import { APICommandInit, Command } from "./base/Command.js";
+import { InputManager } from "../structures/InputManager.js";
 
 /**
  * Types of command bases

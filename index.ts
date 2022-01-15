@@ -28,8 +28,7 @@ import {
     CommandFunctionReturnTypes,
     BaseCommandType,
     EphemeralType,
-} from "./src/commands/types/commands";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/commands/types/permissions";
+} from "./src/commands/commandsTypes";
 import {
     APICommandObject,
     APICommandType,
@@ -52,7 +51,7 @@ import { FunctionCommand, FunctionCommandInit } from "./src/commands/base/Functi
 import { APICommandInit, Command } from "./src/commands/base/Command";
 import { CommandManager } from "./src/structures/CommandManager";
 import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/SystemMessage";
-import { CommandPermissions } from "./src/structures/CommandPermissions";
+import { CommandPermissions, CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/structures/CommandPermissions";
 import { HelpMessage, HelpMessageParams } from "./src/commands/Help";
 import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager";
 import { GuildCommand, GuildCommandInit } from "./src/commands/base/GuildCommand";

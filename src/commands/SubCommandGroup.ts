@@ -2,7 +2,7 @@ import { SubCommandGroupObject } from "../structures/apiTypes";
 import { APICommandInit, Command } from "./base/Command";
 import { ChatCommand } from "./ChatCommand";
 import { SubCommand, SubCommandInit } from "./SubCommand";
-import { CommandRegExps } from "./types/commands";
+import { CommandRegExps } from "./commandsTypes";
 
 /**
  * Intialization options of subcommand group

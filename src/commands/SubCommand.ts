@@ -2,7 +2,7 @@ import { generateUsageFromArguments } from "../utils/generateUsageFromArguments"
 import { DefaultParameter, Parameter, ParameterSchema } from "../structures/Parameter";
 import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand";
 import { SubCommandGroup } from "./SubCommandGroup";
-import { CommandRegExps } from "./types/commands";
+import { CommandRegExps } from "./commandsTypes";
 import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/apiTypes";
 import { ChatCommand } from "./ChatCommand";
 import { InputManager } from "../structures/InputManager";

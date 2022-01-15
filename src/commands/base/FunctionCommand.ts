@@ -2,7 +2,7 @@ import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord
 import { OperationSuccess } from "../../errors";
 import { APICommandInit, Command } from "./Command";
 import { CommandManager } from "../../structures/CommandManager";
-import { CommandFunction, CommandType, EphemeralType } from "../types/commands";
+import { CommandFunction, CommandType, EphemeralType } from "../commandsTypes";
 import { InputManager } from "../../structures/InputManager";
 
 /**

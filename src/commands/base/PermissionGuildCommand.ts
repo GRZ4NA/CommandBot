@@ -1,7 +1,7 @@
 import { CommandManager } from "../../structures/CommandManager";
 import { GuildCommand } from "./GuildCommand";
 import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand";
-import { CommandType } from "../types/commands";
+import { CommandType } from "../commandsTypes";
 import { InputManager } from "../../structures/InputManager";
 
 /**
