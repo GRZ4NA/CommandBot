@@ -1,10 +1,10 @@
-import { PermissionsError } from "../../errors.js";
-import { CommandManager } from "../../structures/CommandManager.js";
-import { CommandPermissions } from "../../structures/CommandPermissions.js";
-import { FunctionCommand } from "./FunctionCommand.js";
-import { PermissionCommandInit } from "../types/InitOptions.js";
-import { CommandType } from "../types/commands.js";
-import { InputManager } from "../../structures/InputManager.js";
+import { PermissionsError } from "../../errors";
+import { CommandManager } from "../../structures/CommandManager";
+import { CommandPermissions } from "../../structures/CommandPermissions";
+import { FunctionCommand } from "./FunctionCommand";
+import { PermissionCommandInit } from "../types/InitOptions";
+import { CommandType } from "../types/commands";
+import { InputManager } from "../../structures/InputManager";
 
 /**
  * Executable command with attached permission system

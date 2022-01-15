@@ -1,8 +1,8 @@
-import { ContextMenuCommandInit } from "./types/InitOptions.js";
-import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
-import { ContextType } from "./types/commands.js";
-import { ContextMenuCommandObject } from "../structures/types/api.js";
+import { ContextMenuCommandInit } from "./types/InitOptions";
+import { CommandManager } from "../structures/CommandManager";
+import { PermissionGuildCommand } from "./base/PermissionGuildCommand";
+import { ContextType } from "./types/commands";
+import { ContextMenuCommandObject } from "../structures/types/api";
 
 /**
  * Representation of all context menu Discord interactions

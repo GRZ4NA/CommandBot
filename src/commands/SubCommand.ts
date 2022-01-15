@@ -1,12 +1,12 @@
-import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { DefaultParameter, Parameter } from "../structures/Parameter.js";
-import { PermissionCommand } from "./base/PermissionCommand.js";
-import { SubCommandGroup } from "./SubCommandGroup.js";
-import { CommandRegExps } from "./types/commands.js";
-import { SubCommandInit } from "./types/InitOptions.js";
-import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/types/api.js";
-import { ChatCommand } from "./ChatCommand.js";
-import { InputManager } from "../structures/InputManager.js";
+import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
+import { DefaultParameter, Parameter } from "../structures/Parameter";
+import { PermissionCommand } from "./base/PermissionCommand";
+import { SubCommandGroup } from "./SubCommandGroup";
+import { CommandRegExps } from "./types/commands";
+import { SubCommandInit } from "./types/InitOptions";
+import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/types/api";
+import { ChatCommand } from "./ChatCommand";
+import { InputManager } from "../structures/InputManager";
 
 /**
  * Representation of SUB_COMMAND Discord interaction

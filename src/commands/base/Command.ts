@@ -1,13 +1,13 @@
-import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands.js";
-import { CommandManager } from "../../structures/CommandManager.js";
-import { APICommandObject } from "../../structures/types/api.js";
-import { APICommandInit } from "../types/InitOptions.js";
-import { FunctionCommand } from "./FunctionCommand.js";
-import { GuildCommand } from "./GuildCommand.js";
-import { PermissionCommand } from "./PermissionCommand.js";
-import { CommandPermissions } from "../../structures/CommandPermissions.js";
-import { ChatCommand } from "../ChatCommand.js";
-import { SubCommand } from "../SubCommand.js";
+import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands";
+import { CommandManager } from "../../structures/CommandManager";
+import { APICommandObject } from "../../structures/types/api";
+import { APICommandInit } from "../types/InitOptions";
+import { FunctionCommand } from "./FunctionCommand";
+import { GuildCommand } from "./GuildCommand";
+import { PermissionCommand } from "./PermissionCommand";
+import { CommandPermissions } from "../../structures/CommandPermissions";
+import { ChatCommand } from "../ChatCommand";
+import { SubCommand } from "../SubCommand";
 
 /**
  * Bot core command object

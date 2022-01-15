@@ -1,15 +1,15 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
-import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
-import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
-import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
-import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { SubCommand } from "./SubCommand.js";
-import { SubCommandGroup } from "./SubCommandGroup.js";
-import { applicationState } from "../state.js";
-import { InputManager } from "../structures/InputManager.js";
+import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions";
+import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands";
+import { CommandManager } from "../structures/CommandManager";
+import { PermissionGuildCommand } from "./base/PermissionGuildCommand";
+import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
+import { SubCommand } from "./SubCommand";
+import { SubCommandGroup } from "./SubCommandGroup";
+import { applicationState } from "../state";
+import { InputManager } from "../structures/InputManager";
 
 /**
  * A representation of CHAT_INPUT command (also known as a slash command)

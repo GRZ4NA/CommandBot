@@ -1,8 +1,8 @@
-import { CommandManager } from "../../structures/CommandManager.js";
-import { FunctionCommand } from "./FunctionCommand.js";
-import { GuildCommandInit } from "../types/InitOptions.js";
-import { CommandType } from "../types/commands.js";
-import { InputManager } from "../../structures/InputManager.js";
+import { CommandManager } from "../../structures/CommandManager";
+import { FunctionCommand } from "./FunctionCommand";
+import { GuildCommandInit } from "../types/InitOptions";
+import { CommandType } from "../types/commands";
+import { InputManager } from "../../structures/InputManager";
 
 /**
  * Guild-scoped executable command

@@ -1,9 +1,9 @@
-import { PermissionGuildCommandInit } from "../types/InitOptions.js";
+import { PermissionGuildCommandInit } from "../types/InitOptions";
 import { CommandManager } from "../../structures/CommandManager";
-import { GuildCommand } from "./GuildCommand.js";
-import { PermissionCommand } from "./PermissionCommand.js";
-import { CommandType } from "../types/commands.js";
-import { InputManager } from "../../structures/InputManager.js";
+import { GuildCommand } from "./GuildCommand";
+import { PermissionCommand } from "./PermissionCommand";
+import { CommandType } from "../types/commands";
+import { InputManager } from "../../structures/InputManager";
 
 /**
  * Guild-scoped executable command with permissions attached

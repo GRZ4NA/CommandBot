@@ -1,6 +1,6 @@
 import { Interaction, Permissions, Message } from "discord.js";
-import { PermissionCommand } from "../commands/base/PermissionCommand.js";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions.js";
+import { PermissionCommand } from "../commands/base/PermissionCommand";
+import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions";
 
 /**
  * Object that stores permission resolvables and properties (bouund to a {@link PermissionCommand})

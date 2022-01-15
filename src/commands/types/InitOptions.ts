@@ -1,6 +1,6 @@
-import { ParameterSchema } from "../../structures/Parameter.js";
-import { CommandPermissionsInit } from "./permissions.js";
-import { CommandFunction, ContextType, EphemeralType } from "./commands.js";
+import { ParameterSchema } from "../../structures/Parameter";
+import { CommandPermissionsInit } from "./permissions";
+import { CommandFunction, ContextType, EphemeralType } from "./commands";
 
 /**
  * Initialization options of core {@link Command} object

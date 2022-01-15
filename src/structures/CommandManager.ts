@@ -1,21 +1,21 @@
 import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
-import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
-import { CommandNotFound } from "../errors.js";
-import { applicationState } from "../state.js";
-import { ChatCommand } from "../commands/ChatCommand.js";
-import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
-import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
-import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
-import { Bot } from "./Bot.js";
-import { SubCommand } from "../commands/SubCommand.js";
-import { SubCommandGroup } from "../commands/SubCommandGroup.js";
-import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
-import { HelpMessageParams } from "../commands/Help.js";
-import { HelpMessage } from "../commands/Help.js";
-import { PrefixManager } from "./PrefixManager.js";
-import { Command } from "../commands/base/Command.js";
-import { InputManager } from "./InputManager.js";
+import { InputParameter, ObjectID, TargetID } from "./Parameter";
+import { CommandNotFound } from "../errors";
+import { applicationState } from "../state";
+import { ChatCommand } from "../commands/ChatCommand";
+import { ContextMenuCommand } from "../commands/ContextMenuCommand";
+import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands";
+import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api";
+import { Bot } from "./Bot";
+import { SubCommand } from "../commands/SubCommand";
+import { SubCommandGroup } from "../commands/SubCommandGroup";
+import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions";
+import { HelpMessageParams } from "../commands/Help";
+import { HelpMessage } from "../commands/Help";
+import { PrefixManager } from "./PrefixManager";
+import { Command } from "../commands/base/Command";
+import { InputManager } from "./InputManager";
 
 /**
  * Object that stores the registered commands and is responsible for data exchanging with the Discord API
