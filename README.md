@@ -229,6 +229,7 @@ const cmd = bot.commands.add("CHAT", {
 cmd.append("COMMAND", {
     name: "child",
     description: "This is a subcommand",
+    aliases: ["ch"],
 });
 
 // Create and append a subcommand group
@@ -241,6 +242,7 @@ const group = cmd.append("GROUP", {
 group.append({
     name: "group_command",
     description: "This is a subcommand that is a child of the command_group",
+    aliases: ["subch"],
 });
 ```
 
