@@ -1,20 +1,20 @@
 import axios, { AxiosResponse } from "axios";
 import { Guild, Interaction, Message } from "discord.js";
-import { InputParameter, ObjectID, TargetID } from "./Parameter";
-import { CommandNotFound } from "../errors";
-import { applicationState } from "../state";
-import { ChatCommand, ChatCommandInit } from "../commands/ChatCommand";
-import { ContextMenuCommand, ContextMenuCommandInit } from "../commands/ContextMenuCommand";
-import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/commandsTypes";
-import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./apiTypes";
-import { Bot } from "./Bot";
-import { SubCommand } from "../commands/SubCommand";
-import { SubCommandGroup } from "../commands/SubCommandGroup";
-import { HelpMessageParams } from "../commands/Help";
-import { HelpMessage } from "../commands/Help";
-import { PrefixManager } from "./PrefixManager";
-import { Command } from "../commands/base/Command";
-import { InputManager } from "./InputManager";
+import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
+import { CommandNotFound } from "../errors.js";
+import { applicationState } from "../state.js";
+import { ChatCommand, ChatCommandInit } from "../commands/ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "../commands/ContextMenuCommand.js";
+import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/commandsTypes.js";
+import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./apiTypes.js";
+import { Bot } from "./Bot.js";
+import { SubCommand } from "../commands/SubCommand.js";
+import { SubCommandGroup } from "../commands/SubCommandGroup.js";
+import { HelpMessageParams } from "../commands/Help.js";
+import { HelpMessage } from "../commands/Help.js";
+import { PrefixManager } from "./PrefixManager.js";
+import { Command } from "../commands/base/Command.js";
+import { InputManager } from "./InputManager.js";
 
 /**
  * Object that stores the registered commands and is responsible for data exchanging with the Discord API

@@ -1,7 +1,7 @@
 import { ColorResolvable, DMChannel, GuildMember, Interaction, Message, MessageEmbed, Permissions, TextChannel, User } from "discord.js";
-import { FunctionCommand } from "../commands/base/FunctionCommand";
-import { PermissionsError } from "../errors";
-import Bot from "./Bot";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
+import { PermissionsError } from "../errors.js";
+import Bot from "./Bot.js";
 
 /**
  * Types of system messages

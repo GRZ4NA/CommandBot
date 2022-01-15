@@ -1,7 +1,7 @@
-import { CommandManager } from "../../structures/CommandManager";
-import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand";
-import { CommandType } from "../commandsTypes";
-import { InputManager } from "../../structures/InputManager";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand.js";
+import { CommandType } from "../commandsTypes.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 /**
  * Initialization options of base guild-scoped command

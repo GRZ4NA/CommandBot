@@ -1,12 +1,12 @@
-import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../commandsTypes";
-import { CommandManager } from "../../structures/CommandManager";
-import { APICommandObject } from "../../structures/apiTypes";
-import { FunctionCommand } from "./FunctionCommand";
-import { GuildCommand } from "./GuildCommand";
-import { PermissionCommand } from "./PermissionCommand";
-import { CommandPermissions } from "../../structures/CommandPermissions";
-import { ChatCommand } from "../ChatCommand";
-import { SubCommand } from "../SubCommand";
+import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../commandsTypes.js";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { APICommandObject } from "../../structures/apiTypes.js";
+import { FunctionCommand } from "./FunctionCommand.js";
+import { GuildCommand } from "./GuildCommand.js";
+import { PermissionCommand } from "./PermissionCommand.js";
+import { CommandPermissions } from "../../structures/CommandPermissions.js";
+import { ChatCommand } from "../ChatCommand.js";
+import { SubCommand } from "../SubCommand.js";
 
 /**
  * Initialization options of core {@link Command} object

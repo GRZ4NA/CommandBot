@@ -1,10 +1,10 @@
-import { PermissionsError } from "../../errors";
-import { CommandManager } from "../../structures/CommandManager";
-import { CommandPermissions } from "../../structures/CommandPermissions";
-import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand";
-import { CommandType } from "../commandsTypes";
-import { InputManager } from "../../structures/InputManager";
-import { CommandPermissionsInit } from "../../structures/CommandPermissions";
+import { PermissionsError } from "../../errors.js";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { CommandPermissions } from "../../structures/CommandPermissions.js";
+import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand.js";
+import { CommandType } from "../commandsTypes.js";
+import { InputManager } from "../../structures/InputManager.js";
+import { CommandPermissionsInit } from "../../structures/CommandPermissions.js";
 
 /**
  * Initialization options of base command with attached permissions

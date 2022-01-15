@@ -1,8 +1,8 @@
-import { CommandManager } from "../../structures/CommandManager";
-import { GuildCommand } from "./GuildCommand";
-import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand";
-import { CommandType } from "../commandsTypes";
-import { InputManager } from "../../structures/InputManager";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { GuildCommand } from "./GuildCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand.js";
+import { CommandType } from "../commandsTypes.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 /**
  * Initialization options of base guild-scoped command with attached permisisions

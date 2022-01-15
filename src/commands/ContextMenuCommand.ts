@@ -1,7 +1,7 @@
-import { CommandManager } from "../structures/CommandManager";
-import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
-import { ContextType } from "./commandsTypes";
-import { ContextMenuCommandObject } from "../structures/apiTypes";
+import { CommandManager } from "../structures/CommandManager.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
+import { ContextType } from "./commandsTypes.js";
+import { ContextMenuCommandObject } from "../structures/apiTypes.js";
 
 /**
  * Initialization options of context menu interactions

@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
-import { CommandManager } from "./CommandManager";
-import { CommandRegExps } from "../commands/commandsTypes";
+import { CommandManager } from "./CommandManager.js";
+import { CommandRegExps } from "../commands/commandsTypes.js";
 
 /**
  * Prefix scope types

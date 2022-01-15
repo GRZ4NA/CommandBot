@@ -1,8 +1,8 @@
-import { SubCommandGroupObject } from "../structures/apiTypes";
-import { APICommandInit, Command } from "./base/Command";
-import { ChatCommand } from "./ChatCommand";
-import { SubCommand, SubCommandInit } from "./SubCommand";
-import { CommandRegExps } from "./commandsTypes";
+import { SubCommandGroupObject } from "../structures/apiTypes.js";
+import { APICommandInit, Command } from "./base/Command.js";
+import { ChatCommand } from "./ChatCommand.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
+import { CommandRegExps } from "./commandsTypes.js";
 
 /**
  * Intialization options of subcommand group

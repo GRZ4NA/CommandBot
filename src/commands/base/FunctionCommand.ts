@@ -1,9 +1,9 @@
 import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { OperationSuccess } from "../../errors";
-import { APICommandInit, Command } from "./Command";
-import { CommandManager } from "../../structures/CommandManager";
-import { CommandFunction, CommandType, EphemeralType } from "../commandsTypes";
-import { InputManager } from "../../structures/InputManager";
+import { OperationSuccess } from "../../errors.js";
+import { APICommandInit, Command } from "./Command.js";
+import { CommandManager } from "../../structures/CommandManager.js";
+import { CommandFunction, CommandType, EphemeralType } from "../commandsTypes.js";
+import { InputManager } from "../../structures/InputManager.js";
 
 /**
  * Initialization options of base executable command

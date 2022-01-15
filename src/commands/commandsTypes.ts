@@ -1,10 +1,10 @@
 import { MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { ChatCommand, ChatCommandInit } from "./ChatCommand";
-import { ContextMenuCommand, ContextMenuCommandInit } from "./ContextMenuCommand";
-import { SubCommand, SubCommandInit } from "./SubCommand";
-import { SubCommandGroup, SubCommandGroupInit } from "./SubCommandGroup";
-import { FunctionCommand, FunctionCommandInit } from "./base/FunctionCommand";
-import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand";
+import { ChatCommand, ChatCommandInit } from "./ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./ContextMenuCommand.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
+import { SubCommandGroup, SubCommandGroupInit } from "./SubCommandGroup.js";
+import { FunctionCommand, FunctionCommandInit } from "./base/FunctionCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand.js";
 import { GuildCommand, GuildCommandInit } from "./base/GuildCommand.js";
 import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
 import { APICommandInit, Command } from "./base/Command.js";

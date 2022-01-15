@@ -1,9 +1,9 @@
 import { Interaction, Message, MessageEmbed, Permissions, ColorResolvable } from "discord.js";
-import { ChatCommand } from "./ChatCommand";
-import { CommandManager } from "../structures/CommandManager";
-import { SubCommand } from "./SubCommand";
-import { SubCommandGroup } from "./SubCommandGroup";
-import { EphemeralType } from "./commandsTypes";
+import { ChatCommand } from "./ChatCommand.js";
+import { CommandManager } from "../structures/CommandManager.js";
+import { SubCommand } from "./SubCommand.js";
+import { SubCommandGroup } from "./SubCommandGroup.js";
+import { EphemeralType } from "./commandsTypes.js";
 
 /**
  * All properties used to customize the appearance of a help message

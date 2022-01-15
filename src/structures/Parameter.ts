@@ -1,6 +1,6 @@
 import { CategoryChannel, Guild, GuildMember, Interaction, Message, NewsChannel, Role, StageChannel, StoreChannel, TextChannel, VoiceChannel } from "discord.js";
-import { MissingParameterError, ParameterTypeError } from "../errors";
-import { Command } from "../commands/base/Command";
+import { MissingParameterError, ParameterTypeError } from "../errors.js";
+import { Command } from "../commands/base/Command.js";
 
 /**
  * Parameter type values

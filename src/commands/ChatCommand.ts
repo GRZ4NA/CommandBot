@@ -1,15 +1,15 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter, ParameterSchema } from "../structures/Parameter";
-import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/apiTypes";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./commandsTypes";
-import { CommandManager } from "../structures/CommandManager";
-import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
-import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
-import { SubCommand, SubCommandInit } from "./SubCommand";
-import { SubCommandGroup } from "./SubCommandGroup";
-import { applicationState } from "../state";
-import { InputManager } from "../structures/InputManager";
-import { SubCommandGroupInit } from "./SubCommandGroup";
+import { DefaultParameter, InputParameter, ObjectID, Parameter, ParameterSchema } from "../structures/Parameter.js";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/apiTypes.js";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./commandsTypes.js";
+import { CommandManager } from "../structures/CommandManager.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
+import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
+import { SubCommandGroup } from "./SubCommandGroup.js";
+import { applicationState } from "../state.js";
+import { InputManager } from "../structures/InputManager.js";
+import { SubCommandGroupInit } from "./SubCommandGroup.js";
 
 /**
  * Intialization options of chat command

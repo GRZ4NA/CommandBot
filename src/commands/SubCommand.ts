@@ -1,11 +1,11 @@
-import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
-import { DefaultParameter, Parameter, ParameterSchema } from "../structures/Parameter";
-import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand";
-import { SubCommandGroup } from "./SubCommandGroup";
-import { CommandRegExps } from "./commandsTypes";
-import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/apiTypes";
-import { ChatCommand } from "./ChatCommand";
-import { InputManager } from "../structures/InputManager";
+import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
+import { DefaultParameter, Parameter, ParameterSchema } from "../structures/Parameter.js";
+import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand.js";
+import { SubCommandGroup } from "./SubCommandGroup.js";
+import { CommandRegExps } from "./commandsTypes.js";
+import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/apiTypes.js";
+import { ChatCommand } from "./ChatCommand.js";
+import { InputManager } from "../structures/InputManager.js";
 
 /**
  * Subcommand initialization options

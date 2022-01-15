@@ -1,5 +1,5 @@
 import { Interaction, Permissions, Message, PermissionResolvable } from "discord.js";
-import { PermissionCommand } from "../commands/base/PermissionCommand";
+import { PermissionCommand } from "../commands/base/PermissionCommand.js";
 
 /**
  * Permission checking methods

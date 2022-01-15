@@ -1,13 +1,13 @@
 import { Client, ClientOptions, CommandInteraction, GuildMember, Intents, Message } from "discord.js";
 import { EventEmitter } from "events";
 import * as http from "http";
-import { CommandManager } from "./CommandManager";
-import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors";
-import { SystemMessageManager } from "./SystemMessage";
-import { applicationState } from "../state";
-import { InputManager } from "./InputManager";
-import { FunctionCommand } from "../commands/base/FunctionCommand";
-import { HelpMessageParams } from "../commands/Help";
+import { CommandManager } from "./CommandManager.js";
+import { CommandNotFound, OperationSuccess, PermissionsError } from "../errors.js";
+import { SystemMessageManager } from "./SystemMessage.js";
+import { applicationState } from "../state.js";
+import { InputManager } from "./InputManager.js";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
+import { HelpMessageParams } from "../commands/Help.js";
 
 /**
  * Main object initialization options
