@@ -1,10 +1,23 @@
 import { PermissionsError } from "../../errors";
 import { CommandManager } from "../../structures/CommandManager";
 import { CommandPermissions } from "../../structures/CommandPermissions";
-import { FunctionCommand } from "./FunctionCommand";
-import { PermissionCommandInit } from "../types/InitOptions";
+import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand";
 import { CommandType } from "../types/commands";
 import { InputManager } from "../../structures/InputManager";
+import { CommandPermissionsInit } from "../types/permissions";
+
+/**
+ * Initialization options of base command with attached permissions
+ * @interface
+ * @extends {FunctionCommandInit}
+ */
+export interface PermissionCommandInit extends FunctionCommandInit {
+    /**
+     * Object with permissions' options and resolvables
+     * @type {?CommandPermissionsInit}
+     */
+    permissions?: CommandPermissionsInit;
+}
 
 /**
  * Executable command with attached permission system

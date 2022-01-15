@@ -1,10 +1,38 @@
 import { Interaction, Message, MessageEmbed, ReplyMessageOptions } from "discord.js";
 import { OperationSuccess } from "../../errors";
-import { Command } from "./Command";
+import { APICommandInit, Command } from "./Command";
 import { CommandManager } from "../../structures/CommandManager";
 import { CommandFunction, CommandType, EphemeralType } from "../types/commands";
-import { FunctionCommandInit } from "../types/InitOptions";
 import { InputManager } from "../../structures/InputManager";
+
+/**
+ * Initialization options of base executable command
+ * @interface
+ * @extends {APICommandInit}
+ */
+export interface FunctionCommandInit extends APICommandInit {
+    /**
+     * Command function (will be executed when calling a command)
+     * @type {?CommandFunction}
+     */
+    function?: CommandFunction;
+    /**
+     * Whether to send a built-in success message when the command has completed (if no other response is defined)
+     * @type {?boolean}
+     */
+    announceSuccess?: boolean;
+    /**
+     * Whether a reply should be visible only to the caller
+     *
+     * - NONE - bot replies are public and visible to everyone in a text channel
+     * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+     * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+     *
+     * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+     * @type {?EphemeralType}
+     */
+    ephemeral?: EphemeralType;
+}
 
 /**
  * Function (executable) command

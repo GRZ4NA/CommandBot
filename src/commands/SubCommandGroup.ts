@@ -1,9 +1,21 @@
-import { SubCommandGroupObject } from "../structures/types/api";
-import { Command } from "./base/Command";
+import { SubCommandGroupObject } from "../structures/apiTypes";
+import { APICommandInit, Command } from "./base/Command";
 import { ChatCommand } from "./ChatCommand";
-import { SubCommand } from "./SubCommand";
+import { SubCommand, SubCommandInit } from "./SubCommand";
 import { CommandRegExps } from "./types/commands";
-import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions";
+
+/**
+ * Intialization options of subcommand group
+ * @interface
+ * @extends {APICommandInit}
+ */
+export interface SubCommandGroupInit extends APICommandInit {
+    /**
+     * Command description
+     * @type {?string}
+     */
+    description?: string;
+}
 
 /**
  * Group of subcommands

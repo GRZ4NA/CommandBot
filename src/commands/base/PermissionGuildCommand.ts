@@ -1,9 +1,26 @@
-import { PermissionGuildCommandInit } from "../types/InitOptions";
 import { CommandManager } from "../../structures/CommandManager";
 import { GuildCommand } from "./GuildCommand";
-import { PermissionCommand } from "./PermissionCommand";
+import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand";
 import { CommandType } from "../types/commands";
 import { InputManager } from "../../structures/InputManager";
+
+/**
+ * Initialization options of base guild-scoped command with attached permisisions
+ * @interface
+ * @extends {PermissionCommandInit}
+ */
+export interface PermissionGuildCommandInit extends PermissionCommandInit {
+    /**
+     * Whether this command should be callable using private messages with bot
+     * @type {?boolean}
+     */
+    dm?: boolean;
+    /**
+     * List of Guild IDs in which the command can be called
+     * @type {?Array<string>}
+     */
+    guilds?: string[];
+}
 
 /**
  * Guild-scoped executable command with permissions attached

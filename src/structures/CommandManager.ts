@@ -6,7 +6,7 @@ import { applicationState } from "../state";
 import { ChatCommand } from "../commands/ChatCommand";
 import { ContextMenuCommand } from "../commands/ContextMenuCommand";
 import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands";
-import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api";
+import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./apiTypes";
 import { Bot } from "./Bot";
 import { SubCommand } from "../commands/SubCommand";
 import { SubCommandGroup } from "../commands/SubCommandGroup";

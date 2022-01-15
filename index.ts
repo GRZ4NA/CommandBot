@@ -1,16 +1,5 @@
 import { Bot, InitOptions } from "./src/structures/Bot";
 import {
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    SubCommandInit,
-    SubCommandGroupInit,
-    APICommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-} from "./src/commands/types/InitOptions";
-import {
     ObjectID,
     TargetID,
     Parameter,
@@ -53,22 +42,22 @@ import {
     RegisteredCommandObject,
     SubCommandGroupObject,
     TextCommandOptionChoiceObject,
-} from "./src/structures/types/api";
+} from "./src/structures/apiTypes";
 import { InputManager } from "./src/structures/InputManager";
-import { SubCommand } from "./src/commands/SubCommand";
-import { SubCommandGroup } from "./src/commands/SubCommandGroup";
-import { ChatCommand } from "./src/commands/ChatCommand";
-import { ContextMenuCommand } from "./src/commands/ContextMenuCommand";
-import { FunctionCommand } from "./src/commands/base/FunctionCommand";
-import { Command } from "./src/commands/base/Command";
+import { SubCommand, SubCommandInit } from "./src/commands/SubCommand";
+import { SubCommandGroup, SubCommandGroupInit } from "./src/commands/SubCommandGroup";
+import { ChatCommand, ChatCommandInit } from "./src/commands/ChatCommand";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./src/commands/ContextMenuCommand";
+import { FunctionCommand, FunctionCommandInit } from "./src/commands/base/FunctionCommand";
+import { APICommandInit, Command } from "./src/commands/base/Command";
 import { CommandManager } from "./src/structures/CommandManager";
 import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/SystemMessage";
 import { CommandPermissions } from "./src/structures/CommandPermissions";
 import { HelpMessage, HelpMessageParams } from "./src/commands/Help";
 import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager";
-import { GuildCommand } from "./src/commands/base/GuildCommand";
-import { PermissionCommand } from "./src/commands/base/PermissionCommand";
-import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand";
+import { GuildCommand, GuildCommandInit } from "./src/commands/base/GuildCommand";
+import { PermissionCommand, PermissionCommandInit } from "./src/commands/base/PermissionCommand";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./src/commands/base/PermissionGuildCommand";
 
 export {
     Bot,

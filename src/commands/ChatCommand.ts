@@ -1,15 +1,53 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
-import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter";
-import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api";
+import { DefaultParameter, InputParameter, ObjectID, Parameter, ParameterSchema } from "../structures/Parameter";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/apiTypes";
 import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands";
 import { CommandManager } from "../structures/CommandManager";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
-import { SubCommand } from "./SubCommand";
+import { SubCommand, SubCommandInit } from "./SubCommand";
 import { SubCommandGroup } from "./SubCommandGroup";
 import { applicationState } from "../state";
 import { InputManager } from "../structures/InputManager";
+import { SubCommandGroupInit } from "./SubCommandGroup";
+
+/**
+ * Intialization options of chat command
+ * @interface
+ * @extends {PermissionGuildCommandInit}
+ */
+export interface ChatCommandInit extends PermissionGuildCommandInit {
+    /**
+     * List of object defining all parameters of the command
+     * @type {?ParameterSchema[] | "simple" | "no_input"}
+     */
+    parameters?: ParameterSchema[] | "simple" | "no_input";
+    /**
+     * Different string that can be used with prefix to invoke the command
+     * @type {?Array<string>}
+     */
+    aliases?: string[] | string;
+    /**
+     * Command description
+     * @type {?string}
+     */
+    description?: string;
+    /**
+     * Command usage (if *undefined*, the usage will be automatically generated using parameters)
+     * @type {?string}
+     */
+    usage?: string;
+    /**
+     * Whether this command is visible in the help message
+     * @type {?boolean}
+     */
+    visible?: boolean;
+    /**
+     * Whether this command should be registered as a slash command
+     * @type {?boolean}
+     */
+    slash?: boolean;
+}
 
 /**
  * A representation of CHAT_INPUT command (also known as a slash command)

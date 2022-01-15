@@ -1,13 +1,29 @@
 import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands";
 import { CommandManager } from "../../structures/CommandManager";
-import { APICommandObject } from "../../structures/types/api";
-import { APICommandInit } from "../types/InitOptions";
+import { APICommandObject } from "../../structures/apiTypes";
 import { FunctionCommand } from "./FunctionCommand";
 import { GuildCommand } from "./GuildCommand";
 import { PermissionCommand } from "./PermissionCommand";
 import { CommandPermissions } from "../../structures/CommandPermissions";
 import { ChatCommand } from "../ChatCommand";
 import { SubCommand } from "../SubCommand";
+
+/**
+ * Initialization options of core {@link Command} object
+ * @interface
+ */
+export interface APICommandInit {
+    /**
+     * Command name
+     * @type {string}
+     */
+    name: string;
+    /**
+     * Discord API default permission
+     * @type {?boolean}
+     */
+    default_permission?: boolean;
+}
 
 /**
  * Bot core command object

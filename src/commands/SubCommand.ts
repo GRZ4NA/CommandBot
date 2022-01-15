@@ -1,12 +1,34 @@
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments";
-import { DefaultParameter, Parameter } from "../structures/Parameter";
-import { PermissionCommand } from "./base/PermissionCommand";
+import { DefaultParameter, Parameter, ParameterSchema } from "../structures/Parameter";
+import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand";
 import { SubCommandGroup } from "./SubCommandGroup";
 import { CommandRegExps } from "./types/commands";
-import { SubCommandInit } from "./types/InitOptions";
-import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/types/api";
+import { ChatCommandObject, ChatCommandOptionObject, ChatCommandOptionType, TextCommandOptionChoiceObject } from "../structures/apiTypes";
 import { ChatCommand } from "./ChatCommand";
 import { InputManager } from "../structures/InputManager";
+
+/**
+ * Subcommand initialization options
+ * @interface
+ * @extends {PermissionCommandInit}
+ */
+export interface SubCommandInit extends PermissionCommandInit {
+    /**
+     * Command description
+     * @type {?string}
+     */
+    description?: string;
+    /**
+     * List of object defining all parameters of the command
+     * @type {?Array<ParameterSchema> | "simple" | "no_input"}
+     */
+    parameters?: ParameterSchema[] | "simple" | "no_input";
+    /**
+     * Command usage (if *undefined*, the usage will be automatically generated using parameters)
+     * @type {?string}
+     */
+    usage?: string;
+}
 
 /**
  * Representation of SUB_COMMAND Discord interaction

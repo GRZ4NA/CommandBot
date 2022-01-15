@@ -1,8 +1,20 @@
-import { ContextMenuCommandInit } from "./types/InitOptions";
 import { CommandManager } from "../structures/CommandManager";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand";
 import { ContextType } from "./types/commands";
-import { ContextMenuCommandObject } from "../structures/types/api";
+import { ContextMenuCommandObject } from "../structures/apiTypes";
+
+/**
+ * Initialization options of context menu interactions
+ * @interface
+ * @extends {PermissionGuildCommandInit}
+ */
+export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
+    /**
+     * Context menu target type
+     * @type {ContextType}
+     */
+    contextType: ContextType;
+}
 
 /**
  * Representation of all context menu Discord interactions
