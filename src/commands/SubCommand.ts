@@ -24,6 +24,11 @@ export interface SubCommandInit extends PermissionCommandInit {
      */
     parameters?: ParameterSchema[] | "simple" | "no_input";
     /**
+     * Different string that can be used with prefix to invoke the command
+     * @type {?Array<string>}
+     */
+    aliases?: string[] | string;
+    /**
      * Command usage (if *undefined*, the usage will be automatically generated using parameters)
      * @type {?string}
      */
@@ -57,6 +62,13 @@ export class SubCommand extends PermissionCommand {
      */
     public readonly parameters: Parameter<any>[];
     /**
+     * List of different names that can be used to invoke a command (when using prefix interactions)
+     * @type {?Array<string>}
+     * @public
+     * @readonly
+     */
+    public readonly aliases?: string[];
+    /**
      * Command usage displayed in the help message
      * @type {?string}
      * @public
@@ -88,6 +100,7 @@ export class SubCommand extends PermissionCommand {
         } else {
             this.parameters = options.parameters.map((ps) => new Parameter(this, ps));
         }
+        this.aliases = options.aliases ? (Array.isArray(options.aliases) ? options.aliases : [options.aliases]) : undefined;
         this.usage = options.usage ?? generateUsageFromArguments(this);
 
         if (this.parent.children.find((ch) => ch.name === this.name)) {
@@ -98,6 +111,22 @@ export class SubCommand extends PermissionCommand {
         }
         if (this.description && !CommandRegExps.chatDescription.test(this.description)) {
             throw new Error(`The description of "${this.name}" doesn't match a regular expression ${CommandRegExps.chatDescription}`);
+        }
+        if (this.aliases) {
+            if (Array.isArray(this.aliases)) {
+                this.aliases.map((a) => {
+                    if (!CommandRegExps.chatName.test(a)) {
+                        throw new Error(`"${a}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
+                    }
+                });
+            } else {
+                if (!CommandRegExps.chatName.test(this.aliases)) {
+                    throw new Error(`"${this.aliases}" is not a valid alias name (regexp: ${CommandRegExps.chatName})`);
+                }
+            }
+        }
+        if (this.aliases && this.aliases.length > 0 && this.aliases.find((a) => this.manager.get(a, this.type))) {
+            throw new Error(`One of aliases from "${this.name}" command is already a registered name in the manager and cannot be reused.`);
         }
     }
 

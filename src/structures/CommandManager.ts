@@ -163,33 +163,32 @@ export class CommandManager {
      * @returns {?Command} A command object
      * @public
      */
-    public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
+    public get<T extends CommandType>(q: string, t?: T): (T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) | null {
         switch (t) {
             case "CHAT":
+                const cmdList = this.list(t);
                 return (
-                    (this.list(t).find((c) => {
-                        if (c.name === q) {
-                            return true;
-                        }
-                        if (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }) as Commands<T>) || null
+                    (cmdList.find((c) => c.name === q || (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q))) as T extends "CHAT"
+                        ? Commands<T> | SubCommand
+                        : Commands<T>) ??
+                    cmdList
+                        .filter((c) => c.hasSubCommands)
+                        .map((c) =>
+                            c.children.map((ch) => {
+                                if (ch instanceof SubCommand) return ch;
+                                else return ch.children;
+                            })
+                        )
+                        .flat(2)
+                        .find((c) => c.aliases?.find((a) => a === q)) ??
+                    null
                 );
             case "NESTED":
-                return (this.list(t).find((c) => {
-                    if (c.name === q) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }) || null) as Commands<T>;
+                return (this.list(t).find((c) => c.name === q) || null) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>;
             case "CONTEXT":
-                return (this.list(t).find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list(t).find((c) => c.name === q) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) || null;
             default:
-                return (this.list().find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list().find((c) => c.name === q) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) || null;
         }
     }
     /**
@@ -205,9 +204,7 @@ export class CommandManager {
         const guildId = guild instanceof Guild ? guild.id : guild;
         if (!noCache) {
             const rqC = this.getCache(id, guildId);
-            if (rqC) {
-                return rqC;
-            }
+            if (rqC) return rqC;
         }
         let rq: AxiosResponse<RegisteredCommandObject>;
         if (guildId) {
@@ -302,7 +299,7 @@ export class CommandManager {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT");
-                if (cmd) {
+                if (cmd instanceof ChatCommand) {
                     if (cmd.hasSubCommands) {
                         const subCmd = cmd.fetchSubcommand([...i.options.data], i);
                         if (subCmd) return subCmd;
@@ -337,7 +334,7 @@ export class CommandManager {
                 if (i.content === prefix) return null;
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT");
-                if (cmd) {
+                if (cmd instanceof ChatCommand) {
                     const argsRaw = i.content
                         .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -383,6 +380,28 @@ export class CommandManager {
                                 return new InputParameter(p, new ObjectID(argsRaw[index], p.type, i.guild ?? undefined));
                             } else {
                                 return new InputParameter(p, argsRaw[index]);
+                            }
+                        })
+                    );
+                } else if (cmd instanceof SubCommand) {
+                    const subArgsRaw = i.content
+                        .replace(`${prefix}${cmdName}`, "")
+                        .split(this.argumentSeparator)
+                        .map((a) => {
+                            if (a.startsWith(" ")) {
+                                return a.replace(" ", "");
+                            } else {
+                                return a;
+                            }
+                        });
+                    return new InputManager(
+                        cmd,
+                        i,
+                        cmd.parameters.map((p, index) => {
+                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                return new InputParameter(p, new ObjectID(subArgsRaw[index] ?? "", p.type, i.guild ?? undefined));
+                            } else {
+                                return new InputParameter(p, subArgsRaw[index] ?? null);
                             }
                         })
                     );
