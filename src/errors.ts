@@ -44,7 +44,6 @@ export class PermissionsError extends Error {
         return `User ${this.user?.user.tag} doesn't have enough permissions to run "${this.command.name}" command`;
     }
 }
-
 /**
  * Error indicating that an input value cannot be converted to a expected type
  * @class
@@ -86,7 +85,6 @@ export class ParameterTypeError extends TypeError {
         return `Parameter "${this.stringContent}" cannot be converted to ${this.type}`;
     }
 }
-
 /**
  * Error indicating that a required parameter is missing in the request
  * @class
@@ -119,7 +117,6 @@ export class MissingParameterError extends ReferenceError {
         return `Your request is missing a "${this.argument.name}" parameter which is not optional`;
     }
 }
-
 /**
  * Object indicating command execution success
  * @class
@@ -141,7 +138,6 @@ export class OperationSuccess {
         this.command = c;
     }
 }
-
 /**
  * Error thrown when there is no command with the given name
  * @class

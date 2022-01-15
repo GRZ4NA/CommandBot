@@ -20,7 +20,6 @@ export class SubCommand extends PermissionCommand {
      * @readonly
      */
     public readonly parent: SubCommandGroup | ChatCommand;
-
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -28,7 +27,6 @@ export class SubCommand extends PermissionCommand {
      * @readonly
      */
     public readonly description: string;
-
     /**
      * List of parameters that can passed to this command
      * @type {Array<Parameter>}
@@ -36,7 +34,6 @@ export class SubCommand extends PermissionCommand {
      * @readonly
      */
     public readonly parameters: Parameter<any>[];
-
     /**
      * Command usage displayed in the help message
      * @type {?string}
@@ -99,7 +96,6 @@ export class SubCommand extends PermissionCommand {
             throw new Error(`Command "${this.name}" is not available.`);
         await super.start(input);
     }
-
     /**
      * @returns {ChatCommandObject} Discord API object
      * @public

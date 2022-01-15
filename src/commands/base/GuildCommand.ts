@@ -17,7 +17,6 @@ export class GuildCommand extends FunctionCommand {
      * @readonly
      */
     public readonly guilds?: string[];
-
     /**
      * If set to *false*, all interactions that get invoked from private/direct conversations (outside a guild) will result a PermissionError
      * @type {boolean}

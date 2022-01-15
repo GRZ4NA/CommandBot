@@ -18,7 +18,6 @@ export interface APICommandInit {
      */
     default_permission?: boolean;
 }
-
 /**
  * Initialization options of base executable command
  * @interface
@@ -47,7 +46,6 @@ export interface FunctionCommandInit extends APICommandInit {
      */
     ephemeral?: EphemeralType;
 }
-
 /**
  * Initialization options of base guild-scoped command
  * @interface
@@ -65,7 +63,6 @@ export interface GuildCommandInit extends FunctionCommandInit {
      */
     guilds?: string[];
 }
-
 /**
  * Initialization options of base command with attached permissions
  * @interface
@@ -78,7 +75,6 @@ export interface PermissionCommandInit extends FunctionCommandInit {
      */
     permissions?: CommandPermissionsInit;
 }
-
 /**
  * Initialization options of base guild-scoped command with attached permisisions
  * @interface
@@ -96,7 +92,6 @@ export interface PermissionGuildCommandInit extends PermissionCommandInit {
      */
     guilds?: string[];
 }
-
 /**
  * Intialization options of chat command
  * @interface
@@ -134,7 +129,6 @@ export interface ChatCommandInit extends PermissionGuildCommandInit {
      */
     slash?: boolean;
 }
-
 /**
  * Initialization options of context menu interactions
  * @interface
@@ -147,7 +141,6 @@ export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
      */
     contextType: ContextType;
 }
-
 /**
  * Subcommand initialization options
  * @interface
@@ -170,7 +163,6 @@ export interface SubCommandInit extends PermissionCommandInit {
      */
     usage?: string;
 }
-
 /**
  * Intialization options of subcommand group
  * @interface

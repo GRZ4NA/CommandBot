@@ -15,43 +15,36 @@ export interface HelpMessageParams {
      * @type {boolean}
      */
     enabled: boolean;
-
     /**
      * Title field
      * @type {string}
      */
     title: string;
-
     /**
      * Text below the title
      * @type {?string}
      */
     bottomText?: string;
-
     /**
      * Color of a message
      * @type {?ColorResolvable}
      */
     color?: ColorResolvable;
-
     /**
      * Description of the "help" command
      * @type {?string}
      */
     description?: string;
-
     /**
      * Usage of the "help" command
      * @type {?string}
      */
     usage?: string;
-
     /**
      * Whether the "help" command should be visible in the help message
      * @type {?boolean}
      */
     visible?: boolean;
-
     /**
      * Whether the response message should be ephemeral
      * @type {?EphemeralType}

@@ -36,7 +36,6 @@ export class ContextMenuCommand extends PermissionGuildCommand {
 
         this.contextType = options.contextType;
     }
-
     /**
      * @returns {ContextMenuCommandObject} Discord API object
      * @public

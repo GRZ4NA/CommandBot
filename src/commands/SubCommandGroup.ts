@@ -17,7 +17,6 @@ export class SubCommandGroup extends Command {
      * @readonly
      */
     private readonly _children: SubCommand[] = [];
-
     /**
      * Group parent command
      * @type {ChatCommand}
@@ -25,7 +24,6 @@ export class SubCommandGroup extends Command {
      * @readonly
      */
     public readonly parent: ChatCommand;
-
     /**
      * Group description (default: "No description")
      * @type {string}
@@ -80,7 +78,6 @@ export class SubCommandGroup extends Command {
             return sc;
         }
     }
-
     /**
      * @returns {SubCommandGroupObject} Discord API object
      * @public

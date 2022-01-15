@@ -21,7 +21,6 @@ export class Command {
      * @readonly
      */
     public readonly manager: CommandManager;
-
     /**
      * Command name
      * @type {string}
@@ -29,7 +28,6 @@ export class Command {
      * @readonly
      */
     public readonly name: string;
-
     /**
      * CommandBot's internal command type
      * @type {CommandType}
@@ -37,7 +35,6 @@ export class Command {
      * @readonly
      */
     public readonly type: CommandType;
-
     /**
      * Discord API default_permission
      * @type {boolean}
@@ -78,7 +75,6 @@ export class Command {
             default_permission: this.default_permission,
         };
     }
-
     /**
      * Check base command type
      * @param {BaseCommandType} type - base command type
@@ -118,7 +114,6 @@ export class Command {
                 return false;
         }
     }
-
     /**
      * Checks command type
      * @param {CommandType} type - command type
@@ -145,7 +140,6 @@ export class Command {
                 return false;
         }
     }
-
     /**
      * Check child command type
      * @param {ChildCommandType} type - child command type

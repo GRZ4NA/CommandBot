@@ -31,7 +31,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly parameters: Parameter<any>[];
-
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
      * @type {?Array<string>}
@@ -39,7 +38,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly aliases?: string[];
-
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -47,7 +45,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly description: string;
-
     /**
      * Command usage displayed in the help message
      * @type {?string}
@@ -55,7 +52,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly usage?: string;
-
     /**
      * Whether this command is visible in the help message (default: true)
      * @type {boolean}
@@ -63,7 +59,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly visible: boolean;
-
     /**
      * Whether this command should be registered as a slash command (default: true)
      * @type {boolean}
@@ -133,7 +128,6 @@ export class ChatCommand extends PermissionGuildCommand {
     get hasSubCommands() {
         return this._children.length > 0;
     }
-
     /**
      * Returns list of attached subcommands
      * @type {Array<ChildCommandResolvable>}
@@ -156,7 +150,6 @@ export class ChatCommand extends PermissionGuildCommand {
         }
         await super.start(input);
     }
-
     /**
      * Attaches subcommand or subcommand group to this ChatCommand
      * @param {T} type - subcommand type
@@ -182,7 +175,6 @@ export class ChatCommand extends PermissionGuildCommand {
         this._children.push(command);
         return command;
     }
-
     /**
      *
      * @param {Array<CommandInteractionOption>} options - parameter options
@@ -242,7 +234,6 @@ export class ChatCommand extends PermissionGuildCommand {
             return null;
         }
     }
-
     /**
      *
      * @param {string} name - subcommand name
@@ -262,7 +253,6 @@ export class ChatCommand extends PermissionGuildCommand {
             return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
         }
     }
-
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {ChatCommandObject} Discord API object

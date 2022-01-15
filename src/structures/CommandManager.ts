@@ -37,7 +37,6 @@ export class CommandManager {
      */
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
-
     /**
      * Client connected to this manager
      * @type {Client}
@@ -45,7 +44,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly client: Bot;
-
     /**
      * Help command associated with this manager
      * @type {?HelpMessage}
@@ -53,7 +51,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly help?: HelpMessage;
-
     /**
      * A manager holding all guild-specific prefixes and a global prefix
      * @type {string}
@@ -61,7 +58,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly prefix: PrefixManager;
-
     /**
      * A string used to split all incoming input data from Discord messages
      * @type {string}
@@ -69,7 +65,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly argumentSeparator: string;
-
     /**
      * A string used to separate subcommand groups and subcommands
      * @type {string}
@@ -77,7 +72,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly commandSeparator: string;
-
     /**
      * Discord API URL
      * @type {string}
@@ -120,7 +114,6 @@ export class CommandManager {
     get cache(): Readonly<Map<string, Map<string, RegisteredCommandObject>>> {
         return this._registerCache;
     }
-
     /**
      * Number of commands registered in this manager
      * @type {number}
@@ -164,7 +157,6 @@ export class CommandManager {
         this._commands.push(command);
         return command;
     }
-
     /**
      * Get command registered in this manager
      * @param {string} q - command name or alias
@@ -201,7 +193,6 @@ export class CommandManager {
                 return (this.list().find((c) => c.name === q) as Commands<T>) || null;
         }
     }
-
     /**
      * Fetches command object from the Discord API
      * @param {string} id - Discord command ID
@@ -236,7 +227,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
         }
     }
-
     /**
      * Fetches command ID by name from the Discord APi
      * @param {string} name - name of the command
@@ -257,7 +247,6 @@ export class CommandManager {
         });
         return result;
     }
-
     /**
      * Lists all commands in the manager
      * @param {APICommandType} [f] - filter, type of commands to return in the list
@@ -277,7 +266,6 @@ export class CommandManager {
                 return Object.freeze([...this._commands]);
         }
     }
-
     /**
      * Lists commands registered in the Discord API
      * @param {Guild | string} [g] - Guild object or ID
@@ -304,7 +292,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
         }
     }
-
     /**
      * Process an interaction
      * @param {Interaction | Message} i - interaction object to fetch a command from
@@ -410,7 +397,6 @@ export class CommandManager {
             return null;
         }
     }
-
     /**
      * Register all commands in this manager in the Discord API
      * @returns {Promise<void>}
@@ -469,7 +455,6 @@ export class CommandManager {
                 .catch((e) => console.error(e));
         });
     }
-
     /**
      * Set permissions using Discord Permissions API
      * @param {string} id - command ID
@@ -497,7 +482,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${response.status}: ${response.statusText}`);
         }
     }
-
     /**
      * Get permissions from Discord Permissions API for a specified command
      * @param {string} id - command ID
@@ -521,7 +505,6 @@ export class CommandManager {
         }
         return response.data as CommandPermission[];
     }
-
     /**
      *
      * @param {Array<RegisteredCommandObject>} commands - list of commands to cache
@@ -537,7 +520,6 @@ export class CommandManager {
             this._registerCache.get(guildId || this._globalEntryName)?.set(commands.id, commands);
         }
     }
-
     /**
      * Retrieves cache from the manager
      * @param {string} q
@@ -547,7 +529,6 @@ export class CommandManager {
     private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
         return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
     }
-
     /**
      * Performs internal data type conversions
      * @param {Array<RegisteredCommandObject>} a
@@ -560,7 +541,6 @@ export class CommandManager {
         });
         return map;
     }
-
     /**
      * @param {any} c - object to check
      * @returns {boolean} Whether this object is a {@link Command} object

@@ -19,7 +19,6 @@ export interface InitOptions {
      * @type {string}
      */
     name: string;
-
     /**
      * Prefix used as a way to trigger the bot using messages in all guilds by default
      * @remarks
@@ -27,37 +26,31 @@ export interface InitOptions {
      * @type {?string}
      */
     globalPrefix?: string;
-
     /**
      * Separator used to split user input to a list of {@link InputParameter}s (applies to prefix interactions)
      * @type {?string}
      */
     argumentSeparator?: string;
-
     /**
      * Separator used to split subcommands when using prefix interactions
      * @type {?string}
      */
     commandSeparator?: string;
-
     /**
      * Additional [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions) for Discord.js [Client](https://discord.js.org/#/docs/main/stable/class/Client) object
      * @type {?ClientOptions}
      */
     clientOptions?: ClientOptions;
-
     /**
      * Help message appearance configuration
      * @type {?HelpMessageParams}
      */
     help?: HelpMessageParams;
-
     /**
      * Discord bot token
      * @type {string}
      */
     token: string;
-
     /**
      * Discord API application ID
      * @type {string}
@@ -101,7 +94,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly name: string;
-
     /**
      * Discord.js {@link Client} instance
      * @type {Client}
@@ -109,7 +101,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly client: Client;
-
     /**
      * Instance command manager
      * @type {CommandManager}
@@ -117,7 +108,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly commands: CommandManager;
-
     /**
      * Discord Bot token
      * @type {string}
@@ -125,7 +115,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly token: string;
-
     /**
      * Discord API application ID
      * @type {string}
@@ -133,7 +122,6 @@ export class Bot extends EventEmitter {
      * @readonly
      */
     public readonly applicationId: string;
-
     /**
      * {@link SystemMessageManager} storing messages' configuration
      * @type {SystemMessageManager}

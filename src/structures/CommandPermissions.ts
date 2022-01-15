@@ -14,7 +14,6 @@ export class CommandPermissions {
      * @readonly
      */
     public readonly command: PermissionCommand;
-
     /**
      * If set to "ALL", the command can only be used when all specified conditions are met. (works only for Discord.js permissions object)
      * @type {PermissionCheckTypes}
@@ -22,7 +21,6 @@ export class CommandPermissions {
      * @readonly
      */
     public readonly permissions: Permissions | PermissionFunction;
-
     /**
      * Command permissions
      * @type {Permissions | PermissionFunction}
@@ -49,7 +47,6 @@ export class CommandPermissions {
     get isCustom(): boolean {
         return this.permissions instanceof Function ? true : false;
     }
-
     /**
      * Permission bitfield
      * @type {BigInt}
