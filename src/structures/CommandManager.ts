@@ -3,14 +3,13 @@ import { Guild, Interaction, Message } from "discord.js";
 import { InputParameter, ObjectID, TargetID } from "./Parameter.js";
 import { CommandNotFound } from "../errors.js";
 import { applicationState } from "../state.js";
-import { ChatCommand } from "../commands/ChatCommand.js";
-import { ContextMenuCommand } from "../commands/ContextMenuCommand.js";
-import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/types/commands.js";
-import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./types/api.js";
+import { ChatCommand, ChatCommandInit } from "../commands/ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "../commands/ContextMenuCommand.js";
+import { Commands, CommandInit, CommandRegExps, CommandType } from "../commands/commandsTypes.js";
+import { APICommandObject, CommandPermission, RegisteredCommandObject, APICommandType } from "./apiTypes.js";
 import { Bot } from "./Bot.js";
 import { SubCommand } from "../commands/SubCommand.js";
 import { SubCommandGroup } from "../commands/SubCommandGroup.js";
-import { ChatCommandInit, ContextMenuCommandInit } from "../commands/types/InitOptions.js";
 import { HelpMessageParams } from "../commands/Help.js";
 import { HelpMessage } from "../commands/Help.js";
 import { PrefixManager } from "./PrefixManager.js";
@@ -37,7 +36,6 @@ export class CommandManager {
      */
     private readonly _registerCache: Map<string, Map<string, RegisteredCommandObject>> = new Map();
     private readonly _globalEntryName: string = "global";
-
     /**
      * Client connected to this manager
      * @type {Client}
@@ -45,7 +43,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly client: Bot;
-
     /**
      * Help command associated with this manager
      * @type {?HelpMessage}
@@ -53,7 +50,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly help?: HelpMessage;
-
     /**
      * A manager holding all guild-specific prefixes and a global prefix
      * @type {string}
@@ -61,7 +57,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly prefix: PrefixManager;
-
     /**
      * A string used to split all incoming input data from Discord messages
      * @type {string}
@@ -69,7 +64,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly argumentSeparator: string;
-
     /**
      * A string used to separate subcommand groups and subcommands
      * @type {string}
@@ -77,7 +71,6 @@ export class CommandManager {
      * @readonly
      */
     public readonly commandSeparator: string;
-
     /**
      * Discord API URL
      * @type {string}
@@ -120,7 +113,6 @@ export class CommandManager {
     get cache(): Readonly<Map<string, Map<string, RegisteredCommandObject>>> {
         return this._registerCache;
     }
-
     /**
      * Number of commands registered in this manager
      * @type {number}
@@ -164,7 +156,6 @@ export class CommandManager {
         this._commands.push(command);
         return command;
     }
-
     /**
      * Get command registered in this manager
      * @param {string} q - command name or alias
@@ -172,36 +163,34 @@ export class CommandManager {
      * @returns {?Command} A command object
      * @public
      */
-    public get<T extends CommandType>(q: string, t?: T): Commands<T> | null {
+    public get<T extends CommandType>(q: string, t?: T): (T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) | null {
         switch (t) {
             case "CHAT":
+                const cmdList = this.list(t);
                 return (
-                    (this.list(t).find((c) => {
-                        if (c.name === q) {
-                            return true;
-                        }
-                        if (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }) as Commands<T>) || null
+                    (cmdList.find((c) => c.name === q || (c.aliases && c.aliases.length > 0 && c.aliases.find((a) => a === q))) as T extends "CHAT"
+                        ? Commands<T> | SubCommand
+                        : Commands<T>) ??
+                    cmdList
+                        .filter((c) => c.hasSubCommands)
+                        .map((c) =>
+                            c.children.map((ch) => {
+                                if (ch instanceof SubCommand) return ch;
+                                else return ch.children;
+                            })
+                        )
+                        .flat(2)
+                        .find((c) => c.aliases?.find((a) => a === q)) ??
+                    null
                 );
             case "NESTED":
-                return (this.list(t).find((c) => {
-                    if (c.name === q) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }) || null) as Commands<T>;
+                return (this.list(t).find((c) => c.name === q) || null) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>;
             case "CONTEXT":
-                return (this.list(t).find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list(t).find((c) => c.name === q) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) || null;
             default:
-                return (this.list().find((c) => c.name === q) as Commands<T>) || null;
+                return (this.list().find((c) => c.name === q) as T extends "CHAT" ? Commands<T> | SubCommand : Commands<T>) || null;
         }
     }
-
     /**
      * Fetches command object from the Discord API
      * @param {string} id - Discord command ID
@@ -215,9 +204,7 @@ export class CommandManager {
         const guildId = guild instanceof Guild ? guild.id : guild;
         if (!noCache) {
             const rqC = this.getCache(id, guildId);
-            if (rqC) {
-                return rqC;
-            }
+            if (rqC) return rqC;
         }
         let rq: AxiosResponse<RegisteredCommandObject>;
         if (guildId) {
@@ -236,7 +223,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
         }
     }
-
     /**
      * Fetches command ID by name from the Discord APi
      * @param {string} name - name of the command
@@ -257,7 +243,6 @@ export class CommandManager {
         });
         return result;
     }
-
     /**
      * Lists all commands in the manager
      * @param {APICommandType} [f] - filter, type of commands to return in the list
@@ -277,7 +262,6 @@ export class CommandManager {
                 return Object.freeze([...this._commands]);
         }
     }
-
     /**
      * Lists commands registered in the Discord API
      * @param {Guild | string} [g] - Guild object or ID
@@ -304,7 +288,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${rq.status}: ${rq.statusText}`);
         }
     }
-
     /**
      * Process an interaction
      * @param {Interaction | Message} i - interaction object to fetch a command from
@@ -316,7 +299,7 @@ export class CommandManager {
         if (i instanceof Interaction) {
             if (i.isCommand()) {
                 const cmd = this.get(i.commandName, "CHAT");
-                if (cmd) {
+                if (cmd instanceof ChatCommand) {
                     if (cmd.hasSubCommands) {
                         const subCmd = cmd.fetchSubcommand([...i.options.data], i);
                         if (subCmd) return subCmd;
@@ -351,7 +334,7 @@ export class CommandManager {
                 if (i.content === prefix) return null;
                 const cmdName = i.content.replace(prefix, "").split(" ")[0].split(this.commandSeparator)[0];
                 const cmd = this.get(cmdName, "CHAT");
-                if (cmd) {
+                if (cmd instanceof ChatCommand) {
                     const argsRaw = i.content
                         .replace(`${prefix}${cmdName}`, "")
                         .split(this.argumentSeparator)
@@ -400,6 +383,28 @@ export class CommandManager {
                             }
                         })
                     );
+                } else if (cmd instanceof SubCommand) {
+                    const subArgsRaw = i.content
+                        .replace(`${prefix}${cmdName}`, "")
+                        .split(this.argumentSeparator)
+                        .map((a) => {
+                            if (a.startsWith(" ")) {
+                                return a.replace(" ", "");
+                            } else {
+                                return a;
+                            }
+                        });
+                    return new InputManager(
+                        cmd,
+                        i,
+                        cmd.parameters.map((p, index) => {
+                            if (p.type === "user" || p.type === "role" || p.type === "channel" || p.type === "mentionable") {
+                                return new InputParameter(p, new ObjectID(subArgsRaw[index] ?? "", p.type, i.guild ?? undefined));
+                            } else {
+                                return new InputParameter(p, subArgsRaw[index] ?? null);
+                            }
+                        })
+                    );
                 } else {
                     throw new CommandNotFound(cmdName);
                 }
@@ -410,7 +415,6 @@ export class CommandManager {
             return null;
         }
     }
-
     /**
      * Register all commands in this manager in the Discord API
      * @returns {Promise<void>}
@@ -469,7 +473,6 @@ export class CommandManager {
                 .catch((e) => console.error(e));
         });
     }
-
     /**
      * Set permissions using Discord Permissions API
      * @param {string} id - command ID
@@ -497,7 +500,6 @@ export class CommandManager {
             throw new Error(`HTTP request failed with code ${response.status}: ${response.statusText}`);
         }
     }
-
     /**
      * Get permissions from Discord Permissions API for a specified command
      * @param {string} id - command ID
@@ -521,7 +523,6 @@ export class CommandManager {
         }
         return response.data as CommandPermission[];
     }
-
     /**
      *
      * @param {Array<RegisteredCommandObject>} commands - list of commands to cache
@@ -537,7 +538,6 @@ export class CommandManager {
             this._registerCache.get(guildId || this._globalEntryName)?.set(commands.id, commands);
         }
     }
-
     /**
      * Retrieves cache from the manager
      * @param {string} q
@@ -547,7 +547,6 @@ export class CommandManager {
     private getCache(q: string, guildId?: string): RegisteredCommandObject | null {
         return this._registerCache.get(guildId || this._globalEntryName)?.get(q) || null;
     }
-
     /**
      * Performs internal data type conversions
      * @param {Array<RegisteredCommandObject>} a
@@ -560,7 +559,6 @@ export class CommandManager {
         });
         return map;
     }
-
     /**
      * @param {any} c - object to check
      * @returns {boolean} Whether this object is a {@link Command} object

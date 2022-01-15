@@ -1,6 +1,36 @@
-import { Interaction, Permissions, Message } from "discord.js";
+import { Interaction, Permissions, Message, PermissionResolvable } from "discord.js";
 import { PermissionCommand } from "../commands/base/PermissionCommand.js";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "../commands/types/permissions.js";
+
+/**
+ * Permission checking methods
+ *
+ * ALL - uses [*Permissions.prototype.has*](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=has) method
+ *
+ * ANY - uses [*Permissions.prototype.any*](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=any) method
+ * @type
+ */
+export type PermissionCheckTypes = "ALL" | "ANY";
+/**
+ * Definition of permission function
+ * @type
+ */
+export type PermissionFunction = (i: Interaction | Message) => boolean;
+/**
+ * Command permissions initialization object
+ * @interface
+ */
+export interface CommandPermissionsInit {
+    /**
+     * Resolvable (Discord.js permission resolvables) or custom function that returns *boolean* value
+     * @type {?PermissionResolvable | PermissionFunction}
+     */
+    resolvable?: PermissionResolvable | PermissionFunction;
+    /**
+     * Whether to check if the caller has all defined permissions or at least one of them (applies only if the command uses Discord.js permission system)
+     * @type {?PermissionCheckTypes}
+     */
+    checkType?: PermissionCheckTypes;
+}
 
 /**
  * Object that stores permission resolvables and properties (bouund to a {@link PermissionCommand})
@@ -14,7 +44,6 @@ export class CommandPermissions {
      * @readonly
      */
     public readonly command: PermissionCommand;
-
     /**
      * If set to "ALL", the command can only be used when all specified conditions are met. (works only for Discord.js permissions object)
      * @type {PermissionCheckTypes}
@@ -22,7 +51,6 @@ export class CommandPermissions {
      * @readonly
      */
     public readonly permissions: Permissions | PermissionFunction;
-
     /**
      * Command permissions
      * @type {Permissions | PermissionFunction}
@@ -49,7 +77,6 @@ export class CommandPermissions {
     get isCustom(): boolean {
         return this.permissions instanceof Function ? true : false;
     }
-
     /**
      * Permission bitfield
      * @type {BigInt}

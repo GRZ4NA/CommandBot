@@ -24,6 +24,13 @@ export class StateManager {
     get running() {
         return this._isRunning;
     }
+    /**
+     * _unstable property getter
+     * @type {boolean}
+     */
+    get dev() {
+        return this._unstable;
+    }
 
     /**
      * Setter for running state
@@ -34,13 +41,5 @@ export class StateManager {
         if (!this._isRunning) {
             this._isRunning = bool;
         }
-    }
-
-    /**
-     * _unstable property getter
-     * @type {boolean}
-     */
-    get dev() {
-        return this._unstable;
     }
 }

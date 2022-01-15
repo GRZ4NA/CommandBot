@@ -1,9 +1,26 @@
-import { PermissionGuildCommandInit } from "../types/InitOptions.js";
-import { CommandManager } from "../../structures/CommandManager";
+import { CommandManager } from "../../structures/CommandManager.js";
 import { GuildCommand } from "./GuildCommand.js";
-import { PermissionCommand } from "./PermissionCommand.js";
-import { CommandType } from "../types/commands.js";
+import { PermissionCommand, PermissionCommandInit } from "./PermissionCommand.js";
+import { CommandType } from "../commandsTypes.js";
 import { InputManager } from "../../structures/InputManager.js";
+
+/**
+ * Initialization options of base guild-scoped command with attached permisisions
+ * @interface
+ * @extends {PermissionCommandInit}
+ */
+export interface PermissionGuildCommandInit extends PermissionCommandInit {
+    /**
+     * Whether this command should be callable using private messages with bot
+     * @type {?boolean}
+     */
+    dm?: boolean;
+    /**
+     * List of Guild IDs in which the command can be called
+     * @type {?Array<string>}
+     */
+    guilds?: string[];
+}
 
 /**
  * Guild-scoped executable command with permissions attached
@@ -19,7 +36,6 @@ export class PermissionGuildCommand extends PermissionCommand implements GuildCo
      * @readonly
      */
     public readonly guilds?: string[];
-
     /**
      * If set to *false*, all interactions that get invoked from private/direct conversations (outside a guild) will result a PermissionError
      * @type {boolean}

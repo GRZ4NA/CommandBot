@@ -1,15 +1,53 @@
 import { Message, Interaction, CommandInteractionOption } from "discord.js";
-import { ChatCommandInit, SubCommandGroupInit, SubCommandInit } from "./types/InitOptions.js";
-import { DefaultParameter, InputParameter, ObjectID, Parameter } from "../structures/Parameter.js";
-import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/types/api.js";
-import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./types/commands.js";
+import { DefaultParameter, InputParameter, ObjectID, Parameter, ParameterSchema } from "../structures/Parameter.js";
+import { ChatCommandObject, TextCommandOptionChoiceObject, ChatCommandOptionObject, ChatCommandOptionType } from "../structures/apiTypes.js";
+import { ChildCommandInit, ChildCommandResolvable, ChildCommands, ChildCommandType, CommandRegExps } from "./commandsTypes.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
 import { generateUsageFromArguments } from "../utils/generateUsageFromArguments.js";
-import { SubCommand } from "./SubCommand.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
 import { applicationState } from "../state.js";
 import { InputManager } from "../structures/InputManager.js";
+import { SubCommandGroupInit } from "./SubCommandGroup.js";
+
+/**
+ * Intialization options of chat command
+ * @interface
+ * @extends {PermissionGuildCommandInit}
+ */
+export interface ChatCommandInit extends PermissionGuildCommandInit {
+    /**
+     * List of object defining all parameters of the command
+     * @type {?ParameterSchema[] | "simple" | "no_input"}
+     */
+    parameters?: ParameterSchema[] | "simple" | "no_input";
+    /**
+     * Different string that can be used with prefix to invoke the command
+     * @type {?Array<string>}
+     */
+    aliases?: string[] | string;
+    /**
+     * Command description
+     * @type {?string}
+     */
+    description?: string;
+    /**
+     * Command usage (if *undefined*, the usage will be automatically generated using parameters)
+     * @type {?string}
+     */
+    usage?: string;
+    /**
+     * Whether this command is visible in the help message
+     * @type {?boolean}
+     */
+    visible?: boolean;
+    /**
+     * Whether this command should be registered as a slash command
+     * @type {?boolean}
+     */
+    slash?: boolean;
+}
 
 /**
  * A representation of CHAT_INPUT command (also known as a slash command)
@@ -31,7 +69,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly parameters: Parameter<any>[];
-
     /**
      * List of different names that can be used to invoke a command (when using prefix interactions)
      * @type {?Array<string>}
@@ -39,7 +76,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly aliases?: string[];
-
     /**
      * Command description displayed in the help message or in slash commands menu (Default description: "No description")
      * @type {string}
@@ -47,7 +83,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly description: string;
-
     /**
      * Command usage displayed in the help message
      * @type {?string}
@@ -55,7 +90,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly usage?: string;
-
     /**
      * Whether this command is visible in the help message (default: true)
      * @type {boolean}
@@ -63,7 +97,6 @@ export class ChatCommand extends PermissionGuildCommand {
      * @readonly
      */
     public readonly visible: boolean;
-
     /**
      * Whether this command should be registered as a slash command (default: true)
      * @type {boolean}
@@ -133,7 +166,6 @@ export class ChatCommand extends PermissionGuildCommand {
     get hasSubCommands() {
         return this._children.length > 0;
     }
-
     /**
      * Returns list of attached subcommands
      * @type {Array<ChildCommandResolvable>}
@@ -156,7 +188,6 @@ export class ChatCommand extends PermissionGuildCommand {
         }
         await super.start(input);
     }
-
     /**
      * Attaches subcommand or subcommand group to this ChatCommand
      * @param {T} type - subcommand type
@@ -182,7 +213,6 @@ export class ChatCommand extends PermissionGuildCommand {
         this._children.push(command);
         return command;
     }
-
     /**
      *
      * @param {Array<CommandInteractionOption>} options - parameter options
@@ -242,7 +272,6 @@ export class ChatCommand extends PermissionGuildCommand {
             return null;
         }
     }
-
     /**
      *
      * @param {string} name - subcommand name
@@ -262,7 +291,6 @@ export class ChatCommand extends PermissionGuildCommand {
             return (this._children.filter((c) => c instanceof SubCommand).find((c) => c.name === name) as SubCommand) || null;
         }
     }
-
     /**
      * Converts {@link ChatCommand} instance to object that is recognized by the Discord API
      * @returns {ChatCommandObject} Discord API object

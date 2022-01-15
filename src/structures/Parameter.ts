@@ -10,7 +10,6 @@ import { Command } from "../commands/base/Command.js";
  * @type
  */
 export type ParameterType = "string" | "boolean" | "number" | ObjectIdType;
-
 /**
  * Input parameter value resolvable selector
  * @type
@@ -30,13 +29,11 @@ export type InputParameterValue<T extends ParameterType> = T extends "string"
     : T extends "mentionable"
     ? ObjectID<"mentionable">
     : never;
-
 /**
  * All parameter resolvables
  * @type
  */
 export type ParameterResolvable = string | boolean | number | ObjectID<any> | TargetID<any> | null;
-
 /**
  * Properties required to build a {@link Parameter} object
  * @interface
@@ -47,25 +44,21 @@ export interface ParameterSchema {
      * @type {string}
      */
     name: string;
-
     /**
      * Parameter description
      * @type {?string}
      */
     description?: string;
-
     /**
      * Whether this parameter is optional
      * @type {boolean}
      */
     optional: boolean;
-
     /**
      * Type of parameter data
      * @type {ParameterType}
      */
     type: ParameterType;
-
     /**
      * List of value choices
      * @type {?Array<string>}
@@ -73,7 +66,6 @@ export interface ParameterSchema {
      */
     choices?: string[];
 }
-
 /**
  * Types of Discord objects (IDs contained in an {@link ObjectID} wrapper)
  * - **user** - server users list shown as selection menu in Discord
@@ -83,7 +75,6 @@ export interface ParameterSchema {
  * @type
  */
 export type ObjectIdType = "user" | "role" | "channel" | "mentionable";
-
 /**
  * *ObjectID.prototype.toObject()* return type selector
  * @type
@@ -97,13 +88,11 @@ export type ObjectIdReturnType<T extends ObjectIdType> = T extends "channel"
     : T extends "mentionable"
     ? TextChannel | VoiceChannel | CategoryChannel | NewsChannel | StageChannel | StoreChannel | GuildMember | Role | null
     : never;
-
 /**
  * Types of Discord context menu targets (IDs contained in a {@link TargetID} wrapper)
  * @type
  */
 export type TargetType = "MESSAGE" | "USER";
-
 /**
  * *TargetID.prototype.toObject()* return type selector
  * @type
@@ -129,7 +118,6 @@ export class Parameter<T extends ParameterType> {
      * @readonly
      */
     public readonly name: string;
-
     /**
      * Parameter description
      * @type {string}
@@ -137,7 +125,6 @@ export class Parameter<T extends ParameterType> {
      * @readonly
      */
     public readonly description: string;
-
     /**
      * Whether this parameter is optional
      * @type {boolean}
@@ -145,7 +132,6 @@ export class Parameter<T extends ParameterType> {
      * @readonly
      */
     public readonly optional: boolean;
-
     /**
      * Parameter input type
      * @type {ParameterType}
@@ -153,7 +139,6 @@ export class Parameter<T extends ParameterType> {
      * @readonly
      */
     public readonly type: T;
-
     /**
      * List of value choices (available only when type is set to "STRING")
      * @type {?Array<string>}
@@ -161,7 +146,6 @@ export class Parameter<T extends ParameterType> {
      * @readonly
      */
     public readonly choices?: string[];
-
     /**
      * Parameter name check regular expression
      * @type {RegExp}
@@ -169,7 +153,6 @@ export class Parameter<T extends ParameterType> {
      * @static
      */
     public static nameRegExp: RegExp = /^[\w-]{1,32}$/;
-
     /**
      * Parameter description check regular expression
      * @type {RegExp}
@@ -199,7 +182,6 @@ export class Parameter<T extends ParameterType> {
         return;
     }
 }
-
 export class DefaultParameter<T extends "string"> extends Parameter<T> {
     constructor(command: Command) {
         super(command, {
@@ -210,7 +192,6 @@ export class DefaultParameter<T extends "string"> extends Parameter<T> {
         });
     }
 }
-
 /**
  * Parameter with input value from interaction (reffered to as argument)
  * @class
@@ -288,7 +269,6 @@ export class InputParameter<T extends ParameterType> extends Parameter<T> {
         this.value = val as InputParameterValue<T>;
     }
 }
-
 /**
  * Wrapped representation of Discord user, role, channel or other mentionable Discord arugment object
  * @class
@@ -351,7 +331,8 @@ export class ObjectID<T extends ObjectIdType> {
 /**
  * Wrapped representation of Discord target object (target of context menu interactions)
  * @class
- */ export class TargetID<T extends TargetType> {
+ */
+export class TargetID<T extends TargetType> {
     /**
      * Object ID
      * @type {string}

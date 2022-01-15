@@ -1,44 +1,30 @@
 import { MessageEmbed, ReplyMessageOptions } from "discord.js";
-import { ChatCommand } from "../ChatCommand.js";
-import { ContextMenuCommand } from "../ContextMenuCommand.js";
-import { SubCommand } from "../SubCommand.js";
-import { SubCommandGroup } from "..//SubCommandGroup.js";
-import { FunctionCommand } from "../base/FunctionCommand.js";
-import { PermissionCommand } from "../base/PermissionCommand.js";
-import {
-    APICommandInit,
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-    SubCommandGroupInit,
-    SubCommandInit,
-} from "./InitOptions.js";
-import { GuildCommand } from "../base/GuildCommand.js";
-import { PermissionGuildCommand } from "../base/PermissionGuildCommand.js";
-import { Command } from "..//base/Command.js";
-import { InputManager } from "../../structures/InputManager.js";
+import { ChatCommand, ChatCommandInit } from "./ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./ContextMenuCommand.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
+import { SubCommandGroup, SubCommandGroupInit } from "./SubCommandGroup.js";
+import { FunctionCommand, FunctionCommandInit } from "./base/FunctionCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "./base/PermissionCommand.js";
+import { GuildCommand, GuildCommandInit } from "./base/GuildCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
+import { APICommandInit, Command } from "./base/Command.js";
+import { InputManager } from "../structures/InputManager.js";
 
 /**
  * Types of command bases
  * @type
  */
 export type BaseCommandType = "BASE" | "FUNCTION" | "GUILD" | "PERMISSION" | "PERMISSIONGUILD";
-
 /**
  * Command types
  * @type
  */
 export type CommandType = "CHAT" | "CONTEXT";
-
 /**
  * Child command types
  * @type
  */
 export type ChildCommandType = "COMMAND" | "GROUP";
-
 /**
  * Base command type selector
  * @type
@@ -54,19 +40,16 @@ export type BaseCommands<T extends BaseCommandType> = T extends "BASE"
     : T extends "PERMISSIONGUILD"
     ? PermissionGuildCommand
     : never;
-
 /**
  * Command type selector
  * @type
  */
 export type Commands<T extends CommandType> = T extends "CHAT" ? ChatCommand : T extends "CONTEXT" ? ContextMenuCommand : never;
-
 /**
  * Child command type selector
  * @type
  */
 export type ChildCommands<T extends ChildCommandType> = T extends "COMMAND" ? SubCommand : T extends "GROUP" ? SubCommandGroup : never;
-
 /**
  * Base command initializer selector
  * @type
@@ -82,37 +65,31 @@ export type BaseCommandInit<T extends BaseCommandType> = T extends "BASE"
     : T extends "PERMISSIONGUILD"
     ? PermissionGuildCommandInit
     : never;
-
 /**
  * Command initializer selector
  * @type
  */
 export type CommandInit<T extends CommandType> = T extends "CHAT" ? ChatCommandInit : T extends "CONTEXT" ? ContextMenuCommandInit : never;
-
 /**
  * Child command initializer selector
  * @type
  */
 export type ChildCommandInit<T extends ChildCommandType> = T extends "COMMAND" ? SubCommandInit : T extends "GROUP" ? SubCommandGroupInit : never;
-
 /**
  * Base command resolvables
  * @type
  */
 export type BaseCommandResolvable = Command | FunctionCommand | GuildCommand | PermissionCommand | PermissionGuildCommand;
-
 /**
  * Command resolvables
  * @type
  */
 export type CommandResolvable = ChatCommand | ContextMenuCommand;
-
 /**
  * Child command resolvables
  * @type
  */
 export type ChildCommandResolvable = SubCommandGroup | SubCommand;
-
 /**
  * Context menu command types
  *
@@ -122,13 +99,11 @@ export type ChildCommandResolvable = SubCommandGroup | SubCommand;
  * @type
  */
 export type ContextType = "USER" | "MESSAGE";
-
 /**
  * All types that can be returned from a command function
  * @type
  */
 export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMessageOptions | Promise<void | string | MessageEmbed | ReplyMessageOptions>;
-
 /**
  * Command function definition
  *
@@ -146,6 +121,17 @@ export type CommandFunctionReturnTypes = void | string | MessageEmbed | ReplyMes
  * @type
  */
 export type CommandFunction = (input: InputManager) => CommandFunctionReturnTypes;
+/**
+ * Ephemeral response types
+ *
+ * - NONE - bot replies are public and visible to everyone in a text channel
+ * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
+ * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
+ *
+ * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
+ * @type
+ */
+export type EphemeralType = "NONE" | "INTERACTIONS" | "FULL";
 
 /**
  * Regular expressions used globally to perform name checking
@@ -162,15 +148,3 @@ export const CommandRegExps = {
     separator: /[^ ]{1,}$/,
     prefix: /[^/ ]{1,}$/,
 };
-
-/**
- * Ephemeral response types
- *
- * - NONE - bot replies are public and visible to everyone in a text channel
- * - INTERACTIONS - bot will mark responses to Discord interactions as ephemeral and they will only be visible to the command caller
- * - FULL - INTERACTIONS + responses to prefix interactions will be sent as direct messages to the command caller
- *
- * [Read more](https://support.discord.com/hc/pl/articles/1500000580222-Ephemeral-Messages-FAQ)
- * @type
- */
-export type EphemeralType = "NONE" | "INTERACTIONS" | "FULL";

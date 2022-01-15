@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "./CommandManager.js";
-import { CommandRegExps } from "../commands/types/commands.js";
+import { CommandRegExps } from "../commands/commandsTypes.js";
 
 /**
  * Prefix scope types
@@ -58,7 +58,6 @@ export class PrefixManager {
     get globalPrefix() {
         return this._prefixes.get(this._global) || null;
     }
-
     /**
      * Manager data
      * @type {Readonly<Map<string, string>>}
@@ -80,7 +79,6 @@ export class PrefixManager {
             return this._prefixes.get(id) || this.globalPrefix;
         }
     }
-
     /**
      * Set prefix for a specific scope
      * @param {string} prefix - new prefix
@@ -98,7 +96,6 @@ export class PrefixManager {
             this._prefixes.set(id, prefix);
         }
     }
-
     /**
      * Remove prefix for the specified scope
      * @param {?ScopeResolvable} [scope] - guild string or ID

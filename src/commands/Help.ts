@@ -3,7 +3,7 @@ import { ChatCommand } from "./ChatCommand.js";
 import { CommandManager } from "../structures/CommandManager.js";
 import { SubCommand } from "./SubCommand.js";
 import { SubCommandGroup } from "./SubCommandGroup.js";
-import { EphemeralType } from "./types/commands.js";
+import { EphemeralType } from "./commandsTypes.js";
 
 /**
  * All properties used to customize the appearance of a help message
@@ -15,43 +15,36 @@ export interface HelpMessageParams {
      * @type {boolean}
      */
     enabled: boolean;
-
     /**
      * Title field
      * @type {string}
      */
     title: string;
-
     /**
      * Text below the title
      * @type {?string}
      */
     bottomText?: string;
-
     /**
      * Color of a message
      * @type {?ColorResolvable}
      */
     color?: ColorResolvable;
-
     /**
      * Description of the "help" command
      * @type {?string}
      */
     description?: string;
-
     /**
      * Usage of the "help" command
      * @type {?string}
      */
     usage?: string;
-
     /**
      * Whether the "help" command should be visible in the help message
      * @type {?boolean}
      */
     visible?: boolean;
-
     /**
      * Whether the response message should be ephemeral
      * @type {?EphemeralType}
@@ -112,8 +105,8 @@ export class HelpMessage extends ChatCommand {
         helpMsg.setFooter(this.manager.client.name || "");
         if (helpMsg != null) {
             if (cmdName) {
-                const cmd: ChatCommand | null = this.manager.get(cmdName?.toString() || "", "CHAT");
-                if (cmd) {
+                const cmd = this.manager.get(cmdName?.toString() || "", "CHAT");
+                if (cmd instanceof ChatCommand) {
                     if (Array.isArray(cmd.guilds) && cmd.guilds.length > 0 && !cmd.guilds.find((g) => i?.guild?.id === g)) {
                         throw new ReferenceError(`Command "${cmd.name}" is not available`);
                     }

@@ -1,7 +1,6 @@
-import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { Interaction, Message } from "discord.js";
-import { ParameterType, InputParameterValue } from "./Parameter.js";
-import { InputParameter, TargetID } from "./Parameter.js";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
+import { ParameterType, InputParameterValue, InputParameter, TargetID } from "./Parameter.js";
 
 /**
  * Object that stores all interaction input data (target, arguments, content and the interaction itself)
@@ -15,7 +14,6 @@ export class InputManager {
      * @readonly
      */
     public readonly command: FunctionCommand;
-
     /**
      * Command interaction or message
      * @type {Interaction | Message}
@@ -23,7 +21,6 @@ export class InputManager {
      * @readonly
      */
     public readonly interaction: Interaction | Message;
-
     /**
      * Command target (when using context menu interactions)
      * @type {?TargetID<any>}
@@ -31,7 +28,6 @@ export class InputManager {
      * @readonly
      */
     public readonly target?: TargetID<any>;
-
     /**
      * All input arguments
      * @type {Array<InputParameter<any>>}

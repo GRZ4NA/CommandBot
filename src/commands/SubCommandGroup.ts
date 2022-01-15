@@ -1,9 +1,21 @@
-import { SubCommandGroupObject } from "../structures/types/api.js";
-import { Command } from "./base/Command.js";
+import { SubCommandGroupObject } from "../structures/apiTypes.js";
+import { APICommandInit, Command } from "./base/Command.js";
 import { ChatCommand } from "./ChatCommand.js";
-import { SubCommand } from "./SubCommand.js";
-import { CommandRegExps } from "./types/commands.js";
-import { SubCommandInit, SubCommandGroupInit } from "./types/InitOptions.js";
+import { SubCommand, SubCommandInit } from "./SubCommand.js";
+import { CommandRegExps } from "./commandsTypes.js";
+
+/**
+ * Intialization options of subcommand group
+ * @interface
+ * @extends {APICommandInit}
+ */
+export interface SubCommandGroupInit extends APICommandInit {
+    /**
+     * Command description
+     * @type {?string}
+     */
+    description?: string;
+}
 
 /**
  * Group of subcommands
@@ -17,7 +29,6 @@ export class SubCommandGroup extends Command {
      * @readonly
      */
     private readonly _children: SubCommand[] = [];
-
     /**
      * Group parent command
      * @type {ChatCommand}
@@ -25,7 +36,6 @@ export class SubCommandGroup extends Command {
      * @readonly
      */
     public readonly parent: ChatCommand;
-
     /**
      * Group description (default: "No description")
      * @type {string}
@@ -80,7 +90,6 @@ export class SubCommandGroup extends Command {
             return sc;
         }
     }
-
     /**
      * @returns {SubCommandGroupObject} Discord API object
      * @public

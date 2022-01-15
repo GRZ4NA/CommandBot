@@ -1,5 +1,5 @@
-import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { ColorResolvable, DMChannel, GuildMember, Interaction, Message, MessageEmbed, Permissions, TextChannel, User } from "discord.js";
+import { FunctionCommand } from "../commands/base/FunctionCommand.js";
 import { PermissionsError } from "../errors.js";
 import Bot from "./Bot.js";
 
@@ -8,7 +8,6 @@ import Bot from "./Bot.js";
  * @type
  */
 export type MessageType = "PERMISSION" | "ERROR" | "NOT_FOUND" | "SUCCESS";
-
 /**
  * Configuration of a system message
  * @interface
@@ -19,51 +18,43 @@ export interface SystemMessageAppearance {
      * @type {boolean}
      */
     enabled: boolean;
-
     /**
      * Title field
      * @type {string}
      */
     title: string;
-
     /**
      * Text below the title
      * @type {?string}
      * @deprecated
      */
     bottomText?: string;
-
     /**
      * Text below the title
      * @type {?string}
      */
     description?: string;
-
     /**
      * Color of a message
      * @type {?ColorResolvable}
      */
     accentColor?: ColorResolvable;
-
     /**
      * Whether to display detailed informations in the message
      * @type {?boolean}
      */
     displayDetails?: boolean;
-
     /**
      * Whether to show current time and date in a footer
      * @type {?boolean}
      */
     showTimestamp?: boolean;
-
     /**
      * Footer text
      * @type {?string}
      * @deprecated
      */
     footer?: string;
-
     /**
      * Time (in ms) after a message of this type gets deleted
      * @type {?number}
@@ -82,19 +73,16 @@ export interface SystemMessageData {
      * @type {?FunctionCommand}
      */
     command?: FunctionCommand;
-
     /**
      * Phrase received from a Discord channel
      * @type {?string}
      */
     phrase?: string;
-
     /**
      * User who used the bot
      * @type {?GuildMember | User}
      */
     user?: GuildMember | User;
-
     /**
      * Error object
      * @type {?Error | PermissionsError | string}
@@ -125,21 +113,18 @@ export class SystemMessageManager {
      * @public
      */
     public PERMISSION: SystemMessageAppearance;
-
     /**
      * Sent when an error occurs during the execution of a command
      * @type {SystemMessageAppearance}
      * @public
      */
     public ERROR: SystemMessageAppearance;
-
     /**
      * Sent when someone tries to run a command that does not exist (mainly by using prefix interactions)
      * @type {SystemMessageAppearance}
      * @public
      */
     public NOT_FOUND: SystemMessageAppearance;
-
     /**
      * Sent when a command function returns _void_ without throwing an error
      * @type {SystemMessageAppearance}
@@ -147,7 +132,6 @@ export class SystemMessageManager {
      * @remarks An _announceSuccess_ property must be set to _true_ (default) in order to send this message
      */
     public SUCCESS: SystemMessageAppearance;
-
     /**
      * Global time (in ms) after a message gets deleted
      * @type {number}

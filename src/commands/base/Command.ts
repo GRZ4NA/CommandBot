@@ -1,13 +1,29 @@
-import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../types/commands.js";
+import { BaseCommands, BaseCommandType, ChildCommands, ChildCommandType, Commands, CommandRegExps, CommandType } from "../commandsTypes.js";
 import { CommandManager } from "../../structures/CommandManager.js";
-import { APICommandObject } from "../../structures/types/api.js";
-import { APICommandInit } from "../types/InitOptions.js";
+import { APICommandObject } from "../../structures/apiTypes.js";
 import { FunctionCommand } from "./FunctionCommand.js";
 import { GuildCommand } from "./GuildCommand.js";
 import { PermissionCommand } from "./PermissionCommand.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
 import { ChatCommand } from "../ChatCommand.js";
 import { SubCommand } from "../SubCommand.js";
+
+/**
+ * Initialization options of core {@link Command} object
+ * @interface
+ */
+export interface APICommandInit {
+    /**
+     * Command name
+     * @type {string}
+     */
+    name: string;
+    /**
+     * Discord API default permission
+     * @type {?boolean}
+     */
+    default_permission?: boolean;
+}
 
 /**
  * Bot core command object
@@ -21,7 +37,6 @@ export class Command {
      * @readonly
      */
     public readonly manager: CommandManager;
-
     /**
      * Command name
      * @type {string}
@@ -29,7 +44,6 @@ export class Command {
      * @readonly
      */
     public readonly name: string;
-
     /**
      * CommandBot's internal command type
      * @type {CommandType}
@@ -37,7 +51,6 @@ export class Command {
      * @readonly
      */
     public readonly type: CommandType;
-
     /**
      * Discord API default_permission
      * @type {boolean}
@@ -78,7 +91,6 @@ export class Command {
             default_permission: this.default_permission,
         };
     }
-
     /**
      * Check base command type
      * @param {BaseCommandType} type - base command type
@@ -118,7 +130,6 @@ export class Command {
                 return false;
         }
     }
-
     /**
      * Checks command type
      * @param {CommandType} type - command type
@@ -145,7 +156,6 @@ export class Command {
                 return false;
         }
     }
-
     /**
      * Check child command type
      * @param {ChildCommandType} type - child command type

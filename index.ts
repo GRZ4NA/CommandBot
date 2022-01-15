@@ -1,16 +1,5 @@
 import { Bot, InitOptions } from "./src/structures/Bot.js";
 import {
-    ChatCommandInit,
-    ContextMenuCommandInit,
-    SubCommandInit,
-    SubCommandGroupInit,
-    APICommandInit,
-    FunctionCommandInit,
-    GuildCommandInit,
-    PermissionCommandInit,
-    PermissionGuildCommandInit,
-} from "./src/commands/types/InitOptions.js";
-import {
     ObjectID,
     TargetID,
     Parameter,
@@ -39,8 +28,7 @@ import {
     CommandFunctionReturnTypes,
     BaseCommandType,
     EphemeralType,
-} from "./src/commands/types/commands.js";
-import { CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/commands/types/permissions.js";
+} from "./src/commands/commandsTypes.js";
 import {
     APICommandObject,
     APICommandType,
@@ -53,22 +41,22 @@ import {
     RegisteredCommandObject,
     SubCommandGroupObject,
     TextCommandOptionChoiceObject,
-} from "./src/structures/types/api.js";
+} from "./src/structures/apiTypes.js";
 import { InputManager } from "./src/structures/InputManager.js";
-import { SubCommand } from "./src/commands/SubCommand.js";
-import { SubCommandGroup } from "./src/commands/SubCommandGroup.js";
-import { ChatCommand } from "./src/commands/ChatCommand.js";
-import { ContextMenuCommand } from "./src/commands/ContextMenuCommand.js";
-import { FunctionCommand } from "./src/commands/base/FunctionCommand.js";
-import { Command } from "./src/commands/base/Command.js";
+import { SubCommand, SubCommandInit } from "./src/commands/SubCommand.js";
+import { SubCommandGroup, SubCommandGroupInit } from "./src/commands/SubCommandGroup.js";
+import { ChatCommand, ChatCommandInit } from "./src/commands/ChatCommand.js";
+import { ContextMenuCommand, ContextMenuCommandInit } from "./src/commands/ContextMenuCommand.js";
+import { FunctionCommand, FunctionCommandInit } from "./src/commands/base/FunctionCommand.js";
+import { APICommandInit, Command } from "./src/commands/base/Command.js";
 import { CommandManager } from "./src/structures/CommandManager.js";
 import { SystemMessageManager, MessageType, SystemMessageAppearance, SystemMessageData } from "./src/structures/SystemMessage.js";
-import { CommandPermissions } from "./src/structures/CommandPermissions.js";
+import { CommandPermissions, CommandPermissionsInit, PermissionCheckTypes, PermissionFunction } from "./src/structures/CommandPermissions.js";
 import { HelpMessage, HelpMessageParams } from "./src/commands/Help.js";
 import { PrefixManager, ScopeResolvable } from "./src/structures/PrefixManager.js";
-import { GuildCommand } from "./src/commands/base/GuildCommand.js";
-import { PermissionCommand } from "./src/commands/base/PermissionCommand.js";
-import { PermissionGuildCommand } from "./src/commands/base/PermissionGuildCommand.js";
+import { GuildCommand, GuildCommandInit } from "./src/commands/base/GuildCommand.js";
+import { PermissionCommand, PermissionCommandInit } from "./src/commands/base/PermissionCommand.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./src/commands/base/PermissionGuildCommand.js";
 
 export {
     Bot,

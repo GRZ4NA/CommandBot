@@ -1,10 +1,23 @@
 import { PermissionsError } from "../../errors.js";
 import { CommandManager } from "../../structures/CommandManager.js";
 import { CommandPermissions } from "../../structures/CommandPermissions.js";
-import { FunctionCommand } from "./FunctionCommand.js";
-import { PermissionCommandInit } from "../types/InitOptions.js";
-import { CommandType } from "../types/commands.js";
+import { FunctionCommand, FunctionCommandInit } from "./FunctionCommand.js";
+import { CommandType } from "../commandsTypes.js";
 import { InputManager } from "../../structures/InputManager.js";
+import { CommandPermissionsInit } from "../../structures/CommandPermissions.js";
+
+/**
+ * Initialization options of base command with attached permissions
+ * @interface
+ * @extends {FunctionCommandInit}
+ */
+export interface PermissionCommandInit extends FunctionCommandInit {
+    /**
+     * Object with permissions' options and resolvables
+     * @type {?CommandPermissionsInit}
+     */
+    permissions?: CommandPermissionsInit;
+}
 
 /**
  * Executable command with attached permission system

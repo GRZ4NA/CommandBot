@@ -1,8 +1,20 @@
-import { ContextMenuCommandInit } from "./types/InitOptions.js";
 import { CommandManager } from "../structures/CommandManager.js";
-import { PermissionGuildCommand } from "./base/PermissionGuildCommand.js";
-import { ContextType } from "./types/commands.js";
-import { ContextMenuCommandObject } from "../structures/types/api.js";
+import { PermissionGuildCommand, PermissionGuildCommandInit } from "./base/PermissionGuildCommand.js";
+import { ContextType } from "./commandsTypes.js";
+import { ContextMenuCommandObject } from "../structures/apiTypes.js";
+
+/**
+ * Initialization options of context menu interactions
+ * @interface
+ * @extends {PermissionGuildCommandInit}
+ */
+export interface ContextMenuCommandInit extends PermissionGuildCommandInit {
+    /**
+     * Context menu target type
+     * @type {ContextType}
+     */
+    contextType: ContextType;
+}
 
 /**
  * Representation of all context menu Discord interactions
@@ -36,7 +48,6 @@ export class ContextMenuCommand extends PermissionGuildCommand {
 
         this.contextType = options.contextType;
     }
-
     /**
      * @returns {ContextMenuCommandObject} Discord API object
      * @public
