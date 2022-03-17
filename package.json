@@ -1,6 +1,6 @@
 {
     "name": "commandbot",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "description": "A framework that helps you create your own Discord bot easier.",
     "main": "dist/cjs/index.js",
     "module": "dist/mjs/index.js",
@@ -19,7 +19,7 @@
         "interactions"
     ],
     "scripts": {
-        "compile": "rd dist /S /Q && tsc -p tsconfig-mjs.json && tsc -p tsconfig-cjs.json && package-create.bat",
+        "compile": "./compile.sh",
         "test": "node test/index.js"
     },
     "author": "GRZANA",
@@ -29,7 +29,7 @@
     },
     "homepage": "https://github.com/GRZ4NA/CommandBot#readme",
     "dependencies": {
-        "axios": "^0.21.4",
+        "axios": "^0.26.1",
         "discord.js": "^13.1.0"
     },
     "devDependencies": {
